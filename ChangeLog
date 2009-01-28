@@ -1,0 +1,10 @@
+TODO
+
+Deployment:
+* create debian package files
+* update macosx package files
+* update msvcpp files (implement libbfio)
+
+20090128
+* Created initial version based on lipff for the library structure and common code
+

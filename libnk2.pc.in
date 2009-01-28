@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libnk2
+Description: Library to support the Nickfile (NK2) format
+Version: @VERSION@
+Libs: -L${libdir} -lnk2
+Libs.private: @libnk2_pc_libs_private_libbfio@ @libnk2_pc_libs_private_libuna@
+Cflags: -I${includedir}
+

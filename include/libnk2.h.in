@@ -1,0 +1,131 @@
+/*
+ * Library to support the Nickfile (NK2) format
+ *
+ * Copyright (c) 2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations. All rights reserved.
+ *
+ * Refer to AUTHORS for acknowledgements.
+ *
+ * This software is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#if !defined( _LIBNK2_H )
+#define _LIBNK2_H
+
+#include <libnk2/definitions.h>
+#include <libnk2/error.h>
+#include <libnk2/extern.h>
+#include <libnk2/features.h>
+#include <libnk2/types.h>
+
+#include <stdio.h>
+
+#if defined( __cplusplus )
+extern "C" {
+#endif
+
+/* -------------------------------------------------------------------------
+ * Support functions
+ * ------------------------------------------------------------------------- */
+
+/* Returns the library version
+ */
+LIBNK2_EXTERN const char *libnk2_get_version(
+                           void );
+
+/* Frees the error including elements
+ */
+LIBNK2_EXTERN void libnk2_error_free(
+                    libnk2_error_t **error );
+
+/* Prints a descriptive string of the error to the stream
+ */
+LIBNK2_EXTERN void libnk2_error_fprint(
+                    libnk2_error_t *error,
+                    FILE *stream );
+
+/* Set the notify values
+ */
+LIBNK2_EXTERN void libnk2_set_notify_values(
+                    FILE *stream,
+                    int verbose );
+
+/* -------------------------------------------------------------------------
+ * File functions
+ * ------------------------------------------------------------------------- */
+
+/* Initializes the Nickfile
+ * Make sure the value file is pointing to is set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_file_initialize(
+                   libnk2_file_t **file,
+                   libnk2_error_t **error );
+
+/* Frees an exisisting Nickfile
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_file_free(
+                   libnk2_file_t **file,
+                   libnk2_error_t **error );
+
+/* Opens a Nickfile
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_file_open(
+                   libnk2_file_t *file,
+                   const char *filename,
+                   int flags,
+                   libnk2_error_t **error );
+
+#if defined( LIBNK2_WIDE_CHARACTER_TYPE )
+/* Opens a Nickfile
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_file_open_wide(
+                   libnk2_file_t *file,
+                   const wchar_t *filename,
+                   int flags,
+                   libnk2_error_t **error );
+#endif
+
+/* Closes a Nickfile
+ * Returns 0 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_file_close(
+                   libnk2_file_t *file,
+                   libnk2_error_t **error );
+
+/* Retrieves the file ASCII codepage
+ *  * Returns 1 if successful or -1 on error
+ *   */
+LIBNK2_EXTERN int libnk2_file_get_ascii_codepage(
+                   libnk2_file_t *file,
+                   int *ascii_codepage,
+                   libnk2_error_t **error );
+
+/* Sets the file ASCII codepage
+ *  * Returns 1 if successful or -1 on error
+ *   */
+LIBNK2_EXTERN int libnk2_file_set_ascii_codepage(
+                   libnk2_file_t *file,
+                   int ascii_codepage,
+                   libnk2_error_t **error );
+
+#if defined( __cplusplus )
+}
+#endif
+
+#endif
+

@@ -1,0 +1,74 @@
+Name: libnk2
+Version: @VERSION@
+Release: 1
+Summary: Library to support the Nickfile (NK2) format
+Group: System Environment/Libraries
+License: LGPL
+Source: %{name}-%{version}.tar.gz
+URL: http://libnk2.sourceforge.net
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Requires: @libppf_spec_requires_libbfio@ @libppf_spec_requires_libuna@
+BuildRequires: @libppf_spec_build_requires_libbfio@ @libppf_spec_build_requires_libuna@
+
+%description
+libnk2 is a library to support the Nickfile (NK2) format
+
+%package devel
+Summary: Header files and libraries for developing applications for libnk2
+Group: Development/Libraries
+Requires: libnk2 = %{version}-%{release}
+
+%description devel
+Header files and libraries for developing applications for libnk2.
+
+%package tools
+Summary: Several tools for accessing Nickfiles (NK2)
+Group: Applications/System
+Requires: libnk2 = %{version}-%{release}
+
+%description tools
+Several tools for accessing Nickfiles (NK2)
+
+%prep
+%setup -q
+
+%build
+%configure --prefix=/usr --libdir=%{_libdir} --mandir=%{_mandir}
+make %{?_smp_mflags}
+
+%install
+rm -rf ${RPM_BUILD_ROOT}
+make DESTDIR=${RPM_BUILD_ROOT} install
+
+%clean
+rm -rf ${RPM_BUILD_ROOT}
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+%files
+%defattr(644,root,root,755)
+%doc AUTHORS COPYING NEWS README
+%attr(755,root,root) %{_libdir}/*.so.*
+
+%files devel
+%defattr(644,root,root,755)
+%doc AUTHORS COPYING NEWS README ChangeLog
+%{_libdir}/*.a
+%{_libdir}/*.la
+%{_libdir}/*.so
+%{_libdir}/pkgconfig/libnk2.pc
+%{_includedir}/*
+%{_mandir}/man3/*
+
+%files tools
+%defattr(644,root,root,755)
+%doc AUTHORS COPYING NEWS README
+%attr(755,root,root) %{_bindir}/nk2info
+%{_mandir}/man1/*
+
+%changelog
+* Wed Jan 28 2009 Joachim Metz <forensics@hoffmannbv.nl> 20090128-1
+- Initial version based on libpff spec file
+
