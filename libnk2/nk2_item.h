@@ -1,5 +1,5 @@
 /*
- * The file header definition of a Nickfile
+ * The item definition of a Nickfile
  *
  * Copyright (c) 2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
@@ -20,8 +20,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2_FILE_HEADER_H )
-#define _NK2_FILE_HEADER_H
+#if !defined( _NK2_ITEM_H )
+#define _NK2_ITEM_H
 
 #include <common.h>
 #include <types.h>
@@ -30,15 +30,19 @@
 extern "C" {
 #endif
 
-typedef struct nk2_file_header nk2_file_header_t;
+typedef struct nk2_item_value_entry nk2_item_value_entry_t;
 
-struct nk2_file_header
+struct nk2_item_value_entry
 {
-	/* Signature
-	 * Consists of 4 bytes
-	 * 0x0d 0xf0 0xad 0xba
+	/* The value type
+	 * Consists of 2 bytes
 	 */
-	uint8_t signature[ 4 ];
+	uint8_t value_type[ 2 ];
+
+	/* The entry type
+	 * Consists of 2 bytes
+	 */
+	uint8_t entry_type[ 2 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
@@ -50,10 +54,10 @@ struct nk2_file_header
 	 */
 	uint8_t unknown2[ 4 ];
 
-	/* Amount of items
+	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t amount_of_items[ 4 ];
+	uint8_t unknown3[ 4 ];
 };
 
 #if defined( __cplusplus )

@@ -1,23 +1,23 @@
 include_HEADERS = \
-        libpff.h
+        libnk2.h
 
 pkginclude_HEADERS = \
-        libpff/definitions.h \
-        libpff/error.h \
-        libpff/extern.h \
-        libpff/features.h \
-        libpff/types.h
+        libnk2/definitions.h \
+        libnk2/error.h \
+        libnk2/extern.h \
+        libnk2/features.h \
+        libnk2/types.h
 
 EXTRA_DIST = \
-	libpff.h.in \
-	libpff/definitions.h.in \
-	libpff/features.h.in \
-	libpff/types.h.in
+	libnk2.h.in \
+	libnk2/definitions.h.in \
+	libnk2/features.h.in \
+	libnk2/types.h.in
 
 distclean: clean
-	/bin/rm -f libpff.h
-	/bin/rm -f libpff/definitions.h
-	/bin/rm -f libpff/features.h
-	/bin/rm -f libpff/types.h
+	/bin/rm -f libnk2.h
+	/bin/rm -f libnk2/definitions.h
+	/bin/rm -f libnk2/features.h
+	/bin/rm -f libnk2/types.h
 	/bin/rm -f Makefile
 

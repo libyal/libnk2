@@ -19,7 +19,8 @@ libnk2_la_SOURCES = \
 	libnk2_string.h \
 	libnk2_support.c libnk2_support.h \
 	libnk2_system_string.h \
-	nk2_file_header.h
+	nk2_file_header.h \
+	nk2_item.h
 
 libnk2_la_LIBADD  = ../liberror/liberror.la @LIBUNA_LIBADD@ @LIBBFIO_LIBADD@
 libnk2_la_LDFLAGS = -no-undefined -version-info 1:0:0

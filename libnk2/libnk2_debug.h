@@ -29,9 +29,21 @@
 #include <liberror.h>
 
 #include "libnk2_libbfio.h"
+#include "libnk2_string.h"
 
 #if defined( __cplusplus )
 extern "C" {
+#endif
+
+#if defined( HAVE_VERBOSE_OUTPUT )
+
+const libnk2_character_t *libnk2_debug_get_value_type_string(
+                           uint16_t value_type );
+
+const libnk2_character_t *libnk2_debug_get_entry_type_string(
+                           uint16_t entry_type,
+                           uint16_t value_type );
+
 #endif
 
 #if defined( HAVE_DEBUG_OUTPUT )

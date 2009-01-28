@@ -1,5 +1,5 @@
 /*
- * Library to support the Personal Folder File (OST and PST) format
+ * Library to support the Nickfile (NK2)
  *
  * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
