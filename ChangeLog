@@ -5,6 +5,10 @@ Deployment:
 * update macosx package files
 * update msvcpp files (implement libbfio)
 
+20090129
+* Worked on initial version
+* Changed item separator to item value entries
+
 20090128
 * Created initial version based on lipff for the library structure and common code
 

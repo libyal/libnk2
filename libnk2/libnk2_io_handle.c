@@ -453,15 +453,17 @@ int libnk2_io_handle_read_item(
 {
 	uint8_t buffer[ 12 ];
 
-	uint8_t *buffer_data     = NULL;
-	uint8_t *value_data      = NULL;
-	static char *function    = "libnk2_io_handle_read_item";
-	ssize_t read_count       = 0;
-	uint64_t test            = 0;
-	uint32_t item_separator  = 0;
-	uint32_t value_data_size = 0;
-	uint16_t entry_type      = 0;
-	uint16_t value_type      = 0;
+	uint8_t *buffer_data           = NULL;
+	uint8_t *value_data            = NULL;
+	static char *function          = "libnk2_io_handle_read_item";
+	ssize_t read_count             = 0;
+	uint64_t test                  = 0;
+	uint32_t amount_of_item_values = 0;
+	uint32_t item_value_iterator   = 0;
+	uint32_t value_data_size       = 0;
+	uint16_t entry_type            = 0;
+	uint16_t value_type            = 0;
+	int item_index                 = 0;
 
 	if( io_handle == NULL )
 	{
@@ -502,145 +504,26 @@ int libnk2_io_handle_read_item(
 
 		return( -1 );
 	}
-	endian_little_convert_32bit(
-	 item_separator,
-	 buffer );
-
-#if defined( HAVE_VERBOSE_OUTPUT )
-	libnk2_notify_verbose_printf(
-	 "%s: item separator\t: 0x%08" PRIx32 "\n",
-	 function,
-	 item_separator );
-#endif
-
-	/* Loop through all item value entries
-	 */
 	while( 1 )
 	{
-		read_count = libbfio_read(
-			      io_handle->file_io_handle,
-			      buffer,
-			      4,
-			      error );
-
-		if( read_count != (ssize_t) 4 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item value entry.",
-			 function );
-
-			return( -1 );
-		}
 		endian_little_convert_32bit(
-		 test,
+		 amount_of_item_values,
 		 buffer );
-
-		if( ( test == 0 )
-		 || ( test == (uint64_t) item_separator ) )
-		{
-			break;
-		}
-		endian_little_convert_16bit(
-		 value_type,
-		 buffer );
-
-		buffer_data = &( buffer[ 2 ] );
-
-		endian_little_convert_16bit(
-		 entry_type,
-		 buffer_data );
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 		libnk2_notify_verbose_printf(
-		 "%s: value type\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+		 "%s: item\t\t: %d\n",
 		 function,
-		 value_type,
-		 libnk2_debug_get_value_type_string(
-		  value_type ) );
+		 item_index );
 		libnk2_notify_verbose_printf(
-		 "%s: entry type\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+		 "%s: amount of item values\t: 0x%08" PRIx32 "\n",
 		 function,
-		 entry_type,
-		 libnk2_debug_get_entry_type_string(
-		  entry_type,
-		  value_type ) );
+		 amount_of_item_values );
 #endif
 
-		read_count = libbfio_read(
-			      io_handle->file_io_handle,
-			      buffer,
-			      12,
-			      error );
-
-		if( read_count != (ssize_t) 12 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item value entry data.",
-			 function );
-
-			return( -1 );
-		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		libnk2_notify_verbose_printf(
-		 "\n" );
-		libnk2_notify_verbose_printf(
-		 "%s: item value entry data:\n",
-		 function );
-		libnk2_notify_verbose_dump_data(
-		 buffer,
-		 12 );
-#endif
-
-#if defined( HAVE_VERBOSE_OUTPUT )
-		endian_little_convert_32bit(
-		 test,
-		 buffer );
-		libnk2_notify_verbose_printf(
-		 "%s: unknown1\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 test );
-
-		buffer_data = &( buffer[ 4 ] );
-
-		endian_little_convert_16bit(
-		 test,
-		 buffer_data );
-		libnk2_notify_verbose_printf(
-		 "%s: unknown2a\t\t: 0x%04" PRIx64 "\n",
-		 function,
-		 test );
-
-		buffer_data = &( buffer[ 6 ] );
-
-		endian_little_convert_16bit(
-		 test,
-		 buffer_data );
-		libnk2_notify_verbose_printf(
-		 "%s: unknown2b\t\t: 0x%04" PRIx64 "\n",
-		 function,
-		 test );
-
-		buffer_data = &( buffer[ 8 ] );
-
-		endian_little_convert_32bit(
-		 test,
-		 buffer_data );
-		libnk2_notify_verbose_printf(
-		 "%s: unknown3\t\t: 0x%08" PRIx64 "\n",
-		 function,
-		 test );
-#endif
-
-		/* Read the value data
+		/* Loop through all item value entries
 		 */
-		if( ( value_type == 0x001f )
-		 || ( value_type == 0x0102 ) )
+		for( item_value_iterator = 0; item_value_iterator < amount_of_item_values; item_value_iterator++ )
 		{
 			read_count = libbfio_read(
 				      io_handle->file_io_handle,
@@ -654,74 +537,192 @@ int libnk2_io_handle_read_item(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read value data size.",
+				 "%s: unable to read item value entry.",
 				 function );
 
 				return( -1 );
 			}
 			endian_little_convert_16bit(
-			 value_data_size,
+			 value_type,
 			 buffer );
+
+			buffer_data = &( buffer[ 2 ] );
+
+			endian_little_convert_16bit(
+			 entry_type,
+			 buffer_data );
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 			libnk2_notify_verbose_printf(
-			 "%s: value data size\t: %" PRIu32 "\n",
+			 "%s: value type\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
 			 function,
-			 value_data_size );
+			 value_type,
+			 libnk2_debug_get_value_type_string(
+			  value_type ) );
+			libnk2_notify_verbose_printf(
+			 "%s: entry type\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+			 function,
+			 entry_type,
+			 libnk2_debug_get_entry_type_string(
+			  entry_type,
+			  value_type ) );
 #endif
 
-			/* TODO check if value data size > SSIZE_MAX */
-
-			value_data = (uint8_t *) memory_allocate(
-						  (size_t) value_data_size );
-
-			if( value_data == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-				 "%s: unable to create value data.",
-				 function );
-
-				return( -1 );
-			}
 			read_count = libbfio_read(
 				      io_handle->file_io_handle,
-				      value_data,
-				      value_data_size,
+				      buffer,
+				      12,
 				      error );
 
-			if( read_count != (ssize_t) value_data_size )
+			if( read_count != (ssize_t) 12 )
 			{
 				liberror_error_set(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_IO,
 				 LIBERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read value data.",
+				 "%s: unable to read item value entry data.",
 				 function );
-
-				memory_free(
-				 value_data );
 
 				return( -1 );
 			}
-#if defined( HAVE_VERBOSE_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT )
 			libnk2_notify_verbose_printf(
-			 "%s: value data:\n",
+			 "\n" );
+			libnk2_notify_verbose_printf(
+			 "%s: item value entry data:\n",
 			 function );
 			libnk2_notify_verbose_dump_data(
-			 value_data,
-			 value_data_size );
+			 buffer,
+			 12 );
 #endif
 
-			memory_free(
-			 value_data );
-		}
 #if defined( HAVE_VERBOSE_OUTPUT )
-		libnk2_notify_verbose_printf(
-		 "\n" );
+			endian_little_convert_32bit(
+			 test,
+			 buffer );
+			libnk2_notify_verbose_printf(
+			 "%s: unknown1\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 test );
+
+			buffer_data = &( buffer[ 4 ] );
+
+			endian_little_convert_16bit(
+			 test,
+			 buffer_data );
+			libnk2_notify_verbose_printf(
+			 "%s: unknown2a\t\t: 0x%04" PRIx64 "\n",
+			 function,
+			 test );
+
+			buffer_data = &( buffer[ 6 ] );
+
+			endian_little_convert_16bit(
+			 test,
+			 buffer_data );
+			libnk2_notify_verbose_printf(
+			 "%s: unknown2b\t\t: 0x%04" PRIx64 "\n",
+			 function,
+			 test );
+
+			buffer_data = &( buffer[ 8 ] );
+
+			endian_little_convert_32bit(
+			 test,
+			 buffer_data );
+			libnk2_notify_verbose_printf(
+			 "%s: unknown3\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 test );
 #endif
+
+			/* Read the value data
+			 */
+			if( ( value_type == 0x001f )
+			 || ( value_type == 0x0102 ) )
+			{
+				read_count = libbfio_read(
+					      io_handle->file_io_handle,
+					      buffer,
+					      4,
+					      error );
+
+				if( read_count != (ssize_t) 4 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read value data size.",
+					 function );
+
+					return( -1 );
+				}
+				endian_little_convert_16bit(
+				 value_data_size,
+				 buffer );
+
+#if defined( HAVE_VERBOSE_OUTPUT )
+				libnk2_notify_verbose_printf(
+				 "%s: value data size\t: %" PRIu32 "\n",
+				 function,
+				 value_data_size );
+#endif
+
+				/* TODO check if value data size > SSIZE_MAX */
+
+				value_data = (uint8_t *) memory_allocate(
+							  (size_t) value_data_size );
+
+				if( value_data == NULL )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_MEMORY,
+					 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+					 "%s: unable to create value data.",
+					 function );
+
+					return( -1 );
+				}
+				read_count = libbfio_read(
+					      io_handle->file_io_handle,
+					      value_data,
+					      value_data_size,
+					      error );
+
+				if( read_count != (ssize_t) value_data_size )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read value data.",
+					 function );
+
+					memory_free(
+					 value_data );
+
+					return( -1 );
+				}
+#if defined( HAVE_VERBOSE_OUTPUT )
+				libnk2_notify_verbose_printf(
+				 "%s: value data:\n",
+				 function );
+				libnk2_notify_verbose_dump_data(
+				 value_data,
+				 value_data_size );
+#endif
+
+				memory_free(
+				 value_data );
+			}
+#if defined( HAVE_VERBOSE_OUTPUT )
+			libnk2_notify_verbose_printf(
+			 "\n" );
+#endif
+		}
+		item_index++;
 	}
 	return( 1 );
 }
