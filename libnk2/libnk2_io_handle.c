@@ -451,9 +451,10 @@ int libnk2_io_handle_read_item(
      libnk2_io_handle_t *io_handle,
      liberror_error_t **error )
 {
-	uint8_t buffer[ 12 ];
+	uint8_t buffer[ 4 ];
 
-	uint8_t *buffer_data           = NULL;
+	nk2_item_value_entry_t item_value_entry;
+
 	uint8_t *value_data            = NULL;
 	static char *function          = "libnk2_io_handle_read_item";
 	ssize_t read_count             = 0;
@@ -487,36 +488,40 @@ int libnk2_io_handle_read_item(
 
 		return( -1 );
 	}
-	read_count = libbfio_read(
-	              io_handle->file_io_handle,
-	              buffer,
-	              4,
-	              error );
-
-	if( read_count != (ssize_t) 4 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read item separator.",
-		 function );
-
-		return( -1 );
-	}
 	while( 1 )
 	{
+		read_count = libbfio_read(
+			      io_handle->file_io_handle,
+			      buffer,
+			      4,
+			      error );
+
+		if( read_count != (ssize_t) 4 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read item separator.",
+			 function );
+
+			return( -1 );
+		}
 		endian_little_convert_32bit(
 		 amount_of_item_values,
 		 buffer );
 
+		if( amount_of_item_values == 0 )
+		{
+			break;
+		}
 #if defined( HAVE_VERBOSE_OUTPUT )
 		libnk2_notify_verbose_printf(
-		 "%s: item\t\t: %d\n",
+		 "%s: item\t\t\t: %d\n",
 		 function,
 		 item_index );
 		libnk2_notify_verbose_printf(
-		 "%s: amount of item values\t: 0x%08" PRIx32 "\n",
+		 "%s: amount of item values\t: %" PRIu32 "\n",
 		 function,
 		 amount_of_item_values );
 #endif
@@ -527,11 +532,11 @@ int libnk2_io_handle_read_item(
 		{
 			read_count = libbfio_read(
 				      io_handle->file_io_handle,
-				      buffer,
-				      4,
+				      (uint8_t *) &item_value_entry,
+				      sizeof( nk2_item_value_entry_t ),
 				      error );
 
-			if( read_count != (ssize_t) 4 )
+			if( read_count != (ssize_t) sizeof( nk2_item_value_entry_t ) )
 			{
 				liberror_error_set(
 				 error,
@@ -544,94 +549,53 @@ int libnk2_io_handle_read_item(
 			}
 			endian_little_convert_16bit(
 			 value_type,
-			 buffer );
-
-			buffer_data = &( buffer[ 2 ] );
-
+			 item_value_entry.value_type );
 			endian_little_convert_16bit(
 			 entry_type,
-			 buffer_data );
+			 item_value_entry.entry_type );
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			libnk2_notify_verbose_printf(
+			 "%s: item value entry:\n",
+			 function );
+			libnk2_notify_verbose_dump_data(
+			 (uint8_t *) &item_value_entry,
+			 sizeof( nk2_item_value_entry_t ) );
+#endif
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 			libnk2_notify_verbose_printf(
-			 "%s: value type\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+			 "%s: value type\t\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
 			 function,
 			 value_type,
 			 libnk2_debug_get_value_type_string(
 			  value_type ) );
 			libnk2_notify_verbose_printf(
-			 "%s: entry type\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+			 "%s: entry type\t\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
 			 function,
 			 entry_type,
 			 libnk2_debug_get_entry_type_string(
 			  entry_type,
 			  value_type ) );
-#endif
-
-			read_count = libbfio_read(
-				      io_handle->file_io_handle,
-				      buffer,
-				      12,
-				      error );
-
-			if( read_count != (ssize_t) 12 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read item value entry data.",
-				 function );
-
-				return( -1 );
-			}
-#if defined( HAVE_DEBUG_OUTPUT )
-			libnk2_notify_verbose_printf(
-			 "\n" );
-			libnk2_notify_verbose_printf(
-			 "%s: item value entry data:\n",
-			 function );
-			libnk2_notify_verbose_dump_data(
-			 buffer,
-			 12 );
-#endif
-
-#if defined( HAVE_VERBOSE_OUTPUT )
 			endian_little_convert_32bit(
 			 test,
-			 buffer );
+			 item_value_entry.unknown1 );
 			libnk2_notify_verbose_printf(
-			 "%s: unknown1\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown1\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 test );
-
-			buffer_data = &( buffer[ 4 ] );
-
-			endian_little_convert_16bit(
-			 test,
-			 buffer_data );
-			libnk2_notify_verbose_printf(
-			 "%s: unknown2a\t\t: 0x%04" PRIx64 "\n",
-			 function,
-			 test );
-
-			buffer_data = &( buffer[ 6 ] );
-
-			endian_little_convert_16bit(
-			 test,
-			 buffer_data );
-			libnk2_notify_verbose_printf(
-			 "%s: unknown2b\t\t: 0x%04" PRIx64 "\n",
-			 function,
-			 test );
-
-			buffer_data = &( buffer[ 8 ] );
-
 			endian_little_convert_32bit(
 			 test,
-			 buffer_data );
+			 item_value_entry.unknown2 );
 			libnk2_notify_verbose_printf(
-			 "%s: unknown3\t\t: 0x%08" PRIx64 "\n",
+			 "%s: unknown2\t\t\t: 0x%04" PRIx64 "\n",
+			 function,
+			 test );
+			endian_little_convert_32bit(
+			 test,
+			 item_value_entry.unknown3 );
+			libnk2_notify_verbose_printf(
+			 "%s: unknown3\t\t\t: 0x%08" PRIx64 "\n",
 			 function,
 			 test );
 #endif
@@ -664,7 +628,7 @@ int libnk2_io_handle_read_item(
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 				libnk2_notify_verbose_printf(
-				 "%s: value data size\t: %" PRIu32 "\n",
+				 "%s: value data size\t\t: %" PRIu32 "\n",
 				 function,
 				 value_data_size );
 #endif
