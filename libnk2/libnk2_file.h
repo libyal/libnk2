@@ -40,6 +40,10 @@ typedef struct libnk2_internal_file libnk2_internal_file_t;
 
 struct libnk2_internal_file
 {
+	/* The item list
+	 */
+	libnk2_list_t *item_list;
+
 	/* The item reference list
 	 */
 	libnk2_list_t *item_reference_list;
@@ -47,10 +51,6 @@ struct libnk2_internal_file
 	/* The io handle
 	 */
 	libnk2_io_handle_t *io_handle;
-
-	/* The amount of items
-	 */
-	uint32_t amount_of_items;
 
 	/* The codepage of the extended ASCII strings
 	 */
@@ -99,6 +99,17 @@ LIBNK2_EXTERN int libnk2_file_get_ascii_codepage(
 LIBNK2_EXTERN int libnk2_file_set_ascii_codepage(
                    libnk2_file_t *file,
                    int ascii_codepage,
+                   liberror_error_t **error );
+
+LIBNK2_EXTERN int libnk2_file_get_amount_of_items(
+                   libnk2_file_t *file,
+                   int *amount_of_items,
+                   liberror_error_t **error );
+
+LIBNK2_EXTERN int libnk2_file_get_item(
+                   libnk2_file_t *file,
+                   int item_index,
+                   libnk2_item_t **item,
                    liberror_error_t **error );
 
 #if defined( __cplusplus )

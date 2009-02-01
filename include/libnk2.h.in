@@ -23,6 +23,7 @@
 #if !defined( _LIBNK2_H )
 #define _LIBNK2_H
 
+#include <libnk2/codepage.h>
 #include <libnk2/definitions.h>
 #include <libnk2/error.h>
 #include <libnk2/extern.h>
@@ -108,19 +109,125 @@ LIBNK2_EXTERN int libnk2_file_close(
                    libnk2_error_t **error );
 
 /* Retrieves the file ASCII codepage
- *  * Returns 1 if successful or -1 on error
- *   */
+ * Returns 1 if successful or -1 on error
+ */
 LIBNK2_EXTERN int libnk2_file_get_ascii_codepage(
                    libnk2_file_t *file,
                    int *ascii_codepage,
                    libnk2_error_t **error );
 
 /* Sets the file ASCII codepage
- *  * Returns 1 if successful or -1 on error
- *   */
+ * Returns 1 if successful or -1 on error
+ */
 LIBNK2_EXTERN int libnk2_file_set_ascii_codepage(
                    libnk2_file_t *file,
                    int ascii_codepage,
+                   libnk2_error_t **error );
+
+/* Retrieves the amount of items
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_file_get_amount_of_items(
+                   libnk2_file_t *file,
+                   int *amount_of_items,
+                   libnk2_error_t **error );
+
+/* Retrieves a specific item
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_file_get_item(
+                   libnk2_file_t *file,
+                   int item_index,
+                   libnk2_item_t **item,
+                   libnk2_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Item functions
+ * ------------------------------------------------------------------------- */
+
+/* Frees an item
+ * Detaches the reference from the file if necessary
+ * Return 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_free(
+                   libnk2_item_t **item,
+                   libnk2_error_t **error );
+
+/* Retrieves the identifier of a specific entry from the item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_identifier(
+                   libnk2_item_t *item,
+                   uint32_t *identifier,
+                   libnk2_error_t **error );
+
+/* Retrieves the value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint32_t *value_type,
+                   uint8_t **value_data,
+                   size_t *value_data_size,
+                   libnk2_error_t **error );
+
+/* Retrieves the boolean value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_boolean(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint8_t *entry_value,
+                   libnk2_error_t **error );
+
+/* Retrieves the 32-bit value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_32bit(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint32_t *entry_value,
+                   libnk2_error_t **error );
+
+/* Retrieves the 64-bit value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_64bit(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint64_t *entry_value,
+                   libnk2_error_t **error );
+
+/* Retrieves the size value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_size(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   size_t *entry_value,
+                   libnk2_error_t **error );
+
+/* Retrieves the size of a string value of a specific entry from the referenced item
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_string_size(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   size_t *size,
+                   libnk2_error_t **error );
+
+/* Retrieves the string value of a specific entry from the referenced item
+ * The string is formatted in UTF-8
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_string(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint8_t *string,
+                   size_t size,
                    libnk2_error_t **error );
 
 #if defined( __cplusplus )

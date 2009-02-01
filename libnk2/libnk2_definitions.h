@@ -23,7 +23,9 @@
 #if !defined( _LIBNK2_INTERNAL_DEFINITIONS_H )
 #define _LIBNK2_INTERNAL_DEFINITIONS_H
 
+#include <libnk2/codepage.h>
 #include <libnk2/definitions.h>
+#include <libnk2/mapi.h>
 
 /* The mask for the (file) offset index identifier
  * The lower order bit of the (file) offset index identifier is used for other purposes

@@ -2,6 +2,7 @@ include_HEADERS = \
         libnk2.h
 
 pkginclude_HEADERS = \
+        libnk2/codepage.h \
         libnk2/definitions.h \
         libnk2/error.h \
         libnk2/extern.h \

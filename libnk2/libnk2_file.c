@@ -88,10 +88,10 @@ int libnk2_file_initialize(
 
 			return( -1 );
 		}
-		internal_file->item_reference_list = (libnk2_list_t *) memory_allocate(
-		                                                        sizeof( libnk2_list_t ) );
+		internal_file->item_list = (libnk2_list_t *) memory_allocate(
+		                                              sizeof( libnk2_list_t ) );
 
-		if( internal_file->item_reference_list == NULL )
+		if( internal_file->item_list == NULL )
 		{
 			liberror_error_set(
 			 error,
@@ -106,7 +106,7 @@ int libnk2_file_initialize(
 			return( -1 );
 		}
 		if( memory_set(
-		     internal_file->item_reference_list,
+		     internal_file->item_list,
 		     0,
 		     sizeof( libnk2_list_t ) ) == NULL )
 		{
@@ -117,6 +117,46 @@ int libnk2_file_initialize(
 			 "%s: unable to clear item list.",
 			 function );
 
+			memory_free(
+			 internal_file->item_list );
+			memory_free(
+			 internal_file );
+
+			return( -1 );
+		}
+		internal_file->item_reference_list = (libnk2_list_t *) memory_allocate(
+		                                                        sizeof( libnk2_list_t ) );
+
+		if( internal_file->item_reference_list == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create item reference list.",
+			 function );
+
+			memory_free(
+			 internal_file->item_list );
+			memory_free(
+			 internal_file );
+
+			return( -1 );
+		}
+		if( memory_set(
+		     internal_file->item_reference_list,
+		     0,
+		     sizeof( libnk2_list_t ) ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear item reference list.",
+			 function );
+
+			memory_free(
+			 internal_file->item_list );
 			memory_free(
 			 internal_file->item_reference_list );
 			memory_free(
@@ -135,6 +175,10 @@ int libnk2_file_initialize(
 			 "%s: unable to initialize io handle.",
 			 function );
 
+			memory_free(
+			 internal_file->item_list );
+			memory_free(
+			 internal_file->item_reference_list );
 			memory_free(
 			 internal_file );
 
@@ -460,7 +504,8 @@ int libnk2_file_open_read(
      libnk2_internal_file_t *internal_file,
      liberror_error_t **error )
 {
-	static char *function = "libnk2_file_open_read";
+	static char *function    = "libnk2_file_open_read";
+	uint32_t amount_of_items = 0;
 
 	if( internal_file == NULL )
 	{
@@ -490,7 +535,7 @@ int libnk2_file_open_read(
 #endif
 	if( libnk2_io_handle_read_file_header(
 	     internal_file->io_handle,
-	     &( internal_file->amount_of_items ),
+	     &amount_of_items,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -502,15 +547,14 @@ int libnk2_file_open_read(
 
 		return( -1 );
 	}
-	/* TODO create item list/array */
-
-	/* TODO currently for test */
 #if defined( HAVE_VERBOSE_OUTPUT )
 	libnk2_notify_verbose_printf(
-	 "Reading item:\n" );
+	 "Reading items:\n" );
 #endif
-	if( libnk2_io_handle_read_item(
+	if( libnk2_io_handle_read_items(
 	     internal_file->io_handle,
+	     amount_of_items,
+	     internal_file->item_list,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -522,7 +566,6 @@ int libnk2_file_open_read(
 
 		return( -1 );
 	}
-	/* TODO test */
 	return( 1 );
 }
 
@@ -597,7 +640,8 @@ int libnk2_file_set_ascii_codepage(
 	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1253 )
 	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1254 )
 	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1256 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1257 ) )
+	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1257 )
+	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1258 ) )
 	{
 		liberror_error_set(
 		 error,
@@ -610,6 +654,165 @@ int libnk2_file_set_ascii_codepage(
 	}
 	internal_file->ascii_codepage = ascii_codepage;
 
+	return( 1 );
+}
+
+/* Retrieves the amount of items
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_file_get_amount_of_items(
+     libnk2_file_t *file,
+     int *amount_of_items,
+     liberror_error_t **error )
+{
+	libnk2_internal_file_t *internal_file = NULL;
+	static char *function                 = "libnk2_file_get_amount_of_items";
+
+	if( file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libnk2_internal_file_t *) file;
+
+	if( internal_file->item_list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing item list.",
+		 function );
+
+		return( -1 );
+	}
+	if( amount_of_items == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid amount of items.",
+		 function );
+
+		return( -1 );
+	}
+	*amount_of_items = internal_file->item_list->amount_of_elements;
+
+	return( 1 );
+}
+
+/* Retrieves a specific item
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_file_get_item(
+     libnk2_file_t *file,
+     int item_index,
+     libnk2_item_t **item,
+     liberror_error_t **error )
+{
+	libnk2_internal_file_t *internal_file = NULL;
+	libnk2_list_element_t *list_element   = NULL;
+	static char *function                 = "libnk2_file_get_item";
+
+	if( file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libnk2_internal_file_t *) file;
+
+	if( internal_file->item_list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing item list.",
+		 function );
+
+		return( -1 );
+	}
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	if( libnk2_item_initialize(
+	     item,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create item.",
+		 function );
+
+		return( -1 );
+	}
+	if( libnk2_list_get_element(
+	     internal_file->item_list,
+	     item_index,
+	     &list_element,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve item list element.",
+		 function );
+
+		return( -1 );
+	}
+	if( list_element->value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item list element - missing value.",
+		 function );
+
+		return( -1 );
+	}
+	if( libnk2_item_attach(
+	     (libnk2_internal_item_t *) *item,
+	     internal_file,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+		 "%s: unable to attach item.",
+		 function );
+
+		libnk2_item_free(
+		 item,
+		 NULL );
+
+		return( -1 );
+	}
 	return( 1 );
 }
 

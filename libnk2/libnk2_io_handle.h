@@ -75,8 +75,10 @@ int libnk2_io_handle_read_file_header(
      uint32_t *amount_of_items,
      liberror_error_t **error );
 
-int libnk2_io_handle_read_item(
+int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
+     uint32_t amount_of_items,
+     libnk2_list_t *item_list,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

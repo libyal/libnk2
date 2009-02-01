@@ -444,11 +444,13 @@ int libnk2_io_handle_read_file_header(
 	return( 1 );
 }
 
-/* Reads an item
+/* Reads the items into the item list
  * Returns 1 if successful or -1 on error
  */
-int libnk2_io_handle_read_item(
+int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
+     uint32_t amount_of_items,
+     libnk2_list_t *item_list,
      liberror_error_t **error )
 {
 	uint8_t buffer[ 4 ];
@@ -456,15 +458,15 @@ int libnk2_io_handle_read_item(
 	nk2_item_value_entry_t item_value_entry;
 
 	uint8_t *value_data            = NULL;
-	static char *function          = "libnk2_io_handle_read_item";
+	static char *function          = "libnk2_io_handle_read_items";
 	ssize_t read_count             = 0;
 	uint64_t test                  = 0;
 	uint32_t amount_of_item_values = 0;
+	uint32_t item_iterator         = 0;
 	uint32_t item_value_iterator   = 0;
 	uint32_t value_data_size       = 0;
 	uint16_t entry_type            = 0;
 	uint16_t value_type            = 0;
-	int item_index                 = 0;
 
 	if( io_handle == NULL )
 	{
@@ -488,7 +490,18 @@ int libnk2_io_handle_read_item(
 
 		return( -1 );
 	}
-	while( 1 )
+	if( item_list == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item list.",
+		 function );
+
+		return( -1 );
+	}
+	for( item_iterator = 0; item_iterator < amount_of_items; item_iterator++ )
 	{
 		read_count = libbfio_read(
 			      io_handle->file_io_handle,
@@ -517,12 +530,9 @@ int libnk2_io_handle_read_item(
 		}
 #if defined( HAVE_VERBOSE_OUTPUT )
 		libnk2_notify_verbose_printf(
-		 "%s: item\t\t\t: %d\n",
+		 "%s: item: %03" PRIu32 " amount of item values\t: %" PRIu32 "\n",
 		 function,
-		 item_index );
-		libnk2_notify_verbose_printf(
-		 "%s: amount of item values\t: %" PRIu32 "\n",
-		 function,
+		 item_iterator,
 		 amount_of_item_values );
 #endif
 
@@ -556,7 +566,9 @@ int libnk2_io_handle_read_item(
 
 #if defined( HAVE_DEBUG_OUTPUT )
 			libnk2_notify_verbose_printf(
-			 "%s: item value entry:\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 "\n",
+			 item_iterator,
+			 item_value_iterator,
 			 function );
 			libnk2_notify_verbose_dump_data(
 			 (uint8_t *) &item_value_entry,
@@ -565,14 +577,18 @@ int libnk2_io_handle_read_item(
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 			libnk2_notify_verbose_printf(
-			 "%s: value type\t\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value type\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
 			 function,
+			 item_iterator,
+			 item_value_iterator,
 			 value_type,
 			 libnk2_debug_get_value_type_string(
 			  value_type ) );
 			libnk2_notify_verbose_printf(
-			 "%s: entry type\t\t\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " entry type\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
 			 function,
+			 item_iterator,
+			 item_value_iterator,
 			 entry_type,
 			 libnk2_debug_get_entry_type_string(
 			  entry_type,
@@ -581,22 +597,28 @@ int libnk2_io_handle_read_item(
 			 test,
 			 item_value_entry.unknown1 );
 			libnk2_notify_verbose_printf(
-			 "%s: unknown1\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown1\t: 0x%08" PRIx64 "\n",
 			 function,
+			 item_iterator,
+			 item_value_iterator,
 			 test );
 			endian_little_convert_32bit(
 			 test,
 			 item_value_entry.unknown2 );
 			libnk2_notify_verbose_printf(
-			 "%s: unknown2\t\t\t: 0x%04" PRIx64 "\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown2\t: 0x%04" PRIx64 "\n",
 			 function,
+			 item_iterator,
+			 item_value_iterator,
 			 test );
 			endian_little_convert_32bit(
 			 test,
 			 item_value_entry.unknown3 );
 			libnk2_notify_verbose_printf(
-			 "%s: unknown3\t\t\t: 0x%08" PRIx64 "\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown3\t: 0x%08" PRIx64 "\n",
 			 function,
+			 item_iterator,
+			 item_value_iterator,
 			 test );
 #endif
 
@@ -628,8 +650,10 @@ int libnk2_io_handle_read_item(
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 				libnk2_notify_verbose_printf(
-				 "%s: value data size\t\t: %" PRIu32 "\n",
+				 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data size\t\t: %" PRIu32 "\n",
 				 function,
+				 item_iterator,
+				 item_value_iterator,
 				 value_data_size );
 #endif
 
@@ -671,8 +695,10 @@ int libnk2_io_handle_read_item(
 				}
 #if defined( HAVE_VERBOSE_OUTPUT )
 				libnk2_notify_verbose_printf(
-				 "%s: value data:\n",
-				 function );
+				 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data:\n",
+				 function,
+				 item_iterator,
+				 item_value_iterator );
 				libnk2_notify_verbose_dump_data(
 				 value_data,
 				 value_data_size );
@@ -686,7 +712,6 @@ int libnk2_io_handle_read_item(
 			 "\n" );
 #endif
 		}
-		item_index++;
 	}
 	return( 1 );
 }

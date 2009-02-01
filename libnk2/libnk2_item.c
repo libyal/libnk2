@@ -27,10 +27,8 @@
 
 #include <liberror.h>
 
-#include "libnk2_definitions.h"
 #include "libnk2_item.h"
 #include "libnk2_list_type.h"
-#include "libnk2_notify.h"
 
 /* Initializes the item and its values
  * Returns 1 if successful or -1 on error
@@ -122,6 +120,46 @@ int libnk2_item_initialize(
 
 			return( -1 );
 		}
+		internal_item->item_values = (libnk2_item_values_t *) memory_allocate(
+		                                                       sizeof( libnk2_item_values_t ) );
+	
+		if( internal_item->item_values == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create item values.",
+			 function );
+
+			memory_free(
+			 internal_item->list_element );
+			memory_free(
+			 internal_item );
+
+			return( -1 );
+		}
+		if( memory_set(
+		     internal_item->item_values,
+		     0,
+		     sizeof( libnk2_item_values_t ) ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear item values.",
+			 function );
+
+			memory_free(
+			 internal_item->item_values );
+			memory_free(
+			 internal_item->list_element );
+			memory_free(
+			 internal_item );
+
+			return( -1 );
+		}
 		*item = (libnk2_item_t *) internal_item;
 	}
 	return( 1 );
@@ -172,6 +210,18 @@ int libnk2_item_free(
 			memory_free(
 			 internal_item->list_element );
 		}
+		if( ( internal_item->item_values != NULL )
+		 && ( libnk2_item_values_free(
+		       internal_item->item_values,
+		       error ) != 1 ) )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free item values.",
+			 function );
+		}
 		memory_free(
 		 internal_item );
 	}
@@ -195,6 +245,13 @@ int libnk2_item_free_no_detach(
 		}
 		/* The list element is expected to be freed elsewhere
 		 */
+		if( ( ( (libnk2_internal_item_t *) internal_item )->item_values != NULL )
+		 && ( libnk2_item_values_free(
+		       ( (libnk2_internal_item_t *) internal_item )->item_values,
+		       NULL ) != 1 ) )
+		{
+			result = -1;
+		}
 		memory_free(
 		 internal_item );
 	}
@@ -317,5 +374,483 @@ int libnk2_item_detach(
 		internal_item->internal_file = NULL;
 	}
 	return( 1 );
+}
+
+/* Retrieves the value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint32_t *value_type,
+     uint8_t **value_data, 
+     size_t *value_data_size,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	static char *function                 = "libnk2_item_get_entry_value";
+	int result                            = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_item->internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - invalid internal file - missing io handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          value_type,
+	          value_data, 
+	          value_data_size,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve entry value.",
+		 function );
+	}
+	return( result );
+}
+
+/* Retrieves the boolean value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value_boolean(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *entry_value,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	static char *function                 = "libnk2_item_get_entry_value_boolean";
+	int result                            = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_item->internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - invalid internal file - missing io handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value_boolean(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          entry_value,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to get entry value boolean.",
+		 function );
+	}
+	return( result );
+}
+
+/* Retrieves the 32-bit value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value_32bit(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint32_t *entry_value,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	static char *function                 = "libnk2_item_get_entry_value_32bit";
+	int result                            = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_item->internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - invalid internal file - missing io handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value_32bit(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          entry_value,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to get entry value 32-bit.",
+		 function );
+	}
+	return( result );
+}
+
+/* Retrieves the 64-bit value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value_64bit(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint64_t *entry_value,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	static char *function                 = "libnk2_item_get_entry_value_64bit";
+	int result                                = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_item->internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - invalid internal file - missing io handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value_64bit(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          entry_value,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to get entry value 64-bit.",
+		 function );
+	}
+	return( result );
+}
+
+/* Retrieves the size value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *entry_value,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	static char *function                 = "libnk2_item_get_entry_value_size";
+	int result                            = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_item->internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - invalid internal file - missing io handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value_size(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          entry_value,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to get entry value size.",
+		 function );
+	}
+	return( result );
+}
+
+/* Retrieves the string size of a specific entry from the referenced item
+ * Length includes the end of string character
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value_string_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *size,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	static char *function                 = "libnk2_item_get_entry_value_string_size";
+	int result                            = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_item->internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - invalid internal file - missing io handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value_string_size(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          size,
+	          internal_item->internal_file->ascii_codepage,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to get entry value string size.",
+		 function );
+	}
+	return( result );
+}
+
+/* Retrieves the string value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value_string(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *string,
+     size_t size,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	static char *function                 = "libnk2_item_get_entry_value_string";
+	int result                            = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_item->internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - invalid internal file - missing io handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value_string(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          string,
+	          size,
+	          internal_item->internal_file->ascii_codepage,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to get entry value string.",
+		 function );
+	}
+	return( result );
 }
 

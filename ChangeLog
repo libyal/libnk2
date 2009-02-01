@@ -1,9 +1,19 @@
 TODO
 
+Tools
+* nk2export
+* Create
+* nk2info
+* print amount of items
+
 Deployment:
 * create debian package files
 * update macosx package files
 * update msvcpp files (implement libbfio)
+
+20090132
+* Worked on initial version
+* Added item functions
 
 20090129
 * Worked on initial version
