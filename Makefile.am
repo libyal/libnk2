@@ -4,6 +4,7 @@ SUBDIRS = \
 	liberror \
 	libuna \
 	libbfio \
+	libfmapi \
 	libnk2 \
 	nk2tools \
 	manuals \
@@ -33,6 +34,7 @@ library:
 	(cd $(srcdir)/liberror && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfmapi && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libnk2 && $(MAKE) $(AM_MAKEFLAGS))
 
 distclean: clean
@@ -51,6 +53,7 @@ splint:
 	(cd $(srcdir)/liberror && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfmapi && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libnk2 && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/nk2tools && $(MAKE) splint $(AM_MAKEFLAGS))
 

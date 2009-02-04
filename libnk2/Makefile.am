@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/common -I$(top_srcdir)/liberror @LIBUNA_CPPFLAGS@ @LIBBFIO_CPPFLAGS@ @MEMWATCH_CPPFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/common -I$(top_srcdir)/liberror -I$(top_srcdir)/libfmapi @LIBUNA_CPPFLAGS@ @LIBBFIO_CPPFLAGS@ @MEMWATCH_CPPFLAGS@
 
 lib_LTLIBRARIES = libnk2.la
 
@@ -23,7 +23,7 @@ libnk2_la_SOURCES = \
 	nk2_file_header.h \
 	nk2_item.h
 
-libnk2_la_LIBADD  = ../liberror/liberror.la @LIBUNA_LIBADD@ @LIBBFIO_LIBADD@
+libnk2_la_LIBADD  = ../liberror/liberror.la ../libfmapi/libfmapi.la @LIBUNA_LIBADD@ @LIBBFIO_LIBADD@
 libnk2_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
 distclean: clean

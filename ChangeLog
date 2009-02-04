@@ -1,4 +1,5 @@
 TODO
+* item list item free function 
 
 Tools
 * nk2export
@@ -11,7 +12,11 @@ Deployment:
 * update macosx package files
 * update msvcpp files (implement libbfio)
 
-20090132
+20090202
+* Worked on initial version
+* Added libfmapi
+
+20090131
 * Worked on initial version
 * Added item functions
 

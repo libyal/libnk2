@@ -216,6 +216,19 @@ int libnk2_file_free(
 	{
 		internal_file = (libnk2_internal_file_t *) *file;
 
+		/* TODO item free function */
+		if( libnk2_list_free(
+		     internal_file->item_list,
+		     NULL,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free item list.",
+			 function );
+		}
 		if( libnk2_list_free(
 		     internal_file->item_reference_list,
 		     &libnk2_item_free_no_detach,
@@ -225,7 +238,7 @@ int libnk2_file_free(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free item list.",
+			 "%s: unable to free item reference list.",
 			 function );
 		}
 		if( ( internal_file->io_handle != NULL )
@@ -566,6 +579,7 @@ int libnk2_file_open_read(
 
 		return( -1 );
 	}
+	/* TODO read footer */
 	return( 1 );
 }
 

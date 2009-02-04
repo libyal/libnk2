@@ -26,6 +26,7 @@
 #include <types.h>
 
 #include <liberror.h>
+#include <libfmapi.h>
 
 #include "libnk2_item_values.h"
 
@@ -103,7 +104,7 @@ int libnk2_item_values_get_entry_value(
 		           recovered,
 		           name_to_id_map_list,
 		           io_handle,
-		           LIBPFF_DEBUG_ITEM_TYPE_DEFAULT,
+		           LIBNK2_DEBUG_ITEM_TYPE_DEFAULT,
 		           error );
 
 		if( result == -1 )
@@ -213,7 +214,7 @@ int libnk2_item_values_get_entry_value_boolean(
 
 			return( -1 );
 		}
-		if( value_type != LIBPFF_VALUE_TYPE_BOOLEAN )
+		if( value_type != LIBNK2_VALUE_TYPE_BOOLEAN )
 		{
 			liberror_error_set(
 			 error,
@@ -301,7 +302,7 @@ int libnk2_item_values_get_entry_value_32bit(
 
 			return( -1 );
 		}
-		if( value_type != LIBPFF_VALUE_TYPE_INTEGER_32BIT_SIGNED )
+		if( value_type != LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED )
 		{
 			liberror_error_set(
 			 error,
@@ -391,8 +392,8 @@ int libnk2_item_values_get_entry_value_64bit(
 
 			return( -1 );
 		}
-		if( ( value_type != LIBPFF_VALUE_TYPE_INTEGER_64BIT_SIGNED )
-		 && ( value_type != LIBPFF_VALUE_TYPE_FILETIME ) )
+		if( ( value_type != LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED )
+		 && ( value_type != LIBNK2_VALUE_TYPE_FILETIME ) )
 		{
 			liberror_error_set(
 			 error,
@@ -482,8 +483,8 @@ int libnk2_item_values_get_entry_value_size(
 
 			return( -1 );
 		}
-		if( ( value_type != LIBPFF_VALUE_TYPE_INTEGER_32BIT_SIGNED )
-		 && ( value_type != LIBPFF_VALUE_TYPE_INTEGER_64BIT_SIGNED ) )
+		if( ( value_type != LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED )
+		 && ( value_type != LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED ) )
 		{
 			liberror_error_set(
 			 error,
@@ -574,8 +575,8 @@ int libnk2_item_values_get_entry_value_string_size(
 	}
 	else if( result == 1 )
 	{
-		if( ( value_type != LIBPFF_VALUE_TYPE_STRING_ASCII )
-		 && ( value_type != LIBPFF_VALUE_TYPE_STRING_UNICODE ) )
+		if( ( value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
+		 && ( value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
 		{
 			liberror_error_set(
 			 error,
@@ -595,7 +596,7 @@ int libnk2_item_values_get_entry_value_string_size(
 		}
 		else
 		{
-			if( ( value_type == LIBPFF_VALUE_TYPE_STRING_ASCII )
+			if( ( value_type == LIBNK2_VALUE_TYPE_STRING_ASCII )
 			 && ( libuna_utf8_string_size_from_byte_stream(
 			       value_data,
 			       value_data_size,
@@ -612,11 +613,11 @@ int libnk2_item_values_get_entry_value_string_size(
 
 				return( -1 );
 			}
-			else if( ( value_type == LIBPFF_VALUE_TYPE_STRING_UNICODE )
+			else if( ( value_type == LIBNK2_VALUE_TYPE_STRING_UNICODE )
 			      && ( libuna_utf8_string_size_from_utf16_stream(
 			            value_data,
 			            value_data_size,
-			            LIBPFF_ENDIAN_LITTLE,
+			            LIBNK2_ENDIAN_LITTLE,
 			            size,
 			            error ) != 1 ) )
 			{
@@ -705,8 +706,8 @@ int libnk2_item_values_get_entry_value_string(
 	}
 	else if( result == 1 )
 	{
-		if( ( value_type != LIBPFF_VALUE_TYPE_STRING_ASCII )
-		 && ( value_type != LIBPFF_VALUE_TYPE_STRING_UNICODE ) )
+		if( ( value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
+		 && ( value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
 		{
 			liberror_error_set(
 			 error,
@@ -724,7 +725,7 @@ int libnk2_item_values_get_entry_value_string(
 		{
 			string[ 0 ] = 0;
 		}
-		else if( ( value_type == LIBPFF_VALUE_TYPE_STRING_ASCII )
+		else if( ( value_type == LIBNK2_VALUE_TYPE_STRING_ASCII )
 		      && ( libuna_utf8_string_copy_from_byte_stream(
 		            string,
 		            size,
@@ -742,13 +743,13 @@ int libnk2_item_values_get_entry_value_string(
 
 			return( -1 );
 		}
-		else if( ( value_type == LIBPFF_VALUE_TYPE_STRING_UNICODE )
+		else if( ( value_type == LIBNK2_VALUE_TYPE_STRING_UNICODE )
 		      && ( libuna_utf8_string_copy_from_utf16_stream(
 			    string,
 			    size,
 			    value_data,
 			    value_data_size,
-			    LIBPFF_ENDIAN_LITTLE,
+			    LIBNK2_ENDIAN_LITTLE,
 			    error ) != 1 ) )
 		{
 			liberror_error_set(

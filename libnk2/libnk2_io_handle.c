@@ -25,6 +25,9 @@
 #include <memory.h>
 #include <types.h>
 
+#include <liberror.h>
+#include <libfmapi.h>
+
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"
@@ -567,9 +570,9 @@ int libnk2_io_handle_read_items(
 #if defined( HAVE_DEBUG_OUTPUT )
 			libnk2_notify_verbose_printf(
 			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 "\n",
+			 function,
 			 item_iterator,
-			 item_value_iterator,
-			 function );
+			 item_value_iterator );
 			libnk2_notify_verbose_dump_data(
 			 (uint8_t *) &item_value_entry,
 			 sizeof( nk2_item_value_entry_t ) );
@@ -577,20 +580,25 @@ int libnk2_io_handle_read_items(
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value type\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value type\t: 0x%04" PRIx16 " (%s : %s)\n",
 			 function,
 			 item_iterator,
 			 item_value_iterator,
 			 value_type,
-			 libnk2_debug_get_value_type_string(
+			 libfmapi_value_type_get_identifier(
+			  value_type ),
+			 libfmapi_value_type_get_description(
 			  value_type ) );
 			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " entry type\t: 0x%04" PRIx16 " (%" PRIs_LIBNK2 ")\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " entry type\t: 0x%04" PRIx16 " (%s : %s)\n",
 			 function,
 			 item_iterator,
 			 item_value_iterator,
 			 entry_type,
-			 libnk2_debug_get_entry_type_string(
+			 libfmapi_property_type_get_identifier(
+			  entry_type,
+			  value_type ),
+			 libfmapi_property_type_get_description(
 			  entry_type,
 			  value_type ) );
 			endian_little_convert_32bit(
@@ -606,7 +614,7 @@ int libnk2_io_handle_read_items(
 			 test,
 			 item_value_entry.unknown2 );
 			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown2\t: 0x%04" PRIx64 "\n",
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown2\t: 0x%08" PRIx64 "\n",
 			 function,
 			 item_iterator,
 			 item_value_iterator,
@@ -650,7 +658,7 @@ int libnk2_io_handle_read_items(
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 				libnk2_notify_verbose_printf(
-				 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data size\t\t: %" PRIu32 "\n",
+				 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data size\t: %" PRIu32 "\n",
 				 function,
 				 item_iterator,
 				 item_value_iterator,

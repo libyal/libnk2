@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20090131],
+  [20090203],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libnk2],
- [20090131])
+ [20090203])
 
 dnl Check for host type
 AC_CANONICAL_HOST
@@ -933,6 +933,7 @@ AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([liberror/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
+AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
 AC_CONFIG_FILES([manuals/Makefile])
