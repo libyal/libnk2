@@ -12,6 +12,10 @@ Deployment:
 * update macosx package files
 * update msvcpp files (implement libbfio)
 
+20090218
+* Worked on initial version
+* small update of manuals
+
 20090202
 * Worked on initial version
 * Added libfmapi
