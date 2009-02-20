@@ -3,6 +3,9 @@ TODO
 * fill item list
 * item list item free function 
 
+Optimalisations:
+* map (file offset and size) items and item values first read on demand
+
 Tools
 * nk2export
   - export item data (export handle)
@@ -14,6 +17,9 @@ Deployment:
 * create debian package files
 * update macosx package files
 * update msvcpp files (implement libbfio)
+
+20090220
+* Worked on initial version
 
 20090219
 * Worked on initial version

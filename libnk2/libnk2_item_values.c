@@ -58,6 +58,83 @@ int libnk2_item_values_free(
 	return( 1 );
 }
 
+/* Creates the item values entries
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_item_values_entries_allocate(
+     libnk2_item_values_t *item_values,
+     int amount_of_entries,
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_item_values_entries_allocate";
+
+	if( item_values == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item values.",
+		 function );
+
+		return( -1 );
+	}
+	if( item_values->entry != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid item values - entries already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( amount_of_entries <= 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 "%s: invalid amount of entries value zero or less.",
+		 function );
+
+		return( -1 );
+	}
+	item_values->entry = (libnk2_item_entry_t **) memory_allocate(
+	                                               sizeof( libnk2_item_entry_t * ) * amount_of_items );
+
+	if( item_values->entry == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create item values entries.",
+		 function );
+
+		return( -1 );
+	}
+	if( memory_set(
+	     table->entry[ set_iterator ],
+	     0,
+	     sizeof( libnk2_table_entry_t ) * amount_of_entries ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear table entries for set: %d.",
+		 function,
+		 set_iterator );
+
+		return( -1 );
+	}
+	table->amount_of_entries = (uint32_t) amount_of_entries;
+
+	return( 1 );
+}
+
 /* Retrieves the value of a specific entry from the referenced item values
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
@@ -95,8 +172,7 @@ int libnk2_item_values_get_entry_value(
 
 		return( -1 );
 	}
-#ifdef TODO
-	if( item_values->table == NULL )
+	if( item_values->entries == NULL )
 	{
 		result = libnk2_item_values_read(
 		           item_values,
@@ -152,7 +228,6 @@ int libnk2_item_values_get_entry_value(
 		 "%s: unable to retrieve table entry value.",
 		 function );
 	}
-#endif
 	return( result );
 }
 

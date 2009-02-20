@@ -47,9 +47,9 @@ struct libnk2_item_values
 	uint32_t amount_of_entries;
 };
 
-typedef struct libnk2_item_entry_definition libnk2_item_entry_definition_t;
+typedef struct libnk2_item_entry libnk2_item_entry_t;
 
-struct libnk2_item_entry_definition
+struct libnk2_item_entry
 {
 	/* The item entry type
 	 */
@@ -70,6 +70,11 @@ struct libnk2_item_entry_definition
 
 int libnk2_item_values_free(
      libnk2_item_values_t *item_values,
+     liberror_error_t **error );
+
+int libnk2_item_values_entries_allocate(
+     libnk2_item_values_t *item_values,
+     int amount_of_entries,
      liberror_error_t **error );
 
 int libnk2_item_values_get_entry_value(
