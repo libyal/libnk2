@@ -27,19 +27,5 @@
 #include <libnk2/definitions.h>
 #include <libnk2/mapi.h>
 
-/* The mask for the (file) offset index identifier
- * The lower order bit of the (file) offset index identifier is used for other purposes
- * and needs to be excluded when the identifier is searched in the index
- */
-#define LIBNK2_OFFSET_INDEX_IDENTIFIER_MASK				0xfffffffffffffffeLL
-
-/* The 2nd lower order bit of the (file) offset index identifier is used to flag that the data is encrypted
- */
-#define LIBNK2_OFFSET_INDEX_IDENTIFIER_ENCRYPTION_FLAG			0x0000000000000002LL
-
-/* The descriptor list identifiers
- */
-#define LIBNK2_DESCRIPTOR_LIST_ATTACHMENTS_IDENTIFIER			0x0671
-
 #endif
 

@@ -1,16 +1,23 @@
 TODO
+* implement item values
+* fill item list
 * item list item free function 
 
 Tools
 * nk2export
-* Create
+  - export item data (export handle)
 * nk2info
-* print amount of items
+  - print amount of items
+  - create info handle
 
 Deployment:
 * create debian package files
 * update macosx package files
 * update msvcpp files (implement libbfio)
+
+20090219
+* Worked on initial version
+* Correction in error output
 
 20090218
 * Worked on initial version
@@ -29,5 +36,5 @@ Deployment:
 * Changed item separator to item value entries
 
 20090128
-* Created initial version based on lipff for the library structure and common code
+* Created initial version based on libpff for the library structure and common code
 

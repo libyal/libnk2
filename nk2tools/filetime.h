@@ -1,5 +1,5 @@
 /*
- * Common input functions for the nk2tools
+ * Filetime functions
  *
  * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
@@ -20,21 +20,44 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2INPUT_H )
-#define _NK2INPUT_H
+#if !defined( _FILETIME_H )
+#define _FILETIME_H
 
 #include <common.h>
 #include <types.h>
 
-#include "system_string.h"
+#include "character_string.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-int nk2input_determine_ascii_codepage(
-     const system_character_t *argument,
-     int *ascii_codepage );
+#define FILETIME_ZERO		{ 0, 0 }
+#define FILETIME_STRING_SIZE	26
+
+typedef struct filetime filetime_t;
+
+/* Contains a 64-bit value representing the number of 100-nanosecond intervals since January 1, 1601 (UTC)
+ */
+struct filetime
+{
+	/* The lower filetime part
+	 */
+	uint32_t lower;
+
+	/* The upper filetime part
+	 */
+	uint32_t upper;
+};
+
+int filetime_from_uint64(
+     filetime_t *filetime,
+     uint64_t integer );
+
+int filetime_to_string(
+     filetime_t *filetime,
+     character_t *string,
+     size_t length );
 
 #if defined( __cplusplus )
 }

@@ -1,28 +1,26 @@
-.Dd Janurary 18, 2009
-.Dt pffexport
-.Os libpff
+.Dd February 19, 2009
+.Dt nk2export
+.Os libnk2
 .Sh NAME
-.Nm pffexport
-.Nd exports items stored in a Personal Folder File (OST and PST)
+.Nm nk2export
+.Nd exports items stored in a Nickfile (NK2)
 .Sh SYNOPSIS
-.Nm pffexport
+.Nm nk2export
 .Op Fl c Ar codepage
-.Op Fl f Ar format
 .Op Fl l Ar logfile
-.Op Fl m Ar mode
 .Op Fl t Ar target
 .Op Fl hvV
 .Va Ar source
 .Sh DESCRIPTION
-.Nm pffexport
-is a utility to export items stored in a Personal Folder File (OST and PST)
+.Nm nk2export
+is a utility to export items stored in a Nickfile (NK2)
 .Pp
-.Nm pffexport
+.Nm nk2export
 is part of the
-.Nm libpff
+.Nm libnk2
 package.
-.Nm libpff
-is a library to support the Personal Folder File (OST and PST) format
+.Nm libnk2
+is a library to support the Nickfile (NK2) format
 .Pp
 .Ar source
 is the source file.
@@ -31,14 +29,10 @@ The options are as follows:
 .Bl -tag -width Ds
 .It Fl c Ar codepage
 specify the codepage of ASCII strings, options: ascii, windows-1250 (default), windows-1251, windows-1252, windows-1253, windows-1254, windows-1255, windows-1256, windows-1257 or windows-1258
-.It Fl f Ar format
-specify the preferred output format, options: all, html, rtf, text (default)
 .It Fl h
 shows this help
 .It Fl l Ar logfile
 specify the file in which to log information about the exported items
-.It Fl m Ar mode
-specify the export mode, option: full, items (default)
 .It Fl t Ar target
 specify the target directory to export to (default is the source filename followed by .export)
 .It Fl v
@@ -52,20 +46,14 @@ None
 None
 .Sh EXAMPLES
 .Bd -literal
-# pffexport file.pst
-pffexport 20081018 (libpff 20081018, libuna 20081011)
+# nk2export file.pst
+nk2export 20090219 (libnk2 20090219, libuna 20081011)
 
 Opening file.
 Exporting items.
-Exporting folder item 1 out of 4.
+Exporting item 1 out of 4.
 .Dl ...
-Exporting e-mail item 17 out of 115.
-Exporting attachment 1 out of 3.
-Exporting attachment 2 out of 3.
-Exporting attachment 3 out of 3.
-Exporting e-mail item 18 out of 115.
-.Dl ...
-Exporting folder item 4 out of 4.
+Exporting item 4 out of 4.
 Export completed.
 
 .Ed
@@ -74,12 +62,11 @@ Errors, verbose and debug output are printed to stderr when verbose output \-v i
 Verbose and debug output are only printed when enabled at compilation.
 .Sh BUGS
 Please report bugs of any kind to <forensics@hoffmannbv.nl> or on the project website:
-http://libpff.sourceforge.net/
+http://libnk2.sourceforge.net/
 .Sh AUTHOR
 These man pages were written by Joachim Metz.
 .Sh COPYRIGHT
-Copyright 2008-2009 Joachim Metz, Hoffmann Investigations <forensics@hoffmannbv.nl> and contributors.
+Copyright 2009 Joachim Metz, Hoffmann Investigations <forensics@hoffmannbv.nl> and contributors.
 This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
-.Xr pffinfo 1
-.Xr pffrecover 1
+.Xr nk2info 1

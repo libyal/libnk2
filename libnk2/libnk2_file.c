@@ -314,7 +314,7 @@ int libnk2_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to personal folder files currently not supported.",
+		 "%s: write access to Nickfiles currently not supported.",
 		 function );
 
 		return( -1 );
@@ -413,7 +413,7 @@ int libnk2_file_open_wide(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to personal folder files currently not supported.",
+		 "%s: write access to Nickfiles files currently not supported.",
 		 function );
 
 		return( -1 );
@@ -504,7 +504,7 @@ int libnk2_file_close(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close file io handle.",
+		 "%s: unable to close io handle.",
 		 function );
 	}
 	return( result );

@@ -38,7 +38,34 @@ typedef struct libnk2_item_values libnk2_item_values_t;
 
 struct libnk2_item_values
 {
-	/* TODO */
+	/* The item entries
+	 */
+	libnk2_table_entry_t **entry;
+
+	/* The amount of item entries
+	 */
+	uint32_t amount_of_entries;
+};
+
+typedef struct libnk2_item_entry_definition libnk2_item_entry_definition_t;
+
+struct libnk2_item_entry_definition
+{
+	/* The item entry type
+	 */
+	uint16_t entry_type;
+
+	/* The item entry value type
+	 */
+	uint16_t value_type;
+
+	/* The value size
+	 */
+	uint32_t value_size;
+
+	/* The value data
+	 */
+	uint8_t *value_data;
 };
 
 int libnk2_item_values_free(

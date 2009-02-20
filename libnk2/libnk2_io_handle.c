@@ -714,6 +714,9 @@ int libnk2_io_handle_read_items(
 
 				memory_free(
 				 value_data );
+
+				/* TODO append value to item list
+				 */
 			}
 #if defined( HAVE_VERBOSE_OUTPUT )
 			libnk2_notify_verbose_printf(

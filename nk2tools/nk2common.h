@@ -52,11 +52,6 @@ extern "C" {
 #define NK2COMMON_PATH_SEPARATOR	'/'
 #endif
 
-#define NK2COMMON_EXPORT_FORMAT_ALL	(int) 'a'
-#define NK2COMMON_EXPORT_FORMAT_HTML	(int) 'h'
-#define NK2COMMON_EXPORT_FORMAT_RTF	(int) 'r'
-#define NK2COMMON_EXPORT_FORMAT_TEXT	(int) 't'
-
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER_T )
 #define nk2common_fopen( filename, mode ) \
         file_stream_io_wfopen( filename, mode )
@@ -72,116 +67,6 @@ extern "C" {
         file_io_exists( filename )
 
 #endif
-
-int nk2common_sanitize_filename(
-     uint8_t *filename,
-     size_t filename_length,
-     liberror_error_t **error );
-
-int nk2common_create_fullname(
-     system_character_t *export_path,
-     uint8_t *filename,
-     size_t filename_size,
-     system_character_t **fullname,
-     liberror_error_t **error );
-
-int nk2common_export_item(
-     FILE *log_file_stream,
-     libnk2_item_t *item,
-     int item_index,
-     int amount_of_items,
-     system_character_t *export_path,
-     int preferred_export_format,
-     liberror_error_t **error );
-
-int nk2common_export_sub_items(
-     FILE *log_file_stream,
-     libnk2_item_t *item,
-     system_character_t *export_path,
-     int preferred_export_format,
-     liberror_error_t **error );
-
-int nk2common_export_message_header(
-     FILE *log_file_stream,
-     libnk2_item_t *message,
-     int message_index,
-     system_character_t *export_path,
-     int preferred_export_format,
-     liberror_error_t **error );
-
-int nk2common_export_attachment(
-     FILE *log_file_stream,
-     libnk2_item_t *attachment,
-     int attachment_index,
-     system_character_t *export_path,
-     int preferred_export_format,
-     liberror_error_t **error );
-
-int nk2common_export_email(
-     FILE *log_file_stream,
-     libnk2_item_t *email,
-     int email_index,
-     system_character_t *export_path,
-     int preferred_export_format,
-     liberror_error_t **error );
-
-int nk2common_export_email_internet_headers(
-     FILE *log_file_stream,
-     libnk2_item_t *email,
-     system_character_t *export_path,
-     liberror_error_t **error );
-
-int nk2common_export_email_body_html(
-     FILE *log_file_stream,
-     libnk2_item_t *email,
-     uint8_t *email_filename,
-     size_t email_filename_size,
-     size_t email_html_body_size,
-     system_character_t *export_path,
-     liberror_error_t **error );
-
-int nk2common_export_email_body_rtf(
-     FILE *log_file_stream,
-     libnk2_item_t *email,
-     uint8_t *email_filename,
-     size_t email_filename_size,
-     size_t email_rtf_body_size,
-     system_character_t *export_path,
-     liberror_error_t **error );
-
-int nk2common_export_email_body_plain_text(
-     FILE *log_file_stream,
-     libnk2_item_t *email,
-     uint8_t *email_filename,
-     size_t email_filename_size,
-     size_t email_plain_text_body_size,
-     int export_internet_headers,
-     system_character_t *export_path,
-     liberror_error_t **error );
-
-int nk2common_export_appointment(
-     FILE *log_file_stream,
-     libnk2_item_t *appointment,
-     int appointment_index,
-     system_character_t *export_path,
-     int preferred_export_format,
-     liberror_error_t **error );
-
-int nk2common_export_contact(
-     FILE *log_file_stream,
-     libnk2_item_t *appointment,
-     int appointment_index,
-     system_character_t *export_path,
-     int preferred_export_format,
-     liberror_error_t **error );
-
-int nk2common_export_folder(
-     FILE *log_file_stream,
-     libnk2_item_t *folder,
-     int folder_index,
-     system_character_t *export_path,
-     int preferred_export_format,
-     liberror_error_t **error );
 
 #if defined( __cplusplus )
 }
