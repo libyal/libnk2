@@ -47,7 +47,7 @@ int export_handle_initialize(
      export_handle_t **export_handle,
      liberror_error_t **error )
 {
-	static char *function = "export_handle_allocate";
+	static char *function = "export_handle_initialize";
 
 	if( export_handle == NULL )
 	{
