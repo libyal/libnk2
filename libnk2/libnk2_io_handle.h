@@ -54,17 +54,9 @@ int libnk2_io_handle_free(
 
 int libnk2_io_handle_open(
      libnk2_io_handle_t *io_handle,
-     const char *filename,
+     libbfio_handle_t *file_io_handle,
      int flags,
      liberror_error_t **error );
-
-#if defined( LIBNK2_WIDE_CHARACTER_TYPE )
-int libnk2_io_handle_open_wide(
-     libnk2_io_handle_t *io_handle,
-     const wchar_t *filename,
-     int flags,
-     liberror_error_t **error );
-#endif
 
 int libnk2_io_handle_close(
      libnk2_io_handle_t *io_handle,

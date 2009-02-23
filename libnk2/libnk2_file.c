@@ -270,6 +270,7 @@ int libnk2_file_open(
      int flags,
      liberror_error_t **error )
 {
+	libbfio_handle_t *file_io_handle      = NULL;
 	libnk2_internal_file_t *internal_file = NULL;
 	static char *function                 = "libnk2_file_open";
 	int file_io_flags                     = 0;
@@ -321,13 +322,42 @@ int libnk2_file_open(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
+	if( libbfio_file_initialize(
+	     &file_io_handle,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize file io handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_file_set_name(
+	     file_io_handle,
+	     filename,
+	     narrow_string_length(
+	      filename ) + 1,
+	     error ) != 1 )
+	{
+                liberror_error_set(
+                 error,
+                 LIBERROR_ERROR_DOMAIN_RUNTIME,
+                 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+                 "%s: unable to set filename in file io handle.",
+                 function );
+
+                return( -1 );
+	}
 	if( ( flags & LIBNK2_FLAG_READ ) == LIBNK2_FLAG_READ )
 	{
 		file_io_flags = LIBBFIO_FLAG_READ;
 	}
 	if( libnk2_io_handle_open(
 	     internal_file->io_handle,
-	     filename,
+	     file_io_handle,
 	     file_io_flags,
 	     error ) != 1 )
 	{
@@ -369,6 +399,7 @@ int libnk2_file_open_wide(
      int flags,
      liberror_error_t **error )
 {
+	libbfio_handle_t *file_io_handle      = NULL;
 	libnk2_internal_file_t *internal_file = NULL;
 	static char *function                 = "libnk2_file_open_wide";
 	int file_io_flags                     = 0;
@@ -420,13 +451,42 @@ int libnk2_file_open_wide(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
+	if( libbfio_file_initialize(
+	     &file_io_handle,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize file io handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_file_set_name_wide(
+	     file_io_handle,
+	     filename,
+	     narrow_string_length(
+	      filename ) + 1,
+	     error ) != 1 )
+	{
+                liberror_error_set(
+                 error,
+                 LIBERROR_ERROR_DOMAIN_RUNTIME,
+                 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+                 "%s: unable to set filename in file io handle.",
+                 function );
+
+                return( -1 );
+	}
 	if( ( flags & LIBNK2_FLAG_READ ) == LIBNK2_FLAG_READ )
 	{
-		file_io_flags = LIBNK2_FILE_IO_O_RDONLY;
+		file_io_flags = LIBBFIO_FLAG_READ;
 	}
-	if( libnk2_io_handle_open_wide(
+	if( libnk2_io_handle_open(
 	     internal_file->io_handle,
-	     filename,
+	     file_io_handle,
 	     file_io_flags,
 	     error ) != 1 )
 	{

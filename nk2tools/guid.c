@@ -26,9 +26,8 @@
 
 #include <liberror.h>
 
-#include "character_string.h"
 #include "guid.h"
-#include "notify.h"
+#include "system_string.h"
 
 /* Converts the GUID into a string
  * Returns 1 if successful or -1 on error
@@ -36,7 +35,7 @@
 int guid_to_string(
      guid_t *guid,
      int byte_order,
-     character_t *string,
+     system_character_t *string,
      size_t string_size,
      liberror_error_t **error )
 {
@@ -104,25 +103,25 @@ int guid_to_string(
 	 */
 	if( byte_order == LIBNK2_ENDIAN_BIG )
 	{
-		print_count = string_snprintf(
+		print_count = system_string_snprintf(
 			       string,
 			       string_size,
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "-%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "-%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "-%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "-%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 ),
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "-%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "-%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "-%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "-%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 ),
 			       guid[ 0 ], guid[ 1 ], guid[ 2 ], guid[ 3 ],
 			       guid[ 4 ], guid[ 5 ],
 			       guid[ 6 ], guid[ 7 ],
@@ -131,25 +130,25 @@ int guid_to_string(
 	}
 	else if( byte_order == LIBNK2_ENDIAN_LITTLE )
 	{
-		print_count = string_snprintf(
+		print_count = system_string_snprintf(
 			       string,
 			       string_size,
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "-%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "-%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "-%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "-%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 )
-			       _CHARACTER_T_STRING( "%.2" ) _CHARACTER_T_STRING( PRIx8 ),
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "-%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "-%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "-%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "-%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 )
+			       _SYSTEM_CHARACTER_T_STRING( "%.2" ) _SYSTEM_CHARACTER_T_STRING( PRIx8 ),
 			       guid[ 3 ], guid[ 2 ], guid[ 1 ], guid[ 0 ],
 			       guid[ 5 ], guid[ 4 ],
 			       guid[ 7 ], guid[ 6 ],
@@ -160,7 +159,11 @@ int guid_to_string(
 	if( ( print_count < 0 )
 	 || ( (size_t) print_count > string_size ) )
 	{
-		notify_warning_printf( "%s: unable to format string.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set string.",
 		 function );
 
 		return( -1 );

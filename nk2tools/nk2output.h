@@ -28,8 +28,6 @@
 
 #include <stdio.h>
 
-#include "error_string.h"
-
 #if defined( __cplusplus )
 extern "C" {
 #endif
@@ -39,7 +37,7 @@ void nk2output_copyright_fprint(
 
 void nk2output_version_fprint(
       FILE *stream,
-      const character_t *program );
+      const char *program );
 
 void nk2output_error_fprint(
       FILE *stream,

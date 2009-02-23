@@ -34,19 +34,6 @@
 extern "C" {
 #endif
 
-typedef struct libnk2_item_values libnk2_item_values_t;
-
-struct libnk2_item_values
-{
-	/* The item entries
-	 */
-	libnk2_table_entry_t **entry;
-
-	/* The amount of item entries
-	 */
-	uint32_t amount_of_entries;
-};
-
 typedef struct libnk2_item_entry libnk2_item_entry_t;
 
 struct libnk2_item_entry
@@ -66,6 +53,19 @@ struct libnk2_item_entry
 	/* The value data
 	 */
 	uint8_t *value_data;
+};
+
+typedef struct libnk2_item_values libnk2_item_values_t;
+
+struct libnk2_item_values
+{
+	/* The item entries
+	 */
+	libnk2_item_entry_t **entry;
+
+	/* The amount of item entries
+	 */
+	uint32_t amount_of_entries;
 };
 
 int libnk2_item_values_free(

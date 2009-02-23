@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20090220],
+  [20090222],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libnk2],
- [20090220])
+ [20090222])
 
 dnl Check for host type
 AC_CANONICAL_HOST
@@ -119,6 +119,8 @@ AC_CHECK_HEADERS([signal.h])
 AC_CHECK_HEADERS([sys/signal.h])
 
 dnl Other headers
+AC_CHECK_HEADERS([langinfo.h])
+AC_CHECK_HEADERS([locale.h])
 
 dnl Check for declarations and type definitions
 AC_TYPE_OFF_T
@@ -400,6 +402,18 @@ AC_FUNC_STRERROR_R(
 
 dnl Commandline argument/option parsing functions
 AC_CHECK_FUNCS([getopt])
+
+dnl Check for locale functions
+AC_CHECK_FUNCS(
+ [setlocale],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: setlocale],
+  [1]) ])
+
+LIBNK2_LANGINFO_CODESET
+
+dnl System functions
 
 dnl Check for printf conversion specifier support
 LIBNK2_PRINTF_JD

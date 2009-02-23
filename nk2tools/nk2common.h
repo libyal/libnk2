@@ -24,22 +24,6 @@
 #define _NK2COMMON_H
 
 #include <common.h>
-#include <types.h>
-
-#include <liberror.h>
-
-#if defined( HAVE_SYS_STAT_H )
-#include <sys/stat.h>
-#endif
-
-#include <stdio.h>
-
-#include <libnk2.h>
-
-#include "character_string.h"
-#include "file_io.h"
-#include "file_stream_io.h"
-#include "system_string.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -50,22 +34,6 @@ extern "C" {
 
 #else
 #define NK2COMMON_PATH_SEPARATOR	'/'
-#endif
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER_T )
-#define nk2common_fopen( filename, mode ) \
-        file_stream_io_wfopen( filename, mode )
-
-#define nk2common_file_exists( filename ) \
-        file_io_wexists( filename )
-
-#else
-#define nk2common_fopen( filename, mode ) \
-        file_stream_io_fopen( filename, mode )
-
-#define nk2common_file_exists( filename ) \
-        file_io_exists( filename )
-
 #endif
 
 #if defined( __cplusplus )

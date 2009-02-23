@@ -95,22 +95,6 @@ int libnk2_io_handle_initialize(
 
 			return( -1 );
 		}
-		if( libbfio_file_initialize(
-		     &( ( *io_handle )->file_io_handle ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to initialize file io handle.",
-			 function );
-
-			memory_free(
-			 *io_handle );
-
-			return( -1 );
-		}
 	}
 	return( 1 );
 }
@@ -165,7 +149,7 @@ int libnk2_io_handle_free(
  */
 int libnk2_io_handle_open(
      libnk2_io_handle_t *io_handle,
-     const char *filename,
+     libbfio_handle_t *file_io_handle,
      int flags,
      liberror_error_t **error )
 {
@@ -182,79 +166,30 @@ int libnk2_io_handle_open(
 
                 return( -1 );
         }
-	if( libbfio_file_set_name(
-	     io_handle->file_io_handle,
-	     filename,
-	     narrow_string_length(
-	      filename ) + 1,
-	     error ) != 1 )
+	if( io_handle->file_io_handle == NULL )
 	{
-                liberror_error_set(
-                 error,
-                 LIBERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set filename in file io handle.",
-                 function );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid io handle - file io handle already set.",
+		 function );
 
-                return( -1 );
+		return( -1 );
 	}
-	if( libbfio_open(
-	     io_handle->file_io_handle,
-	     flags,
-	     error ) != 1 )
-	{
-                liberror_error_set(
-                 error,
-                 LIBERROR_ERROR_DOMAIN_IO,
-                 LIBERROR_IO_ERROR_OPEN_FAILED,
-                 "%s: unable to open file io handle.",
-                 function );
-
-                return( -1 );
-	}
-	return( 1 );
-}
-
-#if defined( LIBNK2_WIDE_CHARACTER_TYPE )
-
-/* Opens an io handle
- * Returns 1 if successful or -1 on error
- */
-int libnk2_io_handle_open_wide(
-     libnk2_io_handle_t *io_handle,
-     const wchar_t *filename,
-     int flags,
-     liberror_error_t **error )
-{
-        static char *function = "libnk2_io_handle_open_wide";
-
-        if( io_handle == NULL )
+        if( file_io_handle == NULL )
         {
                 liberror_error_set(
                  error,
                  LIBERROR_ERROR_DOMAIN_ARGUMENTS,
                  LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-                 "%s: invalid io handle.",
+                 "%s: invalid file io handle.",
                  function );
 
                 return( -1 );
         }
-	if( libbfio_set_filename_wide(
-	     io_handle->file_io_handle,
-	     filename,
-	     wide_string_length(
-	      filename ) + 1,
-	     error ) != 1 )
-	{
-                liberror_error_set(
-                 error,
-                 LIBERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set filename in file io handle.",
-                 function );
+	io_handle->file_io_handle = file_io_handle;
 
-                return( -1 );
-	}
 	if( libbfio_open(
 	     io_handle->file_io_handle,
 	     flags,
@@ -271,8 +206,6 @@ int libnk2_io_handle_open_wide(
 	}
 	return( 1 );
 }
-
-#endif
 
 /* Closes an io handle
  * Returns 0 if successful or -1 on error

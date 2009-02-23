@@ -50,8 +50,11 @@ int libnk2_item_values_free(
 
 		return( -1 );
 	}
-	/* TODO */
-
+	if( item_values->entry != NULL )
+	{
+		memory_free(
+		 item_values->entry );
+	}
 	memory_free(
 	 item_values );
 
@@ -67,6 +70,7 @@ int libnk2_item_values_entries_allocate(
      liberror_error_t **error )
 {
 	static char *function = "libnk2_item_values_entries_allocate";
+	size_t entries_size   = 0;
 
 	if( item_values == NULL )
 	{
@@ -101,8 +105,21 @@ int libnk2_item_values_entries_allocate(
 
 		return( -1 );
 	}
+	entries_size = sizeof( libnk2_item_entry_t * ) * amount_of_entries;
+
+	if( entries_size > (size_t) SSIZE_MAX )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid entries size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
 	item_values->entry = (libnk2_item_entry_t **) memory_allocate(
-	                                               sizeof( libnk2_item_entry_t * ) * amount_of_items );
+	                                               entries_size );
 
 	if( item_values->entry == NULL )
 	{
@@ -116,21 +133,20 @@ int libnk2_item_values_entries_allocate(
 		return( -1 );
 	}
 	if( memory_set(
-	     table->entry[ set_iterator ],
+	     item_values->entry,
 	     0,
-	     sizeof( libnk2_table_entry_t ) * amount_of_entries ) == NULL )
+	     entries_size ) == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_MEMORY,
 		 LIBERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear table entries for set: %d.",
-		 function,
-		 set_iterator );
+		 "%s: unable to clear item values entries.",
+		 function );
 
 		return( -1 );
 	}
-	table->amount_of_entries = (uint32_t) amount_of_entries;
+	item_values->amount_of_entries = (uint32_t) amount_of_entries;
 
 	return( 1 );
 }
@@ -161,6 +177,18 @@ int libnk2_item_values_get_entry_value(
 
 		return( -1 );
 	}
+	if( item_values->entry != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid entry value data.",
+		 "%s: invalid item values - missing entries.",
+		 function );
+
+		return( -1 );
+	}
 	if( io_handle == NULL )
 	{
 		liberror_error_set(
@@ -172,62 +200,8 @@ int libnk2_item_values_get_entry_value(
 
 		return( -1 );
 	}
-	if( item_values->entries == NULL )
-	{
-		result = libnk2_item_values_read(
-		           item_values,
-		           descriptor_identifier,
-		           recovered,
-		           name_to_id_map_list,
-		           io_handle,
-		           LIBNK2_DEBUG_ITEM_TYPE_DEFAULT,
-		           error );
 
-		if( result == -1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item values.",
-			 function );
-
-			return( -1 );
-		}
-		else if( result == 0 )
-		{
-			return( 0 );
-		}
-		if( item_values->table == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid item values - missing table.",
-			 function );
-
-			return( -1 );
-		}
-	}
-	result = libnk2_table_get_entry_value_by_entry_type(
-	          item_values->table,
-	          (uint32_t) table_set_index,
-	          entry_type,
-	          value_type,
-	          value_data, 
-	          value_data_size,
-	          error );
-
-	if( result == -1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve table entry value.",
-		 function );
-	}
+	/* TODO */
 	return( result );
 }
 

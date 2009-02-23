@@ -3,7 +3,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/common -I$(top_srcdir)/lib
 bin_PROGRAMS = nk2export nk2info
 
 nk2export_SOURCES = \
-	character_string.c character_string.h \
 	date_time.c date_time.h \
 	directory_io.h \
 	error_string.c error_string.h \
@@ -14,19 +13,17 @@ nk2export_SOURCES = \
 	glob.c glob.h \
 	guid.c guid.h \
 	notify.c notify.h \
-	nk2common.c nk2common.h \
+	nk2common.h \
 	nk2export.c \
 	nk2getopt.c nk2getopt.h \
 	nk2input.c nk2input.h \
 	nk2output.c nk2output.h \
 	nk2signal.c nk2signal.h \
-	string_conversion.c string_conversion.h \
 	system_string.c system_string.h
 
 nk2export_LDADD   = ../liberror/liberror.la ../libnk2/libnk2.la @MEMWATCH_LIBADD@
 
 nk2info_SOURCES = \
-	character_string.c character_string.h \
 	date_time.c date_time.h \
 	directory_io.h \
 	error_string.c error_string.h \
@@ -35,12 +32,11 @@ nk2info_SOURCES = \
 	glob.c glob.h \
 	guid.c guid.h \
 	notify.c notify.h \
-	nk2common.c nk2common.h \
+	nk2common.h \
 	nk2getopt.c nk2getopt.h \
 	nk2info.c \
 	nk2output.c nk2output.h \
 	nk2signal.c nk2signal.h \
-	string_conversion.c string_conversion.h \
 	system_string.c system_string.h
 
 nk2info_LDADD   = ../liberror/liberror.la ../libnk2/libnk2.la @MEMWATCH_LIBADD@

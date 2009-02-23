@@ -3,6 +3,15 @@ TODO
 * fill item list
 * item list item free function 
 
+* locale support
+  - library data returns UTF-8 (done)
+  - input filenames remain system string (done)
+  - move character_t functionality to system_character_t (done)
+  - remove string conversion code (done)
+  - print output convert to system string
+  - to reduce conversions use as much as possible the system string
+    type in the tools
+
 Optimalisations:
 * map (file offset and size) items and item values first read on demand
 
@@ -17,6 +26,11 @@ Deployment:
 * create debian package files
 * update macosx package files
 * update msvcpp files (implement libbfio)
+
+20090222
+* Worked on initial version
+* removed character_string and string_conversions
+* worked on locale support
 
 20090220
 * Worked on initial version

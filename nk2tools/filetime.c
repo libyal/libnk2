@@ -23,22 +23,28 @@
 #include <common.h>
 #include <types.h>
 
-#include "character_string.h"
+#include <liberror.h>
+
+#include "system_string.h"
 #include "filetime.h"
-#include "notify.h"
 
 /* Converts a 64-bit unsigned integer into a filetime
  * Returns 1 if successful or -1 on error
  */
 int filetime_from_uint64(
      filetime_t *filetime,
-     uint64_t integer )
+     uint64_t integer,
+     liberror_error_t **error )
 {
 	static char *function = "filetime_from_uint64";
 
 	if( filetime == NULL )
 	{
-		notify_warning_printf( "%s: invalid filetime.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid filetime.",
 		 function );
 
 		return( -1 );
@@ -54,47 +60,64 @@ int filetime_from_uint64(
  */
 int filetime_to_string(
      filetime_t *filetime,
-     character_t *string,
-     size_t string_size )
+     system_character_t *string,
+     size_t string_size,
+     liberror_error_t **error )
 {
-	character_t *month_string = NULL;
-	static char *function     = "filetime_to_string";
-	uint64_t filetimestamp    = 0;
-	uint32_t remainder        = 0;
-	uint16_t days_in_year     = 0;
-	uint16_t year             = 0;
-	uint8_t days_in_month     = 0;
-	uint8_t seconds           = 0;
-	uint8_t minutes           = 0;
-	uint8_t hours             = 0;
-	uint8_t month             = 0;
-	uint8_t day            = 0;
-	int print_count        = 0;
+	system_character_t *month_string = NULL;
+	static char *function            = "filetime_to_string";
+	uint64_t filetimestamp           = 0;
+	uint32_t remainder               = 0;
+	uint16_t days_in_year            = 0;
+	uint16_t year                    = 0;
+	uint8_t days_in_month            = 0;
+	uint8_t seconds                  = 0;
+	uint8_t minutes                  = 0;
+	uint8_t hours                    = 0;
+	uint8_t month                    = 0;
+	uint8_t day                      = 0;
+	int print_count                  = 0;
 
 	if( filetime == NULL )
 	{
-		notify_warning_printf( "%s: invalid filetime.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid filetime.",
 		 function );
 
 		return( -1 );
 	}
 	if( string == NULL )
 	{
-		notify_warning_printf( "%s: invalid string.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid string.",
 		 function );
 
 		return( -1 );
 	}
 	if( string_size < FILETIME_STRING_SIZE )
 	{
-		notify_warning_printf( "%s: string too small.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: string is too small.",
 		 function );
 
 		return( -1 );
 	}
 	if( string_size > (size_t) SSIZE_MAX )
 	{
-		notify_warning_printf( "%s: invalid string size value exceeds maximum.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid string size value exceeds maximum.",
 		 function );
 
 		return( -1 );
@@ -132,7 +155,7 @@ int filetime_to_string(
 	 */
 	year = 1601;
 
-	while( filetimestamp > days_in_year )
+	while( filetimestamp > 0 )
 	{
 		/* Check for a leap year
 		 * The year is ( ( dividable by 4 ) and ( not dividable by 100 ) ) or ( dividable by 400 )
@@ -160,7 +183,7 @@ int filetime_to_string(
 	 */
 	month = 1;
 
-	while( filetimestamp > days_in_month )
+	while( filetimestamp > 0 )
 	{
 		/* February (2)
 		 */
@@ -202,8 +225,13 @@ int filetime_to_string(
 		 */
 		else
 		{
-			notify_warning_printf( "%s: unsupported month: %" PRIu8 "\n",
-			 function, month );
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupported month: %d.",
+			 function,
+			 month );
 
 			return( -1 );
 		}
@@ -218,51 +246,50 @@ int filetime_to_string(
 	switch( month )
 	{
 		case 1:
-			month_string = _CHARACTER_T_STRING( "Jan" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Jan" );
 			break;
 		case 2:
-			month_string = _CHARACTER_T_STRING( "Feb" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Feb" );
 			break;
 		case 3:
-			month_string = _CHARACTER_T_STRING( "Mar" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Mar" );
 			break;
 		case 4:
-			month_string = _CHARACTER_T_STRING( "Apr" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Apr" );
 			break;
 		case 5:
-			month_string = _CHARACTER_T_STRING( "May" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "May" );
 			break;
 		case 6:
-			month_string = _CHARACTER_T_STRING( "Jun" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Jun" );
 			break;
 		case 7:
-			month_string = _CHARACTER_T_STRING( "Jul" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Jul" );
 			break;
 		case 8:
-			month_string = _CHARACTER_T_STRING( "Aug" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Aug" );
 			break;
 		case 9:
-			month_string = _CHARACTER_T_STRING( "Sep" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Sep" );
 			break;
 		case 10:
-			month_string = _CHARACTER_T_STRING( "Oct" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Oct" );
 			break;
 		case 11:
-			month_string = _CHARACTER_T_STRING( "Nov" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Nov" );
 			break;
 		case 12:
-			month_string = _CHARACTER_T_STRING( "Dec" );
+			month_string = _SYSTEM_CHARACTER_T_STRING( "Dec" );
 			break;
 
 		default:
-#ifdef TODO
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported month value.",
-			 function );
-#endif
+			 "%s: unsupported month: %d.",
+			 function,
+			 month );
 
 			return( -1 );
 	}
@@ -272,10 +299,10 @@ int filetime_to_string(
 
 	/* Create the time string
 	 */
-	print_count = string_snprintf(
+	print_count = system_string_snprintf(
 	               string,
 	               string_size,
-	               _CHARACTER_T_STRING( "%s %02u, %04u %02u:%02u:%02u UTC" ),
+	               _SYSTEM_CHARACTER_T_STRING( "%s %02u, %04u %02u:%02u:%02u UTC" ),
 	               month_string,
 	               day,
 	               year,
@@ -286,7 +313,11 @@ int filetime_to_string(
 	if( ( print_count < 0 )
 	 || ( (size_t) print_count > string_size ) )
 	{
-		notify_warning_printf( "%s: unable to format string.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set string.",
 		 function );
 
 		return( -1 );

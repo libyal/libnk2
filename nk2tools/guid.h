@@ -28,7 +28,7 @@
 
 #include <liberror.h>
 
-#include "character_string.h"
+#include "system_string.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -41,7 +41,7 @@ typedef uint8_t guid_t;
 int guid_to_string(
      guid_t *guid,
      int byte_order,
-     character_t *string,
+     system_character_t *string,
      size_t string_size,
      liberror_error_t **error );
 

@@ -26,7 +26,9 @@
 #include <common.h>
 #include <types.h>
 
-#include "character_string.h"
+#include <liberror.h>
+
+#include "system_string.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -52,12 +54,14 @@ struct filetime
 
 int filetime_from_uint64(
      filetime_t *filetime,
-     uint64_t integer );
+     uint64_t integer,
+     liberror_error_t **error );
 
 int filetime_to_string(
      filetime_t *filetime,
-     character_t *string,
-     size_t length );
+     system_character_t *string,
+     size_t string_size,
+     liberror_error_t **error );
 
 #if defined( __cplusplus )
 }

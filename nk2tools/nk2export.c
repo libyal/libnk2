@@ -45,7 +45,6 @@
 
 #include <libnk2.h>
 
-#include "character_string.h"
 #include "export_handle.h"
 #include "error_string.h"
 #include "filetime.h"
@@ -86,7 +85,7 @@ void usage_fprint(
 
 /* The main program
  */
-#if defined( HAVE_WIDE_CHARACTER_SUPPORT_FUNCTIONS )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER_T )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
@@ -94,13 +93,13 @@ int main( int argc, char * const argv[] )
 {
 	export_handle_t *export_handle         = NULL;
 	liberror_error_t *error                = NULL;
-	character_t *program                   = _CHARACTER_T_STRING( "nk2export" );
 	system_character_t *log_filename       = NULL;
 	system_character_t *option_target_path = NULL;
 	system_character_t *path_separator     = NULL;
 	system_character_t *source             = NULL;
 	system_character_t *target_path        = NULL;
 	FILE *log_file_stream                  = NULL;
+	char *program                          = "nk2export";
 	size_t source_length                   = 0;
 	size_t target_path_length              = 0;
 	system_integer_t option                = 0;
@@ -108,6 +107,20 @@ int main( int argc, char * const argv[] )
 	int result                             = 0;
 	int verbose                            = 0;
 
+	if( system_string_initialize(
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to initialize system string.\n" );
+
+		notify_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+
+		return( EXIT_FAILURE );
+	}
 	nk2output_version_fprint(
 	 stdout,
 	 program );
@@ -254,7 +267,7 @@ int main( int argc, char * const argv[] )
 			return( EXIT_FAILURE );
 		}
 	}
-	result = nk2common_file_exists(
+	result = system_string_file_exists(
 	          target_path );
 
 	if( result == -1 )
@@ -305,7 +318,7 @@ int main( int argc, char * const argv[] )
 	}
 	if( log_filename != NULL )
 	{
-		log_file_stream = nk2common_fopen(
+		log_file_stream = system_string_fopen(
 		                   log_filename,
 		                   _SYSTEM_CHARACTER_T_STRING( "a" ) );
 

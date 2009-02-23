@@ -45,7 +45,6 @@
 
 #include <libnk2.h>
 
-#include "character_string.h"
 #include "error_string.h"
 #include "notify.h"
 #include "nk2getopt.h"
@@ -105,7 +104,7 @@ int nk2info_file_info_fprint(
 
 /* The main program
  */
-#if defined( HAVE_WIDE_CHARACTER_SUPPORT_FUNCTIONS )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER_T )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
@@ -113,11 +112,25 @@ int main( int argc, char * const argv[] )
 {
 	libnk2_error_t *error      = NULL;
 	libnk2_file_t *nk2_file    = NULL;
-	character_t *program       = _CHARACTER_T_STRING( "nk2info" );
 	system_character_t *source = NULL;
+	char *program              = "nk2info";
 	system_integer_t option    = 0;
 	int verbose                = 0;
 
+	if( system_string_initialize(
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to initialize system string.\n" );
+
+		notify_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+
+		return( EXIT_FAILURE );
+	}
 	nk2output_version_fprint(
 	 stdout,
 	 program );

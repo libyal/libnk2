@@ -51,7 +51,6 @@
 
 #include <libnk2.h>
 
-#include "character_string.h"
 #include "error_string.h"
 #include "nk2output.h"
 #include "system_string.h"
@@ -67,7 +66,7 @@ void nk2output_copyright_fprint(
 	}
 	fprintf(
 	 stream,
-	 "Copyright (c) 2008, Joachim Metz, Hoffmann Investigations <%s> and contributors.\n"
+	 "Copyright (c) 2009, Joachim Metz, Hoffmann Investigations <%s> and contributors.\n"
 	 "This is free software; see the source for copying conditions. There is NO\n"
 	 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n",
 	 PACKAGE_BUGREPORT );
@@ -77,7 +76,7 @@ void nk2output_copyright_fprint(
  */
 void nk2output_version_fprint(
       FILE *stream,
-      const character_t *program )
+      const char *program )
 {
 	if( stream == NULL )
 	{
@@ -89,7 +88,7 @@ void nk2output_version_fprint(
 	}
         fprintf(
 	 stream,
-	 "%" PRIs " %s (libnk2 %s",
+	 "%s %s (libnk2 %s",
          program,
 	 LIBNK2_VERSION_STRING,
 	 LIBNK2_VERSION_STRING );
@@ -163,7 +162,8 @@ void VARIABLE_ARGUMENTS_FUNCTION(
 
 		if( error_string != NULL )
 		{
-			fprintf( stream, " with error: %" PRIs_SYSTEM "",
+			fprintf(
+			 stream, " with error: %" PRIs_SYSTEM "",
 			 error_string );
 
 			memory_free(
