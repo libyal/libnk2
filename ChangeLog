@@ -27,6 +27,10 @@ Deployment:
 * update macosx package files
 * update msvcpp files (implement libbfio)
 
+20090324
+* Worked on initial version
+* fixed small logic error in io handle
+
 20090222
 * Worked on initial version
 * removed character_string and string_conversions

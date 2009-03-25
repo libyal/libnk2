@@ -166,7 +166,7 @@ int libnk2_io_handle_open(
 
                 return( -1 );
         }
-	if( io_handle->file_io_handle == NULL )
+	if( io_handle->file_io_handle != NULL )
 	{
 		liberror_error_set(
 		 error,
