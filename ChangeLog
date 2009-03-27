@@ -27,6 +27,11 @@ Deployment:
 * update macosx package files
 * update msvcpp files (implement libbfio)
 
+Fix:
+* filetime to string year value > 4
+* update libfmapi
+* update libbfio
+
 20090324
 * Worked on initial version
 * fixed small logic error in io handle
