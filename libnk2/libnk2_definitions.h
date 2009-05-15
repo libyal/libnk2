@@ -27,5 +27,8 @@
 #include <libnk2/definitions.h>
 #include <libnk2/mapi.h>
 
+#define LIBNK2_ENDIAN_BIG		_ENDIAN_BIG
+#define LIBNK2_ENDIAN_LITTLE		_ENDIAN_LITTLE
+
 #endif
 

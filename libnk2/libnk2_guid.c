@@ -26,6 +26,7 @@
 
 #include <liberror.h>
 
+#include "libnk2_definitions.h"
 #include "libnk2_guid.h"
 #include "libnk2_string.h"
 

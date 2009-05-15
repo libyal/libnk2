@@ -10,12 +10,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -48,11 +48,20 @@
 #undef HAVE_PRINTF_JD
 #undef HAVE_PRINTF_ZD
 
+/* Windows does not have <sys/time.h>
+ */
+#undef TIME_WITH_SYS_TIME
+#undef HAVE_SYS_TIME_H
+
 /* Windows does not have <unistd.h> but uses <io.h> and <share.h> instead
  */
 #undef HAVE_UNISTD_H
 #define HAVE_IO_H	1
 #define HAVE_SHARE_H	1
+
+#if !defined( HAVE_FCNTL_H )
+#define HAVE_FCNTL_H    1
+#endif
 
 /* Windows does not have <sys/ioctl.h> and <sys/utsname.h>
  */
@@ -82,33 +91,40 @@
  */
 #undef HAVE_SIGNAL_H
 
+/* Windows does not have <langinfo.h>
+ */
+#undef HAVE_LANGINFO_H
+#undef HAVE_LANGINFO_CODESET
+
 /* If wide character support was enabled
  * make use of the wide character support functions
  */
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
-#if !defined( HAVE_WCHAR_H )
-#define HAVE_WCHAR_H            1
+#if !defined( HAVE_WIDE_CHARACTER_TYPE )
+#define HAVE_WIDE_CHARACTER_TYPE
 #endif
+
+#if !defined( HAVE_WCHAR_H )
+#define HAVE_WCHAR_H		1
+#endif
+
+#if defined( SIZEOF_WCHAR_T )
+#undef SIZEOF_WCHAR_T
+#endif
+
+#define SIZEOF_WCHAR_T		2
 
 /* Make sure the function definitions are available
  * these should be normally defined in config.h
  * use the following defintions to control the function
  * definitions per source file in common
  */
-#undef HAVE_DATE_TIME
-#define HAVE_DIRECTORY_IO	1
+#define HAVE_DATE_TIME		1
 #define HAVE_ERROR_STRING	1
 #define HAVE_FILE_IO		1
-#define HAVE_FILE_STREAM_IO	1
 #define HAVE_NARROW_STRING	1
-
-#if defined( HAVE_WIDE_CHARACTER_TYPE )
 #define HAVE_WIDE_STRING	1
-#else
-#undef HAVE_WIDE_STRING
-#endif
 
-/* Functions in common/date_time.h
+/* Functions in unatools/date_time.h
  */
 #if defined( HAVE_DATE_TIME )
 #if !defined( HAVE_CTIME_R )
@@ -142,21 +158,7 @@
 #undef HAVE_TIME
 #endif
 
-/* Functions in common/directory_io.h
- */
-#if defined( HAVE_DIRECTORY_IO )
-#if !defined( HAVE_MKDIR )
-#define HAVE_MKDIR		1
-#endif
-
-#define HAVE_WMKDIR		1 
-
-#else
-#undef HAVE_MKDIR
-#undef HAVE_WMKDIR
-#endif
-
-/* Functions in common/error_string.h
+/* Functions in unatools/error_string.h
  */
 #if defined( HAVE_ERROR_STRING )
 #if !defined( HAVE_STRERROR_R )
@@ -170,7 +172,7 @@
 #undef HAVE_WCSERROR_R
 #endif
 
-/* Functions in common/file_io.h
+/* Functions in unatools/file_io.h
  */
 #if defined( HAVE_FILE_IO )
 #if !defined( HAVE_OPEN )
@@ -204,35 +206,6 @@
 #undef HAVE_WRITE
 #endif
 
-/* Functions in common/file_stream_io.h
- */
-#if defined( HAVE_FILE_STREAM_IO )
-#if !defined( HAVE_FOPEN )
-#define HAVE_FOPEN		1
-#endif
-
-#define HAVE_WFOPEN		1
-
-#if !defined( HAVE_FCLOSE )
-#define HAVE_FCLOSE		1
-#endif
-
-#if !defined( HAVE_FREAD )
-#define HAVE_FREAD		1
-#endif
-
-#if !defined( HAVE_FWRITE )
-#define HAVE_FWRITE		1
-#endif
-
-#else
-#undef HAVE_FOPEN
-#undef HAVE_WFOPEN
-#undef HAVE_FCLOSE
-#undef HAVE_FREAD
-#undef HAVE_FWRITE
-#endif
-
 /* Functions in common/narrow_string.h
  */
 #if defined( HAVE_NARROW_STRING )
@@ -256,15 +229,9 @@
 #define HAVE_STRRCHR		1
 #endif
 
-#if !defined( HAVE_SNPRINTF )
-#define HAVE_SNPRINTF		1
-#endif
-
 #if !defined( HAVE_FGETS )
 #define HAVE_FGETS		1
 #endif
-
-#define HAVE_ATOI64		1
 
 #else
 #undef HAVE_STRLEN
@@ -272,9 +239,7 @@
 #undef HAVE_STRNCPY
 #undef HAVE_STRCHR
 #undef HAVE_STRRCHR
-#undef HAVE_SNPRINTF
 #undef HAVE_FGETS
-#undef HAVE_ATOI64
 #endif
 
 /* Functions in common/wide_string.h
@@ -300,15 +265,9 @@
 #define HAVE_WCSRCHR		1
 #endif
 
-#if !defined( HAVE_SWPRINTF )
-#define HAVE_SWPRINTF		1
-#endif
-
 #if !defined( HAVE_FGETWS )
 #define HAVE_FGETWS		1
 #endif
-
-#define HAVE_WTOI64		1
 
 #else
 #undef HAVE_WCSLEN
@@ -316,10 +275,12 @@
 #undef HAVE_WCSNCPY
 #undef HAVE_WCSCHR
 #undef HAVE_WCSRCHR
-#undef HAVE_SWPRINTF
 #undef HAVE_FGETWS
-#undef HAVE_WTOI64
 #endif
+
+/* Use the native WINAPI functions instead of the POSIX like functions
+#define USE_NATIVE_WINAPI_FUNCTIONS	1
+ */
 
 #endif
 

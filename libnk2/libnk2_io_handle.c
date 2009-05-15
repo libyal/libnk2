@@ -190,7 +190,7 @@ int libnk2_io_handle_open(
         }
 	io_handle->file_io_handle = file_io_handle;
 
-	if( libbfio_open(
+	if( libbfio_handle_open(
 	     io_handle->file_io_handle,
 	     flags,
 	     error ) != 1 )
@@ -240,7 +240,7 @@ int libnk2_io_handle_close(
 		 function );
 	}
 #endif
-	if( libbfio_close(
+	if( libbfio_handle_close(
 	     io_handle->file_io_handle,
 	     error ) != 0 )
 	{
@@ -303,7 +303,7 @@ int libnk2_io_handle_read_file_header(
 
 		return( -1 );
 	}
-	read_count = libbfio_read(
+	read_count = libbfio_handle_read(
 	              io_handle->file_io_handle,
 	              (uint8_t *) &file_header,
 	              sizeof( nk2_file_header_t ),
@@ -439,7 +439,7 @@ int libnk2_io_handle_read_items(
 	}
 	for( item_iterator = 0; item_iterator < amount_of_items; item_iterator++ )
 	{
-		read_count = libbfio_read(
+		read_count = libbfio_handle_read(
 			      io_handle->file_io_handle,
 			      buffer,
 			      4,
@@ -476,7 +476,7 @@ int libnk2_io_handle_read_items(
 		 */
 		for( item_value_iterator = 0; item_value_iterator < amount_of_item_values; item_value_iterator++ )
 		{
-			read_count = libbfio_read(
+			read_count = libbfio_handle_read(
 				      io_handle->file_io_handle,
 				      (uint8_t *) &item_value_entry,
 				      sizeof( nk2_item_value_entry_t ),
@@ -529,9 +529,11 @@ int libnk2_io_handle_read_items(
 			 item_value_iterator,
 			 entry_type,
 			 libfmapi_property_type_get_identifier(
+			  NULL,
 			  entry_type,
 			  value_type ),
 			 libfmapi_property_type_get_description(
+			  NULL,
 			  entry_type,
 			  value_type ) );
 			endian_little_convert_32bit(
@@ -565,10 +567,11 @@ int libnk2_io_handle_read_items(
 
 			/* Read the value data
 			 */
-			if( ( value_type == 0x001f )
+			if( ( value_type == 0x001e )
+			 || ( value_type == 0x001f )
 			 || ( value_type == 0x0102 ) )
 			{
-				read_count = libbfio_read(
+				read_count = libbfio_handle_read(
 					      io_handle->file_io_handle,
 					      buffer,
 					      4,
@@ -614,7 +617,7 @@ int libnk2_io_handle_read_items(
 
 					return( -1 );
 				}
-				read_count = libbfio_read(
+				read_count = libbfio_handle_read(
 					      io_handle->file_io_handle,
 					      value_data,
 					      value_data_size,
@@ -640,9 +643,27 @@ int libnk2_io_handle_read_items(
 				 function,
 				 item_iterator,
 				 item_value_iterator );
-				libnk2_notify_verbose_dump_data(
-				 value_data,
-				 value_data_size );
+
+				if( libnk2_debug_mapi_value_print(
+				     entry_type,
+				     value_type,
+				     value_data,
+				     value_data_size,
+				     LIBUNA_CODEPAGE_ASCII,
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
+					 "%s: unable to print value data.",
+					 function );
+
+					memory_free(
+					 value_data );
+
+					return( -1 );
+				}
 #endif
 
 				memory_free(

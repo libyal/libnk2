@@ -267,8 +267,10 @@ int main( int argc, char * const argv[] )
 			return( EXIT_FAILURE );
 		}
 	}
+	/* TODO add error */
 	result = system_string_file_exists(
-	          target_path );
+	          target_path,
+	          NULL );
 
 	if( result == -1 )
 	{

@@ -57,6 +57,21 @@ extern "C" {
 	wcscmp( string1, string2 )
 #endif
 
+/* Caseless string compare
+ */
+#if defined( WINAPI )
+#define wide_string_compare_no_case( string1, string2, size ) \
+	_wcsnicmp( string1, string2, size )
+
+#elif defined( HAVE_WCSNCASECMP )
+#define wide_string_compare_no_case( string1, string2, size ) \
+	wcsncasecmp( string1, string2, size )
+
+#elif defined( HAVE_WCSCASECMP )
+#define wide_string_compare_no_case( string1, string2, size ) \
+	wcscasecmp( string1, string2 )
+#endif
+
 /* String copy
  */
 #if defined( HAVE_WCSNCPY )
@@ -96,15 +111,13 @@ extern "C" {
 
 /* String formatted print (snprinf)
  */
-#if defined( HAVE_SWPRINTF )
 #if defined( WINAPI )
 #define wide_string_snprintf( target, size, format, ... ) \
 	swprintf_s( target, size, format, __VA_ARGS__ )
 
-#else
+#elif defined( HAVE_SWPRINTF )
 #define wide_string_snprintf( target, size, format, ... ) \
 	swprintf( target, size, format, __VA_ARGS__ )
-#endif
 #endif
 
 /* String retrieve from stream (fgets)
@@ -116,7 +129,7 @@ extern "C" {
 
 /* String to singed long long (int64)
  */
-#if defined( HAVE_WTOI64 )
+#if defined( WINAPI )
 #define wide_string_to_signed_long_long( string, end_of_string, base ) \
 	(int64_t) _wtoi64( string )
 
@@ -127,7 +140,7 @@ extern "C" {
 
 /* String to unsinged long long (uint64)
  */
-#if defined( HAVE_WTOI64 )
+#if defined( WINAPI )
 #define wide_string_to_unsigned_long_long( string, end_of_string, base ) \
 	(uint64_t) _wtoi64( string )
 

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20090324],
+  [20090514],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libnk2],
- [20090324])
+ [20090514])
 
 dnl Check for host type
 AC_CANONICAL_HOST
@@ -333,6 +333,16 @@ AC_CHECK_FUNCS(
   [],
   [AC_MSG_FAILURE(
    [Missing functions: strchr and memchr],
+   [1]) ]) ])
+
+AC_CHECK_FUNCS(
+ [strncasecmp],
+ [],
+ [AC_CHECK_FUNCS(
+  [strcasecmp],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing functions: strncasecmp and strcasecmp],
    [1]) ]) ])
 
 AC_CHECK_FUNCS(
@@ -823,6 +833,16 @@ AS_IF(
 	  [],
 	  [AC_MSG_FAILURE(
 	   [Missing functions: wcschr and wmemchr],
+	   [1]) ]) ])
+
+	AC_CHECK_FUNCS(
+	 [wcsncasecmp],
+	 [],
+	 [AC_CHECK_FUNCS(
+	  [wcscasecmp],
+	  [],
+	  [AC_MSG_FAILURE(
+	   [Missing functions: wcsncasecmp and wcscasecmp],
 	   [1]) ]) ])
 
 	AC_CHECK_FUNCS(

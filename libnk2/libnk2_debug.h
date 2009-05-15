@@ -36,6 +36,14 @@ extern "C" {
 
 #if defined( HAVE_DEBUG_OUTPUT )
 
+int libnk2_debug_mapi_value_print(
+     uint32_t entry_type,
+     uint32_t value_type,
+     uint8_t *value_data,
+     size_t value_data_size,
+     int ascii_codepage,
+     liberror_error_t **error );
+
 int libnk2_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,
      liberror_error_t **error );

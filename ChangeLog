@@ -29,8 +29,17 @@ Deployment:
 
 Fix:
 * filetime to string year value > 4
-* update libfmapi
-* update libbfio
+
+20090514
+* Worked on initial version
+* updated liberror with libewf version
+* updated libuna with libewf version
+* updated libfmapi with libpff version
+* updated libbfio with libewf version
+* updated nk2tools/system_string.[ch] with ewftools version
+* updated nk2tools/file_io.[ch] with ewftools version
+* updated common/endian.h with libewf version
+* Strings are now formatted to UTF-8 in debug output
 
 20090324
 * Worked on initial version

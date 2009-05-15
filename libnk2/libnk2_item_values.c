@@ -28,6 +28,7 @@
 #include <liberror.h>
 #include <libfmapi.h>
 
+#include "libnk2_definitions.h"
 #include "libnk2_item_values.h"
 
 /* Frees item values
