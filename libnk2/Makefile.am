@@ -4,12 +4,12 @@ lib_LTLIBRARIES = libnk2.la
 
 libnk2_la_SOURCES = \
 	libnk2.c \
+	libnk2_array_type.c libnk2_array_type.h \
 	libnk2_debug.c libnk2_debug.h \
 	libnk2_definitions.h \
-	libnk2_error.h \
+	libnk2_error.c libnk2_error.h \
 	libnk2_extern.h \
 	libnk2_file.c libnk2_file.h \
-	libnk2_guid.c libnk2_guid.h \
 	libnk2_item.c libnk2_item.h \
 	libnk2_item_values.c libnk2_item_values.h \
 	libnk2_io_handle.c libnk2_io_handle.h \
@@ -19,7 +19,6 @@ libnk2_la_SOURCES = \
 	libnk2_notify.c libnk2_notify.h \
 	libnk2_string.h \
 	libnk2_support.c libnk2_support.h \
-	libnk2_system_string.h \
 	nk2_file_header.h \
 	nk2_item.h
 

@@ -1,7 +1,7 @@
 /*
- * GUID functions
+ * Error functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
  *
  * Refer to AUTHORS for acknowledgements.
@@ -10,44 +10,57 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#if !defined( _LIBNK2_GUID_H )
-#define _LIBNK2_GUID_H
 
 #include <common.h>
 #include <types.h>
 
 #include <liberror.h>
 
-#include "libnk2_string.h"
+#include <stdio.h>
 
-#if defined( __cplusplus )
-extern "C" {
-#endif
+#include "libnk2_error.h"
 
-#define LIBNK2_GUID_STRING_SIZE	37
+#if !defined( HAVE_LOCAL_LIBNK2 )
 
-typedef uint8_t libnk2_guid_t;
-
-int libnk2_guid_to_string(
-     libnk2_guid_t *guid,
-     uint8_t byte_order,
-     libnk2_character_t *string,
-     size_t string_size,
-     liberror_error_t **error );
-
-#if defined( __cplusplus )
+/* Free an error and its elements
+ */
+void libnk2_error_free(
+      libnk2_error_t **error )
+{
+	liberror_error_free(
+	 (liberror_error_t **) error );
 }
-#endif
+
+/* Prints a descriptive string of the error to the stream
+ */
+void libnk2_error_fprint(
+      libnk2_error_t *error,
+      FILE *stream )
+{
+	liberror_error_fprint(
+	 (liberror_error_t *) error,
+	 stream );
+}
+
+/* Prints a backtrace of the error to the stream
+ */
+void libnk2_error_backtrace_fprint(
+      libnk2_error_t *error,
+      FILE *stream )
+{
+	liberror_error_backtrace_fprint(
+	 (liberror_error_t *) error,
+	 stream );
+}
 
 #endif
 

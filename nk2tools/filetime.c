@@ -136,7 +136,7 @@ int filetime_to_string(
 	seconds        = filetimestamp % 60;
 	filetimestamp /= 60;
 
-	/* There are 60 minutes in an hour correct the value to minutes
+	/* There are 60 minutes in an hour correct the value to hours
 	 */
 	minutes        = filetimestamp % 60;
 	filetimestamp /= 60;
@@ -177,6 +177,18 @@ int filetime_to_string(
 		filetimestamp -= days_in_year;
 
 		year++;
+	}
+	if( year > 9999 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported year: %" PRIu16 "",
+		 function,
+		 year );
+
+		return( -1 );
 	}
 
 	/* Determine the month correct the value to days within the month

@@ -45,6 +45,20 @@ extern "C" {
 LIBNK2_EXTERN const char *libnk2_get_version(
                            void );
 
+/* -------------------------------------------------------------------------
+ * Notify functions
+ * ------------------------------------------------------------------------- */
+
+/* Set the notify values
+ */
+LIBNK2_EXTERN void libnk2_set_notify_values(
+                    FILE *stream,
+                    int verbose );
+
+/* -------------------------------------------------------------------------
+ * Error functions
+ * ------------------------------------------------------------------------- */
+
 /* Frees the error including elements
  */
 LIBNK2_EXTERN void libnk2_error_free(
@@ -56,11 +70,11 @@ LIBNK2_EXTERN void libnk2_error_fprint(
                     libnk2_error_t *error,
                     FILE *stream );
 
-/* Set the notify values
+/* Prints a backtrace of the error to the stream
  */
-LIBNK2_EXTERN void libnk2_set_notify_values(
-                    FILE *stream,
-                    int verbose );
+LIBNK2_EXTERN void libnk2_error_backtrace_fprint(
+                    libnk2_error_t *error,
+                    FILE *stream );
 
 /* -------------------------------------------------------------------------
  * File functions
@@ -79,6 +93,13 @@ LIBNK2_EXTERN int libnk2_file_initialize(
  */
 LIBNK2_EXTERN int libnk2_file_free(
                    libnk2_file_t **file,
+                   libnk2_error_t **error );
+
+/* Signals the libnk2 file to abort its current activity
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_file_signal_abort(
+                   libnk2_file_t *file,
                    libnk2_error_t **error );
 
 /* Opens a Nickfile

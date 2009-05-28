@@ -49,15 +49,10 @@ struct nk2_item_value_entry
 	 */
 	uint8_t unknown1[ 4 ];
 
-	/* Unknown
-	 * Consists of 4 bytes
+	/* The value data array
+	 * Consists of 8 bytes
 	 */
-	uint8_t unknown2[ 4 ];
-
-	/* Unknown
-	 * Consists of 4 bytes
-	 */
-	uint8_t unknown3[ 4 ];
+	uint8_t value_data_array[ 8 ];
 };
 
 #if defined( __cplusplus )

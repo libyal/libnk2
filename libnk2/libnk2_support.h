@@ -28,9 +28,7 @@
 
 #include <stdio.h>
 
-#include "libnk2_error.h"
 #include "libnk2_extern.h"
-#include "libnk2_file.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -38,20 +36,6 @@ extern "C" {
 
 LIBNK2_EXTERN const char *libnk2_get_version(
                            void );
-
-LIBNK2_EXTERN int libnk2_signal_abort(
-                   libnk2_file_t *file );
-
-LIBNK2_EXTERN void libnk2_error_free(
-                    libnk2_error_t **error );
-
-LIBNK2_EXTERN void libnk2_error_fprint(
-                    libnk2_error_t *error,
-                    FILE *stream );
-
-LIBNK2_EXTERN void libnk2_error_backtrace_fprint(
-                    libnk2_error_t *error,
-                    FILE *stream );
 
 #if defined( __cplusplus )
 }

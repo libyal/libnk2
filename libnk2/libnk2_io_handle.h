@@ -28,8 +28,8 @@
 
 #include <liberror.h>
 
+#include "libnk2_array_type.h"
 #include "libnk2_libbfio.h"
-#include "libnk2_list_type.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -70,7 +70,7 @@ int libnk2_io_handle_read_file_header(
 int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
      uint32_t amount_of_items,
-     libnk2_list_t *item_list,
+     libnk2_array_t *item_table,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

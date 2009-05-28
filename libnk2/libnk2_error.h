@@ -24,8 +24,34 @@
 #define _LIBNK2_INTERNAL_ERROR_H
 
 #include <common.h>
+#include <types.h>
 
+#include <stdio.h>
+
+#if !defined( HAVE_LOCAL_LIBNK2 )
 #include <libnk2/error.h>
+#endif
+
+#include "libnk2_extern.h"
+
+#if defined( __cplusplus )
+extern "C" {
+#endif
+
+#if !defined( HAVE_LOCAL_LIBNK2 )
+
+LIBNK2_EXTERN void libnk2_error_free(
+                    libnk2_error_t **error );
+
+LIBNK2_EXTERN void libnk2_error_fprint(
+                    libnk2_error_t *error,
+                    FILE *stream );
+
+LIBNK2_EXTERN void libnk2_error_backtrace_fprint(
+                    libnk2_error_t *error,
+                    FILE *stream );
+
+#endif
 
 #if defined( __cplusplus )
 }

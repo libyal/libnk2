@@ -46,9 +46,9 @@ struct libnk2_item_entry
 	 */
 	uint16_t value_type;
 
-	/* The value size
+	/* The value data size
 	 */
-	uint32_t value_size;
+	uint32_t value_data_size;
 
 	/* The value data
 	 */
@@ -61,20 +61,29 @@ struct libnk2_item_values
 {
 	/* The item entries
 	 */
-	libnk2_item_entry_t **entry;
+	libnk2_item_entry_t *entry;
 
 	/* The amount of item entries
 	 */
 	uint32_t amount_of_entries;
 };
 
-int libnk2_item_values_free(
-     libnk2_item_values_t *item_values,
+int libnk2_item_values_initialize(
+     libnk2_item_values_t **item_values,
+     uint32_t amount_of_entries,
      liberror_error_t **error );
 
-int libnk2_item_values_entries_allocate(
+int libnk2_item_values_free(
+     libnk2_item_values_t **item_values,
+     liberror_error_t **error );
+
+int libnk2_item_values_free_as_referenced_value(
+     intptr_t *item_values,
+     liberror_error_t **error );
+
+int libnk2_item_values_read(
      libnk2_item_values_t *item_values,
-     int amount_of_entries,
+     libnk2_io_handle_t *io_handle,
      liberror_error_t **error );
 
 int libnk2_item_values_get_entry_value(

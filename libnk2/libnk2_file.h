@@ -28,6 +28,7 @@
 
 #include <liberror.h>
 
+#include "libnk2_array_type.h"
 #include "libnk2_extern.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_list_type.h"
@@ -40,13 +41,13 @@ typedef struct libnk2_internal_file libnk2_internal_file_t;
 
 struct libnk2_internal_file
 {
-	/* The item list
-	 */
-	libnk2_list_t *item_list;
-
 	/* The item reference list
 	 */
 	libnk2_list_t *item_reference_list;
+
+	/* The item array
+	 */
+	libnk2_array_t *item_array;
 
 	/* The io handle
 	 */
@@ -67,6 +68,10 @@ LIBNK2_EXTERN int libnk2_file_initialize(
 
 LIBNK2_EXTERN int libnk2_file_free(
                    libnk2_file_t **file,
+                   liberror_error_t **error );
+
+LIBNK2_EXTERN int libnk2_file_signal_abort(
+                   libnk2_file_t *file,
                    liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_file_open(

@@ -120,46 +120,6 @@ int libnk2_item_initialize(
 
 			return( -1 );
 		}
-		internal_item->item_values = (libnk2_item_values_t *) memory_allocate(
-		                                                       sizeof( libnk2_item_values_t ) );
-	
-		if( internal_item->item_values == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create item values.",
-			 function );
-
-			memory_free(
-			 internal_item->list_element );
-			memory_free(
-			 internal_item );
-
-			return( -1 );
-		}
-		if( memory_set(
-		     internal_item->item_values,
-		     0,
-		     sizeof( libnk2_item_values_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear item values.",
-			 function );
-
-			memory_free(
-			 internal_item->item_values );
-			memory_free(
-			 internal_item->list_element );
-			memory_free(
-			 internal_item );
-
-			return( -1 );
-		}
 		*item = (libnk2_item_t *) internal_item;
 	}
 	return( 1 );
@@ -192,6 +152,9 @@ int libnk2_item_free(
 		internal_item = (libnk2_internal_item_t *) *item;
 		*item         = NULL;
 
+		/* The internal_file and item_values references
+		 * are freed elsewhere
+		 */
 		if( libnk2_item_detach(
 		     internal_item,
 		     error ) != 1 )
@@ -210,18 +173,6 @@ int libnk2_item_free(
 			memory_free(
 			 internal_item->list_element );
 		}
-		if( ( internal_item->item_values != NULL )
-		 && ( libnk2_item_values_free(
-		       internal_item->item_values,
-		       error ) != 1 ) )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free item values.",
-			 function );
-		}
 		memory_free(
 		 internal_item );
 	}
@@ -232,7 +183,8 @@ int libnk2_item_free(
  * Return 1 if successful or -1 on error
  */
 int libnk2_item_free_no_detach(
-     intptr_t *internal_item )
+     intptr_t *internal_item,
+     liberror_error_t **error )
 {
 	int result = 1;
 
@@ -243,15 +195,9 @@ int libnk2_item_free_no_detach(
 			memory_free(
 			 ( (libnk2_internal_item_t *) internal_item )->list_element );
 		}
-		/* The list element is expected to be freed elsewhere
+		/* The internal_file, item_values and list_element references
+		 * are freed elsewhere
 		 */
-		if( ( ( (libnk2_internal_item_t *) internal_item )->item_values != NULL )
-		 && ( libnk2_item_values_free(
-		       ( (libnk2_internal_item_t *) internal_item )->item_values,
-		       NULL ) != 1 ) )
-		{
-			result = -1;
-		}
 		memory_free(
 		 internal_item );
 	}
@@ -264,6 +210,7 @@ int libnk2_item_free_no_detach(
 int libnk2_item_attach(
      libnk2_internal_item_t *internal_item,
      libnk2_internal_file_t *internal_file,
+     libnk2_item_values_t *item_values,
      liberror_error_t **error )
 {
 	static char *function = "libnk2_item_attach";
@@ -318,6 +265,7 @@ int libnk2_item_attach(
 		return( -1 );
 	}
 	internal_item->internal_file = internal_file;
+	internal_item->item_values   = item_values;
 
 	return( 1 );
 }
@@ -372,6 +320,7 @@ int libnk2_item_detach(
 			return( -1 );
 		}
 		internal_item->internal_file = NULL;
+		internal_item->item_values   = NULL;
 	}
 	return( 1 );
 }
@@ -411,17 +360,6 @@ int libnk2_item_get_entry_value(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_item->internal_file->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - invalid internal file - missing io handle.",
 		 function );
 
 		return( -1 );
@@ -484,17 +422,6 @@ int libnk2_item_get_entry_value_boolean(
 
 		return( -1 );
 	}
-	if( internal_item->internal_file->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - invalid internal file - missing io handle.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value_boolean(
 	          internal_item->item_values,
 	          internal_item->internal_file->io_handle,
@@ -547,17 +474,6 @@ int libnk2_item_get_entry_value_32bit(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_item->internal_file->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - invalid internal file - missing io handle.",
 		 function );
 
 		return( -1 );
@@ -618,17 +534,6 @@ int libnk2_item_get_entry_value_64bit(
 
 		return( -1 );
 	}
-	if( internal_item->internal_file->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - invalid internal file - missing io handle.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value_64bit(
 	          internal_item->item_values,
 	          internal_item->internal_file->io_handle,
@@ -681,17 +586,6 @@ int libnk2_item_get_entry_value_size(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_item->internal_file->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - invalid internal file - missing io handle.",
 		 function );
 
 		return( -1 );
@@ -753,17 +647,6 @@ int libnk2_item_get_entry_value_string_size(
 
 		return( -1 );
 	}
-	if( internal_item->internal_file->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - invalid internal file - missing io handle.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value_string_size(
 	          internal_item->item_values,
 	          internal_item->internal_file->io_handle,
@@ -818,17 +701,6 @@ int libnk2_item_get_entry_value_string(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_item->internal_file->io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - invalid internal file - missing io handle.",
 		 function );
 
 		return( -1 );

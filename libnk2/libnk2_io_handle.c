@@ -26,16 +26,16 @@
 #include <types.h>
 
 #include <liberror.h>
-#include <libfmapi.h>
 
+#include "libnk2_array_type.h"
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"
+#include "libnk2_item_values.h"
 #include "libnk2_libbfio.h"
 #include "libnk2_notify.h"
 
 #include "nk2_file_header.h"
-#include "nk2_item.h"
 
 uint8_t nk2_file_signature[ 4 ] = { 0x0d, 0xf0, 0xad, 0xba };
 
@@ -268,7 +268,10 @@ int libnk2_io_handle_read_file_header(
 
 	static char *function = "libnk2_io_handle_read_file_header";
 	ssize_t read_count    = 0;
-	uint64_t test         = 0;
+
+#if defined( HAVE_VERBOSE_OUTPUT )
+	uint32_t test         = 0;
+#endif
 
 	if( io_handle == NULL )
 	{
@@ -352,25 +355,25 @@ int libnk2_io_handle_read_file_header(
 	 test,
 	 file_header.signature );
 	libnk2_notify_verbose_printf(
-	 "%s: signature\t\t: 0x%08" PRIx64 "\n",
+	 "%s: signature\t\t: 0x%08" PRIx32 "\n",
 	 function,
 	 test );
 	endian_little_convert_32bit(
 	 test,
 	 file_header.unknown1 );
 	libnk2_notify_verbose_printf(
-	 "%s: unknown1\t\t: 0x%08" PRIx64 "\n",
+	 "%s: unknown1\t\t: 0x%08" PRIx32 "\n",
 	 function,
 	 test );
 	endian_little_convert_32bit(
 	 test,
 	 file_header.unknown2 );
 	libnk2_notify_verbose_printf(
-	 "%s: unknown2\t\t: 0x%08" PRIx64 "\n",
+	 "%s: unknown2\t\t: 0x%08" PRIx32 "\n",
 	 function,
 	 test );
 	libnk2_notify_verbose_printf(
-	 "%s: amount of items\t: %" PRIu64 "\n",
+	 "%s: amount of items\t: %" PRIu32 "\n",
 	 function,
 	 *amount_of_items );
 	libnk2_notify_verbose_printf(
@@ -380,29 +383,23 @@ int libnk2_io_handle_read_file_header(
 	return( 1 );
 }
 
-/* Reads the items into the item list
+/* Reads the items into the item table
  * Returns 1 if successful or -1 on error
  */
 int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
      uint32_t amount_of_items,
-     libnk2_list_t *item_list,
+     libnk2_array_t *item_table,
      liberror_error_t **error )
 {
-	uint8_t buffer[ 4 ];
+	uint8_t amount_of_item_values_data[ 4 ];
 
-	nk2_item_value_entry_t item_value_entry;
-
-	uint8_t *value_data            = NULL;
-	static char *function          = "libnk2_io_handle_read_items";
-	ssize_t read_count             = 0;
-	uint64_t test                  = 0;
-	uint32_t amount_of_item_values = 0;
-	uint32_t item_iterator         = 0;
-	uint32_t item_value_iterator   = 0;
-	uint32_t value_data_size       = 0;
-	uint16_t entry_type            = 0;
-	uint16_t value_type            = 0;
+	libnk2_item_values_t *item_values = NULL;
+	static char *function             = "libnk2_io_handle_read_items";
+	ssize_t read_count                = 0;
+	uint32_t amount_of_item_values    = 0;
+	uint32_t item_iterator            = 0;
+	int item_entry_index              = 0;
 
 	if( io_handle == NULL )
 	{
@@ -426,13 +423,13 @@ int libnk2_io_handle_read_items(
 
 		return( -1 );
 	}
-	if( item_list == NULL )
+	if( item_table == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item list.",
+		 "%s: invalid item table.",
 		 function );
 
 		return( -1 );
@@ -441,7 +438,7 @@ int libnk2_io_handle_read_items(
 	{
 		read_count = libbfio_handle_read(
 			      io_handle->file_io_handle,
-			      buffer,
+			      amount_of_item_values_data,
 			      4,
 			      error );
 
@@ -451,14 +448,14 @@ int libnk2_io_handle_read_items(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read item separator.",
+			 "%s: unable to read amount of item values data.",
 			 function );
 
 			return( -1 );
 		}
 		endian_little_convert_32bit(
 		 amount_of_item_values,
-		 buffer );
+		 amount_of_item_values_data );
 
 		if( amount_of_item_values == 0 )
 		{
@@ -472,211 +469,58 @@ int libnk2_io_handle_read_items(
 		 amount_of_item_values );
 #endif
 
-		/* Loop through all item value entries
-		 */
-		for( item_value_iterator = 0; item_value_iterator < amount_of_item_values; item_value_iterator++ )
+		if( libnk2_item_values_initialize(
+		     &item_values,
+		     amount_of_item_values,
+		     error ) != 1 )
 		{
-			read_count = libbfio_handle_read(
-				      io_handle->file_io_handle,
-				      (uint8_t *) &item_value_entry,
-				      sizeof( nk2_item_value_entry_t ),
-				      error );
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create item values.",
+			 function );
 
-			if( read_count != (ssize_t) sizeof( nk2_item_value_entry_t ) )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read item value entry.",
-				 function );
-
-				return( -1 );
-			}
-			endian_little_convert_16bit(
-			 value_type,
-			 item_value_entry.value_type );
-			endian_little_convert_16bit(
-			 entry_type,
-			 item_value_entry.entry_type );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 "\n",
-			 function,
-			 item_iterator,
-			 item_value_iterator );
-			libnk2_notify_verbose_dump_data(
-			 (uint8_t *) &item_value_entry,
-			 sizeof( nk2_item_value_entry_t ) );
-#endif
-
-#if defined( HAVE_VERBOSE_OUTPUT )
-			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value type\t: 0x%04" PRIx16 " (%s : %s)\n",
-			 function,
-			 item_iterator,
-			 item_value_iterator,
-			 value_type,
-			 libfmapi_value_type_get_identifier(
-			  value_type ),
-			 libfmapi_value_type_get_description(
-			  value_type ) );
-			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " entry type\t: 0x%04" PRIx16 " (%s : %s)\n",
-			 function,
-			 item_iterator,
-			 item_value_iterator,
-			 entry_type,
-			 libfmapi_property_type_get_identifier(
-			  NULL,
-			  entry_type,
-			  value_type ),
-			 libfmapi_property_type_get_description(
-			  NULL,
-			  entry_type,
-			  value_type ) );
-			endian_little_convert_32bit(
-			 test,
-			 item_value_entry.unknown1 );
-			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown1\t: 0x%08" PRIx64 "\n",
-			 function,
-			 item_iterator,
-			 item_value_iterator,
-			 test );
-			endian_little_convert_32bit(
-			 test,
-			 item_value_entry.unknown2 );
-			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown2\t: 0x%08" PRIx64 "\n",
-			 function,
-			 item_iterator,
-			 item_value_iterator,
-			 test );
-			endian_little_convert_32bit(
-			 test,
-			 item_value_entry.unknown3 );
-			libnk2_notify_verbose_printf(
-			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown3\t: 0x%08" PRIx64 "\n",
-			 function,
-			 item_iterator,
-			 item_value_iterator,
-			 test );
-#endif
-
-			/* Read the value data
-			 */
-			if( ( value_type == 0x001e )
-			 || ( value_type == 0x001f )
-			 || ( value_type == 0x0102 ) )
-			{
-				read_count = libbfio_handle_read(
-					      io_handle->file_io_handle,
-					      buffer,
-					      4,
-					      error );
-
-				if( read_count != (ssize_t) 4 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read value data size.",
-					 function );
-
-					return( -1 );
-				}
-				endian_little_convert_16bit(
-				 value_data_size,
-				 buffer );
-
-#if defined( HAVE_VERBOSE_OUTPUT )
-				libnk2_notify_verbose_printf(
-				 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data size\t: %" PRIu32 "\n",
-				 function,
-				 item_iterator,
-				 item_value_iterator,
-				 value_data_size );
-#endif
-
-				/* TODO check if value data size > SSIZE_MAX */
-
-				value_data = (uint8_t *) memory_allocate(
-							  (size_t) value_data_size );
-
-				if( value_data == NULL )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_MEMORY,
-					 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create value data.",
-					 function );
-
-					return( -1 );
-				}
-				read_count = libbfio_handle_read(
-					      io_handle->file_io_handle,
-					      value_data,
-					      value_data_size,
-					      error );
-
-				if( read_count != (ssize_t) value_data_size )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_READ_FAILED,
-					 "%s: unable to read value data.",
-					 function );
-
-					memory_free(
-					 value_data );
-
-					return( -1 );
-				}
-#if defined( HAVE_VERBOSE_OUTPUT )
-				libnk2_notify_verbose_printf(
-				 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data:\n",
-				 function,
-				 item_iterator,
-				 item_value_iterator );
-
-				if( libnk2_debug_mapi_value_print(
-				     entry_type,
-				     value_type,
-				     value_data,
-				     value_data_size,
-				     LIBUNA_CODEPAGE_ASCII,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
-					 "%s: unable to print value data.",
-					 function );
-
-					memory_free(
-					 value_data );
-
-					return( -1 );
-				}
-#endif
-
-				memory_free(
-				 value_data );
-
-				/* TODO append value to item list
-				 */
-			}
-#if defined( HAVE_VERBOSE_OUTPUT )
-			libnk2_notify_verbose_printf(
-			 "\n" );
-#endif
+			return( -1 );
 		}
+		if( libnk2_item_values_read(
+		     item_values,
+		     io_handle,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read item values.",
+			 function );
+
+			libnk2_item_values_free(
+			 &item_values,
+			 error );
+
+			return( -1 );
+		}
+		if( libnk2_array_append_entry(
+		     item_table,
+		     &item_entry_index,
+		     (intptr_t *) item_values,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append item values to item table.",
+			 function );
+
+			libnk2_item_values_free(
+			 &item_values,
+			 error );
+
+			return( -1 );
+		}
+		item_values = NULL;
 	}
 	return( 1 );
 }

@@ -45,13 +45,13 @@ struct libnk2_internal_item
 	 */
 	libnk2_internal_file_t *internal_file;
 
-	/* The item reference list element
-	 */
-	libnk2_list_element_t *list_element;
-
 	/* The item values
 	 */
 	libnk2_item_values_t *item_values;
+
+	/* The item reference list element
+	 */
+	libnk2_list_element_t *list_element;
 };
 
 int libnk2_item_initialize(
@@ -63,11 +63,13 @@ LIBNK2_EXTERN int libnk2_item_free(
                    liberror_error_t **error );
 
 int libnk2_item_free_no_detach(
-     intptr_t *internal_item );
+     intptr_t *internal_item,
+     liberror_error_t **error );
 
 int libnk2_item_attach(
      libnk2_internal_item_t *internal_item,
      libnk2_internal_file_t *internal_file,
+     libnk2_item_values_t *item_values,
      liberror_error_t **error );
 
 int libnk2_item_detach(

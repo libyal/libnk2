@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20090514],
+  [20090524],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libnk2],
- [20090514])
+ [20090524])
 
 dnl Check for host type
 AC_CANONICAL_HOST
@@ -23,6 +23,11 @@ LIBNK2_TEST_ENABLE(
  [wide-character-type],
  [wide_character_type],
  [enable wide character type support],
+ [no])
+LIBNK2_TEST_ENABLE(
+ [static-executables],
+ [static_executables],
+ [build the nk2tools as static executables],
  [no])
 LIBNK2_TEST_ENABLE(
  [verbose-output],
@@ -923,6 +928,14 @@ AC_SUBST(
  [HAVE_WIDE_CHARACTER_SUPPORT_FUNCTIONS],
  [0])
 
+dnl Check if nk2tools should be build as static executables
+AS_IF(
+	[test "x$ac_cv_libnk2_enable_static_executables" != xno],
+	[STATIC_LDFLAGS="-all-static";
+	AC_SUBST(
+	 [STATIC_LDFLAGS])
+	ac_cv_libnk2_enable_static_executables=yes])
+
 dnl Check if libnk2 should be build with verbose output
 AS_IF(
 	[test "x$ac_cv_libnk2_enable_verbose_output" != xno ],
@@ -960,6 +973,18 @@ AM_CONDITIONAL(
 dnl Set additional compiler flags
 CFLAGS="$CFLAGS -Wall";
 
+dnl Check if DLL support is needed in nk2tools
+AS_IF(
+	[test x"$enable_shared" = xyes],
+	[AS_CASE(
+		[$host],
+		[*cygwin* | *mingw*],
+		[AC_SUBST(
+		 [LIBNK2_DLL_IMPORT],
+		 ["-DLIBNK2_DLL_IMPORT"])
+		])
+	])
+
 dnl Have configure make the Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
@@ -979,6 +1004,7 @@ AC_CONFIG_FILES([include/libnk2/definitions.h])
 AC_CONFIG_FILES([include/libnk2/features.h])
 AC_CONFIG_FILES([include/libnk2/types.h])
 dnl Have configure make distribution specific files
+AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libnk2.pc])
 AC_CONFIG_FILES([libnk2.spec])
@@ -990,13 +1016,14 @@ AC_OUTPUT
 dnl Print a summary
 AC_MSG_NOTICE([
 Building:
-   libuna support:              $ac_libnk2_have_libuna
-   libbfio support:             $ac_libnk2_have_libbfio
+   libuna support:                           $ac_libnk2_have_libuna
+   libbfio support:                          $ac_libnk2_have_libbfio
 
 Features:
-   Wide character type support: $ac_cv_libnk2_enable_wide_character_type
-   Verbose output:              $ac_cv_libnk2_enable_verbose_output
-   Debug output:                $ac_cv_libnk2_enable_debug_output
+   Wide character type support:              $ac_cv_libnk2_enable_wide_character_type
+   nk2tools are build as static executables: $ac_cv_libnk2_enable_static_executables
+   Verbose output:                           $ac_cv_libnk2_enable_verbose_output
+   Debug output:                             $ac_cv_libnk2_enable_debug_output
 ]);
 
 

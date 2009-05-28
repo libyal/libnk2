@@ -97,63 +97,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_allocation_table.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_array_type.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_attachment.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_crc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_data_array.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_descriptor.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_email.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_encryption.c"
+				RelativePath="..\..\libnk2\libnk2_error.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libnk2\libnk2_file.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_file_io.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_file_io_handle.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_filetime.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_folder.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_guid.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_index.c"
 				>
 			</File>
 			<File
@@ -165,19 +117,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_item_descriptor.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_item_tree.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_item_values.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_list.c"
 				>
 			</File>
 			<File
@@ -185,27 +125,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_lzfu.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_notify.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_offset_list.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_support.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_table.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_tree_type.c"
 				>
 			</File>
 		</Filter>
@@ -215,39 +139,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\libnk2\libnk2_allocation_table.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_array_type.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_attachment.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_crc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_data_array.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_definitions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_descriptor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_email.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_encryption.h"
 				>
 			</File>
 			<File
@@ -263,43 +159,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_file_io.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_file_io_handle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_filetime.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_folder.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_guid.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_index.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_io_handle.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libnk2\libnk2_item.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_item_descriptor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_item_tree.h"
 				>
 			</File>
 			<File
@@ -311,23 +175,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_list.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_list_type.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_lzfu.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_notify.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_offset_list.h"
 				>
 			</File>
 			<File
@@ -339,43 +191,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_system_string.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_table.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_tree_type.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\nk2_allocation_table.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\nk2_array.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\nk2_file_header.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\nk2_index_node.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\nk2_list.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\nk2_table.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\nk2_value_data.h"
+				RelativePath="..\..\libnk2\nk2_item.h"
 				>
 			</File>
 		</Filter>

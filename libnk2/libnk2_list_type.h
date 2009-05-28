@@ -32,6 +32,13 @@
 extern "C" {
 #endif
 
+enum LIBNK2_LIST_COMPARE_DEFINITIONS
+{
+	LIBNK2_LIST_COMPARE_LESS,
+	LIBNK2_LIST_COMPARE_EQUAL,
+	LIBNK2_LIST_COMPARE_GREATER
+};
+
 typedef struct libnk2_list_element libnk2_list_element_t;
 
 struct libnk2_list_element
@@ -66,14 +73,24 @@ struct libnk2_list
 	libnk2_list_element_t *last;
 };
 
+int libnk2_list_initialize(
+     libnk2_list_t **list,
+     liberror_error_t **error );
+
 int libnk2_list_free(
-     libnk2_list_t *list,
-     int (*value_free_function)( intptr_t *value ),
+     libnk2_list_t **list,
+     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
      liberror_error_t **error );
 
 int libnk2_list_empty(
      libnk2_list_t *list,
-     int (*value_free_function)( intptr_t *value ),
+     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
+     liberror_error_t **error );
+
+int libnk2_list_clone(
+     libnk2_list_t **destination,
+     libnk2_list_t *source,
+     int (*value_clone_function)( intptr_t **destination, intptr_t *source, liberror_error_t **error ),
      liberror_error_t **error );
 
 int libnk2_list_prepend_element(
@@ -99,13 +116,13 @@ int libnk2_list_append_value(
 int libnk2_list_insert_element(
      libnk2_list_t *list,
      libnk2_list_element_t *element,
-     int (*value_compare_function)( intptr_t *first, intptr_t *second ),
+     int (*value_compare_function)( intptr_t *first, intptr_t *second, liberror_error_t **error ),
      liberror_error_t **error );
 
 int libnk2_list_insert_value(
      libnk2_list_t *list,
      intptr_t *value,
-     int (*value_compare_function)( intptr_t *first, intptr_t *second ),
+     int (*value_compare_function)( intptr_t *first, intptr_t *second, liberror_error_t **error ),
      liberror_error_t **error );
 
 int libnk2_list_remove_element(
