@@ -21,10 +21,13 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
 #include <memory.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include <liberror.h>
+#include <libnotify.h>
 
 #include "libnk2_array_type.h"
 #include "libnk2_definitions.h"
@@ -33,7 +36,6 @@
 #include "libnk2_file.h"
 #include "libnk2_libbfio.h"
 #include "libnk2_list_type.h"
-#include "libnk2_notify.h"
 
 /* Initialize a file
  * Make sure the value file is pointing to is set to NULL
@@ -627,7 +629,7 @@ int libnk2_file_open_read(
 		return( -1 );
 	}
 #if defined( HAVE_VERBOSE_OUTPUT )
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "Reading file header:\n" );
 #endif
 	if( libnk2_io_handle_read_file_header(
@@ -645,7 +647,7 @@ int libnk2_file_open_read(
 		return( -1 );
 	}
 #if defined( HAVE_VERBOSE_OUTPUT )
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "Reading items:\n" );
 #endif
 	if( libnk2_io_handle_read_items(

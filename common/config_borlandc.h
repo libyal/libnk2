@@ -1,5 +1,5 @@
 /*
- * GetOpt functions
+ * Configuration file for Borland/CodeGear C++ Builder compiler
  *
  * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.
@@ -20,45 +20,46 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2GETOPT_H )
-#define _NK2GETOPT_H
+#if !defined( _CONFIG_BORLANDC_H )
+#define _CONFIG_BORLANDC_H
 
-#include <common.h>
-#include <types.h>
+/* Define to the address where bug reports for this package should be sent.
+ */
+#define PACKAGE_BUGREPORT "forensics@hoffmannbv.nl"
 
-#include "system_string.h"
+/* Use the safe size and offset types
+ */
+#define HAVE_SIZE32_T   0
+#define HAVE_SSIZE32_T  0
+#define HAVE_SIZE64_T   0
+#define HAVE_SSIZE64_T  0
+#define HAVE_OFF64_T    0
 
-#if defined( __cplusplus )
-extern "C" {
+/* Define the wide character type
+ */
+#if !defined( HAVE_WCHAR_H )
+#define HAVE_WCHAR_H		1
 #endif
 
-#if defined( HAVE_GETOPT ) && !defined( HAVE_WIDE_CHARACTER_SUPPORT_FUNCTIONS )
-#define nk2getopt( argument_count, argument_values, options_string ) \
-	getopt( argument_count, argument_values, options_string )
-#else
-
-/* The current option argument
- */
-extern system_character_t *optarg;
-
-/* The option index
- */
-extern int optind;
-
-/* Value to indicate the current option
- */
-extern system_integer_t optopt;
-
-system_integer_t nk2getopt(
-                  int argument_count,
-                  system_character_t * const argument_values[],
-                  const system_character_t *options_string );
-
+#if defined( SIZEOF_WCHAR_T )
+#undef SIZEOF_WCHAR_T
 #endif
 
-#if defined( __cplusplus )
-}
-#endif
+#define SIZEOF_WCHAR_T		2
+
+/* Use the native WINAPI functions instead of the POSIX like functions
+#define USE_NATIVE_WINAPI_FUNCTIONS	1
+ */
+
+/* Enable verbose output
+#define HAVE_VERBOSE_OUTPUT     1
+ */
+
+/* Enable debug output
+#define HAVE_DEBUG_OUTPUT       1
+ */
+
+#define HAVE_V1_API		1
 
 #endif
 

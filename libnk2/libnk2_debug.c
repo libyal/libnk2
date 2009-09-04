@@ -25,12 +25,13 @@
 #include <types.h>
 
 #include <liberror.h>
+#include <libnotify.h>
+
 #include <libfmapi.h>
 
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_libbfio.h"
-#include "libnk2_notify.h"
 #include "libnk2_string.h"
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -90,10 +91,10 @@ int libnk2_debug_mapi_value_print(
 
 				return( -1 );
 			}
-			libnk2_notify_verbose_printf(
+			libnotify_verbose_printf(
 			 "Floating point value\t: %f\n",
 			 value_float );
-			libnk2_notify_verbose_printf(
+			libnotify_verbose_printf(
 			 "\n" );
 
 			break;
@@ -117,10 +118,10 @@ int libnk2_debug_mapi_value_print(
 
 				return( -1 );
 			}
-			libnk2_notify_verbose_printf(
+			libnotify_verbose_printf(
 			 "Floating point double value\t: %f\n",
 			 value_double );
-			libnk2_notify_verbose_printf(
+			libnotify_verbose_printf(
 			 "\n" );
 
 			break;
@@ -130,10 +131,10 @@ int libnk2_debug_mapi_value_print(
 			 value_64bit,
 			 value_data );
 
-			libnk2_notify_verbose_printf(
+			libnotify_verbose_printf(
 			 "64-bit value\t: %" PRIu64 "\n",
 			 value_64bit );
-			libnk2_notify_verbose_printf(
+			libnotify_verbose_printf(
 			 "\n" );
 
 			break;
@@ -156,13 +157,13 @@ int libnk2_debug_mapi_value_print(
 				if( ( error != NULL )
 				 && ( *error != NULL ) )
 				{
-			                libnk2_notify_error_backtrace(
+			                libnotify_print_error_backtrace(
 			                 *error );
 				}
 				liberror_error_free(
 				 error );
 
-				libnk2_notify_verbose_dump_data(
+				libnotify_verbose_print_data(
 				 value_data,
 				 value_data_size );
 
@@ -184,22 +185,22 @@ int libnk2_debug_mapi_value_print(
 				if( ( error != NULL )
 				 && ( *error != NULL ) )
 				{
-			                libnk2_notify_error_backtrace(
+			                libnotify_print_error_backtrace(
 			                 *error );
 				}
 				liberror_error_free(
 				 error );
 
-				libnk2_notify_verbose_dump_data(
+				libnotify_verbose_print_data(
 				 value_data,
 				 value_data_size );
 
 				break;
 			}
-			libnk2_notify_verbose_printf(
+			libnotify_verbose_printf(
 			 "Filetime\t: %s\n",
 			 filetime_string );
-			libnk2_notify_verbose_printf(
+			libnotify_verbose_printf(
 			 "\n" );
 
 			break;
@@ -223,15 +224,15 @@ int libnk2_debug_mapi_value_print(
 
 					return( -1 );
 				}
-				libnk2_notify_verbose_printf(
+				libnotify_verbose_printf(
 				 "GUID\t: %s\n",
 				 guid_string );
-				libnk2_notify_verbose_printf(
+				libnotify_verbose_printf(
 				 "\n" );
 			}
 			else
 			{
-				libnk2_notify_verbose_dump_data(
+				libnotify_verbose_print_data(
 				 value_data,
 				 value_data_size );
 			}
@@ -255,13 +256,13 @@ int libnk2_debug_mapi_value_print(
 				if( ( error != NULL )
 				 && ( *error != NULL ) )
 				{
-			                libnk2_notify_error_backtrace(
+			                libnotify_print_error_backtrace(
 			                 *error );
 				}
 				liberror_error_free(
 				 error );
 
-				libnk2_notify_verbose_dump_data(
+				libnotify_verbose_print_data(
 				 value_data,
 				 value_data_size );
 			}
@@ -289,10 +290,10 @@ int libnk2_debug_mapi_value_print(
 				     ascii_codepage,
 				     error ) == 1 )
 				{
-					libnk2_notify_verbose_printf(
+					libnotify_verbose_printf(
 					 "ASCII string\t: " );
 
-					libnk2_notify_verbose_printf(
+					libnotify_verbose_printf(
 					 "%s\n\n",
 					 value_string );
 				}
@@ -319,13 +320,13 @@ int libnk2_debug_mapi_value_print(
 				if( ( error != NULL )
 				 && ( *error != NULL ) )
 				{
-			                libnk2_notify_error_backtrace(
+			                libnotify_print_error_backtrace(
 			                 *error );
 				}
 				liberror_error_free(
 				 error );
 
-				libnk2_notify_verbose_dump_data(
+				libnotify_verbose_print_data(
 				 value_data,
 				 value_data_size );
 			}
@@ -354,10 +355,10 @@ int libnk2_debug_mapi_value_print(
 				     LIBNK2_ENDIAN_LITTLE,
 				     error ) == 1 )
 				{
-					libnk2_notify_verbose_printf(
+					libnotify_verbose_printf(
 					 "Unicode string\t: " );
 
-					libnk2_notify_verbose_printf(
+					libnotify_verbose_printf(
 					 "%s\n\n",
 					 value_string );
 				}
@@ -370,7 +371,7 @@ int libnk2_debug_mapi_value_print(
 			switch( entry_type )
 			{
 				default:
-					libnk2_notify_verbose_dump_data(
+					libnotify_verbose_print_data(
 					 value_data,
 					 value_data_size );
 					break;
@@ -381,7 +382,7 @@ int libnk2_debug_mapi_value_print(
 			switch( entry_type )
 			{
 				default:
-					libnk2_notify_verbose_dump_data(
+					libnotify_verbose_print_data(
 					 value_data,
 					 value_data_size );
 					break;
@@ -389,7 +390,7 @@ int libnk2_debug_mapi_value_print(
 			break;
 
 		default:
-			libnk2_notify_verbose_dump_data(
+			libnotify_verbose_print_data(
 			 value_data,
 			 value_data_size );
 			break;
@@ -435,7 +436,7 @@ int libnk2_debug_print_read_offsets(
 
 		return( -1 );
 	}
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "Offsets read:\n" );
 
 	for( offset_iterator = 0; offset_iterator < amount_of_offsets; offset_iterator++ )
@@ -457,7 +458,7 @@ int libnk2_debug_print_read_offsets(
 
 			return( -1 );
 		}
-		libnk2_notify_verbose_printf(
+		libnotify_verbose_printf(
 		 "%08" PRIu64 " ( 0x%08" PRIx64 " ) - %08" PRIu64 " ( 0x%08" PRIx64 " ) size: %" PRIu64 "\n",
 		 offset,
 		 offset,
@@ -465,7 +466,7 @@ int libnk2_debug_print_read_offsets(
 		 ( offset + size ),
 		 size );
 	}
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "\n" );
 
 	return( 1 );

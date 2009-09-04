@@ -3,8 +3,10 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 EXTRA_DIST = \
 	common.h \
 	config.h \
-	config_windows.h \
+	config_borlandc.h \
+	config_msc.h \
 	endian.h \
+	file_stream.h \
 	memory.h \
 	narrow_string.h \
 	types.h \
@@ -20,5 +22,6 @@ endif
 
 distclean: clean
 	/bin/rm -f config.h
+	/bin/rm -f types.h
 	/bin/rm -f Makefile
 

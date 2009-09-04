@@ -26,8 +26,12 @@
 /* The libnk2 type support features
  */
 #if @HAVE_WIDE_CHARACTER_TYPE@ || defined( HAVE_WIDE_CHARACTER_TYPE )
-#define LIBNK2_WIDE_CHARACTER_TYPE      1
+#define LIBNK2_HAVE_WIDE_CHARACTER_TYPE		1
 
+#endif
+
+#if defined( HAVE_LIBBFIO ) || @HAVE_LIBBFIO@
+#define LIBNK2_HAVE_BFIO			1
 #endif
 
 #endif

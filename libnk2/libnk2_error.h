@@ -43,13 +43,23 @@ extern "C" {
 LIBNK2_EXTERN void libnk2_error_free(
                     libnk2_error_t **error );
 
-LIBNK2_EXTERN void libnk2_error_fprint(
-                    libnk2_error_t *error,
-                    FILE *stream );
+LIBNK2_EXTERN int libnk2_error_fprint(
+                   libnk2_error_t *error,
+                   FILE *stream );
 
-LIBNK2_EXTERN void libnk2_error_backtrace_fprint(
-                    libnk2_error_t *error,
-                    FILE *stream );
+LIBNK2_EXTERN int libnk2_error_sprint(
+                   libnk2_error_t *error,
+                   char *string,
+                   size_t size );
+
+LIBNK2_EXTERN int libnk2_error_backtrace_fprint(
+                   libnk2_error_t *error,
+                   FILE *stream );
+
+LIBNK2_EXTERN int libnk2_error_backtrace_sprint(
+                   libnk2_error_t *error,
+                   char *string,
+                   size_t size );
 
 #endif
 

@@ -28,7 +28,7 @@
 
 #include <liberror.h>
 
-#include "system_string.h"
+#include <libsystem.h>
 
 #if defined( __cplusplus )
 extern "C" {
@@ -52,14 +52,14 @@ struct filetime
 	uint32_t upper;
 };
 
-int filetime_from_uint64(
+int filetime_copy_from_uint64(
      filetime_t *filetime,
      uint64_t integer,
      liberror_error_t **error );
 
-int filetime_to_string(
+int filetime_copy_to_string(
      filetime_t *filetime,
-     system_character_t *string,
+     libsystem_character_t *string,
      size_t string_size,
      liberror_error_t **error );
 

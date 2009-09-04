@@ -26,14 +26,14 @@
 #include <common.h>
 #include <types.h>
 
-#include "system_string.h"
+#include <libsystem.h>
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
 int nk2input_determine_ascii_codepage(
-     const system_character_t *argument,
+     const libsystem_character_t *argument,
      int *ascii_codepage );
 
 #if defined( __cplusplus )

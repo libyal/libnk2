@@ -29,6 +29,7 @@
 #include <stdio.h>
 
 #include "libnk2_extern.h"
+#include "libnk2_file.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -36,6 +37,20 @@ extern "C" {
 
 LIBNK2_EXTERN const char *libnk2_get_version(
                            void );
+
+LIBNK2_EXTERN int libnk2_check_file_signature(
+                   const char *filename,
+                   liberror_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+LIBNK2_EXTERN int libnk2_check_file_signature_wide(
+                   const wchar_t *filename,
+                   liberror_error_t **error );
+#endif
+
+LIBNK2_EXTERN int libnk2_check_file_signature_file_io_handle(
+                   libbfio_handle_t *bfio_handle,
+                   liberror_error_t **error );
 
 #if defined( __cplusplus )
 }

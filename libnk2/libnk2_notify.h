@@ -27,6 +27,7 @@
 #include <types.h>
 
 #include <liberror.h>
+#include <libnotify.h>
 
 #include <stdio.h>
 
@@ -36,28 +37,23 @@
 extern "C" {
 #endif
 
-extern int libnk2_notify_verbose;
+#if !defined( HAVE_LOCAL_LIBNK2 )
 
-LIBNK2_EXTERN void libnk2_set_notify_values(
-                    FILE *stream,
+LIBNK2_EXTERN void libnk2_notify_set_verbose(
                     int verbose );
 
-void libnk2_notify_printf(
-      char *format,
-      ... );
+LIBNK2_EXTERN int libnk2_notify_set_stream(
+                   FILE *stream,
+                   liberror_error_t **error );
 
-#define libnk2_notify_verbose_printf \
-	if( libnk2_notify_verbose != 0 ) libnk2_notify_printf
+LIBNK2_EXTERN int libnk2_notify_stream_open(
+                   const char *filename,
+                   liberror_error_t **error );
 
-void libnk2_notify_error_backtrace(
-      liberror_error_t *error );
+LIBNK2_EXTERN int libnk2_notify_stream_close(
+                   liberror_error_t **error );
 
-void libnk2_notify_dump_data(
-      void *data,
-      size_t size );
-
-#define libnk2_notify_verbose_dump_data \
-	if( libnk2_notify_verbose != 0 ) libnk2_notify_dump_data
+#endif
 
 #if defined( __cplusplus )
 }

@@ -15,6 +15,8 @@ Performance improvement
 * pre allocate item array entries
 
 Tools
+* nk2input
+  - implement liberror
 * nk2export
   - export item data (export handle)
 * nk2info
@@ -25,6 +27,17 @@ Deployment:
 * create debian package files
 * update macosx package files
 * update msvcpp files (implement libbfio)
+
+20090904
+* added libtool m4 directory support
+* updated common, liberror, libfmapi, libuna, libbfio
+* added libnotify, libsystem
+* updated spec file to handle empty requires and build requires
+* updated libnk2_notify, libnk2_error, libnk2_support
+* updated configure
+* updated codpage definitions
+* worked on libsystem integration
+* updated guid and filetime
 
 20090524
 * updated libbfio

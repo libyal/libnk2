@@ -26,7 +26,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <stdio.h>
+#include <libsystem.h>
 
 #if defined( __cplusplus )
 extern "C" {
@@ -38,11 +38,6 @@ void nk2output_copyright_fprint(
 void nk2output_version_fprint(
       FILE *stream,
       const char *program );
-
-void nk2output_error_fprint(
-      FILE *stream,
-      char *format,
-      ... );
 
 #if defined( __cplusplus )
 }

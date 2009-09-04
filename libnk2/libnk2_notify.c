@@ -24,196 +24,100 @@
 #include <types.h>
 
 #include <liberror.h>
+#include <libnotify.h>
 
-#if defined( HAVE_STDLIB_H )
+#if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
 #include <stdio.h>
 
-#if defined( HAVE_STDARG_H )
-#include <stdarg.h>
-#elif defined( HAVE_VARARGS_H )
-#include <varargs.h>
-#else
-#error Missing headers stdarg.h and varargs.h
-#endif
-
 #include "libnk2_notify.h"
 
-FILE *libnk2_notify_stream = NULL;
-int libnk2_notify_verbose  = 0;
+#if !defined( HAVE_LOCAL_LIBNK2 )
 
-/* Set the notify values
+/* Set the verbose notification
  */
-void libnk2_set_notify_values(
-      FILE *stream,
+void libnk2_notify_set_verbose(
       int verbose )
 {
-	libnk2_notify_stream  = stream;
-	libnk2_notify_verbose = verbose;
+	libnotify_set_verbose(
+	 verbose );
 }
 
-#if defined( HAVE_STDARG_H )
-#define VARARGS( function, type, argument ) \
-	function( type argument, ... )
-#define VASTART( argument_list, type, name ) \
-	va_start( argument_list, name )
-#define VAEND( argument_list ) \
-	va_end( argument_list )
+/* Set the notification stream
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_notify_set_stream(
+     FILE *stream,
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_notify_set_stream";
 
-#elif defined( HAVE_VARARGS_H )
-#define VARARGS( function, type, argument ) \
-	function( va_alist ) va_dcl
-#define VASTART( argument_list, type, name ) \
-	{ type name; va_start( argument_list ); name = va_arg( argument_list, type )
-#define VAEND( argument_list ) \
-	va_end( argument_list ); }
+	if( libnotify_set_stream(
+	     stream,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set stream.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Opens the notification stream using a filename
+ * The stream is opened in append mode
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_notify_stream_open(
+     const char *filename,
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_notify_stream_open";
+
+	if( libnotify_stream_open(
+	     filename,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open stream.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Closes the notification stream if opened using a filename
+ * Returns 0 if successful or -1 on error
+ */
+int libnk2_notify_stream_close(
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_notify_stream_close";
+
+	if( libnotify_stream_close(
+	     error ) != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open stream.",
+		 function );
+
+		return( -1 );
+	}
+	return( 0 );
+}
 
 #endif
-
-/* Print a formatted string on the notify stream
- */
-void VARARGS(
-      libnk2_notify_printf,
-      char *,
-      format )
-{
-	va_list argument_list;
-
-	if( libnk2_notify_stream != NULL )
-	{
-		VASTART(
-		 argument_list,
-		 char *,
-		 format );
-
-		vfprintf(
-		 libnk2_notify_stream,
-		 format,
-		 argument_list );
-
-		VAEND(
-		 argument_list );
-	}
-}
-
-#undef VARARGS
-#undef VASTART
-#undef VAEND
-
-/* Prints a backtrace of the error using notify_printf
- */
-void libnk2_notify_error_backtrace(
-      liberror_error_t *error )
-{
-	if( libnk2_notify_stream != NULL )
-	{
-		liberror_error_backtrace_fprint(
-		 error,
-		 libnk2_notify_stream );
-	}
-}
-
-/* Prints a dump of data
- */
-void libnk2_notify_dump_data(
-      void *data,
-      size_t size )
-{
-	size_t byte_iterator = 0;
-	size_t size_iterator = 0;
-
-	if( libnk2_notify_stream == NULL )
-	{
-		return;
-	}
-	while( size_iterator < size )
-	{
-		while( byte_iterator < size )
-		{
-			if( byte_iterator % 16 == 0 )
-			{
-				fprintf(
-				 libnk2_notify_stream,
-				 "%.8" PRIzx ": ",
-				 byte_iterator );
-			}
-			fprintf(
-			 libnk2_notify_stream,
-			 "%.2" PRIx8 " ",
-			 ( (unsigned char *) data )[ byte_iterator++ ] );
-
-			if( byte_iterator % 16 == 0 )
-			{
-				break;
-			}
-			else if( byte_iterator % 8 == 0 )
-			{
-				fprintf(
-				 libnk2_notify_stream,
-				 " " );
-			}
-		}
-		while( byte_iterator % 16 != 0 )
-		{
-			byte_iterator++;
-
-			fprintf(
-			 libnk2_notify_stream,
-			 "   " );
-
-			if( ( byte_iterator % 8 == 0 )
-			 && ( byte_iterator % 16 != 0 ) )
-			{
-				fprintf(
-				 libnk2_notify_stream,
-				 " " );
-			}
-		}
-		fprintf(
-		 libnk2_notify_stream,
-		 "  " );
-
-		byte_iterator = size_iterator;
-
-		while( byte_iterator < size )
-		{
-			if( ( ( (char *) data )[ byte_iterator ] >= 0x20 )
-			 && ( ( (char *) data )[ byte_iterator ] <= 0x7e ) )
-			{
-				fprintf(
-				 libnk2_notify_stream,
-				 "%c",
-				 ( (char *) data )[ byte_iterator ] );
-			}
-			else
-			{
-				fprintf(
-				 libnk2_notify_stream,
-				 "." );
-			}
-			byte_iterator++;
-
-			if( byte_iterator % 16 == 0 )
-			{
-				break;
-			}
-			else if( byte_iterator % 8 == 0 )
-			{
-				fprintf(
-				 libnk2_notify_stream,
-				 " " );
-			}
-		}
-		fprintf(
-		 libnk2_notify_stream,
-		 "\n" );
-
-		size_iterator = byte_iterator;
-	}
-	fprintf(
-	 libnk2_notify_stream,
-	 "\n" );
-}
 

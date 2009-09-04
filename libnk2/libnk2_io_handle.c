@@ -26,6 +26,7 @@
 #include <types.h>
 
 #include <liberror.h>
+#include <libnotify.h>
 
 #include "libnk2_array_type.h"
 #include "libnk2_debug.h"
@@ -33,11 +34,10 @@
 #include "libnk2_io_handle.h"
 #include "libnk2_item_values.h"
 #include "libnk2_libbfio.h"
-#include "libnk2_notify.h"
 
 #include "nk2_file_header.h"
 
-uint8_t nk2_file_signature[ 4 ] = { 0x0d, 0xf0, 0xad, 0xba };
+const uint8_t nk2_file_signature[ 4 ] = { 0x0d, 0xf0, 0xad, 0xba };
 
 /* Initialize an io handle
  * Make sure the value io_handle is pointing to is set to NULL
@@ -324,10 +324,10 @@ int libnk2_io_handle_read_file_header(
 		return( -1 );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "%s: file header:\n",
 	 function );
-	libnk2_notify_verbose_dump_data(
+	libnotify_verbose_print_data(
 	 (uint8_t *) &file_header,
 	 sizeof( nk2_file_header_t ) );
 #endif
@@ -354,29 +354,29 @@ int libnk2_io_handle_read_file_header(
 	endian_little_convert_32bit(
 	 test,
 	 file_header.signature );
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "%s: signature\t\t: 0x%08" PRIx32 "\n",
 	 function,
 	 test );
 	endian_little_convert_32bit(
 	 test,
 	 file_header.unknown1 );
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "%s: unknown1\t\t: 0x%08" PRIx32 "\n",
 	 function,
 	 test );
 	endian_little_convert_32bit(
 	 test,
 	 file_header.unknown2 );
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "%s: unknown2\t\t: 0x%08" PRIx32 "\n",
 	 function,
 	 test );
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "%s: amount of items\t: %" PRIu32 "\n",
 	 function,
 	 *amount_of_items );
-	libnk2_notify_verbose_printf(
+	libnotify_verbose_printf(
 	 "\n" );
 #endif
 
@@ -462,7 +462,7 @@ int libnk2_io_handle_read_items(
 			break;
 		}
 #if defined( HAVE_VERBOSE_OUTPUT )
-		libnk2_notify_verbose_printf(
+		libnotify_verbose_printf(
 		 "%s: item: %03" PRIu32 " amount of item values\t: %" PRIu32 "\n",
 		 function,
 		 item_iterator,

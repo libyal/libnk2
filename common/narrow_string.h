@@ -26,7 +26,15 @@
 #include "common.h"
 #include "types.h"
 
-#if defined( HAVE_STRING_H )
+#if defined( HAVE_GLIB_H )
+#include <glib.h>
+#endif
+
+#if defined( HAVE_STDLIB_H ) || defined( WINAPI )
+#include <stdlib.h>
+#endif
+
+#if defined( HAVE_STRING_H ) || defined( WINAPI )
 #include <string.h>
 #endif
 
@@ -36,14 +44,14 @@ extern "C" {
 
 /* String length
  */
-#if defined( HAVE_STRLEN )
+#if defined( HAVE_STRLEN ) || defined( WINAPI )
 #define narrow_string_length( string ) \
 	strlen( string )
 #endif
 
 /* String compare
  */
-#if defined( HAVE_STRNCMP )
+#if defined( HAVE_STRNCMP ) || defined( WINAPI )
 #define narrow_string_compare( string1, string2, size ) \
 	strncmp( string1, string2, size )
 
@@ -58,10 +66,17 @@ extern "C" {
 
 /* Caseless string compare
  */
-#if defined( WINAPI )
+#if defined( HAVE_GLIB_H )
 #define narrow_string_compare_no_case( string1, string2, size ) \
-        _strnicmp( string1, string2, size )
+	g_ascii_strncasecmp( string1, string2, size )
 
+#elif defined( _MSC_VER )
+#define narrow_string_compare_no_case( string1, string2, size ) \
+	_strnicmp( string1, string2, size )
+
+#elif defined( WINAPI )
+#define narrow_string_compare_no_case( string1, string2, size ) \
+	strnicmp( string1, string2, size )
 
 #elif defined( HAVE_STRNCASECMP )
 #define narrow_string_compare_no_case( string1, string2, size ) \
@@ -74,7 +89,7 @@ extern "C" {
 
 /* String copy
  */
-#if defined( HAVE_STRNCPY )
+#if defined( HAVE_STRNCPY ) || defined( WINAPI )
 #define narrow_string_copy( destination, source, size ) \
 	strncpy( destination, source, size )
 
@@ -89,7 +104,7 @@ extern "C" {
 
 /* String search
  */
-#if defined( HAVE_STRCHR )
+#if defined( HAVE_STRCHR ) || defined( WINAPI )
 #define narrow_string_search( string, character, size ) \
 	strchr( string, (int) character )
 
@@ -100,7 +115,7 @@ extern "C" {
 
 /* String reverse search
  */
-#if defined( HAVE_STRRCHR )
+#if defined( HAVE_STRRCHR ) || defined( WINAPI )
 #define narrow_string_search_reverse( string, character, size ) \
 	strrchr( string, (int) character )
 
@@ -111,36 +126,37 @@ extern "C" {
 
 /* String formatted print (snprinf)
  */
-#if defined( WINAPI )
-#define narrow_string_snprintf( target, size, format, ... ) \
-	sprintf_s( target, size, format, __VA_ARGS__ )
+#if defined( HAVE_GLIB_H )
+#define narrow_string_snprintf( target, size, ... ) \
+	g_snprintf( target, size, __VA_ARGS__ )
 
-#elif defined( HAVE_SNPRINTF )
-#define narrow_string_snprintf( target, size, format, ... ) \
-	snprintf( target, size, format, __VA_ARGS__ )
+#elif defined( _MSC_VER )
+#define narrow_string_snprintf( target, size, ... ) \
+	sprintf_s( target, size, __VA_ARGS__ )
+
+#elif defined( HAVE_SNPRINTF ) || defined( WINAPI )
+#define narrow_string_snprintf( target, size, ... ) \
+	snprintf( target, size, __VA_ARGS__ )
 
 #elif defined( HAVE_SPRINTF )
-#define narrow_string_snprintf( target, size, format, ... ) \
-	sprintf( target, format, __VA_ARGS__ )
-#endif
-
-/* String retrieve from stream (fgets)
- */
-#if defined( HAVE_FGETS )
-#define narrow_string_get_from_stream( string, size, stream ) \
-	fgets( string, size, stream )
+#define narrow_string_snprintf( target, size, ... ) \
+	sprintf( target, __VA_ARGS__ )
 #endif
 
 /* String input conversion (sscanf)
  */
-#if defined( HAVE_SSCANF )
+#if defined( HAVE_SSCANF ) || defined( WINAPI )
 #define narrow_string_sscanf( string, format, ... ) \
 	sscanf( string, format, __VA_ARGS__ )
 #endif
 
 /* String to singed long long (int64)
  */
-#if defined( WINAPI )
+#if defined( HAVE_GLIB_H )
+#define narrow_string_to_signed_long_long( string, end_of_string, base ) \
+	(int64_t) g_ascii_strtoll( string, end_of_string, base )
+
+#elif defined( WINAPI )
 #define narrow_string_to_signed_long_long( string, end_of_string, base ) \
 	(int64_t) _atoi64( string )
 
@@ -155,7 +171,11 @@ extern "C" {
 
 /* String to unsigned long long (uint64)
  */
-#if defined( WINAPI )
+#if defined( HAVE_GLIB_H )
+#define narrow_string_to_unsigned_long_long( string, end_of_string, base ) \
+	(uint64_t) g_ascii_strtoull( string, end_of_string, base )
+
+#elif defined( WINAPI )
 #define narrow_string_to_unsigned_long_long( string, end_of_string, base ) \
 	(uint64_t) _atoi64( string )
 
@@ -166,6 +186,21 @@ extern "C" {
 #elif defined( HAVE_ATOLL )
 #define narrow_string_to_unsigned_long_long( string, end_of_string, base ) \
 	(uint64_t) atoll( string )
+#endif
+
+/* Variable arguments formatted print to string function
+ */
+#if defined( HAVE_GLIB_H )
+#define narrow_string_vsnprintf( string, size, format, ... ) \
+	g_vsnprintf( string, size, format, __VA_ARGS__ )
+
+#elif defined( _MSC_VER )
+#define narrow_string_vsnprintf( string, size, format, ... ) \
+	_vsnprintf( string, size, format, __VA_ARGS__ )
+
+#elif defined( HAVE_VSNPRINTF ) || defined( WINAPI )
+#define narrow_string_vsnprintf( string, size, format, ... ) \
+	vsnprintf( string, size, format, __VA_ARGS__ )
 #endif
 
 #if defined( __cplusplus )

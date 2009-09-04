@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20090524],
+  [20090904],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,9 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libnk2],
- [20090524])
+ [20090904])
+
+AC_CONFIG_MACRO_DIR([m4])
 
 dnl Check for host type
 AC_CANONICAL_HOST
@@ -99,33 +101,36 @@ AC_CHECK_HEADER(
 dnl Headers included in common/types.h
 AC_CHECK_HEADERS([limits.h])
 
-dnl Headers included in common/directory_io.h and common/file_io.h
-AC_CHECK_HEADERS([sys/stat.h])
-
-dnl Headers included in common/file_io.h
-AC_CHECK_HEADERS([fcntl.h])
-AC_CHECK_HEADERS([unistd.h])
-
-dnl Headers included in common/narrow_string.h
+dnl Headers included in common/narrow_string.h and common/memory.h
 AC_CHECK_HEADERS([string.h])
-
-dnl Headers included in common/memory.h
 AC_CHECK_HEADERS([stdlib.h])
 
-dnl Headers included in common/notify.c
+dnl Headers included in libnotify/libnotify.c
 AC_CHECK_HEADERS([stdarg.h])
 AC_CHECK_HEADERS([varargs.h])
 
-dnl Headers included in and nk2tools/glob.h
+dnl Headers included in libnotify/libnotify.c, libbfio/libbfio_file.c and libewf/libewf_header_values.c
+AC_CHECK_HEADERS([errno.h])
+
+dnl Headers included in libbfio/libbfio_file.c, libsystem/libsystem_directory_io.h and libsystem/libsystem_file_io.h
+AC_CHECK_HEADERS([sys/stat.h])
+
+dnl Headers included in libbfio/libbfio_file.c and libsystem/libsystem_file_io.h
+AC_CHECK_HEADERS([fcntl.h])
+AC_CHECK_HEADERS([unistd.h])
+
+dnl Headers included in libsystem/libsystem_glob.h
 AC_CHECK_HEADERS([glob.h])
 
-dnl Headers included in and nk2tools/nk2signal.h
+dnl Headers included in libsytem/libsystem_support.c
+AC_CHECK_HEADERS([langinfo.h])
+AC_CHECK_HEADERS([locale.h])
+
+dnl Headers included in libsystem/libsystem_signal.h
 AC_CHECK_HEADERS([signal.h])
 AC_CHECK_HEADERS([sys/signal.h])
 
 dnl Other headers
-AC_CHECK_HEADERS([langinfo.h])
-AC_CHECK_HEADERS([locale.h])
 
 dnl Check for declarations and type definitions
 AC_TYPE_OFF_T
@@ -182,6 +187,63 @@ AC_CHECK_SIZEOF([off_t])
 AC_CHECK_SIZEOF([size_t])
 
 dnl Check for functions
+dnl File stream functions used in common/file_stream.h
+AC_CHECK_FUNCS(
+ [fclose],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: fclose],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [feof],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: feof],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [fgets],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: fgets],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [fopen],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: fopen],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [fread],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: fread],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [fseeko],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: fseeko],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [fwrite],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: fwrite],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [vfprintf],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: vfprintf],
+  [1]) ])
+
 dnl Memory functions used in common/memory.h
 AC_CHECK_FUNCS(
  [free],
@@ -225,94 +287,7 @@ AC_CHECK_FUNCS(
   [Missing function: realloc],
   [1]) ])
 
-dnl File input/output functions used in common/file_io.h
-AC_CHECK_FUNCS(
- [close],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: close],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [lseek],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: lseek],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [open],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: open],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [read],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: read],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [write],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: write],
-  [1]) ])
-
-dnl File input/output functions used in common/file_stream_io.h
-AC_CHECK_FUNCS(
- [fclose],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fclose],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [feof],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: feof],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fopen],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fopen],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fread],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fread],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fwrite],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fwrite],
-  [1]) ])
-
-dnl Directory functions used in common/directory_io.h
-AC_CHECK_FUNCS(
- [mkdir],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: mkdir],
-  [1]) ])
-
 dnl Narrow character string functions used in common/narrow_string.h
-AC_CHECK_FUNCS(
- [fgets],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: fgets],
-  [1]) ])
-
 AC_CHECK_FUNCS(
  [snprintf],
  [],
@@ -322,6 +297,13 @@ AC_CHECK_FUNCS(
   [AC_MSG_FAILURE(
    [Missing functions: snprintf and sprintf],
    [1]) ]) ])
+
+AC_CHECK_FUNCS(
+ [sscanf],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: sscanf],
+  [1]) ])
 
 AC_CHECK_FUNCS(
  [strlen],
@@ -405,7 +387,110 @@ AC_CHECK_FUNCS(
    [Missing functions: strtoull and atoll],
    [1]) ]) ])
 
-dnl Check for error string functions used in common/error_string.h
+AC_CHECK_FUNCS(
+ [vsnprintf],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: vsnprintf],
+  [1]) ])
+
+dnl File input/output functions used in libbfio/libbfio_file.h
+AC_CHECK_FUNCS(
+ [close],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: close],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [lseek],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: lseek],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [open],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: open],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [read],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: read],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [write],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: write],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [fstat],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: fstat],
+  [1]) ])
+
+dnl Date and time functions used in libewf/libewf_date_time.h
+AC_CHECK_FUNCS(
+ [localtime_r],
+ [],
+ [AC_CHECK_FUNCS(
+  [localtime],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing functions: localtime_r and localtime],
+   [1]) ]) ])
+
+AC_CHECK_FUNCS(
+ [mktime],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: mktime],
+  [1]) ])
+
+dnl Date and time functions used in libsystem/libsystem_date_time.h
+LIBNK2_CHECK_FUNC_CTIME
+
+AC_CHECK_FUNCS(
+ [gmtime_r],
+ [],
+ [AC_CHECK_FUNCS(
+  [gmtime],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing functions: gmtime_r and gmtime],
+   [1]) ]) ])
+
+AC_CHECK_FUNCS(
+ [time],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: time],
+  [1]) ])
+
+dnl Directory functions used in libsystem/libsystem_directory_io.h
+AC_CHECK_FUNCS(
+ [chdir],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing functions: chdir],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [mkdir],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing functions: mkdir],
+  [1]) ])
+
+dnl Check for error string functions used in libsystem/libsystem_error.c
 AC_FUNC_STRERROR_R(
  [],
  [AC_CHECK_FUNCS(
@@ -415,10 +500,10 @@ AC_FUNC_STRERROR_R(
    [Missing functions: strerror_r and strerror],
    [1]) ]) ])
 
-dnl Commandline argument/option parsing functions
+dnl Commandline argument/option parsing functions in libsystem/libsystem_getopt.h
 AC_CHECK_FUNCS([getopt])
 
-dnl Check for locale functions
+dnl Check for locale functions in libsystem/libsystem_support.h
 AC_CHECK_FUNCS(
  [setlocale],
  [],
@@ -428,7 +513,7 @@ AC_CHECK_FUNCS(
 
 LIBNK2_LANGINFO_CODESET
 
-dnl System functions
+dnl Other functions
 
 dnl Check for printf conversion specifier support
 LIBNK2_PRINTF_JD
@@ -700,37 +785,64 @@ AS_IF(
 	 [],
 	 [ac_libnk2_have_libbfio=no])
 
-	dnl Basic file IO functions
+	dnl Handle functions
 	AC_CHECK_LIB(
 	 bfio,
-	 libbfio_initialize,
+	 libbfio_handle_free,
 	 [ac_libnk2_dummy=yes],
 	 [ac_libnk2_have_libbfio=no])
 	AC_CHECK_LIB(
 	 bfio,
-	 libbfio_free,
+	 libbfio_handle_open,
 	 [ac_libnk2_dummy=yes],
 	 [ac_libnk2_have_libbfio=no])
 	AC_CHECK_LIB(
 	 bfio,
-	 libbfio_open,
+	 libbfio_handle_close,
 	 [ac_libnk2_dummy=yes],
 	 [ac_libnk2_have_libbfio=no])
 	AC_CHECK_LIB(
 	 bfio,
-	 libbfio_close,
+	 libbfio_handle_read,
+	 [ac_libnk2_dummy=yes],
+	 [ac_libnk2_have_libbfio=no])
+
+	AC_CHECK_LIB(
+	 bfio,
+	 libbfio_handle_set_track_offsets_read,
 	 [ac_libnk2_dummy=yes],
 	 [ac_libnk2_have_libbfio=no])
 	AC_CHECK_LIB(
 	 bfio,
-	 libbfio_seek_offset,
+	 libbfio_handle_get_offset_read,
 	 [ac_libnk2_dummy=yes],
 	 [ac_libnk2_have_libbfio=no])
 	AC_CHECK_LIB(
 	 bfio,
-	 libbfio_read,
+	 libbfio_handle_get_amount_of_offsets_read,
 	 [ac_libnk2_dummy=yes],
 	 [ac_libnk2_have_libbfio=no])
+
+	dnl File functions
+	AC_CHECK_LIB(
+	 bfio,
+	 libbfio_file_initialize,
+	 [ac_libnk2_dummy=yes],
+	 [ac_libnk2_have_libbfio=no])
+	AC_CHECK_LIB(
+	 bfio,
+	 libbfio_file_set_name,
+	 [ac_libnk2_dummy=yes],
+	 [ac_libnk2_have_libbfio=no])
+
+	AS_IF(
+		[test "x$ac_cv_libnk2_enable_wide_character_type" != xno ],
+		[AC_CHECK_LIB(
+		 bfio,
+		 libbfio_file_set_name_wide,
+		 [ac_libnk2_dummy=yes],
+		 [ac_libnk2_have_libbfio=no])
+		])
 	])
 
 AS_IF(
@@ -749,7 +861,10 @@ AS_IF(
 	 [])
 	AC_SUBST(
 	 [LIBBFIO_LIBADD],
-	 []) ],
+	 [])
+	AC_SUBST(
+	 [HAVE_LIBBFIO],
+	 [1]) ],
 	[dnl If libbfio is not available use the (local) version that came with libnk2
 	AC_DEFINE(
 	 [HAVE_LOCAL_LIBBFIO],
@@ -773,6 +888,9 @@ AS_IF(
 	AC_SUBST(
 	 [LIBBFIO_LIBADD],
 	 [../libbfio/libbfio.la])
+	AC_SUBST(
+	 [HAVE_LIBBFIO],
+	 [0])
 	ac_libnk2_have_libbfio=local])
 
 AM_CONDITIONAL(
@@ -954,6 +1072,23 @@ AS_IF(
 	 [Defines if debug output should be used] )
 	ac_cv_libnk2_enable_debug_output=yes])
 
+dnl Check if requires and build requires should be set in spec file
+AS_IF(
+	[test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes],
+	[AC_SUBST(
+	 [libnk2_spec_requires],
+	 [Requires:])
+	AC_SUBST(
+	 [libnk2_spec_build_requires],
+	 [BuildRequires:]) ],
+	[AC_SUBST(
+	 [libnk2_spec_requires],
+	 [])
+	AC_SUBST(
+	 [libnk2_spec_build_requires],
+	 [])
+	ac_libnk2_dummy=yes])
+
 dnl Set memwatch support
 ac_libnk2_have_memwatch=yes
 
@@ -990,10 +1125,12 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([liberror/Makefile])
+AC_CONFIG_FILES([libnotify/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
+AC_CONFIG_FILES([libsystem/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
 AC_CONFIG_FILES([manuals/Makefile])
 AC_CONFIG_FILES([macosx/Makefile])

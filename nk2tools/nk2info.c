@@ -45,11 +45,9 @@
 
 #include <libnk2.h>
 
-#include "error_string.h"
-#include "notify.h"
-#include "nk2getopt.h"
+#include <libsystem.h>
+
 #include "nk2output.h"
-#include "system_string.h"
 
 /* Prints the executable usage information
  */
@@ -83,21 +81,29 @@ int nk2info_file_info_fprint(
 
 	if( stream == NULL )
 	{
-		fprintf( stderr, "%s: invalid stream.\n",
+		fprintf(
+		 stderr,
+		 "%s: invalid stream.\n",
 		 function );
 
 		return( -1 );
 	}
 	if( file == NULL )
 	{
-		fprintf( stderr, "%s: invalid file.\n",
+		fprintf(
+		 stderr,
+		 "%s: invalid file.\n",
 		 function );
 
 		return( -1 );
 	}
-	fprintf( stream, "Nickfile information:\n" );
+	fprintf(
+	 stream,
+	 "Nickfile information:\n" );
 
-	fprintf( stream, "\n" );
+	fprintf(
+	 stream,
+	 "\n" );
 
 	return( 1 );
 }
@@ -110,21 +116,27 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libnk2_error_t *error      = NULL;
-	libnk2_file_t *nk2_file    = NULL;
-	system_character_t *source = NULL;
-	char *program              = "nk2info";
-	system_integer_t option    = 0;
-	int verbose                = 0;
+	libnk2_error_t *error         = NULL;
+	libnk2_file_t *nk2_file       = NULL;
+	libsystem_character_t *source = NULL;
+	char *program                 = "nk2info";
+	libsystem_integer_t option    = 0;
+	int verbose                   = 0;
 
-	if( system_string_initialize(
-	     &error ) != 1 )
+	libsystem_notify_set_stream(
+	 stderr,
+	 NULL );
+	libsystem_notify_set_verbose(
+	 1 );
+
+        if( libsystem_initialize(
+             &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system string.\n" );
+		 "Unable to initialize system values.\n" );
 
-		notify_error_backtrace(
+		libsystem_notify_print_error_backtrace(
 		 error );
 		liberror_error_free(
 		 &error );
@@ -135,16 +147,18 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = nk2getopt(
+	while( ( option = libsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_CHARACTER_T_STRING( "hvV" ) ) ) != (system_integer_t) -1 )
+	                   _LIBSYSTEM_CHARACTER_T_STRING( "hvV" ) ) ) != (libsystem_integer_t) -1 )
 	{
 		switch( option )
 		{
-			case (system_integer_t) '?':
+			case (libsystem_integer_t) '?':
 			default:
-				fprintf( stderr, "Invalid argument: %s\n",
+				fprintf(
+				 stderr,
+				 "Invalid argument: %s\n",
 				 argv[ optind ] );
 
 				usage_fprint(
@@ -152,18 +166,18 @@ int main( int argc, char * const argv[] )
 
 				return( EXIT_FAILURE );
 
-			case (system_integer_t) 'h':
+			case (libsystem_integer_t) 'h':
 				usage_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
 
-			case (system_integer_t) 'v':
+			case (libsystem_integer_t) 'v':
 				verbose = 1;
 
 				break;
 
-			case (system_integer_t) 'V':
+			case (libsystem_integer_t) 'V':
 				nk2output_copyright_fprint(
 				 stdout );
 
@@ -172,7 +186,9 @@ int main( int argc, char * const argv[] )
 	}
 	if( optind == argc )
 	{
-		fprintf( stderr, "Missing source file.\n" );
+		fprintf(
+		 stderr,
+		 "Missing source file.\n" );
 
 		usage_fprint(
 		 stdout );
@@ -181,18 +197,26 @@ int main( int argc, char * const argv[] )
 	}
 	source = argv[ optind ];
 
-	libnk2_set_notify_values(
-	 stderr,
+	libsystem_notify_set_verbose(
 	 verbose );
-	notify_set_values(
+	libnk2_notify_set_stream(
 	 stderr,
+	 NULL );
+	libnk2_notify_set_verbose(
 	 verbose );
 
 	if( libnk2_file_initialize(
 	     &nk2_file,
 	     &error ) != 1 )
 	{
-		fprintf( stderr, "Unable to initialize libnk2 file.\n" );
+		fprintf(
+		 stderr,
+		 "Unable to initialize libnk2 file.\n" );
+
+		libsystem_notify_print_error_backtrace(
+		 error );
+		libnk2_error_free(
+		 &error );
 
 		return( EXIT_FAILURE );
 	}
@@ -202,11 +226,12 @@ int main( int argc, char * const argv[] )
 	     LIBNK2_OPEN_READ,
 	     &error ) != 1 )
 	{
-		nk2output_error_fprint(
-		 stderr, "Error opening file: %" PRIs_SYSTEM "",
+		fprintf(
+		 stderr,
+		 "Error opening file: %" PRIs_LIBSYSTEM ".\n",
 		 argv[ optind ] );
 
-		notify_error_backtrace(
+		libsystem_notify_print_error_backtrace(
 		 error );
 		libnk2_error_free(
 		 &error );
@@ -222,9 +247,11 @@ int main( int argc, char * const argv[] )
 	     nk2_file,
 	     &error ) != 1 )
 	{
-		fprintf( stderr, "Unable to print file information.\n" );
+		fprintf(
+		 stderr,
+		 "Unable to print file information.\n" );
 
-		notify_error_backtrace(
+		libsystem_notify_print_error_backtrace(
 		 error );
 		libnk2_error_free(
 		 &error );
@@ -239,11 +266,12 @@ int main( int argc, char * const argv[] )
 	     nk2_file,
 	     &error ) != 0 )
 	{
-		nk2output_error_fprint(
-		 stderr, "Error closing file: %" PRIs_SYSTEM "",
+		fprintf(
+		 stderr,
+		 "Error closing file: %" PRIs_LIBSYSTEM ".\n",
 		 argv[ optind ] );
 
-		notify_error_backtrace(
+		libsystem_notify_print_error_backtrace(
 		 error );
 		libnk2_error_free(
 		 &error );
@@ -258,12 +286,11 @@ int main( int argc, char * const argv[] )
 	     &nk2_file,
 	     &error ) != 1 )
 	{
-		fprintf( stderr, "Unable to free libnk2 file.\n" );
+		fprintf(
+		 stderr,
+		 "Unable to free libnk2 file.\n" );
 
-		notify_error_backtrace(
-		 error );
-
-		notify_error_backtrace(
+		libsystem_notify_print_error_backtrace(
 		 error );
 		libnk2_error_free(
 		 &error );

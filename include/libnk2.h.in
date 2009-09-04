@@ -32,6 +32,10 @@
 
 #include <stdio.h>
 
+#if defined( LIBNK2_HAVE_BFIO )
+#include <libbfio.h>
+#endif
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
@@ -45,15 +49,60 @@ extern "C" {
 LIBNK2_EXTERN const char *libnk2_get_version(
                            void );
 
+/* Determines if a file is a NK2 file (check for the NK2 file signature)
+ * Returns 1 if true, 0 if not or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_check_file_signature(
+                   const char *filename,
+                   libnk2_error_t **error );
+
+#if defined( LIBNK2_HAVE_WIDE_CHARACTER_TYPE )
+/* Determines if a file is a NK2 file (check for the NK2 file signature)
+ * Returns 1 if true, 0 if not or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_check_file_signature_wide(
+                   const wchar_t *filename,
+                   libnk2_error_t **error );
+#endif
+
+#if defined( LIBNK2_HAVE_BFIO )
+/* Determines if a file is a NK2 file (check for the NK2 file signature) using a Basic File IO (bfio) handle
+ * Returns 1 if true, 0 if not or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_check_file_signature_file_io_handle(
+                   libbfio_handle_t *bfio_handle,
+                   libnk2_error_t **error );
+#endif
+
 /* -------------------------------------------------------------------------
  * Notify functions
  * ------------------------------------------------------------------------- */
 
-/* Set the notify values
+/* Set the verbose notification
  */
-LIBNK2_EXTERN void libnk2_set_notify_values(
-                    FILE *stream,
+LIBNK2_EXTERN void libnk2_notify_set_verbose(
                     int verbose );
+
+/* Set the notification stream
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_notify_set_stream(
+                   FILE *stream,
+                   libnk2_error_t **error );
+
+/* Opens the notification stream using a filename
+ * The stream is opened in append mode
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_notify_stream_open(
+                   const char *filename,
+                   libnk2_error_t **error );
+
+/* Closes the notification stream if opened using a filename
+ * Returns 0 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_notify_stream_close(
+                   libnk2_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Error functions
@@ -65,16 +114,34 @@ LIBNK2_EXTERN void libnk2_error_free(
                     libnk2_error_t **error );
 
 /* Prints a descriptive string of the error to the stream
+ * Returns the amount of printed characters if successful or -1 on error
  */
-LIBNK2_EXTERN void libnk2_error_fprint(
-                    libnk2_error_t *error,
-                    FILE *stream );
+LIBNK2_EXTERN int libnk2_error_fprint(
+                   libnk2_error_t *error,
+                   FILE *stream );
+
+/* Prints a descriptive string of the error to the string
+ * Returns the amount of printed characters if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_error_sprint(
+                   libnk2_error_t *error,
+                   char *string,
+                   size_t size );
 
 /* Prints a backtrace of the error to the stream
+ * Returns the amount of printed characters if successful or -1 on error
  */
-LIBNK2_EXTERN void libnk2_error_backtrace_fprint(
-                    libnk2_error_t *error,
-                    FILE *stream );
+LIBNK2_EXTERN int libnk2_error_backtrace_fprint(
+                   libnk2_error_t *error,
+                   FILE *stream );
+
+/* Prints a backtrace of the error to the string
+ * Returns the amount of printed characters if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_error_backtrace_sprint(
+                   libnk2_error_t *error,
+                   char *string,
+                   size_t size );
 
 /* -------------------------------------------------------------------------
  * File functions
@@ -111,7 +178,7 @@ LIBNK2_EXTERN int libnk2_file_open(
                    int flags,
                    libnk2_error_t **error );
 
-#if defined( LIBNK2_WIDE_CHARACTER_TYPE )
+#if defined( LIBNK2_HAVE_WIDE_CHARACTER_TYPE )
 /* Opens a Nickfile
  * Returns 1 if successful or -1 on error
  */

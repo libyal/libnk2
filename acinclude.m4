@@ -123,3 +123,65 @@ if( ( string[ 0 ] != '1' ) || ( string[ 1 ] != '0' ) ) return( 1 ); ]] )],
 	AC_LANG_POP(C)
 	CFLAGS="$SAVE_CFLAGS"])
 
+dnl Function to detect if ctime_r or ctime is available
+dnl Also checks if ctime_t is defined according to the POSIX standard
+AC_DEFUN([LIBNK2_CHECK_FUNC_CTIME],
+	[AC_CHECK_FUNC(
+	 [ctime_r],
+	 [AC_LANG_PUSH(C)
+	 AC_MSG_CHECKING(
+	  [if ctime_r is defined according to the POSIX definition])
+	 AC_LINK_IFELSE(
+		AC_LANG_PROGRAM(
+		 [[#include <time.h>]],
+		 [[ctime_r(NULL,NULL,0)]]),
+		[AC_MSG_RESULT(
+		 [ctime_r with additional size argument detected])
+	 	AC_DEFINE(
+		 [HAVE_CTIME_R],
+		 [1],
+		 [Define to 1 if you have the ctime_r function.] )
+		AC_DEFINE(
+		 [HAVE_CTIME_R_SIZE],
+		 [1],
+		 [Define to 1 if you have the ctime_r function with a third size argument.] )],
+		[AC_LINK_IFELSE(
+			AC_LANG_PROGRAM(
+			 [[#include <time.h>]],
+			 [[ctime_r(NULL,NULL)]]),
+			 [AC_MSG_RESULT(
+			  [yes])
+	 		 AC_DEFINE(
+			  [HAVE_CTIME_R],
+			  [1],
+			  [Define to 1 if you have the ctime_r function.] )],
+			 [CPPFLAGS="$CPPFLAGS -D_POSIX_PTHREAD_SEMANTICS"
+			 AC_LINK_IFELSE(
+				AC_LANG_PROGRAM(
+				 [[#include <time.h>]],
+				 [[ctime_r(NULL,NULL)]] ),
+				[AC_MSG_RESULT(
+				 [ctime_r requires additional compile flags])
+		 		 AC_DEFINE(
+				  [HAVE_CTIME_R],
+				  [1],
+				  [Define to 1 if you have the ctime_r function.] )],
+				[AC_MSG_WARN(
+				 [Unable to determine how to compile ctime_r])
+				AC_CHECK_FUNCS(
+				 [ctime],
+				 [],
+				 [AC_MSG_FAILURE(
+				  [Missing function: ctime_r and ctime],
+				  [1]) ]) ])
+			])
+		])
+	AC_LANG_POP(C) ]) ],
+	[AC_CHECK_FUNCS(
+	 [ctime],
+	 [],
+	 [AC_MSG_FAILURE(
+	  [Missing function: ctime_r and ctime],
+	  [1]) ])
+])
+

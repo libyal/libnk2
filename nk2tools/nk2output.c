@@ -24,22 +24,16 @@
 #include <memory.h>
 #include <types.h>
 
-#include <errno.h>
-
-#include <stdio.h>
-
-#if defined( HAVE_STDARG_H )
-#include <stdarg.h>
-#elif defined( HAVE_VARARGS_H )
-#include <varargs.h>
-#else
-#error No variable argument support available
-#endif
-
 #if defined( HAVE_LOCAL_LIBUNA )
 #include <libuna_definitions.h>
 #elif defined( HAVE_LIBUNA_H )
 #include <libuna.h>
+#endif
+
+#if defined( HAVE_LOCAL_LIBBFIO )
+#include <libbfio_definitions.h>
+#elif defined( HAVE_LIBBFIO_H )
+#include <libbfio.h>
 #endif
 
 /* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
@@ -51,9 +45,9 @@
 
 #include <libnk2.h>
 
-#include "error_string.h"
+#include <libsystem.h>
+
 #include "nk2output.h"
-#include "system_string.h"
 
 /* Prints the copyright information
  */
@@ -98,83 +92,13 @@ void nk2output_version_fprint(
 	 ", libuna %s",
 	 LIBUNA_VERSION_STRING );
 
+	fprintf(
+	 stream,
+	 ", libbfio %s",
+	 LIBBFIO_VERSION_STRING );
+
         fprintf(
 	 stream,
 	 ")\n\n" );
 }
-
-#if defined( HAVE_STDARG_H )
-#define VARIABLE_ARGUMENTS_FUNCTION( function, type, argument ) \
-        function( FILE *stream, type argument, ... )
-#define VARIABLE_ARGUMENTS_START( argument_list, type, name ) \
-        va_start( argument_list, name )
-#define VARIABLE_ARGUMENTS_END( argument_list ) \
-        va_end( argument_list )
-
-#elif defined( HAVE_VARARGS_H )
-#define VARIABLE_ARGUMENTS_FUNCTION( function, type, argument ) \
-        function( FILE *stream, va_alist ) va_dcl
-#define VARIABLE_ARGUMENTS_START( argument_list, type, name ) \
-        { type name; va_start( argument_list ); name = va_arg( argument_list, type )
-#define VARIABLE_ARGUMENTS_END( argument_list ) \
-        va_end( argument_list ); }
-
-#endif
-
-void VARIABLE_ARGUMENTS_FUNCTION(
-      nk2output_error_fprint,
-      char *,
-      format )
-{
-	va_list argument_list;
-
-#if defined( HAVE_STRERROR_R ) || defined( HAVE_STRERROR )
-        system_character_t *error_string = NULL;
-#endif
-
-	if( stream == NULL )
-	{
-		return;
-	}
-	VARIABLE_ARGUMENTS_START(
-	 argument_list,
-	 char *,
-       	 format );
-
-	vfprintf(
-       	 stream,
-	 format,
-       	 argument_list );
-
-	VARIABLE_ARGUMENTS_END(
-       	 argument_list );
-
-#if defined( HAVE_STRERROR_R ) || defined( HAVE_STRERROR )
-	if( errno != 0 )
-	{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER_T )
-		error_string = error_string_wcserror(
-		                errno );
-#else
-		error_string = error_string_strerror(
-		                errno );
-#endif
-
-		if( error_string != NULL )
-		{
-			fprintf(
-			 stream, " with error: %" PRIs_SYSTEM "",
-			 error_string );
-
-			memory_free(
-			 error_string );
-		}
-	}
-#endif
-	fprintf( stream, "\n" );
-}
-
-#undef VARIABLE_ARGUMENTS_FUNCTION
-#undef VARIABLE_ARGUMENTS_START
-#undef VARIABLE_ARGUMENTS_END
 

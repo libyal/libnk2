@@ -37,9 +37,7 @@
 
 #include <libnk2.h>
 
-#include <stdio.h>
-
-#include "system_string.h"
+#include <libsystem.h>
 
 #if defined( __cplusplus )
 extern "C" {
@@ -77,23 +75,23 @@ int export_handle_sanitize_filename(
      liberror_error_t **error );
 
 int export_handle_create_fullname(
-     system_character_t *export_path,
+     libsystem_character_t *export_path,
      uint8_t *filename,
      size_t filename_size,
-     system_character_t **fullname,
+     libsystem_character_t **fullname,
      liberror_error_t **error );
 
 int export_handle_export_item(
      libnk2_item_t *item,
      int item_index,
      int amount_of_items,
-     const system_character_t *export_path,
+     const libsystem_character_t *export_path,
      FILE *log_file_stream,
      liberror_error_t **error );
 
 int export_handle_export_items(
      export_handle_t *export_handle,
-     const system_character_t *export_path,
+     const libsystem_character_t *export_path,
      FILE *log_file_stream,
      liberror_error_t **error );
 

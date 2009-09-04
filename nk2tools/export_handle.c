@@ -35,10 +35,10 @@
 
 #include <libnk2.h>
 
-#include "directory_io.h"
+#include <libsystem.h>
+
 #include "export_handle.h"
 #include "nk2common.h"
-#include "notify.h"
 
 /* Initializes the export handle
  * Returns 1 if successful or -1 on error
@@ -319,10 +319,10 @@ int export_handle_sanitize_filename(
  * Returns 1 if successful or -1 on error
  */
 int export_handle_create_fullname(
-     system_character_t *export_path,
+     libsystem_character_t *export_path,
      uint8_t *filename,
      size_t filename_size,
-     system_character_t **fullname,
+     libsystem_character_t **fullname,
      liberror_error_t **error )
 {
 	static char *function = "export_handle_create_fullname";
@@ -397,7 +397,7 @@ int export_handle_create_fullname(
 
 		return( -1 );
 	}
-	fullname_size = system_string_length(
+	fullname_size = libsystem_string_length(
 	                   export_path );
 
 	fullname_size += filename_size - 1;
@@ -406,8 +406,8 @@ int export_handle_create_fullname(
 	 */
 	fullname_size += 2;
 
-	*fullname = (system_character_t *) memory_allocate(
-	                                    sizeof( system_character_t ) * fullname_size );
+	*fullname = (libsystem_character_t *) memory_allocate(
+	                                       sizeof( libsystem_character_t ) * fullname_size );
 
 	if( *fullname == NULL )
 	{
@@ -420,10 +420,10 @@ int export_handle_create_fullname(
 
 		return( -1 );
 	}
-	if( system_string_snprintf(
+	if( libsystem_string_snprintf(
 	     *fullname,
 	     fullname_size,
-	     "%" PRIs_SYSTEM "%c%s",
+	     "%" PRIs_LIBSYSTEM "%c%s",
 	     export_path,
 	     NK2COMMON_PATH_SEPARATOR,
 	     (char *) filename ) == -1 )
@@ -454,7 +454,7 @@ int export_handle_export_item(
      libnk2_item_t *item,
      int item_index,
      int amount_of_items,
-     const system_character_t *export_path,
+     const libsystem_character_t *export_path,
      FILE *log_file_stream,
      liberror_error_t **error )
 {
@@ -498,7 +498,7 @@ int export_handle_export_item(
  */
 int export_handle_export_items(
      export_handle_t *export_handle,
-     const system_character_t *export_path,
+     const libsystem_character_t *export_path,
      FILE *log_file_stream,
      liberror_error_t **error )
 {
@@ -541,14 +541,14 @@ int export_handle_export_items(
 
 		return( -1 );
 	}
-	if( directory_io_mkdir(
+	if( libsystem_directory_make(
 	     export_path ) != 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: unable to create directory: %" PRIs_SYSTEM ".\n",
+		 "%s: unable to make directory: %" PRIs_LIBSYSTEM ".\n",
 		 function,
 		 export_path );
 
@@ -572,7 +572,9 @@ int export_handle_export_items(
 	{
 		return( 0 );
 	}
-	for( item_iterator = 0; item_iterator < amount_of_items; item_iterator++ )
+	for( item_iterator = 0;
+	     item_iterator < amount_of_items;
+	     item_iterator++ )
 	{
 		if( libnk2_file_get_item(
 		     export_handle->input_handle,
@@ -604,7 +606,7 @@ int export_handle_export_items(
 			 item_iterator + 1,
 			 amount_of_items );
 
-			notify_verbose_printf(
+			libsystem_notify_verbose_printf(
 			 "%s: unable to export item: %d.\n",
 			 function,
 			 item_iterator + 1 );
@@ -612,7 +614,7 @@ int export_handle_export_items(
 			if( ( error != NULL )
 			 && ( *error != NULL ) )
 			{
-				notify_error_backtrace(
+				libsystem_notify_print_error_backtrace(
 				 *error );
 			}
 			liberror_error_free(

@@ -1,11 +1,15 @@
+ACLOCAL_AMFLAGS = -I m4
+
 SUBDIRS = \
 	include \
 	common \
 	liberror \
+	libnotify \
 	libuna \
 	libbfio \
 	libfmapi \
 	libnk2 \
+	libsystem \
 	nk2tools \
 	manuals \
 	macosx \
@@ -32,6 +36,7 @@ lib: library
 library:
 	(cd $(srcdir)/common && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/liberror && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libnotify && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfmapi && $(MAKE) $(AM_MAKEFLAGS))
@@ -51,6 +56,7 @@ distclean: clean
 
 splint:
 	(cd $(srcdir)/liberror && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libnotify && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfmapi && $(MAKE) splint $(AM_MAKEFLAGS))

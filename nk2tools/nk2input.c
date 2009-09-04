@@ -32,16 +32,16 @@
 
 #include <libnk2.h>
 
-#include "notify.h"
+#include <libsystem.h>
+
 #include "nk2common.h"
 #include "nk2input.h"
-#include "system_string.h"
 
 /* Determines the codepage from an argument string
  * Returns 1 if successful or -1 on error
  */
 int nk2input_determine_ascii_codepage(
-     const system_character_t *argument,
+     const libsystem_character_t *argument,
      int *ascii_codepage )
 {
 	static char *function = "nk2input_determine_ascii_codepage";
@@ -49,93 +49,95 @@ int nk2input_determine_ascii_codepage(
 
 	if( argument == NULL )
 	{
-		notify_warning_printf( "%s: invalid argument string.\n",
+		libsystem_notify_printf(
+		 "%s: invalid argument string.\n",
 		 function );
 
 		return( -1 );
 	}
 	if( ascii_codepage == NULL )
 	{
-		notify_warning_printf( "%s: invalid ASCII codepage.\n",
+		libsystem_notify_printf(
+		 "%s: invalid ASCII codepage.\n",
 		 function );
 
 		return( -1 );
 	}
-	if( system_string_compare(
+	if( libsystem_string_compare(
 	     argument,
-	     _SYSTEM_CHARACTER_T_STRING( "ascii" ),
+	     _LIBSYSTEM_CHARACTER_T_STRING( "ascii" ),
 	          4 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_ASCII;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1250" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1250" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1250;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1251" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1251" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1251;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1252" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1252" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1252;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1253" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1253" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1253;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1254" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1254" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1254;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1255" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1255" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1255;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1256" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1256" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1256;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1257" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1257" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1257;
 		result          = 1;
 	}
-	else if( system_string_compare(
+	else if( libsystem_string_compare(
 	          argument,
-	          _SYSTEM_CHARACTER_T_STRING( "windows-1258" ),
+	          _LIBSYSTEM_CHARACTER_T_STRING( "windows-1258" ),
 	          12 ) == 0 )
 	{
 		*ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1258;

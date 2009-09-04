@@ -35,6 +35,8 @@
 extern "C" {
 #endif
 
+extern const uint8_t nk2_file_signature[ 4 ];
+
 typedef struct libnk2_io_handle libnk2_io_handle_t;
 
 struct libnk2_io_handle

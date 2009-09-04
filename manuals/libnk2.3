@@ -1,4 +1,4 @@
-.Dd May 24, 2009
+.Dd September 4, 2009
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
@@ -12,18 +12,38 @@
 Support functions
 .Ft const char *
 .Fn libnk2_get_version "void"
+.Ft int
+.Fn libnk2_check_file_signature "const char *filename, libnk2_error_t **error"
+.Pp
+Available when compiled with wide character string support:
+.Ft int
+.Fn libnk2_check_file_signature_wide "const wchar_t *filename, libnk2_error_t **error"
+.Pp
+Available when compiled with libbfio support:
+.Ft int
+.Fn libnk2_check_file_signature_file_io_handle "libbfio_handle_t *bfio_handle, libnk2_error_t **error"
 .Pp
 Notify functions
 .Ft void
-.Fn libnk2_set_notify_values "FILE *stream, uint8_t verbose"
+.Fn libnk2_notify_set_verbose "int verbose"
+.Ft int
+.Fn libnk2_notify_set_stream "FILE *stream, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_notify_stream_open "const char *filename, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_notify_stream_close "libnk2_error_t **error"
 .Pp
 Error functions
-.Ft void
+.Ft void 
 .Fn libnk2_error_free "libnk2_error_t **error"
-.Ft void
+.Ft int
 .Fn libnk2_error_fprint "libnk2_error_t *error, FILE *stream"
-.Ft void
+.Ft int
+.Fn libnk2_error_sprint "libnk2_error_t *error, char *string, size_t size"
+.Ft int 
 .Fn libnk2_error_backtrace_fprint "libnk2_error_t *error, FILE *stream"
+.Ft int
+.Fn libnk2_error_backtrace_sprint "libnk2_error_t *error, char *string, size_t size"
 .Pp
 File functions
 .Ft int
