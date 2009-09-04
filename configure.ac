@@ -1140,6 +1140,7 @@ AC_CONFIG_FILES([include/libnk2.h])
 AC_CONFIG_FILES([include/libnk2/definitions.h])
 AC_CONFIG_FILES([include/libnk2/features.h])
 AC_CONFIG_FILES([include/libnk2/types.h])
+AC_CONFIG_FILES([libnk2/libnk2_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([macosx/Introduction.rtf])

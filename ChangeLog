@@ -38,6 +38,7 @@ Deployment:
 * updated codpage definitions
 * worked on libsystem integration
 * updated guid and filetime
+* added value_type refactored item and item_values
 
 20090524
 * updated libbfio

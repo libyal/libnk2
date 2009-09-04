@@ -29,6 +29,8 @@
 #include <liberror.h>
 #include <libnotify.h>
 
+#include <libnk2/codepage.h>
+
 #include "libnk2_array_type.h"
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"

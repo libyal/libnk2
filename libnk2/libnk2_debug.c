@@ -26,7 +26,6 @@
 
 #include <liberror.h>
 #include <libnotify.h>
-
 #include <libfmapi.h>
 
 #include "libnk2_debug.h"
@@ -47,354 +46,44 @@ int libnk2_debug_mapi_value_print(
      int ascii_codepage,
      liberror_error_t **error )
 {
-	libnk2_character_t filetime_string[ LIBFMAPI_FILETIME_STRING_SIZE ];
-	libnk2_character_t guid_string[ LIBFMAPI_GUID_STRING_SIZE ];
+	static char *function = "libnk2_debug_mapi_value_print";
 
-	libnk2_character_t *value_string    = NULL;
-	static char *function               = "libnk2_debug_mapi_value_print";
-	libfmapi_filetime_t filetime        = LIBFMAPI_FILETIME_ZERO;
-	size_t value_string_size            = 0;
-	double value_double                 = 0.0;
-	float value_float                   = 0.0;
-	uint64_t value_64bit                = 0;
-	uint32_t value_32bit                = 0;
-
-	if( value_data == NULL )
+	if( libfmapi_debug_print_value(
+	     entry_type,
+	     value_type,
+	     value_data,
+	     value_data_size,
+	     ascii_codepage,
+	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value data.",
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
+		 "%s: unable to print MAPI value.",
 		 function );
 
-		return( -1 );
-	}
-	switch( value_type )
-	{
-		case 0x0004:
-			endian_little_convert_64bit(
-			 value_64bit,
-			 value_data );
+		if( ( error != NULL )
+		 && ( *error != NULL ) )
+		{
+			libnotify_print_error_backtrace(
+			 *error );
+		}
+		liberror_error_free(
+		 error );
 
-			if( memory_copy(
-			     &value_float,
-			     &value_32bit,
-			     sizeof( uint32_t ) ) == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to convert 32-bit value into float.",
-				 function );
-
-				return( -1 );
-			}
-			libnotify_verbose_printf(
-			 "Floating point value\t: %f\n",
-			 value_float );
-			libnotify_verbose_printf(
-			 "\n" );
-
-			break;
-
-		case 0x0005:
-			endian_little_convert_64bit(
-			 value_64bit,
-			 value_data );
-
-			if( memory_copy(
-			     &value_double,
-			     &value_64bit,
-			     sizeof( uint64_t ) ) == NULL )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to convert 64-bit value into double.",
-				 function );
-
-				return( -1 );
-			}
-			libnotify_verbose_printf(
-			 "Floating point double value\t: %f\n",
-			 value_double );
-			libnotify_verbose_printf(
-			 "\n" );
-
-			break;
-
-		case 0x0014:
-			endian_little_convert_64bit(
-			 value_64bit,
-			 value_data );
-
-			libnotify_verbose_printf(
-			 "64-bit value\t: %" PRIu64 "\n",
-			 value_64bit );
-			libnotify_verbose_printf(
-			 "\n" );
-
-			break;
-
-		case 0x0040:
-			if( libfmapi_filetime_from_byte_stream(
-			     &filetime,
-			     value_data,
-			     value_data_size,
-			     LIBNK2_ENDIAN_LITTLE,
-			     error ) != 1 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_CONVERSION,
-				 LIBERROR_CONVERSION_ERROR_GENERIC,
-				 "%s: unable to create filetime.",
-				 function );
-
-				if( ( error != NULL )
-				 && ( *error != NULL ) )
-				{
-			                libnotify_print_error_backtrace(
-			                 *error );
-				}
-				liberror_error_free(
-				 error );
-
-				libnotify_verbose_print_data(
-				 value_data,
-				 value_data_size );
-
-				break;
-			}
-			if( libfmapi_filetime_to_string(
-			     &filetime,
-			     filetime_string,
-			     LIBFMAPI_FILETIME_STRING_SIZE,
-			     error ) != 1 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_CONVERSION,
-				 LIBERROR_CONVERSION_ERROR_GENERIC,
-				 "%s: unable to create filetime string.",
-				 function );
-
-				if( ( error != NULL )
-				 && ( *error != NULL ) )
-				{
-			                libnotify_print_error_backtrace(
-			                 *error );
-				}
-				liberror_error_free(
-				 error );
-
-				libnotify_verbose_print_data(
-				 value_data,
-				 value_data_size );
-
-				break;
-			}
-			libnotify_verbose_printf(
-			 "Filetime\t: %s\n",
-			 filetime_string );
-			libnotify_verbose_printf(
-			 "\n" );
-
-			break;
-
-		case 0x0048:
-			if( value_data_size == 16 )
-			{
-				if( libfmapi_guid_to_string(
-				     (libfmapi_guid_t *) value_data,
-				     LIBNK2_ENDIAN_LITTLE,
-				     guid_string,
-				     LIBFMAPI_GUID_STRING_SIZE,
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_CONVERSION,
-					 LIBERROR_CONVERSION_ERROR_GENERIC,
-					 "%s: unable to create guid string.",
-					 function );
-
-					return( -1 );
-				}
-				libnotify_verbose_printf(
-				 "GUID\t: %s\n",
-				 guid_string );
-				libnotify_verbose_printf(
-				 "\n" );
-			}
-			else
-			{
-				libnotify_verbose_print_data(
-				 value_data,
-				 value_data_size );
-			}
-			break;
-
-		case 0x001e:
-			if( libnk2_string_size_from_byte_stream(
-			     value_data,
-			     value_data_size,
-			     ascii_codepage,
-			     &value_string_size,
-			     error ) != 1 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_CONVERSION,
-				 LIBERROR_CONVERSION_ERROR_GENERIC,
-				 "%s: unable to determine string size.",
-				 function );
-
-				if( ( error != NULL )
-				 && ( *error != NULL ) )
-				{
-			                libnotify_print_error_backtrace(
-			                 *error );
-				}
-				liberror_error_free(
-				 error );
-
-				libnotify_verbose_print_data(
-				 value_data,
-				 value_data_size );
-			}
-			else
-			{
-				value_string = (libnk2_character_t *) memory_allocate(
-								       sizeof( libnk2_character_t ) * value_string_size );
-
-				if( value_string == NULL )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_MEMORY,
-					 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create value string.",
-					 function );
-
-					return( -1 );
-				}
-				if( libnk2_string_copy_from_byte_stream(
-				     value_string,
-				     (size_t) value_string_size,
-				     value_data,
-				     value_data_size,
-				     ascii_codepage,
-				     error ) == 1 )
-				{
-					libnotify_verbose_printf(
-					 "ASCII string\t: " );
-
-					libnotify_verbose_printf(
-					 "%s\n\n",
-					 value_string );
-				}
-				memory_free(
-				 value_string );
-			}
-			break;
-
-		case 0x001f:
-			if( libnk2_string_size_from_utf16_stream(
-			     value_data,
-			     value_data_size,
-			     LIBNK2_ENDIAN_LITTLE,
-			     &value_string_size,
-			     error ) != 1 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_CONVERSION,
-				 LIBERROR_CONVERSION_ERROR_GENERIC,
-				 "%s: unable to determine string size.",
-				 function );
-
-				if( ( error != NULL )
-				 && ( *error != NULL ) )
-				{
-			                libnotify_print_error_backtrace(
-			                 *error );
-				}
-				liberror_error_free(
-				 error );
-
-				libnotify_verbose_print_data(
-				 value_data,
-				 value_data_size );
-			}
-			else
-			{
-				value_string = (libnk2_character_t *) memory_allocate(
-								       sizeof( libnk2_character_t ) * value_string_size );
-				
-
-				if( value_string == NULL )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_MEMORY,
-					 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create value string.",
-					 function );
-
-					return( -1 );
-				}
-				if( libnk2_string_copy_from_utf16_stream(
-				     value_string,
-				     (size_t) value_string_size,
-				     value_data,
-				     value_data_size,
-				     LIBNK2_ENDIAN_LITTLE,
-				     error ) == 1 )
-				{
-					libnotify_verbose_printf(
-					 "Unicode string\t: " );
-
-					libnotify_verbose_printf(
-					 "%s\n\n",
-					 value_string );
-				}
-				memory_free(
-				 value_string );
-			}
-			break;
-
-		case 0x0102:
-			switch( entry_type )
-			{
-				default:
-					libnotify_verbose_print_data(
-					 value_data,
-					 value_data_size );
-					break;
-			}
-			break;
-
-		case 0x1102:
-			switch( entry_type )
-			{
-				default:
-					libnotify_verbose_print_data(
-					 value_data,
-					 value_data_size );
-					break;
-			};
-			break;
-
-		default:
+		if( value_data != NULL )
+		{
 			libnotify_verbose_print_data(
 			 value_data,
 			 value_data_size );
-			break;
-	};
+		}
+		else
+		{
+			libnotify_verbose_printf(
+			 "<NULL>\n\n" );
+		}
+	}
 	return( 1 );
 }
 

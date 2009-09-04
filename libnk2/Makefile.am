@@ -19,6 +19,7 @@ libnk2_la_SOURCES = \
 	libnk2_notify.c libnk2_notify.h \
 	libnk2_string.h \
 	libnk2_support.c libnk2_support.h \
+	libnk2_value_type.c libnk2_value_type.h \
 	nk2_file_header.h \
 	nk2_item.h
 

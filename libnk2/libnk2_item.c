@@ -26,9 +26,12 @@
 #include <types.h>
 
 #include <liberror.h>
+#include <libfmapi.h>
 
 #include "libnk2_item.h"
+#include "libnk2_item_values.h"
 #include "libnk2_list_type.h"
+#include "libnk2_value_type.h"
 
 /* Initializes the item and its values
  * Returns 1 if successful or -1 on error
@@ -395,7 +398,10 @@ int libnk2_item_get_entry_value_boolean(
      liberror_error_t **error )
 {
 	libnk2_internal_item_t *internal_item = NULL;
+	uint8_t *value_data                   = NULL;
 	static char *function                 = "libnk2_item_get_entry_value_boolean";
+	size_t value_data_size                = 0;
+	uint32_t value_type                   = 0;
 	int result                            = 0;
 
 	if( item == NULL )
@@ -422,11 +428,24 @@ int libnk2_item_get_entry_value_boolean(
 
 		return( -1 );
 	}
-	result = libnk2_item_values_get_entry_value_boolean(
+	if( entry_value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry value.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          internal_item->internal_file->io_handle,
 	          entry_type,
-	          entry_value,
+	          &value_type,
+	          &value_data,
+	          &value_data_size,
 	          error );
 
 	if( result == -1 )
@@ -435,8 +454,28 @@ int libnk2_item_get_entry_value_boolean(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to get entry value boolean.",
+		 "%s: unable to retrieve entry value.",
 		 function );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		if( libnk2_value_type_copy_to_boolean(
+		     value_data,
+		     value_data_size,
+		     entry_value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to set boolean entry value.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	return( result );
 }
@@ -451,7 +490,10 @@ int libnk2_item_get_entry_value_32bit(
      liberror_error_t **error )
 {
 	libnk2_internal_item_t *internal_item = NULL;
+	uint8_t *value_data                   = NULL;
 	static char *function                 = "libnk2_item_get_entry_value_32bit";
+	size_t value_data_size                = 0;
+	uint32_t value_type                   = 0;
 	int result                            = 0;
 
 	if( item == NULL )
@@ -478,11 +520,24 @@ int libnk2_item_get_entry_value_32bit(
 
 		return( -1 );
 	}
-	result = libnk2_item_values_get_entry_value_32bit(
+	if( entry_value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry value.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          internal_item->internal_file->io_handle,
 	          entry_type,
-	          entry_value,
+	          &value_type,
+	          &value_data,
+	          &value_data_size,
 	          error );
 
 	if( result == -1 )
@@ -491,8 +546,28 @@ int libnk2_item_get_entry_value_32bit(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to get entry value 32-bit.",
+		 "%s: unable to retrieve entry value.",
 		 function );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		if( libnk2_value_type_copy_to_32bit(
+		     value_data,
+		     value_data_size,
+		     entry_value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to set 32-bit entry value.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	return( result );
 }
@@ -507,63 +582,10 @@ int libnk2_item_get_entry_value_64bit(
      liberror_error_t **error )
 {
 	libnk2_internal_item_t *internal_item = NULL;
+	uint8_t *value_data                   = NULL;
 	static char *function                 = "libnk2_item_get_entry_value_64bit";
-	int result                                = 0;
-
-	if( item == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	result = libnk2_item_values_get_entry_value_64bit(
-	          internal_item->item_values,
-	          internal_item->internal_file->io_handle,
-	          entry_type,
-	          entry_value,
-	          error );
-
-	if( result == -1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to get entry value 64-bit.",
-		 function );
-	}
-	return( result );
-}
-
-/* Retrieves the size value of a specific entry from the referenced item
- * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
- */
-int libnk2_item_get_entry_value_size(
-     libnk2_item_t *item,
-     uint32_t entry_type,
-     size_t *entry_value,
-     liberror_error_t **error )
-{
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_entry_value_size";
+	size_t value_data_size                = 0;
+	uint32_t value_type                   = 0;
 	int result                            = 0;
 
 	if( item == NULL )
@@ -590,11 +612,24 @@ int libnk2_item_get_entry_value_size(
 
 		return( -1 );
 	}
-	result = libnk2_item_values_get_entry_value_size(
+	if( entry_value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry value.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          internal_item->internal_file->io_handle,
 	          entry_type,
-	          entry_value,
+	          &value_type,
+	          &value_data,
+	          &value_data_size,
 	          error );
 
 	if( result == -1 )
@@ -603,8 +638,212 @@ int libnk2_item_get_entry_value_size(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to get entry value size.",
+		 "%s: unable to retrieve entry value.",
 		 function );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		if( libnk2_value_type_copy_to_64bit(
+		     value_data,
+		     value_data_size,
+		     entry_value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to set 64-bit entry value.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	return( result );
+}
+
+/* Retrieves the 64-bit filetime value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value_filetime(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint64_t *entry_value,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	uint8_t *value_data                   = NULL;
+	static char *function                 = "libnk2_item_get_entry_value_filetime";
+	size_t value_data_size                = 0;
+	uint32_t value_type                   = 0;
+	int result                            = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( entry_value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry value.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          &value_type,
+	          &value_data,
+	          &value_data_size,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve entry value.",
+		 function );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		if( libnk2_value_type_copy_to_64bit(
+		     value_data,
+		     value_data_size,
+		     entry_value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to set filetime entry value.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	return( result );
+}
+
+/* Retrieves the size value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_get_entry_value_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *entry_value,
+     liberror_error_t **error )
+{
+	libnk2_internal_item_t *internal_item = NULL;
+	uint8_t *value_data                   = NULL;
+	static char *function                 = "libnk2_item_get_entry_value_size";
+	size_t value_data_size                = 0;
+	uint32_t value_type                   = 0;
+	int result                            = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	internal_item = (libnk2_internal_item_t *) item;
+
+	if( internal_item->internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item - missing internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( entry_value == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry value.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value(
+	          internal_item->item_values,
+	          internal_item->internal_file->io_handle,
+	          entry_type,
+	          &value_type,
+	          &value_data,
+	          &value_data_size,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve entry value.",
+		 function );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		if( libnk2_value_type_copy_to_size(
+		     value_data,
+		     value_data_size,
+		     entry_value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to set size entry value.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	return( result );
 }
@@ -620,7 +859,11 @@ int libnk2_item_get_entry_value_string_size(
      liberror_error_t **error )
 {
 	libnk2_internal_item_t *internal_item = NULL;
+	uint8_t *value_data                   = NULL;
 	static char *function                 = "libnk2_item_get_entry_value_string_size";
+	size_t value_data_size                = 0;
+	uint32_t value_type                   = 0;
+	uint8_t is_ascii_string               = 0;
 	int result                            = 0;
 
 	if( item == NULL )
@@ -647,12 +890,24 @@ int libnk2_item_get_entry_value_string_size(
 
 		return( -1 );
 	}
-	result = libnk2_item_values_get_entry_value_string_size(
+	if( size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid size.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          internal_item->internal_file->io_handle,
 	          entry_type,
-	          size,
-	          internal_item->internal_file->ascii_codepage,
+	          &value_type,
+	          &value_data,
+	          &value_data_size,
 	          error );
 
 	if( result == -1 )
@@ -661,8 +916,45 @@ int libnk2_item_get_entry_value_string_size(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to get entry value string size.",
+		 "%s: unable to retrieve entry value.",
 		 function );
+	}
+	else if( result == 1 )
+	{
+		if( ( value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
+		 && ( value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupport string value type: 0x%04" PRIx32 ".",
+			 function,
+			 value_type );
+
+			return( -1 );
+		}
+		if( value_type == LIBNK2_VALUE_TYPE_STRING_ASCII )
+		{
+			is_ascii_string = 1;
+		}
+		if( libnk2_value_type_get_string_size(
+		     value_data,
+		     value_data_size,
+		     is_ascii_string,
+		     internal_item->internal_file->ascii_codepage,
+		     size,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to set string size entry value.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	return( result );
 }
@@ -678,7 +970,11 @@ int libnk2_item_get_entry_value_string(
      liberror_error_t **error )
 {
 	libnk2_internal_item_t *internal_item = NULL;
+	uint8_t *value_data                   = NULL;
 	static char *function                 = "libnk2_item_get_entry_value_string";
+	size_t value_data_size                = 0;
+	uint32_t value_type                   = 0;
+	uint8_t is_ascii_string               = 0;
 	int result                            = 0;
 
 	if( item == NULL )
@@ -705,13 +1001,46 @@ int libnk2_item_get_entry_value_string(
 
 		return( -1 );
 	}
-	result = libnk2_item_values_get_entry_value_string(
+	if( string == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid string.",
+		 function );
+
+		return( -1 );
+	}
+	if( size == 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 "%s: invalid size.",
+		 function );
+
+		return( -1 );
+	}
+	if( size > (size_t) SSIZE_MAX )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          internal_item->internal_file->io_handle,
 	          entry_type,
-	          string,
-	          size,
-	          internal_item->internal_file->ascii_codepage,
+	          &value_type,
+	          &value_data,
+	          &value_data_size,
 	          error );
 
 	if( result == -1 )
@@ -720,8 +1049,48 @@ int libnk2_item_get_entry_value_string(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to get entry value string.",
+		 "%s: unable to retrieve entry value.",
 		 function );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		if( ( value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
+		 && ( value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupport string value type: 0x%04" PRIx32 ".",
+			 function,
+			 value_type );
+
+			return( -1 );
+		}
+		if( value_type == LIBNK2_VALUE_TYPE_STRING_ASCII )
+		{
+			is_ascii_string = 1;
+		}
+		if( libnk2_value_type_copy_to_string(
+		     value_data,
+		     value_data_size,
+		     is_ascii_string,
+		     internal_item->internal_file->ascii_codepage,
+		     string,
+		     size,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to set string entry value.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	return( result );
 }

@@ -95,51 +95,6 @@ int libnk2_item_values_get_entry_value(
      size_t *value_data_size,
      liberror_error_t **error );
 
-int libnk2_item_values_get_entry_value_boolean(
-     libnk2_item_values_t *item_values,
-     libnk2_io_handle_t *io_handle,
-     uint32_t entry_type,
-     uint8_t *entry_value,
-     liberror_error_t **error );
-
-int libnk2_item_values_get_entry_value_32bit(
-     libnk2_item_values_t *item_values,
-     libnk2_io_handle_t *io_handle,
-     uint32_t entry_type,
-     uint32_t *entry_value,
-     liberror_error_t **error );
-
-int libnk2_item_values_get_entry_value_64bit(
-     libnk2_item_values_t *item_values,
-     libnk2_io_handle_t *io_handle,
-     uint32_t entry_type,
-     uint64_t *entry_value,
-     liberror_error_t **error );
-
-int libnk2_item_values_get_entry_value_size(
-     libnk2_item_values_t *item_values,
-     libnk2_io_handle_t *io_handle,
-     uint32_t entry_type,
-     size_t *entry_value,
-     liberror_error_t **error );
-
-int libnk2_item_values_get_entry_value_string_size(
-     libnk2_item_values_t *item_values,
-     libnk2_io_handle_t *io_handle,
-     uint32_t entry_type,
-     size_t *size,
-     int ascii_codepage,
-     liberror_error_t **error );
-
-int libnk2_item_values_get_entry_value_string(
-     libnk2_item_values_t *item_values,
-     libnk2_io_handle_t *io_handle,
-     uint32_t entry_type,
-     uint8_t *string,
-     size_t size,
-     int ascii_codepage,
-     liberror_error_t **error );
-
 #if defined( __cplusplus )
 }
 #endif

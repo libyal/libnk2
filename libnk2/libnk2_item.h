@@ -102,6 +102,12 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_64bit(
                    uint64_t *entry_value,
                    liberror_error_t **error );
 
+LIBNK2_EXTERN int libnk2_item_get_entry_value_filetime(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint64_t *entry_value,
+                   liberror_error_t **error );
+
 LIBNK2_EXTERN int libnk2_item_get_entry_value_size(
                    libnk2_item_t *item,
                    uint32_t entry_type,
