@@ -171,6 +171,7 @@ int libnk2_file_free(
 {
 	libnk2_internal_file_t *internal_file = NULL;
 	static char *function                 = "libnk2_file_free";
+	int result                            = 1;
 
 	if( file == NULL )
 	{
@@ -199,6 +200,8 @@ int libnk2_file_free(
 			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free item list.",
 			 function );
+
+			result = -1;
 		}
 		if( libnk2_list_free(
 		     &( internal_file->item_reference_list ),
@@ -211,6 +214,8 @@ int libnk2_file_free(
 			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free item reference list.",
 			 function );
+
+			result = -1;
 		}
 		if( ( internal_file->io_handle != NULL )
 		 && ( libnk2_io_handle_free(
@@ -223,13 +228,15 @@ int libnk2_file_free(
 			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free io handle.",
 			 function );
+
+			result = -1;
 		}
 		memory_free(
 		 internal_file );
 
 		*file = NULL;
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Signals the libnk2 file to abort its current activity
@@ -269,7 +276,6 @@ int libnk2_file_open(
 	libbfio_handle_t *file_io_handle      = NULL;
 	libnk2_internal_file_t *internal_file = NULL;
 	static char *function                 = "libnk2_file_open";
-	int file_io_flags                     = 0;
 
 	if( file == NULL )
 	{
@@ -363,14 +369,10 @@ int libnk2_file_open(
 
                 return( -1 );
 	}
-	if( ( flags & LIBNK2_FLAG_READ ) == LIBNK2_FLAG_READ )
-	{
-		file_io_flags = LIBBFIO_FLAG_READ;
-	}
-	if( libnk2_io_handle_open(
-	     internal_file->io_handle,
+	if( libnk2_file_open_file_io_handle(
+	     file,
 	     file_io_handle,
-	     file_io_flags,
+	     flags,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -383,24 +385,12 @@ int libnk2_file_open(
 
 		return( -1 );
 	}
-	if( libnk2_file_open_read(
-	     internal_file,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file: %s.",
-		 function,
-		 filename );
+	internal_file->io_handle->handle_created_in_library = 1;
 
-		return( -1 );
-	}
 	return( 1 );
 }
 
-#if defined( LIBNK2_WIDE_CHARACTER_TYPE )
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 /* Opens a Nickfile
  * Returns 1 if successful or -1 on error
@@ -414,7 +404,6 @@ int libnk2_file_open_wide(
 	libbfio_handle_t *file_io_handle      = NULL;
 	libnk2_internal_file_t *internal_file = NULL;
 	static char *function                 = "libnk2_file_open_wide";
-	int file_io_flags                     = 0;
 
 	if( file == NULL )
 	{
@@ -508,6 +497,89 @@ int libnk2_file_open_wide(
 
                 return( -1 );
 	}
+	if( libnk2_file_open_file_io_handle(
+	     file,
+	     file_io_handle,
+	     flags,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open file: %ls.",
+		 function,
+		 filename );
+
+		return( -1 );
+	}
+	internal_file->io_handle->handle_created_in_library = 1;
+
+	return( 1 );
+}
+
+#endif
+
+/* Opens a Nickfile using a Basic File IO (bfio) handle
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_file_open_file_io_handle(
+     libnk2_file_t *file,
+     libbfio_handle_t *file_io_handle,
+     int flags,
+     liberror_error_t **error )
+{
+	libnk2_internal_file_t *internal_file = NULL;
+	static char *function                 = "libnk2_file_open_file_io_handle";
+	int file_io_flags                     = 0;
+
+	if( file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	if( file_io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file io handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( ( flags & LIBNK2_FLAG_READ ) != LIBNK2_FLAG_READ )
+	 && ( ( flags & LIBNK2_FLAG_WRITE ) != LIBNK2_FLAG_WRITE ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported flags.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( flags & LIBNK2_FLAG_WRITE ) == LIBNK2_FLAG_WRITE )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: write access to personal folder files currently not supported.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libnk2_internal_file_t *) file;
+
 	if( ( flags & LIBNK2_FLAG_READ ) == LIBNK2_FLAG_READ )
 	{
 		file_io_flags = LIBBFIO_FLAG_READ;
@@ -522,9 +594,8 @@ int libnk2_file_open_wide(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file: %ls.",
-		 function,
-		 filename );
+		 "%s: unable to open file handle.",
+		 function );
 
 		return( -1 );
 	}
@@ -536,16 +607,13 @@ int libnk2_file_open_wide(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file: %ls.",
-		 function,
-		 filename );
+		 "%s: unable to read from file handle.",
+		 function );
 
 		return( -1 );
 	}
 	return( 1 );
 }
-
-#endif
 
 /* Closes a Nickfile
  * Returns 0 if successful or -1 on error

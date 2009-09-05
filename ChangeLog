@@ -28,6 +28,11 @@ Deployment:
 * update macosx package files
 * update msvcpp files (implement libbfio)
 
+20090905
+* updated manuals
+* updated nk2input codepage detection
+* implemented libbfio open
+
 20090904
 * added libtool m4 directory support
 * updated common, liberror, libfmapi, libuna, libbfio

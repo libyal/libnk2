@@ -26,6 +26,8 @@
 #include <common.h>
 #include <types.h>
 
+#include <liberror.h>
+
 #include <libsystem.h>
 
 #if defined( __cplusplus )
@@ -34,7 +36,8 @@ extern "C" {
 
 int nk2input_determine_ascii_codepage(
      const libsystem_character_t *argument,
-     int *ascii_codepage );
+     int *ascii_codepage,
+     liberror_error_t **error );
 
 #if defined( __cplusplus )
 }

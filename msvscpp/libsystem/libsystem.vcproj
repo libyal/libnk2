@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
-	Name="libnk2_dll"
-	ProjectGUID="{B5225323-AC67-411D-8FBA-199E9467FAB5}"
-	RootNamespace="libnk2"
+	Version="9.00"
+	Name="libsystem"
+	ProjectGUID="{A2B861D5-6751-43A9-B085-8D48F8754AC5}"
+	RootNamespace="libsystem"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -19,7 +19,8 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="4"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -38,10 +39,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\liberror;..\..\libuna;..\..\libnk2"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;LIBNK2_DLL_EXPORT"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\liberror;..\..\libuna;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA"
 				RuntimeLibrary="2"
 				WarningLevel="4"
+				WarnAsError="false"
 				CompileAs="1"
 			/>
 			<Tool
@@ -54,18 +56,13 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\libnk2.dll"
-				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\libnk2.lib"
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\libsystem.lib"
+				ModuleDefinitionFile=""
+				IgnoreAllDefaultLibraries="false"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -75,9 +72,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -93,43 +87,39 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\libnk2\libnk2.c"
+				RelativePath="..\..\libsystem\libsystem_date_time.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_array_type.c"
+				RelativePath="..\..\libsystem\libsystem_error.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_error.h"
+				RelativePath="..\..\libsystem\libsystem_file.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_file.c"
+				RelativePath="..\..\libsystem\libsystem_getopt.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_io_handle.c"
+				RelativePath="..\..\libsystem\libsystem_glob.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_item.c"
+				RelativePath="..\..\libsystem\libsystem_notify.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_item_values.c"
+				RelativePath="..\..\libsystem\libsystem_signal.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_list_type.c"
+				RelativePath="..\..\libsystem\libsystem_string.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_notify.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libnk2\libnk2_support.c"
+				RelativePath="..\..\libsystem\libsystem_support.c"
 				>
 			</File>
 		</Filter>
@@ -139,63 +129,63 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\libnk2\libnk2_array_type.h"
+				RelativePath="..\..\libsystem\libsystem.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_definitions.h"
+				RelativePath="..\..\libsystem\libsystem_date_time.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_error.h"
+				RelativePath="..\..\libsystem\libsystem_directory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_extern.h"
+				RelativePath="..\..\libsystem\libsystem_directory_io.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_file.h"
+				RelativePath="..\..\libsystem\libsystem_error.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_io_handle.h"
+				RelativePath="..\..\libsystem\libsystem_file.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_item.h"
+				RelativePath="..\..\libsystem\libsystem_file_io.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_item_values.h"
+				RelativePath="..\..\libsystem\libsystem_file_stream.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_libuna.h"
+				RelativePath="..\..\libsystem\libsystem_getopt.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_list_type.h"
+				RelativePath="..\..\libsystem\libsystem_glob.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_notify.h"
+				RelativePath="..\..\libsystem\libsystem_libuna.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_string.h"
+				RelativePath="..\..\libsystem\libsystem_notify.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_support.h"
+				RelativePath="..\..\libsystem\libsystem_signal.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\nk2_file_header.h"
+				RelativePath="..\..\libsystem\libsystem_string.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\nk2_item.h"
+				RelativePath="..\..\libsystem\libsystem_support.h"
 				>
 			</File>
 		</Filter>

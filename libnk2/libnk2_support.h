@@ -24,12 +24,14 @@
 #define _LIBNK2_SUPPORT_H
 
 #include <common.h>
+#include <narrow_string.h>
 #include <types.h>
+#include <wide_string.h>
 
-#include <stdio.h>
+#include <liberror.h>
 
 #include "libnk2_extern.h"
-#include "libnk2_file.h"
+#include "libnk2_libbfio.h"
 
 #if defined( __cplusplus )
 extern "C" {

@@ -44,6 +44,10 @@ struct libnk2_io_handle
 	/* The file io handle
 	 */
 	libbfio_handle_t *file_io_handle;
+
+	/* Value to indicate if the file io handle was created inside the library
+	 */
+	uint8_t handle_created_in_library;
 };
 
 int libnk2_io_handle_initialize(

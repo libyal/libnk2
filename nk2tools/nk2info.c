@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from a Personal Folder File (OST or PST)
+ * Shows information obtained from a Nickfile (NK2)
  *
  * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations. All rights reserved.

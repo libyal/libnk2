@@ -1,4 +1,4 @@
-.Dd September 4, 2009
+.Dd September 5, 2009
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
@@ -62,6 +62,10 @@ File functions
 Available when compiled with wide character string support:
 .Ft int
 .Fn libnk2_file_open_wide "libnk2_file_t *file, const wchar_t *filename, int flags, libnk2_error_t **error"
+.Pp
+Available when compiled with libbfio support:
+.Ft int
+.Fn libnk2_file_open_file_io_handle "libnk2_file_t *file, libbfio_handle_t *file_io_handle, int flags, libnk2_error_t **error"
 .PP
 Item functions
 .Ft int
@@ -91,7 +95,14 @@ or pass the definition
  to the compiler (i.e. in case of Microsoft Visual Studio (MSVS) C++).
 
 To have other code to determine if libnk2 was compiled with wide character support it defines
-.Ar LIBNK2_WIDE_CHARACTER_TYPE
+.Ar LIBNK2_HAVE_WIDE_CHARACTER_TYPE
+ in libnk2/features.h.
+
+libnk2 allows to be compiled with chained IO support using libbfio.
+libnk2 will automatically detect if a compatible version of libbfio is available.
+
+To have other code to determine if libnk2 was compiled with libbfio support it defines
+.Ar LIBNK2_HAVE_BFIO
  in libnk2/features.h.
 
 .Sh BUGS

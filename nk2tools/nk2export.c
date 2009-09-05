@@ -149,13 +149,19 @@ int main( int argc, char * const argv[] )
 			case (libsystem_integer_t) 'c':
 				if( nk2input_determine_ascii_codepage(
 				     optarg,
-				     &ascii_codepage ) != 1 )
+				     &ascii_codepage,
+				     &error ) != 1 )
 				{
+					libsystem_notify_print_error_backtrace(
+					 error );
+					liberror_error_free(
+					 &error );
+
+					ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1250;
+
 					fprintf(
 					 stderr,
 					 "Unsupported ASCII codepage defaulting to: windows-1250.\n" );
-
-					ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1250;
 				}
 				break;
 

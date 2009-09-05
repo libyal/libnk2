@@ -122,7 +122,8 @@ int libnk2_io_handle_free(
 	}
 	if( *io_handle != NULL )
 	{
-		if( ( ( *io_handle )->file_io_handle != NULL )
+		if( ( ( *io_handle )->handle_created_in_library != 0 )
+		 && ( ( *io_handle )->file_io_handle != NULL )
 		 && ( libbfio_handle_free(
 		       &( ( *io_handle )->file_io_handle ),
 		       error ) != 1 ) )

@@ -26,6 +26,9 @@ libnk2_la_SOURCES = \
 libnk2_la_LIBADD  = ../liberror/liberror.la ../libnotify/libnotify.la ../libfmapi/libfmapi.la @LIBUNA_LIBADD@ @LIBBFIO_LIBADD@
 libnk2_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
+EXTRA_DIST = \
+	libnk2_definitions.h.in
+
 distclean: clean
 	/bin/rm -f Makefile
 
