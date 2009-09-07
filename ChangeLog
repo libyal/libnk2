@@ -28,6 +28,14 @@ Deployment:
 * update macosx package files
 * update msvcpp files (implement libbfio)
 
+20090907
+* small fixes
+* worked on msvcpp files
+* removed GUID generation code
+
+20090906
+* textual changes
+
 20090905
 * updated manuals
 * updated nk2input codepage detection
