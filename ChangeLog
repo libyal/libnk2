@@ -28,6 +28,9 @@ Deployment:
 * update macosx package files
 * update msvcpp files (implement libbfio)
 
+20090911
+* updated libsystem
+
 20090907
 * small fixes
 * worked on msvcpp files
