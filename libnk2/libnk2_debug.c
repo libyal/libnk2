@@ -128,7 +128,9 @@ int libnk2_debug_print_read_offsets(
 	libnotify_verbose_printf(
 	 "Offsets read:\n" );
 
-	for( offset_iterator = 0; offset_iterator < amount_of_offsets; offset_iterator++ )
+	for( offset_iterator = 0;
+	     offset_iterator < amount_of_offsets;
+	     offset_iterator++ )
 	{
 		if( libbfio_handle_get_offset_read(
 		     file_io_handle,
