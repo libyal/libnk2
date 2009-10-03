@@ -390,17 +390,16 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 "Exporting items.\n" );
 
-	result = export_handle_export_items(
+	result = export_handle_export_file(
 	          export_handle,
 	          target_path,
-	          log_file_stream,
 	          &error );
 
 	if( result == -1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to export items.\n" );
+		 "Unable to export file.\n" );
 
 		libsystem_notify_print_error_backtrace(
 		 error );

@@ -28,6 +28,7 @@
 #include <libnk2/error.h>
 #include <libnk2/extern.h>
 #include <libnk2/features.h>
+#include <libnk2/mapi.h>
 #include <libnk2/types.h>
 
 #include <stdio.h>
@@ -260,7 +261,33 @@ LIBNK2_EXTERN int libnk2_item_get_identifier(
                    uint32_t *identifier,
                    libnk2_error_t **error );
 
+/* Retrieves the amount of entries of the referenced item
+ * All sets in an item contain the same amount of entries
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_amount_of_entries(
+                   libnk2_item_t *item,
+                   uint32_t *amount_of_entries,
+                   libnk2_error_t **error );
+
+/* Retrieves the entry and value type of a specific entry from the referenced item
+ * The name to id map entry is set when available
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_type(
+                   libnk2_item_t *item,
+                   int entry_index,
+                   uint32_t *entry_type,
+                   uint32_t *value_type,
+                   libnk2_error_t **error );
+
 /* Retrieves the value of a specific entry from the referenced item
+ *
+ * When the LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE is set
+ * the value type is ignored and set. The default behavior is a strict
+ * matching of the value type. In this case the value type must be filled
+ * with the corresponding value type
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 LIBNK2_EXTERN int libnk2_item_get_entry_value(
@@ -269,6 +296,7 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value(
                    uint32_t *value_type,
                    uint8_t **value_data,
                    size_t *value_data_size,
+                   uint8_t flags,
                    libnk2_error_t **error );
 
 /* Retrieves the boolean value of a specific entry from the referenced item
@@ -307,25 +335,79 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_size(
                    size_t *entry_value,
                    libnk2_error_t **error );
 
-/* Retrieves the size of a string value of a specific entry from the referenced item
+/* Retrieves the UTF-8 string size of a string value of a specific entry from the referenced item
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_string_size(
+LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string_size(
                    libnk2_item_t *item,
+                   uint32_t entry_type,
+                   size_t *utf8_string_size,
+                   libnk2_error_t **error );
+
+/* Retrieves the UTF-8 string value of a specific entry from the referenced item
+ * The string is formatted in UTF-8
+ * The function uses a codepage if necessary, it uses the codepage set for the library
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint8_t *utf8_string,
+                   size_t utf8_string_size,
+                   libnk2_error_t **error );
+
+/* Retrieves the UTF-16 string size of a string value of a specific entry from the referenced item
+ * The returned size includes the end of string character
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_utf16_string_size(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   size_t *utf16_string_size,
+                   libnk2_error_t **error );
+
+/* Retrieves the UTF-16 string value of a specific entry from the referenced item
+ * The string is formatted in UTF-16
+ * The function uses a codepage if necessary, it uses the codepage set for the library
+ * The size should include the end of string character
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_utf16_string(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint8_t *utf16_string,
+                   size_t utf16_string_size,
+                   libnk2_error_t **error );
+
+/* Retrieves the size of a binary data value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_binary_data_size(
+                   libnk2_item_t *item,
+                   int set_index,
                    uint32_t entry_type,
                    size_t *size,
                    libnk2_error_t **error );
 
-/* Retrieves the string value of a specific entry from the referenced item
- * The string is formatted in UTF-8
- * The size should include the end of string character
+/* Retrieves the binary data value of a specific entry from the referenced item
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_string(
+LIBNK2_EXTERN int libnk2_item_get_entry_value_binary_data(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   uint8_t *string,
+                   uint8_t *binary_data,
+                   size_t size,
+                   libnk2_error_t **error );
+
+/* Retrieves the GUID value of a specific entry from the referenced item
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_entry_value_guid(
+                   libnk2_item_t *item,
+                   uint32_t entry_type,
+                   uint8_t *guid,
                    size_t size,
                    libnk2_error_t **error );
 

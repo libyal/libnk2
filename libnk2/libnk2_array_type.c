@@ -7,16 +7,16 @@
  * Refer to AUTHORS for acknowledgements.
  *
  * This software is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -156,7 +156,7 @@ int libnk2_array_free(
      liberror_error_t **error )
 {
 	static char *function = "libnk2_array_free";
-	int iterator          = 0;
+	int entry_iterator    = 0;
 	int result            = 1;
 
 	if( array == NULL )
@@ -174,13 +174,15 @@ int libnk2_array_free(
 	{
 		if( ( *array )->entry != NULL )
 		{
-			for( iterator = 0; iterator < ( *array )->amount_of_entries; iterator++ )
+			for( entry_iterator = 0;
+			     entry_iterator < ( *array )->amount_of_entries;
+			     entry_iterator++ )
 			{
-				if( ( *array )->entry[ iterator ] != NULL )
+				if( ( *array )->entry[ entry_iterator ] != NULL )
 				{
 					if( ( entry_free_function != NULL )
 					 && ( entry_free_function(
-					       ( *array )->entry[ iterator ],
+					       ( *array )->entry[ entry_iterator ],
 					       error ) != 1 ) )
 					{
 						liberror_error_set(
@@ -189,7 +191,7 @@ int libnk2_array_free(
 						 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 						 "%s: unable to free array entry: %" PRIu16 ".",
 						 function,
-						 iterator );
+						 entry_iterator );
 
 						result = -1;
 					}
@@ -240,7 +242,7 @@ int libnk2_array_resize(
 
 		return( -1 );
 	}
-	if( array->amount_of_entries < amount_of_entries )
+	if( amount_of_entries > array->amount_of_entries )
 	{
 		entries_size = sizeof( intptr_t * ) * amount_of_entries;
 
@@ -272,10 +274,8 @@ int libnk2_array_resize(
 		}
 		array->entry = (intptr_t **) reallocation;
 
-		array->amount_of_entries = amount_of_entries;
-
 		if( memory_set(
-		     array->entry,
+		     &( array->entry[ array->amount_of_entries ] ),
 		     0,
 		     sizeof( intptr_t ) * ( amount_of_entries - array->amount_of_entries ) ) == NULL )
 		{
@@ -288,7 +288,45 @@ int libnk2_array_resize(
 
 			return( -1 );
 		}
+		array->amount_of_entries = amount_of_entries;
 	}
+	return( 1 );
+}
+
+/* Retrieves the amount of entries in the array
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_array_get_amount_of_entries(
+     libnk2_array_t *array,
+     int *amount_of_entries,
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_array_get_amount_of_entries";
+
+	if( array == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid array.",
+		 function );
+
+		return( -1 );
+	}
+	if( amount_of_entries == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid amount of entries.",
+		 function );
+
+		return( -1 );
+	}
+	*amount_of_entries = array->amount_of_entries;
+
 	return( 1 );
 }
 

@@ -26,11 +26,11 @@
 
 #include <liberror.h>
 #include <libnotify.h>
-#include <libfmapi.h>
 
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libfmapi.h"
 #include "libnk2_string.h"
 
 #if defined( HAVE_DEBUG_OUTPUT )

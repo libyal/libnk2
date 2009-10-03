@@ -1,4 +1,4 @@
-.Dd September 5, 2009
+.Dd October 3, 2009
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
@@ -70,12 +70,42 @@ Available when compiled with libbfio support:
 Item functions
 .Ft int
 .Fn libnk2_item_free "libnk2_item_t **item, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_identifier "libnk2_item_t *item, uint32_t *identifier, libnk2_error_t **error
+.Ft int
+.Fn libnk2_item_get_amount_of_entries "libnk2_item_t *item, uint32_t *amount_of_entries, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_type "libnk2_item_t *item, int entry_index, uint32_t *entry_type, uint32_t *value_type, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value "libnk2_item_t *item, uint32_t entry_type, uint32_t *value_type, uint8_t **value_data, size_t *value_data_size, uint8_t flags, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_boolean "libnk2_item_t *item, uint32_t entry_type, uint8_t *entry_value, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_32bit "libnk2_item_t *item, uint32_t entry_type, uint32_t *entry_value, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_64bit "libnk2_item_t *item, uint32_t entry_type, uint64_t *entry_value, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_size "libnk2_item_t *item, uint32_t entry_type, size_t *entry_value, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_utf8_string_size "libnk2_item_t *item, uint32_t entry_type, size_t *utf8_string_size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_utf8_string "libnk2_item_t *item, uint32_t entry_type, uint8_t *utf8_string, size_t utf8_string_size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_utf16_string_size "libnk2_item_t *item, uint32_t entry_type, size_t *utf16_string_size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_utf16_string "libnk2_item_t *item, uint32_t entry_type, uint8_t *utf16_string, size_t utf16_string_size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_binary_data_size "libnk2_item_t *item, int set_index, uint32_t entry_type, size_t *size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_binary_data "libnk2_item_t *item, uint32_t entry_type, uint8_t *binary_data, size_t size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_item_get_entry_value_guid "libnk2_item_t *item, uint32_t entry_type, uint8_t *guid, size_t size, libnk2_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libnk2_get_version
 function is used to retrieve the library version.
 .Sh RETURN VALUES
-Most of the functions return NULL or -1 on error, dependent on the return type. For the actual return values refer to libnk2.h
+Most of the functions return NULL or \-1 on error, dependent on the return type. For the actual return values refer to libnk2.h
 .Sh ENVIRONMENT
 None
 .Sh FILES

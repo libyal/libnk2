@@ -26,8 +26,8 @@
 #include <common.h>
 #include <endian.h>
 
-#define LIBNK2_ENDIAN_BIG		_ENDIAN_BIG
-#define LIBNK2_ENDIAN_LITTLE		_ENDIAN_LITTLE
+#define LIBNK2_ENDIAN_BIG				_ENDIAN_BIG
+#define LIBNK2_ENDIAN_LITTLE				_ENDIAN_LITTLE
 
 /* Define HAVE_LOCAL_LIBNK2 for local use of libnk2
  */
@@ -38,28 +38,35 @@
  * for local use of libnk2
  */
 #else
-#define LIBNK2_VERSION			@VERSION@
+#define LIBNK2_VERSION					@VERSION@
 
 /* The libnk2 version string
  */
-#define LIBNK2_VERSION_STRING		"@VERSION@"
+#define LIBNK2_VERSION_STRING				"@VERSION@"
 
 /* The libnk2 file access
  * bit 1        set to 1 for read access
  * bit 2        set to 1 for write access
  * bit 3-8      not used
  */
-#define LIBNK2_FLAG_READ		0x01
+#define LIBNK2_FLAG_READ				0x01
 /* Reserved: not supported yet */
-#define LIBNK2_FLAG_WRITE		0x02
+#define LIBNK2_FLAG_WRITE				0x02
 
 /* The libnk2 file access macros
  */
-#define LIBNK2_OPEN_READ		( LIBNK2_FLAG_READ )
+#define LIBNK2_OPEN_READ				( LIBNK2_FLAG_READ )
 /* Reserved: not supported yet */
-#define LIBNK2_OPEN_WRITE		( LIBNK2_FLAG_WRITE )
+#define LIBNK2_OPEN_WRITE				( LIBNK2_FLAG_WRITE )
 /* Reserved: not supported yet */
-#define LIBNK2_OPEN_READ_WRITE		( LIBNK2_FLAG_READ | LIBNK2_FLAG_WRITE )
+#define LIBNK2_OPEN_READ_WRITE				( LIBNK2_FLAG_READ | LIBNK2_FLAG_WRITE )
+
+/* The entry value flags
+ */
+enum LIBNK2_ENTRY_VALUE_FLAGS
+{
+	LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE	= 0x01,
+};
 
 #endif
 

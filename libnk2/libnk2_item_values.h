@@ -86,13 +86,25 @@ int libnk2_item_values_read(
      libnk2_io_handle_t *io_handle,
      liberror_error_t **error );
 
+int libnk2_item_values_get_amount_of_entries(
+     libnk2_item_values_t *item_values,
+     uint32_t *amount_of_entries,
+     liberror_error_t **error );
+
+int libnk2_item_values_get_entry_type(
+     libnk2_item_values_t *item_values,
+     int entry_index,
+     uint32_t *entry_type,
+     uint32_t *value_type,
+     liberror_error_t **error );
+
 int libnk2_item_values_get_entry_value(
      libnk2_item_values_t *item_values,
-     libnk2_io_handle_t *io_handle,
      uint32_t entry_type,
      uint32_t *value_type,
      uint8_t **value_data,
      size_t *value_data_size,
+     uint8_t flags,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

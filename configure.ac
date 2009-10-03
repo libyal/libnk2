@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20090907],
+  [20091003],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libnk2],
- [20090907])
+ [20091003])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -897,6 +897,132 @@ AM_CONDITIONAL(
  [HAVE_LOCAL_LIBBFIO],
  [test "x$ac_libnk2_have_libbfio" = xlocal])
 
+dnl Check for enabling libfdatetime for file date and time support
+AC_CHECK_HEADERS(
+ [libfdatetime.h],
+ [],
+ [ac_libnk2_have_libfdatetime=no])
+
+AS_IF(
+	[test "x$ac_libnk2_have_libfdatetime" != xno],
+	[ac_libnk2_have_libfdatetime=yes
+	AC_CHECK_LIB(
+	 fdatetime,
+	 libfdatetime_get_version,
+	 [],
+	 [ac_libnk2_have_libfdatetime=no])
+
+	])
+
+AS_IF(
+	[test "x$ac_libnk2_have_libfdatetime" = xyes],
+	[AC_SUBST(
+	 [libnk2_pc_libs_private_libfdatetime],
+	 [-lfdatetime])
+	AC_SUBST(
+	 [libnk2_spec_requires_libfdatetime],
+	 [libfdatetime])
+	AC_SUBST(
+	 [libnk2_spec_build_requires_libfdatetime],
+	 [libfdatetime-devel])
+	AC_SUBST(
+	 [LIBFDATETIME_CPPFLAGS],
+	 [])
+	AC_SUBST(
+	 [LIBFDATETIME_LIBADD],
+	 []) ],
+	[dnl If libfdatetime is not available use the (local) version that came with libnk2
+	AC_DEFINE(
+	 [HAVE_LOCAL_LIBFDATETIME],
+	 [1],
+	 [Define to 1 if the local version of libfdatetime is used.])
+	AC_SUBST(
+	 [HAVE_LOCAL_LIBFDATETIME],
+	 [1])
+	AC_SUBST(
+	 [libnk2_pc_libs_private_libfdatetime],
+	 [])
+	AC_SUBST(
+	 [libnk2_spec_requires_libfdatetime],
+	 [])
+	AC_SUBST(
+	 [libnk2_spec_build_requires_libfdatetime],
+	 [])
+	AC_SUBST(
+	 [LIBFDATETIME_CPPFLAGS],
+	 [-I../libfdatetime])
+	AC_SUBST(
+	 [LIBFDATETIME_LIBADD],
+	 [../libfdatetime/libfdatetime.la])
+	ac_libnk2_have_libfdatetime=local])
+
+AM_CONDITIONAL(
+ [HAVE_LOCAL_LIBFDATETIME],
+ [test "x$ac_libnk2_have_libfdatetime" = xlocal])
+
+dnl Check for enabling libfmapi for file MAPI types support
+AC_CHECK_HEADERS(
+ [libfmapi.h],
+ [],
+ [ac_libnk2_have_libfmapi=no])
+
+AS_IF(
+	[test "x$ac_libnk2_have_libfmapi" != xno],
+	[ac_libnk2_have_libfmapi=yes
+	AC_CHECK_LIB(
+	 fmapi,
+	 libfmapi_get_version,
+	 [],
+	 [ac_libnk2_have_libfmapi=no])
+
+	])
+
+AS_IF(
+	[test "x$ac_libnk2_have_libfmapi" = xyes],
+	[AC_SUBST(
+	 [libnk2_pc_libs_private_libfmapi],
+	 [-lfmapi])
+	AC_SUBST(
+	 [libnk2_spec_requires_libfmapi],
+	 [libfmapi])
+	AC_SUBST(
+	 [libnk2_spec_build_requires_libfmapi],
+	 [libfmapi-devel])
+	AC_SUBST(
+	 [LIBFMAPI_CPPFLAGS],
+	 [])
+	AC_SUBST(
+	 [LIBFMAPI_LIBADD],
+	 []) ],
+	[dnl If libfmapi is not available use the (local) version that came with libnk2
+	AC_DEFINE(
+	 [HAVE_LOCAL_LIBFMAPI],
+	 [1],
+	 [Define to 1 if the local version of libfmapi is used.])
+	AC_SUBST(
+	 [HAVE_LOCAL_LIBFMAPI],
+	 [1])
+	AC_SUBST(
+	 [libnk2_pc_libs_private_libfmapi],
+	 [])
+	AC_SUBST(
+	 [libnk2_spec_requires_libfmapi],
+	 [])
+	AC_SUBST(
+	 [libnk2_spec_build_requires_libfmapi],
+	 [])
+	AC_SUBST(
+	 [LIBFMAPI_CPPFLAGS],
+	 [-I../libfmapi])
+	AC_SUBST(
+	 [LIBFMAPI_LIBADD],
+	 [../libfmapi/libfmapi.la])
+	ac_libnk2_have_libfmapi=local])
+
+AM_CONDITIONAL(
+ [HAVE_LOCAL_LIBFMAPI],
+ [test "x$ac_libnk2_have_libfmapi" = xlocal])
+
 dnl Check if libnk2 should be build with wide character type support
 AS_IF(
 	[test "x$ac_cv_libnk2_enable_wide_character_type" != xno ],
@@ -1029,7 +1155,7 @@ AS_IF(
 	AC_DEFINE(
 	 [HAVE_WIDE_CHARACTER_TYPE],
 	 [1],
-	 [Defines if wide character type should be used])
+	 [Define to 1 if wide character type should be used.])
 	AC_SUBST(
 	 [HAVE_WIDE_CHARACTER_TYPE],
 	 [1])
@@ -1060,7 +1186,7 @@ AS_IF(
 	[AC_DEFINE(
 	 [HAVE_VERBOSE_OUTPUT],
 	 [1],
-	 [Defines if verbose output should be used] )
+	 [Define to 1 if verbose output should be used.])
 	ac_cv_libnk2_enable_verbose_output=yes])
 
 dnl Check if libnk2 should be build with debug output
@@ -1069,12 +1195,12 @@ AS_IF(
 	[AC_DEFINE(
 	 [HAVE_DEBUG_OUTPUT],
 	 [1],
-	 [Defines if debug output should be used] )
+	 [Define to 1 if debug output should be used.])
 	ac_cv_libnk2_enable_debug_output=yes])
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
-	[test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes],
+	[test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes || test "x$ac_libnk2_have_libfdatetime" = xyes || test "x$ac_libnk2_have_libfmapi" = xyes],
 	[AC_SUBST(
 	 [libnk2_spec_requires],
 	 [Requires:])
@@ -1128,6 +1254,7 @@ AC_CONFIG_FILES([liberror/Makefile])
 AC_CONFIG_FILES([libnotify/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
+AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([libsystem/Makefile])
@@ -1156,6 +1283,8 @@ AC_MSG_NOTICE([
 Building:
    libuna support:                           $ac_libnk2_have_libuna
    libbfio support:                          $ac_libnk2_have_libbfio
+   libfdatetime support:                     $ac_libnk2_have_libfdatetime
+   libfmapi support:                         $ac_libnk2_have_libfmapi
 
 Features:
    Wide character type support:              $ac_cv_libnk2_enable_wide_character_type

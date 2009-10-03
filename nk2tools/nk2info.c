@@ -78,21 +78,40 @@ int nk2info_file_info_fprint(
      libnk2_error_t **error )
 {
 	static char *function = "nk2info_file_info_fprint";
+	int amount_of_items   = 0;
 
 	if( stream == NULL )
 	{
-		fprintf(
-		 stderr,
-		 "%s: invalid stream.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid stream.",
 		 function );
 
 		return( -1 );
 	}
 	if( file == NULL )
 	{
-		fprintf(
-		 stderr,
-		 "%s: invalid file.\n",
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid fil.",
+		 function );
+
+		return( -1 );
+	}
+	if( libnk2_file_get_amount_of_items(
+	     file,
+	     &amount_of_items,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve amount of items.",
 		 function );
 
 		return( -1 );
@@ -100,6 +119,11 @@ int nk2info_file_info_fprint(
 	fprintf(
 	 stream,
 	 "Nickfile information:\n" );
+
+	fprintf(
+	 stream,
+	 "\tAmount of aliases:\t%d\n",
+	 amount_of_items );
 
 	fprintf(
 	 stream,

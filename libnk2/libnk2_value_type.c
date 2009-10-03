@@ -399,26 +399,26 @@ int libnk2_value_type_copy_to_floating_point(
 	return( 1 );
 }
 
-/* Determines the string size from the value data
+/* Determines the UTF-8 string size from the value data
  * Returns 1 if successful or -1 on error
  */
-int libnk2_value_type_get_string_size(
+int libnk2_value_type_get_utf8_string_size(
      uint8_t *value_data,
      size_t value_data_size,
      uint8_t is_ascii_string,
      uint32_t ascii_codepage,
-     size_t *string_size,
+     size_t *utf8_string_size,
      liberror_error_t **error )
 {
-	static char *function = "libnk2_value_type_get_string_size";
+	static char *function = "libnk2_value_type_get_utf8_string_size";
 
-	if( string_size == NULL )
+	if( utf8_string_size == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid string size.",
+		 "%s: invalid UTF-8 string size.",
 		 function );
 
 		return( -1 );
@@ -427,7 +427,7 @@ int libnk2_value_type_get_string_size(
 	 */
 	if( value_data == NULL )
 	{
-		*string_size = 0;
+		*utf8_string_size = 0;
 	}
 	else if( is_ascii_string != 0 )
 	{
@@ -448,7 +448,21 @@ int libnk2_value_type_get_string_size(
 		 */
 		else if( ascii_codepage == 65001 )
 		{
-			*string_size = value_data_size + 1;
+			if( libuna_utf8_string_size_from_utf8_stream(
+			     value_data,
+			     value_data_size,
+			     utf8_string_size,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to determine UTF-8 string size.",
+				 function );
+
+				return( -1 );
+			}
 		}
 		else
 		{
@@ -459,14 +473,14 @@ int libnk2_value_type_get_string_size(
 			     value_data,
 			     value_data_size,
 			     (int) ascii_codepage,
-			     string_size,
+			     utf8_string_size,
 			     error ) != 1 )
 			{
 				liberror_error_set(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to determine string size.",
+				 "%s: unable to determine UTF-8 string size.",
 				 function );
 
 				return( -1 );
@@ -478,15 +492,15 @@ int libnk2_value_type_get_string_size(
 		if( libuna_utf8_string_size_from_utf16_stream(
 		     value_data,
 		     value_data_size,
-		     LIBNK2_ENDIAN_LITTLE,
-		     string_size,
+		     LIBUNA_ENDIAN_LITTLE,
+		     utf8_string_size,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to determine string size.",
+			 "%s: unable to determine UTF-8 string size.",
 			 function );
 
 			return( -1 );
@@ -498,46 +512,46 @@ int libnk2_value_type_get_string_size(
 /* Converts the value data into a UTF-8 string
  * Returns 1 if successful or -1 on error
  */
-int libnk2_value_type_copy_to_string(
+int libnk2_value_type_copy_to_utf8_string(
      uint8_t *value_data,
      size_t value_data_size,
      uint8_t is_ascii_string,
      uint32_t ascii_codepage,
-     uint8_t *string,
-     size_t string_size,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
      liberror_error_t **error )
 {
-	static char *function = "libnk2_value_type_copy_to_string";
+	static char *function = "libnk2_value_type_copy_to_utf8_string";
 
-	if( string == NULL )
+	if( utf8_string == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid string.",
+		 "%s: invalid UTF-8 string.",
 		 function );
 
 		return( -1 );
 	}
-	if( string_size == 0 )
+	if( utf8_string_size == 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid string size.",
+		 "%s: invalid UTF-8 string size.",
 		 function );
 
 		return( -1 );
 	}
-	if( string_size > (size_t) SSIZE_MAX )
+	if( utf8_string_size > (size_t) SSIZE_MAX )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid string size value exceeds maximum.",
+		 "%s: invalid UTF-8 string size value exceeds maximum.",
 		 function );
 
 		return( -1 );
@@ -546,7 +560,7 @@ int libnk2_value_type_copy_to_string(
 	 */
 	if( value_data == NULL )
 	{
-		string[ 0 ] = 0;
+		utf8_string[ 0 ] = 0;
 	}
 	else if( is_ascii_string != 0 )
 	{
@@ -567,34 +581,22 @@ int libnk2_value_type_copy_to_string(
 		 */
 		else if( ascii_codepage == 65001 )
 		{
-			if( string_size < value_data_size )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-				 LIBERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-				 "%s: string too small.",
-				 function );
-
-				return( -1 );
-			}
-			if( memory_copy(
-			     string,
+			if( libuna_utf8_string_copy_from_utf8_stream(
+			     utf8_string,
+			     utf8_string_size,
 			     value_data,
-			     value_data_size ) == NULL )
+			     value_data_size,
+			     error ) != 1 )
 			{
 				liberror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_MEMORY,
-				 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to set string .",
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to determine UTF-8 string size.",
 				 function );
 
 				return( -1 );
 			}
-			/* Add the end of string byte
-			 */
-			string[ value_data_size ] = 0;
 		}
 		else
 		{
@@ -602,8 +604,8 @@ int libnk2_value_type_copy_to_string(
 			 * add a mapping function if this implementation changes
 			 */
 			if( libuna_utf8_string_copy_from_byte_stream(
-			     string,
-			     string_size,
+			     utf8_string,
+			     utf8_string_size,
 			     value_data,
 			     value_data_size,
 			     (int) ascii_codepage,
@@ -613,7 +615,7 @@ int libnk2_value_type_copy_to_string(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_CONVERSION,
 				 LIBERROR_CONVERSION_ERROR_GENERIC,
-				 "%s: unable to set string.",
+				 "%s: unable to set UTF-8 string.",
 				 function );
 
 				return( -1 );
@@ -623,18 +625,18 @@ int libnk2_value_type_copy_to_string(
 	else
 	{
 		if( libuna_utf8_string_copy_from_utf16_stream(
-		     string,
-		     string_size,
+		     utf8_string,
+		     utf8_string_size,
 		     value_data,
 		     value_data_size,
-		     LIBNK2_ENDIAN_LITTLE,
+		     LIBUNA_ENDIAN_LITTLE,
 		     error ) != 1 )
 		{
 			liberror_error_set(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_CONVERSION,
 			 LIBERROR_CONVERSION_ERROR_GENERIC,
-			 "%s: unable to set string.",
+			 "%s: unable to set UTF-8 string.",
 			 function );
 
 			return( -1 );
@@ -643,6 +645,251 @@ int libnk2_value_type_copy_to_string(
 	return( 1 );
 }
 
+/* Determines the UTF-16 string size from the value data
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_value_type_get_utf16_string_size(
+     uint8_t *value_data,
+     size_t value_data_size,
+     uint8_t is_ascii_string,
+     uint32_t ascii_codepage,
+     size_t *utf16_string_size,
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_value_type_get_utf16_string_size";
+
+	if( utf16_string_size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid UTF-16 string size.",
+		 function );
+
+		return( -1 );
+	}
+	/* Internally an empty string is represented by a NULL reference
+	 */
+	if( value_data == NULL )
+	{
+		*utf16_string_size = 0;
+	}
+	else if( is_ascii_string != 0 )
+	{
+		/* Codepage 65000 represents UTF-7
+		 */
+		if( ascii_codepage == 65000 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupport codepage: UTF-7.",
+			 function );
+
+			return( -1 );
+		}
+		/* Codepage 65001 represents UTF-8
+		 */
+		else if( ascii_codepage == 65001 )
+		{
+			if( libuna_utf16_string_size_from_utf8(
+			     value_data,
+			     value_data_size,
+			     utf16_string_size,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to determine UTF-16 string size.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		else
+		{
+			/* TODO currently libuna uses the same numeric values for the codepages as NK2
+			 * add a mapping function if this implementation changes
+			 */
+			if( libuna_utf16_string_size_from_byte_stream(
+			     value_data,
+			     value_data_size,
+			     (int) ascii_codepage,
+			     utf16_string_size,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to determine UTF-16 string size.",
+				 function );
+
+				return( -1 );
+			}
+		}
+	}
+	else
+	{
+		if( libuna_utf16_string_size_from_utf16_stream(
+		     value_data,
+		     value_data_size,
+		     LIBUNA_ENDIAN_LITTLE,
+		     utf16_string_size,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to determine UTF-16 string size.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	return( 1 );
+}
+
+/* Converts the value data into a UTF-16 string
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_value_type_copy_to_utf16_string(
+     uint8_t *value_data,
+     size_t value_data_size,
+     uint8_t is_ascii_string,
+     uint32_t ascii_codepage,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_value_type_copy_to_utf16_string";
+
+	if( utf16_string == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	if( utf16_string_size == 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
+		 "%s: invalid UTF-16 string size.",
+		 function );
+
+		return( -1 );
+	}
+	if( utf16_string_size > (size_t) SSIZE_MAX )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid UTF-16 string size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	/* Internally an empty string is represented by a NULL reference
+	 */
+	if( value_data == NULL )
+	{
+		utf16_string[ 0 ] = 0;
+	}
+	else if( is_ascii_string != 0 )
+	{
+		/* Codepage 65000 represents UTF-7
+		 */
+		if( ascii_codepage == 65000 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupport codepage: UTF-7.",
+			 function );
+
+			return( -1 );
+		}
+		/* Codepage 65001 represents UTF-8
+		 */
+		else if( ascii_codepage == 65001 )
+		{
+			if( libuna_utf16_string_copy_from_utf8(
+			     utf16_string,
+			     utf16_string_size,
+			     value_data,
+			     value_data_size,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_CONVERSION,
+				 LIBERROR_CONVERSION_ERROR_GENERIC,
+				 "%s: unable to set UTF-16 string.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		else
+		{
+			/* TODO currently libuna uses the same numeric values for the codepages as NK2
+			 * add a mapping function if this implementation changes
+			 */
+			if( libuna_utf16_string_copy_from_byte_stream(
+			     utf16_string,
+			     utf16_string_size,
+			     value_data,
+			     value_data_size,
+			     (int) ascii_codepage,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_CONVERSION,
+				 LIBERROR_CONVERSION_ERROR_GENERIC,
+				 "%s: unable to set UTF-16 string.",
+				 function );
+
+				return( -1 );
+			}
+		}
+	}
+	else
+	{
+		if( libuna_utf16_string_copy_from_utf16_stream(
+		     utf16_string,
+		     utf16_string_size,
+		     value_data,
+		     value_data_size,
+		     LIBUNA_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_CONVERSION,
+			 LIBERROR_CONVERSION_ERROR_GENERIC,
+			 "%s: unable to set UTF-16 string.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	return( 1 );
+}
 
 /* Determines the binary data size from the value data
  * Returns 1 if successful or -1 on error

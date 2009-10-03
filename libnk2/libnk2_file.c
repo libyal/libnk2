@@ -139,7 +139,7 @@ int libnk2_file_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to initialize io handle.",
+			 "%s: unable to create io handle.",
 			 function );
 
 			libnk2_array_free(
@@ -332,7 +332,7 @@ int libnk2_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize file io handle.",
+		 "%s: unable to create file io handle.",
 		 function );
 
 		return( -1 );
@@ -349,6 +349,10 @@ int libnk2_file_open(
                  LIBERROR_RUNTIME_ERROR_SET_FAILED,
                  "%s: unable to set track offsets read in file io handle.",
                  function );
+
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
 
                 return( -1 );
 	}
@@ -367,6 +371,10 @@ int libnk2_file_open(
                  "%s: unable to set filename in file io handle.",
                  function );
 
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+
                 return( -1 );
 	}
 	if( libnk2_file_open_file_io_handle(
@@ -382,6 +390,10 @@ int libnk2_file_open(
 		 "%s: unable to open file: %s.",
 		 function,
 		 filename );
+
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
 
 		return( -1 );
 	}
@@ -460,7 +472,7 @@ int libnk2_file_open_wide(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize file io handle.",
+		 "%s: unable to create file io handle.",
 		 function );
 
 		return( -1 );
@@ -477,6 +489,10 @@ int libnk2_file_open_wide(
                  LIBERROR_RUNTIME_ERROR_SET_FAILED,
                  "%s: unable to set track offsets read in file io handle.",
                  function );
+
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
 
                 return( -1 );
 	}
@@ -495,6 +511,10 @@ int libnk2_file_open_wide(
                  "%s: unable to set filename in file io handle.",
                  function );
 
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+
                 return( -1 );
 	}
 	if( libnk2_file_open_file_io_handle(
@@ -510,6 +530,10 @@ int libnk2_file_open_wide(
 		 "%s: unable to open file: %ls.",
 		 function,
 		 filename );
+
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
 
 		return( -1 );
 	}

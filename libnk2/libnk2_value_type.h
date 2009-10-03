@@ -68,21 +68,38 @@ int libnk2_value_type_copy_to_floating_point(
      double *value_floating_point,
      liberror_error_t **error );
 
-int libnk2_value_type_get_string_size(
+int libnk2_value_type_get_utf8_string_size(
      uint8_t *value_data,
      size_t value_data_size,
      uint8_t is_ascii_string,
      uint32_t ascii_codepage,
-     size_t *string_size,
+     size_t *utf8_string_size,
      liberror_error_t **error );
 
-int libnk2_value_type_copy_to_string(
+int libnk2_value_type_copy_to_utf8_string(
      uint8_t *value_data,
      size_t value_data_size,
      uint8_t is_ascii_string,
      uint32_t ascii_codepage,
-     uint8_t *string,
-     size_t string_size,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     liberror_error_t **error );
+
+int libnk2_value_type_get_utf16_string_size(
+     uint8_t *value_data,
+     size_t value_data_size,
+     uint8_t is_ascii_string,
+     uint32_t ascii_codepage,
+     size_t *utf16_string_size,
+     liberror_error_t **error );
+
+int libnk2_value_type_copy_to_utf16_string(
+     uint8_t *value_data,
+     size_t value_data_size,
+     uint8_t is_ascii_string,
+     uint32_t ascii_codepage,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
      liberror_error_t **error );
 
 int libnk2_value_type_get_binary_data_size(

@@ -19,6 +19,7 @@ Tools
   - implement liberror
 * nk2export
   - export item data (export handle)
+  - implement log handle
 * nk2info
   - print amount of items
   - create info handle
@@ -27,6 +28,19 @@ Deployment:
 * create debian package files
 * update macosx package files
 * update msvcpp files (implement libbfio)
+
+20091003
+* updated configure.ac
+* updated common, linbuna, libbfio, libsystem
+* updated array and list type
+* updated value types with libpff version
+* updated libfmapi
+* added libfdatetime support
+* implemented utf16 string item entry functions
+* updated manuals
+* worked on item API
+* worked on nk2tools
+* updated acinclude
 
 20090911
 * updated libsystem

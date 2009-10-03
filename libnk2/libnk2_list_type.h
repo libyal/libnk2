@@ -7,16 +7,16 @@
  * Refer to AUTHORS for acknowledgements.
  *
  * This software is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -73,6 +73,15 @@ struct libnk2_list
 	libnk2_list_element_t *last;
 };
 
+int libnk2_list_element_initialize(
+     libnk2_list_element_t **list_element,
+     liberror_error_t **error );
+
+int libnk2_list_element_free(
+     libnk2_list_element_t **list_element,
+     int (*value_free_function)( intptr_t *value, liberror_error_t **error ),
+     liberror_error_t **error );
+
 int libnk2_list_initialize(
      libnk2_list_t **list,
      liberror_error_t **error );
@@ -91,6 +100,23 @@ int libnk2_list_clone(
      libnk2_list_t **destination,
      libnk2_list_t *source,
      int (*value_clone_function)( intptr_t **destination, intptr_t *source, liberror_error_t **error ),
+     liberror_error_t **error );
+
+int libnk2_list_get_amount_of_elements(
+     libnk2_list_t *list,
+     int *amount_of_elements,
+     liberror_error_t **error );
+
+int libnk2_list_get_element(
+     libnk2_list_t *list,
+     int element_index,
+     libnk2_list_element_t **element,
+     liberror_error_t **error );
+
+int libnk2_list_get_value(
+     libnk2_list_t *list,
+     int element_index,
+     intptr_t **value,
      liberror_error_t **error );
 
 int libnk2_list_prepend_element(
@@ -128,16 +154,6 @@ int libnk2_list_insert_value(
 int libnk2_list_remove_element(
      libnk2_list_t *list,
      libnk2_list_element_t *element,
-     liberror_error_t **error );
-
-int libnk2_list_get_amount_of_elements(
-     libnk2_list_t *list,
-     liberror_error_t **error );
-
-int libnk2_list_get_element(
-     libnk2_list_t *list,
-     int element_index,
-     libnk2_list_element_t **element,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

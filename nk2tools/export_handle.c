@@ -7,16 +7,16 @@
  * Refer to AUTHORS for acknowledgements.
  *
  * This software is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -103,7 +103,7 @@ int export_handle_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to initialize input handle.",
+			 "%s: unable to create input handle.",
 			 function );
 
 			memory_free(
@@ -273,7 +273,7 @@ int export_handle_close(
  * Return 1 if successful or -1 on error
  */
 int export_handle_sanitize_filename(
-     uint8_t *filename,
+     libsystem_character_t *filename,
      size_t filename_size,
      liberror_error_t **error )
 {
@@ -306,27 +306,43 @@ int export_handle_sanitize_filename(
 	{
 		if( ( ( filename[ iterator ] >= 0x01 )
 		  && ( filename[ iterator ] <= 0x1f ) )
-		 || ( filename[ iterator ] == (uint8_t) '\\' )
-		 || ( filename[ iterator ] == (uint8_t) '/' ) )
+		 || ( filename[ iterator ] == (libsystem_character_t) '!' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '$' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '%' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '&' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '*' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '+' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '/' )
+		 || ( filename[ iterator ] == (libsystem_character_t) ':' )
+		 || ( filename[ iterator ] == (libsystem_character_t) ';' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '<' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '>' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '?' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '@' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '\\' )
+		 || ( filename[ iterator ] == (libsystem_character_t) '~' )
+		 || ( filename[ iterator ] == 0x7e ) )
 		{
-			filename[ iterator ] = (uint8_t) '_';
+			filename[ iterator ] = (libsystem_character_t) '_';
 		}
 	}
 	return( 1 );
 }
 
-/* Creates the full path/filename
+/* Creates the target path
  * Returns 1 if successful or -1 on error
  */
-int export_handle_create_fullname(
+int export_handle_create_target_path(
      libsystem_character_t *export_path,
-     uint8_t *filename,
-     size_t filename_size,
-     libsystem_character_t **fullname,
+     size_t export_path_size,
+     uint8_t *utf8_filename,
+     size_t utf8_filename_size,
+     libsystem_character_t **target_path,
+     size_t *target_path_size,
      liberror_error_t **error )
 {
-	static char *function = "export_handle_create_fullname";
-	size_t fullname_size  = 0;
+	static char *function = "export_handle_create_target_path";
+	size_t filename_size  = 0;
 
 	if( export_path == NULL )
 	{
@@ -339,52 +355,148 @@ int export_handle_create_fullname(
 
 		return( -1 );
 	}
-	if( filename == NULL )
+	if( utf8_filename == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
+		 "%s: invalid UTF-8 filename.",
 		 function );
 
 		return( -1 );
 	}
-	if( filename_size > (size_t) SSIZE_MAX )
+	if( utf8_filename_size > (size_t) SSIZE_MAX )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid filename size value exceeds maximum.",
+		 "%s: invalid UTF-8 filename size value exceeds maximum.",
 		 function );
 
 		return( -1 );
 	}
-	if( fullname == NULL )
+	if( target_path == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid fullname.",
+		 "%s: invalid target path.",
 		 function );
 
 		return( -1 );
 	}
-	if( *fullname != NULL )
+	if( *target_path != NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid fullname already set.",
+		 "%s: invalid target path already set.",
 		 function );
 
 		return( -1 );
 	}
+	if( target_path_size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid target path size.",
+		 function );
+
+		return( -1 );
+	}
+	/* Make sure to check the UTF-8 filename length
+	 * the conversion routines are very strict about the string size
+	 */
+	utf8_filename_size = 1 + narrow_string_length(
+	                          (char *) utf8_filename );
+
+	if( libsystem_string_size_from_utf8_string(
+	     utf8_filename,
+	     utf8_filename_size,
+	     &filename_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to determine UTF-8 filename size.",
+		 function );
+
+		return( -1 );
+	}
+	/* Include space for the separator and the end of string character
+	 */
+	*target_path_size = export_path_size + filename_size;
+
+	*target_path = (libsystem_character_t *) memory_allocate(
+	                                          sizeof( libsystem_character_t ) * *target_path_size );
+
+	if( *target_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create target path.",
+		 function );
+
+		*target_path_size = 0;
+
+		return( -1 );
+	}
+	if( libsystem_string_copy(
+	     *target_path,
+	     export_path,
+	     export_path_size ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to set export path in target path.",
+		 function );
+
+		memory_free(
+		 target_path );
+
+		*target_path      = NULL;
+		*target_path_size = 0;
+
+		return( -1 );
+	}
+	( *target_path )[ export_path_size - 1 ] = (libsystem_character_t) NK2COMMON_PATH_SEPARATOR;
+
+	if( libsystem_string_copy_from_utf8_string(
+	     &( ( *target_path )[ export_path_size ] ),
+	     filename_size,
+	     utf8_filename,
+	     utf8_filename_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_CONVERSION,
+		 LIBERROR_CONVERSION_ERROR_GENERIC,
+		 "%s: unable to set filename in target path.",
+		 function );
+
+		memory_free(
+		 target_path );
+
+		*target_path      = NULL;
+		*target_path_size = 0;
+
+		return( -1 );
+	}
 	if( export_handle_sanitize_filename(
-	     filename,
+	     &( ( *target_path )[ export_path_size ] ),
 	     filename_size,
 	     error ) != 1 )
 	{
@@ -392,58 +504,17 @@ int export_handle_create_fullname(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable sanitize filename.",
-		 function );
-
-		return( -1 );
-	}
-	fullname_size = libsystem_string_length(
-	                   export_path );
-
-	fullname_size += filename_size - 1;
-
-	/* Add space for the separator and the end of string character
-	 */
-	fullname_size += 2;
-
-	*fullname = (libsystem_character_t *) memory_allocate(
-	                                       sizeof( libsystem_character_t ) * fullname_size );
-
-	if( *fullname == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create fullname.",
-		 function );
-
-		return( -1 );
-	}
-	if( libsystem_string_snprintf(
-	     *fullname,
-	     fullname_size,
-	     "%" PRIs_LIBSYSTEM "%c%s",
-	     export_path,
-	     NK2COMMON_PATH_SEPARATOR,
-	     (char *) filename ) == -1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set fullname.",
+		 "%s: unable sanitize filename in target path.",
 		 function );
 
 		memory_free(
-		 *fullname );
+		 target_path );
 
-		*fullname = NULL;
+		*target_path      = NULL;
+		*target_path_size = 0;
 
 		return( -1 );
 	}
-	( *fullname )[ fullname_size - 1 ] = 0;
-
 	return( 1 );
 }
 
@@ -455,7 +526,6 @@ int export_handle_export_item(
      int item_index,
      int amount_of_items,
      const libsystem_character_t *export_path,
-     FILE *log_file_stream,
      liberror_error_t **error )
 {
 	static char *function = "export_handle_export_item";
@@ -493,20 +563,250 @@ int export_handle_export_item(
 	return( 1 );
 }
 
-/* Exports the items
+/* Exports the item values
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_export_item_values(
+     libnk2_item_t *item,
+     libsystem_character_t *export_path,
+     size_t export_path_size,
+     liberror_error_t **error )
+{
+	libsystem_character_t *target_path = NULL;
+	FILE *item_values_file_stream      = NULL;
+	uint8_t *value_data                = NULL;
+	static char *function              = "export_handle_export_item_values";
+	size_t target_path_size            = 0;
+	size_t value_data_size             = 0;
+	uint32_t amount_of_entries         = 0;
+	uint32_t entry_iterator            = 0;
+	uint32_t entry_type                = 0;
+	uint32_t value_type                = LIBNK2_VALUE_TYPE_UNSPECIFIED;
+	int result                         = 0;
+
+	if( item == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	if( export_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export path.",
+		 function );
+
+		return( -1 );
+	}
+	/* Create the item value file
+	 */
+	if( export_handle_create_target_path(
+	     export_path,
+	     export_path_size,
+	     (uint8_t *) "ItemValues.txt",
+	     15,
+	     &target_path,
+	     &target_path_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create target path.",
+		 function );
+
+		return( -1 );
+	}
+	if( target_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid target path.",
+		 function );
+
+		return( -1 );
+	}
+	result = libsystem_file_exists(
+	          target_path,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_GENERIC,
+		 "%s: unable to determine if %" PRIs_LIBSYSTEM " exists.",
+		 function,
+		 target_path );
+
+		memory_free(
+		 target_path );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		memory_free(
+		 target_path );
+
+		return( 1 );
+	}
+	item_values_file_stream = libsystem_file_stream_open(
+	                           target_path,
+	                           _LIBSYSTEM_CHARACTER_T_STRING( "w" ) );
+
+	if( item_values_file_stream == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open: %" PRIs_LIBSYSTEM ".",
+		 function,
+		 target_path );
+
+		memory_free(
+		 target_path );
+
+		return( -1 );
+	}
+	memory_free(
+	 target_path );
+
+	if( libnk2_item_get_amount_of_entries(
+	     item,
+	     &amount_of_entries,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve amount of entries.",
+		 function );
+
+		libsystem_file_stream_close(
+		 item_values_file_stream );
+
+		return( -1 );
+	}
+	fprintf(
+	 item_values_file_stream,
+	 "Amount of entries:\t%" PRIu32 "\n",
+	 amount_of_entries );
+	fprintf(
+	 item_values_file_stream,
+	 "\n" );
+
+	for( entry_iterator = 0;
+	     entry_iterator < amount_of_entries;
+	     entry_iterator++ )
+	{
+		fprintf(
+		 item_values_file_stream,
+		 "Entry:\t\t\t%" PRIu32 "\n",
+		 entry_iterator );
+
+		if( libnk2_item_get_entry_type(
+		     item,
+		     entry_iterator,
+		     &entry_type,
+		     &value_type,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve entry type of entry: %" PRIu32 ".",
+			 function,
+			 entry_iterator );
+
+			libsystem_file_stream_close(
+			 item_values_file_stream );
+
+			return( -1 );
+		}
+		fprintf(
+		 item_values_file_stream,
+		 "Entry type:\t\t0x%04" PRIx32 "\n",
+		 entry_type );
+		fprintf(
+		 item_values_file_stream,
+		 "Value type:\t\t0x%04" PRIx32 "\n",
+		 value_type );
+
+		result = libnk2_item_get_entry_value(
+			  item,
+			  entry_type,
+			  &value_type,
+			  &value_data,
+			  &value_data_size,
+			  0,
+			  error );
+
+		if( result == -1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve entry value of entry: %" PRIu32 ".",
+			 function,
+			 entry_iterator );
+
+			libsystem_file_stream_close(
+			 item_values_file_stream );
+
+			return( -1 );
+		}
+		fprintf(
+		 item_values_file_stream,
+		 "Value:\n" );
+		libsystem_notify_fprint_data(
+		 item_values_file_stream,
+		 value_data,
+		 value_data_size );
+	}
+	if( libsystem_file_stream_close(
+	     item_values_file_stream ) != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close item values file.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Exports the file
  * Returns the 1 if succesful, 0 if no items are available or -1 on error
  */
-int export_handle_export_items(
+int export_handle_export_file(
      export_handle_t *export_handle,
      const libsystem_character_t *export_path,
-     FILE *log_file_stream,
      liberror_error_t **error )
 {
 	libnk2_item_t *item   = NULL;
-	static char *function = "export_handle_export_items";
+	static char *function = "export_handle_export_file";
 	int amount_of_items   = 0;
 	int item_iterator     = 0;
-	int result            = 0;
 
 	if( export_handle == NULL )
 	{
@@ -597,7 +897,6 @@ int export_handle_export_items(
 		     item_iterator,
 		     amount_of_items,
 		     export_path,
-		     log_file_stream,
 		     error ) != 1 )
 		{
 			fprintf(
@@ -619,14 +918,6 @@ int export_handle_export_items(
 			}
 			liberror_error_free(
 			 error );
-
-			if( log_file_stream != NULL )
-			{
-				fprintf(
-				 log_file_stream,
-				 "Unable to export item: %d.\n",
-				 item_iterator + 1 );
-			}
 		}
 		if( libnk2_item_free(
 		     &item,

@@ -7,16 +7,16 @@
  * Refer to AUTHORS for acknowledgements.
  *
  * This software is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -70,15 +70,17 @@ int export_handle_close(
      liberror_error_t **error );
 
 int export_handle_sanitize_filename(
-     uint8_t *filename,
+     libsystem_character_t *filename,
      size_t filename_size,
      liberror_error_t **error );
 
-int export_handle_create_fullname(
+int export_handle_create_target_path(
      libsystem_character_t *export_path,
-     uint8_t *filename,
-     size_t filename_size,
-     libsystem_character_t **fullname,
+     size_t export_path_size,
+     uint8_t *utf8_filename,
+     size_t utf8_filename_size,
+     libsystem_character_t **target_path,
+     size_t *target_path_size,
      liberror_error_t **error );
 
 int export_handle_export_item(
@@ -86,13 +88,11 @@ int export_handle_export_item(
      int item_index,
      int amount_of_items,
      const libsystem_character_t *export_path,
-     FILE *log_file_stream,
      liberror_error_t **error );
 
-int export_handle_export_items(
+int export_handle_export_file(
      export_handle_t *export_handle,
      const libsystem_character_t *export_path,
-     FILE *log_file_stream,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

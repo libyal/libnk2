@@ -27,11 +27,11 @@
 
 #include <liberror.h>
 #include <libnotify.h>
-#include <libfmapi.h>
 
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_item_values.h"
+#include "libnk2_libfmapi.h"
 #include "libnk2_libuna.h"
 
 #include "nk2_item.h"
@@ -194,6 +194,7 @@ int libnk2_item_values_free_as_referenced_value(
      liberror_error_t **error )
 {
 	static char *function = "libnk2_item_values_free_as_referenced_value";
+	int result            = 1;
 
 	if( libnk2_item_values_free(
 	     (libnk2_item_values_t **) &item_values,
@@ -205,8 +206,10 @@ int libnk2_item_values_free_as_referenced_value(
 		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 		 "%s: unable to free item values.",
 		 function );
+
+		result = -1;
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Reads the items value
@@ -227,7 +230,7 @@ int libnk2_item_values_read(
 	uint32_t item_value_entry_iterator = 0;
 
 #if defined( HAVE_VERBOSE_OUTPUT )
-	uint32_t test                      = 0;
+	uint32_t value_32bit               = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -331,14 +334,14 @@ int libnk2_item_values_read(
 		  item_values->entry[ item_value_entry_iterator ].value_type ) );
 
 		endian_little_convert_32bit(
-		 test,
+		 value_32bit,
 		 item_value_entry.unknown1 );
 		libnotify_verbose_printf(
 		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown1\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 item_iterator,
 		 item_value_entry_iterator,
-		 test );
+		 value_32bit );
 
 		libnotify_verbose_printf(
 		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data array:\n",
@@ -527,20 +530,15 @@ int libnk2_item_values_read(
 	return( 1 );
 }
 
-/* Retrieves the value of a specific entry from the referenced item values
- * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+/* Retrieves the amount of item entries
+ * Returns 1 if successful or -1 on error
  */
-int libnk2_item_values_get_entry_value(
+int libnk2_item_values_get_amount_of_entries(
      libnk2_item_values_t *item_values,
-     libnk2_io_handle_t *io_handle,
-     uint32_t entry_type,
-     uint32_t *value_type,
-     uint8_t **value_data, 
-     size_t *value_data_size,
+     uint32_t *amount_of_entries,
      liberror_error_t **error )
 {
-	static char *function = "libnk2_item_values_get_entry_value";
-	int result            = 0;
+	static char *function = "libnk2_item_values_get_amount_of_entries";
 
 	if( item_values == NULL )
 	{
@@ -553,31 +551,197 @@ int libnk2_item_values_get_entry_value(
 
 		return( -1 );
 	}
-	if( item_values->entry != NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid entry value data.",
-		 "%s: invalid item values - missing entries.",
-		 function );
-
-		return( -1 );
-	}
-	if( io_handle == NULL )
+	if( amount_of_entries == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid io handle.",
+		 "%s: invalid amount of entries.",
 		 function );
 
 		return( -1 );
 	}
+	*amount_of_entries = item_values->amount_of_entries;
 
-	/* TODO */
-	return( result );
+	return( 1 );
+}
+
+/* Retrieves the entry type of a specific entry from the referenced item values
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_item_values_get_entry_type(
+     libnk2_item_values_t *item_values,
+     int entry_index,
+     uint32_t *entry_type,
+     uint32_t *value_type,
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_item_values_get_entry_type";
+
+	if( item_values == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item values.",
+		 function );
+
+		return( -1 );
+	}
+	if( item_values->entry == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item values - missing entries.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( entry_index < 0 )
+	 || ( (uint32_t) entry_index >= item_values->amount_of_entries ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
+		 "%s: invalid entry index out of range.",
+		 function );
+
+		return( -1 );
+	}
+	if( entry_type == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry type.",
+		 function );
+
+		return( -1 );
+	}
+	if( value_type == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value type.",
+		 function );
+
+		return( -1 );
+	}
+	*entry_type = item_values->entry[ entry_index ].entry_type;
+	*value_type = item_values->entry[ entry_index ].value_type;
+
+	return( 1 );
+}
+
+/* Retrieves the value of a specific entry from the referenced item values
+ *
+ * When the LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE is set
+ * the value type is ignored and set. The default behavior is a strict
+ * matching of the value type. In this case the value type must be filled
+ * with the corresponding value type
+ *
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+int libnk2_item_values_get_entry_value(
+     libnk2_item_values_t *item_values,
+     uint32_t entry_type,
+     uint32_t *value_type,
+     uint8_t **value_data, 
+     size_t *value_data_size,
+     uint8_t flags,
+     liberror_error_t **error )
+{
+	static char *function    = "libnk2_item_values_get_entry_value";
+	uint8_t entry_type_match = 0;
+	int entry_iterator       = 0;
+
+	if( item_values == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid item values.",
+		 function );
+
+		return( -1 );
+	}
+	if( item_values->entry == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid item values - missing entries.",
+		 function );
+
+		return( -1 );
+	}
+	if( value_type == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value type.",
+		 function );
+
+		return( -1 );
+	}
+	if( value_data == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value data.",
+		 function );
+
+		return( -1 );
+	}
+	if( value_data_size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value data size.",
+		 function );
+
+		return( -1 );
+	}
+	for( entry_iterator = 0;
+	     (uint32_t) entry_iterator < item_values->amount_of_entries;
+	     entry_iterator++ )
+	{
+		if( item_values->entry[ entry_iterator ].entry_type == entry_type )
+		{
+			entry_type_match = 1;
+		}
+		if( entry_type_match != 0 )
+		{
+			if( ( ( flags & LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE ) == LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE )
+			 || ( item_values->entry[ entry_iterator ].value_type == *value_type ) )
+			{
+				if( ( flags & LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE ) == LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE )
+				{
+					*value_type = item_values->entry[ entry_iterator ].value_type;
+				}
+				*value_data      = item_values->entry[ entry_iterator ].value_data;
+				*value_data_size = item_values->entry[ entry_iterator ].value_data_size;
+
+				return( 1 );
+			}
+		}
+	}
+	return( 0 );
 }
 
