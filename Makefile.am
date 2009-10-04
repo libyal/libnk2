@@ -12,9 +12,7 @@ SUBDIRS = \
 	libnk2 \
 	libsystem \
 	nk2tools \
-	manuals \
-	macosx \
-	msvscpp
+	manuals
 
 REDHAT_FILES = \
 	libnk2.spec \

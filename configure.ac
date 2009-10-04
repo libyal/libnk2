@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20091003],
+  [20091004],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libnk2],
- [20091003])
+ [20091004])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -1216,7 +1216,7 @@ AS_IF(
 	ac_libnk2_dummy=yes])
 
 dnl Set memwatch support
-ac_libnk2_have_memwatch=yes
+ac_libnk2_have_memwatch=no
 
 AS_IF(
 	[test "x$ac_libnk2_have_memwatch" != xno ],
@@ -1260,8 +1260,6 @@ AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([libsystem/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
 AC_CONFIG_FILES([manuals/Makefile])
-AC_CONFIG_FILES([macosx/Makefile])
-AC_CONFIG_FILES([msvscpp/Makefile])
 dnl Have configure make the include files
 AC_CONFIG_FILES([include/libnk2.h])
 AC_CONFIG_FILES([include/libnk2/definitions.h])
@@ -1270,7 +1268,6 @@ AC_CONFIG_FILES([include/libnk2/types.h])
 AC_CONFIG_FILES([libnk2/libnk2_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
-AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libnk2.pc])
 AC_CONFIG_FILES([libnk2.spec])
 dnl Have configure write its configuration

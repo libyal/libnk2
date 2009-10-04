@@ -226,11 +226,13 @@ int libnk2_item_values_read(
 
 	static char *function              = "libnk2_item_values_read";
 	ssize_t read_count                 = 0;
-	uint32_t item_iterator             = 0;
 	uint32_t item_value_entry_iterator = 0;
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 	uint32_t value_32bit               = 0;
+#endif
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint32_t item_iterator             = 0;
 #endif
 
 	if( io_handle == NULL )

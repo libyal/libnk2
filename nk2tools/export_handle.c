@@ -38,6 +38,7 @@
 #include <libsystem.h>
 
 #include "export_handle.h"
+#include "log_handle.h"
 #include "nk2common.h"
 
 /* Initializes the export handle
@@ -267,6 +268,48 @@ int export_handle_close(
 		result = -1;
 	}
 	return( result );
+}
+
+/* Create a directory
+ * Return 1 if successful or -1 on error
+ */
+int export_handle_make_directory(
+     libsystem_character_t *directory_name,
+     log_handle_t *log_handle,
+     liberror_error_t **error )
+{
+	static char *function = "export_handle_make_directory";
+
+	if( directory_name == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid directory name.",
+		 function );
+
+		return( -1 );
+	}
+	if( libsystem_directory_make(
+	     directory_name ) != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to make directory: %" PRIs_LIBSYSTEM ".",
+		 function,
+		 directory_name );
+
+		return( -1 );
+	}
+	log_handle_printf(
+	 log_handle,
+	 "Created directory: %" PRIs_LIBSYSTEM ".\n",
+	 directory_name );
+
+	return( 1 );
 }
 
 /* Sanitizes the filename
@@ -518,25 +561,40 @@ int export_handle_create_target_path(
 	return( 1 );
 }
 
-/* Exports the item
+/* Exports the alias
  * Returns 1 if successful or -1 on error
  */
-int export_handle_export_item(
-     libnk2_item_t *item,
-     int item_index,
-     int amount_of_items,
-     const libsystem_character_t *export_path,
+int export_handle_export_alias(
+     libnk2_item_t *alias,
+     int alias_index,
+     int amount_of_aliases,
+     libsystem_character_t *export_path,
+     size_t export_path_size,
+     log_handle_t *log_handle,
      liberror_error_t **error )
 {
-	static char *function = "export_handle_export_item";
+	uint8_t alias_directory[ 11 ];
 
-	if( item == NULL )
+	libsystem_character_t *alias_path  = NULL;
+	static char *function              = "export_handle_export_alias";
+	size_t alias_directory_size        = 0;
+	size_t alias_path_size             = 0;
+	int print_count                    = 0;
+	int result                         = 0;
+
+#ifdef TODO
+	libsystem_character_t *target_path = NULL;
+	FILE *alias_file_stream            = NULL;
+	size_t target_path_size            = 0;
+#endif
+
+	if( alias == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
+		 "%s: invalid alias.",
 		 function );
 
 		return( -1 );
@@ -554,11 +612,254 @@ int export_handle_export_item(
 	}
 	fprintf(
 	 stdout,
-	 "Exporting item %d out of %d.\n",
-	 item_index + 1,
-	 amount_of_items );
+	 "Processing alias %d out of %d.\n",
+	 alias_index + 1,
+	 amount_of_aliases );
+
+	/* Create the alias directory
+	 */
+	print_count = narrow_string_snprintf(
+	               (char *) alias_directory,
+	               11,
+	               "Alias%05d",
+	               alias_index + 1 );
+
+	if( ( print_count < 0 )
+	 || ( print_count > 11 ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set alias directory.",
+		 function );
+
+		return( -1 );
+	}
+	alias_directory[ 10 ] = 0;
+	alias_directory_size = 11;
+
+	if( export_handle_create_target_path(
+	     export_path,
+	     export_path_size,
+	     alias_directory,
+	     alias_directory_size,
+	     &alias_path,
+	     &alias_path_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable create alias path.",
+		 function );
+
+		return( -1 );
+	}
+	if( alias_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid alias path.",
+		 function );
+
+		return( -1 );
+	}
+fprintf( stderr, "X: %s, %s, %s\n", export_path, alias_directory, alias_path );
+	result = libsystem_file_exists(
+	          alias_path,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_GENERIC,
+		 "%s: unable to determine if %" PRIs_LIBSYSTEM " exists.",
+		 function,
+		 alias_path );
+	}
+	else if( result == 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_GENERIC,
+		 "%s: %" PRIs_LIBSYSTEM " already exists.",
+		 function,
+		 alias_path );
+	}
+	if( result != 0 )
+	{
+		memory_free(
+		 alias_path );
+
+		return( -1 );
+	}
+	if( export_handle_make_directory(
+	     alias_path,
+	     log_handle,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to create directory: %" PRIs_LIBSYSTEM "",
+		 function,
+		 alias_path );
+
+		memory_free(
+		 alias_path );
+
+		return( -1 );
+	}
+	if( export_handle_export_item_values(
+	     alias,
+	     alias_path,
+	     alias_path_size,
+	     log_handle,
+	     error ) != 1 )
+	{
+		libsystem_notify_verbose_printf(
+		 "%s: unable to export item values.\n",
+		 function );
+
+		if( ( error != NULL )
+		 && ( *error != NULL ) )
+		{
+			libsystem_notify_print_error_backtrace(
+			 *error );
+		}
+		liberror_error_free(
+		 error );
+
+		log_handle_printf(
+		 log_handle,
+		 "Unable to export item values.\n" );
+	}
+#ifdef TODO
+	/* Create the alias file
+	 */
+	if( export_handle_create_target_path(
+	     alias_path,
+	     alias_path_size,
+	     (uint8_t *) "Alias.txt",
+	     10,
+	     &target_path,
+	     &target_path_size,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create target path.",
+		 function );
+
+		memory_free(
+		 alias_path );
+
+		return( -1 );
+	}
+	if( target_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid target path.",
+		 function );
+
+		memory_free(
+		 alias_path );
+
+		return( -1 );
+	}
+	result = libsystem_file_exists(
+	          target_path,
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_GENERIC,
+		 "%s: unable to determine if %" PRIs_LIBSYSTEM " exists.",
+		 function,
+		 target_path );
+
+		memory_free(
+		 target_path );
+		memory_free(
+		 alias_path );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		log_handle_printf(
+		 log_handle,
+		 "Skipping alias it already exists.\n" );
+
+		memory_free(
+		 target_path );
+		memory_free(
+		 alias_path );
+
+		return( 1 );
+	}
+	alias_file_stream = libsystem_file_stream_open(
+	                     target_path,
+	                     _LIBSYSTEM_CHARACTER_T_STRING( "w" ) );
+
+	if( alias_file_stream == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open: %" PRIs_LIBSYSTEM ".",
+		 function,
+		 target_path );
+
+		memory_free(
+		 target_path );
+		memory_free(
+		 alias_path );
+
+		return( -1 );
+	}
+	memory_free(
+	 target_path );
 
 	/* TODO */
+
+	/* Close the alias file
+	 */
+	if( libsystem_file_stream_close(
+	     alias_file_stream ) != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close alias file.",
+		 function );
+
+		memory_free(
+		 alias_path );
+
+		return( -1 );
+	}
+#endif
+	memory_free(
+	 alias_path );
 
 	return( 1 );
 }
@@ -570,6 +871,7 @@ int export_handle_export_item_values(
      libnk2_item_t *item,
      libsystem_character_t *export_path,
      size_t export_path_size,
+     log_handle_t *log_handle,
      liberror_error_t **error )
 {
 	libsystem_character_t *target_path = NULL;
@@ -800,7 +1102,9 @@ int export_handle_export_item_values(
  */
 int export_handle_export_file(
      export_handle_t *export_handle,
-     const libsystem_character_t *export_path,
+     libsystem_character_t *export_path,
+     size_t export_path_size,
+     log_handle_t *log_handle,
      liberror_error_t **error )
 {
 	libnk2_item_t *item   = NULL;
@@ -892,21 +1196,23 @@ int export_handle_export_file(
 
 			return( -1 );
 		}
-		if( export_handle_export_item(
+		if( export_handle_export_alias(
 		     item,
 		     item_iterator,
 		     amount_of_items,
 		     export_path,
+		     export_path_size,
+		     log_handle,
 		     error ) != 1 )
 		{
 			fprintf(
 			 stdout,
-			 "Unable to export item %d out of %d.\n",
+			 "Unable to export alias %d out of %d.\n",
 			 item_iterator + 1,
 			 amount_of_items );
 
 			libsystem_notify_verbose_printf(
-			 "%s: unable to export item: %d.\n",
+			 "%s: unable to export alias: %d.\n",
 			 function,
 			 item_iterator + 1 );
 

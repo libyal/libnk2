@@ -39,6 +39,8 @@
 
 #include <libsystem.h>
 
+#include "log_handle.h"
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
@@ -69,6 +71,11 @@ int export_handle_close(
      export_handle_t *export_handle,
      liberror_error_t **error );
 
+int export_handle_make_directory(
+     libsystem_character_t *directory_name,
+     log_handle_t *log_handle,
+     liberror_error_t **error );
+
 int export_handle_sanitize_filename(
      libsystem_character_t *filename,
      size_t filename_size,
@@ -83,16 +90,27 @@ int export_handle_create_target_path(
      size_t *target_path_size,
      liberror_error_t **error );
 
-int export_handle_export_item(
+int export_handle_export_alias(
      libnk2_item_t *item,
      int item_index,
      int amount_of_items,
-     const libsystem_character_t *export_path,
+     libsystem_character_t *export_path,
+     size_t export_path_size,
+     log_handle_t *log_handle,
+     liberror_error_t **error );
+
+int export_handle_export_item_values(
+     libnk2_item_t *item,
+     libsystem_character_t *export_path,
+     size_t export_path_size,
+     log_handle_t *log_handle,
      liberror_error_t **error );
 
 int export_handle_export_file(
      export_handle_t *export_handle,
-     const libsystem_character_t *export_path,
+     libsystem_character_t *export_path,
+     size_t export_path_size,
+     log_handle_t *log_handle,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

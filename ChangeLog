@@ -1,6 +1,4 @@
 TODO
-* item array item values free function 
-
 * locale support
   - library data returns UTF-8 (done)
   - input filenames remain system string (done)
@@ -14,20 +12,26 @@ Performance improvement
 * map (file offset and size) items and item values first read on demand
 * pre allocate item array entries
 
+library
+* what about multiple alias entries 0x6001 of a single item?
+
 Tools
 * nk2input
   - implement liberror
 * nk2export
-  - export item data (export handle)
-  - implement log handle
+  - add export mode like pffexport
+  - export alias files instead of item values
 * nk2info
-  - print amount of items
-  - create info handle
+  - create info handle ?
 
 Deployment:
 * create debian package files
-* update macosx package files
-* update msvcpp files (implement libbfio)
+* implement macosx package files (add to configure scripts)
+* implement msvcpp files (implement libbfio) (add to configure scripts)
+
+20091004
+* worked on item API
+* worked on nk2tools
 
 20091003
 * updated configure.ac

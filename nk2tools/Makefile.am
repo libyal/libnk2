@@ -18,6 +18,7 @@ nk2export_SOURCES = \
 	export_handle.c export_handle.h \
 	filetime.c filetime.h \
 	guid.c guid.h \
+	log_handle.c log_handle.h \
 	nk2common.h \
 	nk2export.c \
 	nk2input.c nk2input.h \

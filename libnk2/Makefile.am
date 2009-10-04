@@ -37,7 +37,6 @@ libnk2_la_SOURCES = \
 libnk2_la_LIBADD = \
 	../liberror/liberror.la \
 	../libnotify/libnotify.la \
-	../libfmapi/libfmapi.la \
 	@LIBUNA_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \

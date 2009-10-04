@@ -65,6 +65,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %files tools
 %defattr(644,root,root,755)
 %doc AUTHORS COPYING NEWS README
+%attr(755,root,root) %{_bindir}/nk2export
 %attr(755,root,root) %{_bindir}/nk2info
 %{_mandir}/man1/*
 

@@ -49,6 +49,7 @@
 
 #include "export_handle.h"
 #include "filetime.h"
+#include "log_handle.h"
 #include "nk2common.h"
 #include "nk2input.h"
 #include "nk2output.h"
@@ -89,12 +90,12 @@ int main( int argc, char * const argv[] )
 {
 	export_handle_t *export_handle            = NULL;
 	liberror_error_t *error                   = NULL;
+	log_handle_t *log_handle                  = NULL;
 	libsystem_character_t *log_filename       = NULL;
 	libsystem_character_t *option_target_path = NULL;
 	libsystem_character_t *path_separator     = NULL;
 	libsystem_character_t *source             = NULL;
 	libsystem_character_t *target_path        = NULL;
-	FILE *log_file_stream                     = NULL;
 	char *program                             = "nk2export";
 	size_t source_length                      = 0;
 	size_t target_path_length                 = 0;
@@ -259,11 +260,11 @@ int main( int argc, char * const argv[] )
 		{
 			path_separator++;
 		}
-		target_path_length = 8 + libsystem_string_length(
+		target_path_length = 7 + libsystem_string_length(
 		                          path_separator );
 
 		target_path = (libsystem_character_t *) memory_allocate(
-		                                         sizeof( libsystem_character_t ) * target_path_length );
+		                                         sizeof( libsystem_character_t ) * ( target_path_length + 1 ) );
 
 		if( target_path == NULL )
 		{
@@ -275,7 +276,7 @@ int main( int argc, char * const argv[] )
 		}
 		if( libsystem_string_snprintf(
 		     target_path,
-		     target_path_length,
+		     target_path_length + 1,
 		     "%" PRIs_LIBSYSTEM ".export",
 		     path_separator ) == -1 )
 		{
@@ -327,6 +328,24 @@ int main( int argc, char * const argv[] )
 	libnk2_notify_set_verbose(
 	 verbose );
 
+	if( log_handle_initialize(
+	     &log_handle,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to initialize log handle.\n" );
+
+		libsystem_notify_print_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+
+		memory_free(
+		 target_path );
+
+		return( EXIT_FAILURE );
+	}
 	if( export_handle_initialize(
 	     &export_handle,
 	     &error ) != 1 )
@@ -340,24 +359,39 @@ int main( int argc, char * const argv[] )
 		liberror_error_free(
 		 &error );
 
+		log_handle_free(
+		 &log_handle,
+		 NULL );
 		memory_free(
 		 target_path );
 
 		return( EXIT_FAILURE );
 	}
-	if( log_filename != NULL )
+	if( log_handle_open(
+	     log_handle,
+	     log_filename,
+	     &error ) != 1 )
 	{
-		log_file_stream = libsystem_file_stream_open(
-		                   log_filename,
-		                   _LIBSYSTEM_CHARACTER_T_STRING( "a" ) );
+		fprintf(
+		 stderr,
+		 "Unable to open log file: %" PRIs_LIBSYSTEM ".\n",
+		 log_filename );
 
-		if( log_file_stream == NULL )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to open log file: %s.\n",
-			 log_filename );
-		}
+		libsystem_notify_print_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+
+		export_handle_free(
+		 &export_handle,
+		 NULL );
+		log_handle_free(
+		 &log_handle,
+		 NULL );
+		memory_free(
+		 target_path );
+
+		return( EXIT_FAILURE );
 	}
 	fprintf(
 	 stdout,
@@ -371,7 +405,7 @@ int main( int argc, char * const argv[] )
 		fprintf(
 		 stderr,
 		 "Error opening file: %" PRIs_LIBSYSTEM ".\n",
-		 argv[ optind ] );
+		 source );
 
 		libsystem_notify_print_error_backtrace(
 		 error );
@@ -380,6 +414,9 @@ int main( int argc, char * const argv[] )
 
 		export_handle_free(
 		 &export_handle,
+		 NULL );
+		log_handle_free(
+		 &log_handle,
 		 NULL );
 		memory_free(
 		 target_path );
@@ -393,6 +430,8 @@ int main( int argc, char * const argv[] )
 	result = export_handle_export_file(
 	          export_handle,
 	          target_path,
+	          target_path_length + 1,
+	          log_handle,
 	          &error );
 
 	if( result == -1 )
@@ -409,11 +448,17 @@ int main( int argc, char * const argv[] )
 		export_handle_free(
 		 &export_handle,
 		 NULL );
+		log_handle_free(
+		 &log_handle,
+		 NULL );
 		memory_free(
 		 target_path );
 
 		return( EXIT_FAILURE );
 	}
+	memory_free(
+	 target_path );
+
 	if( export_handle_close(
 	     export_handle,
 	     &error ) != 0 )
@@ -421,7 +466,7 @@ int main( int argc, char * const argv[] )
 		fprintf(
 		 stderr,
 		 "Error closing file: %" PRIs_LIBSYSTEM ".\n",
-		 argv[ optind ] );
+		 source );
 
 		libsystem_notify_print_error_backtrace(
 		 error );
@@ -431,8 +476,9 @@ int main( int argc, char * const argv[] )
 		export_handle_free(
 		 &export_handle,
 		 NULL );
-		memory_free(
-		 target_path );
+		log_handle_free(
+		 &log_handle,
+		 NULL );
 
 		return( EXIT_FAILURE );
 	}
@@ -449,24 +495,46 @@ int main( int argc, char * const argv[] )
 		liberror_error_free(
 		 &error );
 
-		memory_free(
-		 target_path );
+		log_handle_free(
+		 &log_handle,
+		 NULL );
 
 		return( EXIT_FAILURE );
 	}
-	memory_free(
-	 target_path );
-
-	if( log_file_stream != NULL )
+	if( log_handle_close(
+	     log_handle,
+	     &error ) != 0 )
 	{
-		if( libsystem_file_stream_close(
-		     log_file_stream ) != 0 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to close log file: %s.\n",
-			 log_filename );
-		}
+		fprintf(
+		 stderr,
+		 "Unable to close log file: %" PRIs_LIBSYSTEM ".\n",
+		 log_filename );
+
+		libsystem_notify_print_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+
+		log_handle_free(
+		 &log_handle,
+		 NULL );
+
+		return( EXIT_FAILURE );
+	}
+	if( log_handle_free(
+	     &log_handle,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to free log handle.\n" );
+
+		libsystem_notify_print_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+
+		return( EXIT_FAILURE );
 	}
 	if( result == 0 )
 	{
