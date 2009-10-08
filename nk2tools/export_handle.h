@@ -62,9 +62,9 @@ int export_handle_free(
      export_handle_t **export_handle,
      liberror_error_t **error );
 
-int export_handle_open_input(
+int export_handle_open(
      export_handle_t *export_handle,
-     const char *filename,
+     const libsystem_character_t *filename,
      liberror_error_t **error );
 
 int export_handle_close(

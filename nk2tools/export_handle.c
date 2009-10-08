@@ -160,16 +160,15 @@ int export_handle_free(
 	return( 1 );
 }
 
-/* Opens the input of the export handle
+/* Opens the export handle
  * Returns 1 if successful or -1 on error
  */
-int export_handle_open_input(
+int export_handle_open(
      export_handle_t *export_handle,
-     const char *filename,
+     const libsystem_character_t *filename,
      liberror_error_t **error )
 {
-	static char *function = "export_handle_open_input";
-	int result            = 1;
+	static char *function = "export_handle_open";
 
 	if( export_handle == NULL )
 	{
@@ -204,6 +203,23 @@ int export_handle_open_input(
 
 		return( -1 );
 	}
+#if defined( LIBSYSTEM_HAVE_WIDE_CHARACTER )
+	if( libnk2_file_open_wide(
+	     export_handle->input_handle,
+	     filename,
+	     LIBNK2_OPEN_READ,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open file.",
+		 function );
+
+		return( -1 );
+	}
+#else
 	if( libnk2_file_open(
 	     export_handle->input_handle,
 	     filename,
@@ -214,15 +230,16 @@ int export_handle_open_input(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open files.",
+		 "%s: unable to open file.",
 		 function );
 
-		return( 1 );
+		return( -1 );
 	}
-	return( result );
+#endif
+	return( 1 );
 }
 
-/* Closes both the input of the export handle
+/* Closes the export handle
  * Returns the 0 if succesful or -1 on error
  */
 int export_handle_close(

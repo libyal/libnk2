@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20091004],
+  [20091008],
   [forensics@hoffmannbv.nl])
 
 AC_CONFIG_SRCDIR(
@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR(
 
 AM_INIT_AUTOMAKE(
  [libnk2],
- [20091004])
+ [20091008])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -1260,6 +1260,8 @@ AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([libsystem/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
 AC_CONFIG_FILES([manuals/Makefile])
+AC_CONFIG_FILES([macosx/Makefile])
+AC_CONFIG_FILES([msvscpp/Makefile])
 dnl Have configure make the include files
 AC_CONFIG_FILES([include/libnk2.h])
 AC_CONFIG_FILES([include/libnk2/definitions.h])

@@ -277,7 +277,7 @@ int main( int argc, char * const argv[] )
 		if( libsystem_string_snprintf(
 		     target_path,
 		     target_path_length + 1,
-		     "%" PRIs_LIBSYSTEM ".export",
+		     _LIBSYSTEM_CHARACTER_T_STRING( "%" ) _LIBSYSTEM_CHARACTER_T_STRING( PRIs_LIBSYSTEM ) _LIBSYSTEM_CHARACTER_T_STRING( ".export" ),
 		     path_separator ) == -1 )
 		{
 			fprintf(
@@ -397,7 +397,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 "Opening file.\n" );
 
-	if( export_handle_open_input(
+	if( export_handle_open(
 	     export_handle,
 	     source,
 	     &error ) != 1 )

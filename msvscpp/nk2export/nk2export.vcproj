@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="nk2info"
-	ProjectGUID="{A7545354-5D50-49F6-A3D0-1F97F6228955}"
-	RootNamespace="nk2info"
+	Name="nk2export"
+	ProjectGUID="{C27BEBA4-D27C-4E67-96D4-B5B8DD355641}"
+	RootNamespace="nk2export"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -104,7 +104,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\nk2tools\nk2info.c"
+				RelativePath="..\..\nk2tools\export_handle.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nk2tools\filetime.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nk2tools\guid.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nk2tools\log_handle.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nk2tools\nk2export.c"
 				>
 			</File>
 			<File
@@ -121,6 +137,22 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\nk2tools\export_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nk2tools\filetime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nk2tools\guid.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nk2tools\log_handle.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\nk2tools\nk2common.h"
 				>

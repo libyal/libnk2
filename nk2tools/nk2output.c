@@ -36,6 +36,18 @@
 #include <libbfio.h>
 #endif
 
+#if defined( HAVE_LOCAL_LIBFDATETIME )
+#include <libfdatetime_definitions.h>
+#elif defined( HAVE_LIBFDATETIME_H )
+#include <libfdatetime.h>
+#endif
+
+#if defined( HAVE_LOCAL_LIBFMAPI )
+#include <libfmapi_definitions.h>
+#elif defined( HAVE_LIBFMAPI_H )
+#include <libfmapi.h>
+#endif
+
 /* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
  * before including libnk2.h
  */
@@ -96,6 +108,16 @@ void nk2output_version_fprint(
 	 stream,
 	 ", libbfio %s",
 	 LIBBFIO_VERSION_STRING );
+
+	fprintf(
+	 stream,
+	 ", libfdatetime %s",
+	 LIBFDATETIME_VERSION_STRING );
+
+	fprintf(
+	 stream,
+	 ", libfmapi %s",
+	 LIBFMAPI_VERSION_STRING );
 
         fprintf(
 	 stream,

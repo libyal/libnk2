@@ -16,8 +16,6 @@ library
 * what about multiple alias entries 0x6001 of a single item?
 
 Tools
-* nk2input
-  - implement liberror
 * nk2export
   - add export mode like pffexport
   - export alias files instead of item values
@@ -27,7 +25,10 @@ Tools
 Deployment:
 * create debian package files
 * implement macosx package files (add to configure scripts)
-* implement msvcpp files (implement libbfio) (add to configure scripts)
+
+20091008
+* worked on msvscpp files
+* worked on native windows compilation
 
 20091004
 * worked on item API
