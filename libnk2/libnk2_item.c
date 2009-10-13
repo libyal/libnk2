@@ -1047,7 +1047,7 @@ int libnk2_item_get_entry_value_utf8_string_size(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupport string value type: 0x%04" PRIx32 ".",
+			 "%s: unsupported string value type: 0x%04" PRIx32 ".",
 			 function,
 			 value_type );
 
@@ -1185,7 +1185,7 @@ int libnk2_item_get_entry_value_utf8_string(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupport string value type: 0x%04" PRIx32 ".",
+			 "%s: unsupported string value type: 0x%04" PRIx32 ".",
 			 function,
 			 value_type );
 
@@ -1297,7 +1297,7 @@ int libnk2_item_get_entry_value_utf16_string_size(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupport string value type: 0x%04" PRIx32 ".",
+			 "%s: unsupported string value type: 0x%04" PRIx32 ".",
 			 function,
 			 value_type );
 
@@ -1435,7 +1435,7 @@ int libnk2_item_get_entry_value_utf16_string(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupport string value type: 0x%04" PRIx32 ".",
+			 "%s: unsupported string value type: 0x%04" PRIx32 ".",
 			 function,
 			 value_type );
 

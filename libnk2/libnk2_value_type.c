@@ -439,7 +439,7 @@ int libnk2_value_type_get_utf8_string_size(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 			 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupport codepage: UTF-7.",
+			 "%s: unsupported codepage: UTF-7.",
 			 function );
 
 			return( -1 );
@@ -572,7 +572,7 @@ int libnk2_value_type_copy_to_utf8_string(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 			 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupport codepage: UTF-7.",
+			 "%s: unsupported codepage: UTF-7.",
 			 function );
 
 			return( -1 );
@@ -685,7 +685,7 @@ int libnk2_value_type_get_utf16_string_size(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 			 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupport codepage: UTF-7.",
+			 "%s: unsupported codepage: UTF-7.",
 			 function );
 
 			return( -1 );
@@ -818,7 +818,7 @@ int libnk2_value_type_copy_to_utf16_string(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 			 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupport codepage: UTF-7.",
+			 "%s: unsupported codepage: UTF-7.",
 			 function );
 
 			return( -1 );

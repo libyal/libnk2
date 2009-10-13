@@ -26,6 +26,9 @@ Deployment:
 * create debian package files
 * implement macosx package files (add to configure scripts)
 
+20091013
+* several textual fixes
+
 20091008
 * worked on msvscpp files
 * worked on native windows compilation

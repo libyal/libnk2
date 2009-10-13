@@ -412,7 +412,7 @@ int libnk2_item_values_read(
 				 error,
 				 LIBERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-				 "%s: unsupport value type: 0x%04" PRIx32 ".",
+				 "%s: unsupported value type: 0x%04" PRIx32 ".",
 				 function,
 				 item_values->entry[ item_value_entry_iterator ].value_type );
 
