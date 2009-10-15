@@ -26,6 +26,9 @@ Deployment:
 * create debian package files
 * implement macosx package files (add to configure scripts)
 
+20091015
+* minor adjustments
+
 20091013
 * several textual fixes
 

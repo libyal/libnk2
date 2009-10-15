@@ -547,17 +547,6 @@ int libnk2_item_get_entry_value_boolean(
 
 		return( -1 );
 	}
-	if( entry_value == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid entry value.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -635,17 +624,6 @@ int libnk2_item_get_entry_value_32bit(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	if( entry_value == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid entry value.",
 		 function );
 
 		return( -1 );
@@ -731,17 +709,6 @@ int libnk2_item_get_entry_value_64bit(
 
 		return( -1 );
 	}
-	if( entry_value == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid entry value.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -819,17 +786,6 @@ int libnk2_item_get_entry_value_filetime(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	if( entry_value == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid entry value.",
 		 function );
 
 		return( -1 );
@@ -915,17 +871,6 @@ int libnk2_item_get_entry_value_size(
 
 		return( -1 );
 	}
-	if( entry_value == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid entry value.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -1005,17 +950,6 @@ int libnk2_item_get_entry_value_utf8_string_size(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	if( utf8_string_size == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid UTF-8 string size.",
 		 function );
 
 		return( -1 );
@@ -1123,39 +1057,6 @@ int libnk2_item_get_entry_value_utf8_string(
 
 		return( -1 );
 	}
-	if( utf8_string == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid UTF-8 string.",
-		 function );
-
-		return( -1 );
-	}
-	if( utf8_string_size == 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid UTF-8 string size.",
-		 function );
-
-		return( -1 );
-	}
-	if( utf8_string_size > (size_t) SSIZE_MAX )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid UTF-8 string size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -1259,17 +1160,6 @@ int libnk2_item_get_entry_value_utf16_string_size(
 
 		return( -1 );
 	}
-	if( utf16_string_size == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid UTF-16 string size.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -1369,39 +1259,6 @@ int libnk2_item_get_entry_value_utf16_string(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
-	if( utf16_string == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid UTF-16 string.",
-		 function );
-
-		return( -1 );
-	}
-	if( utf16_string_size == 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_ZERO_OR_LESS,
-		 "%s: invalid UTF-16 string size.",
-		 function );
-
-		return( -1 );
-	}
-	if( utf16_string_size > (size_t) SSIZE_MAX )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid UTF-16 string size value exceeds maximum.",
 		 function );
 
 		return( -1 );
