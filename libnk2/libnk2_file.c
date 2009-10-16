@@ -597,7 +597,7 @@ int libnk2_file_open_file_io_handle(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to personal folder files currently not supported.",
+		 "%s: write access to nickfiles currently not supported.",
 		 function );
 
 		return( -1 );
