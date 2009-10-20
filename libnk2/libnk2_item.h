@@ -32,6 +32,7 @@
 #include "libnk2_file.h"
 #include "libnk2_item_values.h"
 #include "libnk2_list_type.h"
+#include "libnk2_types.h"
 
 #if defined( __cplusplus )
 extern "C" {

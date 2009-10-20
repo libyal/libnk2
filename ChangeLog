@@ -19,12 +19,17 @@ Tools
 * nk2export
   - add export mode like pffexport
   - export alias files instead of item values
+  - move file handle to nk2export like in pffexport
 * nk2info
   - create info handle ?
 
 Deployment:
 * create debian package files
 * implement macosx package files (add to configure scripts)
+
+20091020
+* small changes in nk2tools Makefile.am
+* correction in error output
 
 20091016
 * correction in error output

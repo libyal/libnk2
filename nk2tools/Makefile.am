@@ -32,7 +32,6 @@ nk2export_LDADD = \
 	@MEMWATCH_LIBADD@
 
 nk2info_SOURCES = \
-	guid.c guid.h \
 	nk2common.h \
 	nk2info.c \
 	nk2output.c nk2output.h
@@ -48,6 +47,8 @@ distclean: clean
 	/bin/rm -f Makefile
 
 splint:
+	@echo "Running splint on nk2export ..." 
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(nk2export_SOURCES) 
 	@echo "Running splint on nk2info ..." 
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(nk2info_SOURCES) 
 

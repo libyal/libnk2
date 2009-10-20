@@ -75,7 +75,7 @@ void usage_fprint(
 int nk2info_file_info_fprint(
      FILE *stream,
      libnk2_file_t *file,
-     libnk2_error_t **error )
+     liberror_error_t **error )
 {
 	static char *function = "nk2info_file_info_fprint";
 	int amount_of_items   = 0;
@@ -97,7 +97,7 @@ int nk2info_file_info_fprint(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid fil.",
+		 "%s: invalid file.",
 		 function );
 
 		return( -1 );
@@ -140,7 +140,7 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libnk2_error_t *error         = NULL;
+	liberror_error_t *error       = NULL;
 	libnk2_file_t *nk2_file       = NULL;
 	libsystem_character_t *source = NULL;
 	char *program                 = "nk2info";
@@ -239,7 +239,7 @@ int main( int argc, char * const argv[] )
 
 		libsystem_notify_print_error_backtrace(
 		 error );
-		libnk2_error_free(
+		liberror_error_free(
 		 &error );
 
 		return( EXIT_FAILURE );
@@ -265,7 +265,7 @@ int main( int argc, char * const argv[] )
 
 		libsystem_notify_print_error_backtrace(
 		 error );
-		libnk2_error_free(
+		liberror_error_free(
 		 &error );
 
 		libnk2_file_free(
@@ -285,9 +285,12 @@ int main( int argc, char * const argv[] )
 
 		libsystem_notify_print_error_backtrace(
 		 error );
-		libnk2_error_free(
+		liberror_error_free(
 		 &error );
 
+		libnk2_file_close(
+		 nk2_file,
+		 NULL );
 		libnk2_file_free(
 		 &nk2_file,
 		 NULL );
@@ -305,7 +308,7 @@ int main( int argc, char * const argv[] )
 
 		libsystem_notify_print_error_backtrace(
 		 error );
-		libnk2_error_free(
+		liberror_error_free(
 		 &error );
 
 		libnk2_file_free(
@@ -324,7 +327,7 @@ int main( int argc, char * const argv[] )
 
 		libsystem_notify_print_error_backtrace(
 		 error );
-		libnk2_error_free(
+		liberror_error_free(
 		 &error );
 
 		return( EXIT_FAILURE );
