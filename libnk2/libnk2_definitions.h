@@ -1,8 +1,8 @@
 /*
  * The internal definitions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -24,10 +24,10 @@
 #define _LIBNK2_INTERNAL_DEFINITIONS_H
 
 #include <common.h>
-#include <endian.h>
+#include <byte_stream.h>
 
-#define LIBNK2_ENDIAN_BIG				_ENDIAN_BIG
-#define LIBNK2_ENDIAN_LITTLE				_ENDIAN_LITTLE
+#define LIBNK2_ENDIAN_BIG				_BYTE_STREAM_ENDIAN_BIG
+#define LIBNK2_ENDIAN_LITTLE				_BYTE_STREAM_ENDIAN_LITTLE
 
 /* Define HAVE_LOCAL_LIBNK2 for local use of libnk2
  */
@@ -38,11 +38,11 @@
  * for local use of libnk2
  */
 #else
-#define LIBNK2_VERSION					20091020
+#define LIBNK2_VERSION					201001114
 
 /* The libnk2 version string
  */
-#define LIBNK2_VERSION_STRING				"20091020"
+#define LIBNK2_VERSION_STRING				"201001114"
 
 /* The libnk2 file access
  * bit 1        set to 1 for read access

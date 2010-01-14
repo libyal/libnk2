@@ -1,8 +1,8 @@
 /*
  * Item functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -31,17 +31,26 @@
 #include "libnk2_extern.h"
 #include "libnk2_file.h"
 #include "libnk2_item_values.h"
-#include "libnk2_list_type.h"
+#include "libnk2_libbfio.h"
 #include "libnk2_types.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
+enum LIBNK2_ITEM_FLAGS
+{
+	LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE		= 0x01,
+};
+
 typedef struct libnk2_internal_item libnk2_internal_item_t;
 
 struct libnk2_internal_item
 {
+	/* The file IO handle
+	 */
+	libbfio_handle_t *file_io_handle;
+
 	/* The internal file
 	 */
 	libnk2_internal_file_t *internal_file;
@@ -50,9 +59,9 @@ struct libnk2_internal_item
 	 */
 	libnk2_item_values_t *item_values;
 
-	/* The item reference list element
+	/* The flags
 	 */
-	libnk2_list_element_t *list_element;
+	uint8_t flags;
 };
 
 int libnk2_item_initialize(
@@ -63,14 +72,12 @@ LIBNK2_EXTERN int libnk2_item_free(
                    libnk2_item_t **item,
                    liberror_error_t **error );
 
-int libnk2_item_free_no_detach(
-     intptr_t *internal_item,
-     liberror_error_t **error );
-
 int libnk2_item_attach(
      libnk2_internal_item_t *internal_item,
+     libbfio_handle_t *file_io_handle,
      libnk2_internal_file_t *internal_file,
      libnk2_item_values_t *item_values,
+     uint8_t flags,
      liberror_error_t **error );
 
 int libnk2_item_detach(

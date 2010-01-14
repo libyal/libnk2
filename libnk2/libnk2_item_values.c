@@ -1,8 +1,8 @@
 /*
  * Item values functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -21,7 +21,7 @@
  */
 
 #include <common.h>
-#include <endian.h>
+#include <byte_stream.h>
 #include <memory.h>
 #include <types.h>
 
@@ -31,6 +31,7 @@
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_item_values.h"
+#include "libnk2_libbfio.h"
 #include "libnk2_libfmapi.h"
 #include "libnk2_libuna.h"
 
@@ -218,6 +219,7 @@ int libnk2_item_values_free_as_referenced_value(
 int libnk2_item_values_read(
      libnk2_item_values_t *item_values,
      libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      liberror_error_t **error )
 {
 	uint8_t value_data_size_data[ 4 ];
@@ -246,17 +248,6 @@ int libnk2_item_values_read(
 
 		return( -1 );
 	}
-	if( io_handle->file_io_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid io handle - missing file io handle.",
-		 function );
-
-		return( -1 );
-	}
 	if( item_values == NULL )
 	{
 		liberror_error_set(
@@ -275,7 +266,7 @@ int libnk2_item_values_read(
 	     item_value_entry_iterator++ )
 	{
 		read_count = libbfio_handle_read(
-			      io_handle->file_io_handle,
+			      file_io_handle,
 			      (uint8_t *) &item_value_entry,
 			      sizeof( nk2_item_value_entry_t ),
 			      error );
@@ -292,67 +283,73 @@ int libnk2_item_values_read(
 			return( -1 );
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
-		libnotify_verbose_printf(
-		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 "\n",
-		 function,
-		 item_iterator,
-		 item_value_entry_iterator );
-		libnotify_verbose_print_data(
-		 (uint8_t *) &item_value_entry,
-		 sizeof( nk2_item_value_entry_t ) );
+		if( libnotify_verbose != 0 )
+		{
+			libnotify_printf(
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 "\n",
+			 function,
+			 item_iterator,
+			 item_value_entry_iterator );
+			libnotify_print_data(
+			 (uint8_t *) &item_value_entry,
+			 sizeof( nk2_item_value_entry_t ) );
+		}
 #endif
 
-		endian_little_convert_16bit(
-		 item_values->entry[ item_value_entry_iterator ].value_type,
-		 item_value_entry.value_type );
-		endian_little_convert_16bit(
-		 item_values->entry[ item_value_entry_iterator ].entry_type,
-		 item_value_entry.entry_type );
+		byte_stream_copy_to_uint16_little_endian(
+		 item_value_entry.value_type,
+		 item_values->entry[ item_value_entry_iterator ].value_type );
+		byte_stream_copy_to_uint16_little_endian(
+		 item_value_entry.entry_type,
+		 item_values->entry[ item_value_entry_iterator ].entry_type );
 
 #if defined( HAVE_VERBOSE_OUTPUT )
-		libnotify_verbose_printf(
-		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
-		 function,
-		 item_iterator,
-		 item_value_entry_iterator,
-		 item_values->entry[ item_value_entry_iterator ].value_type,
-		 libfmapi_value_type_get_identifier(
-		  item_values->entry[ item_value_entry_iterator ].value_type ),
-		 libfmapi_value_type_get_description(
-		  item_values->entry[ item_value_entry_iterator ].value_type ) );
-		libnotify_verbose_printf(
-		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " entry type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
-		 function,
-		 item_iterator,
-		 item_value_entry_iterator,
-		 item_values->entry[ item_value_entry_iterator ].entry_type,
-		 libfmapi_property_type_get_identifier(
-		  NULL,
-		  item_values->entry[ item_value_entry_iterator ].entry_type,
-		  item_values->entry[ item_value_entry_iterator ].value_type ),
-		 libfmapi_property_type_get_description(
-		  NULL,
-		  item_values->entry[ item_value_entry_iterator ].entry_type,
-		  item_values->entry[ item_value_entry_iterator ].value_type ) );
+		if( libnotify_verbose != 0 )
+		{
+			libnotify_printf(
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
+			 function,
+			 item_iterator,
+			 item_value_entry_iterator,
+			 item_values->entry[ item_value_entry_iterator ].value_type,
+			 libfmapi_value_type_get_identifier(
+			  item_values->entry[ item_value_entry_iterator ].value_type ),
+			 libfmapi_value_type_get_description(
+			  item_values->entry[ item_value_entry_iterator ].value_type ) );
+			libnotify_printf(
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " entry type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
+			 function,
+			 item_iterator,
+			 item_value_entry_iterator,
+			 item_values->entry[ item_value_entry_iterator ].entry_type,
+			 libfmapi_property_type_get_identifier(
+			  NULL,
+			  item_values->entry[ item_value_entry_iterator ].entry_type,
+			  item_values->entry[ item_value_entry_iterator ].value_type ),
+			 libfmapi_property_type_get_description(
+			  NULL,
+			  item_values->entry[ item_value_entry_iterator ].entry_type,
+			  item_values->entry[ item_value_entry_iterator ].value_type ) );
 
-		endian_little_convert_32bit(
-		 value_32bit,
-		 item_value_entry.unknown1 );
-		libnotify_verbose_printf(
-		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown1\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 item_iterator,
-		 item_value_entry_iterator,
-		 value_32bit );
+			byte_stream_copy_to_uint32_little_endian(
+			 item_value_entry.unknown1,
+			 value_32bit );
+			libnotify_printf(
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " unknown1\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 item_iterator,
+			 item_value_entry_iterator,
+			 value_32bit );
 
-		libnotify_verbose_printf(
-		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data array:\n",
-		 function,
-		 item_iterator,
-		 item_value_entry_iterator );
-		libnotify_verbose_print_data(
-		 item_value_entry.value_data_array,
-		 8 );
+			libnotify_printf(
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data array:\n",
+			 function,
+			 item_iterator,
+			 item_value_entry_iterator );
+			libnotify_print_data(
+			 item_value_entry.value_data_array,
+			 8 );
+		}
 #endif
 
 		/* TODO add other value types to the item entry
@@ -385,7 +382,7 @@ int libnk2_item_values_read(
 				/* The value data size is stored after the item value entry
 				 */
 				read_count = libbfio_handle_read(
-					      io_handle->file_io_handle,
+					      file_io_handle,
 					      value_data_size_data,
 					      4,
 					      error );
@@ -401,9 +398,9 @@ int libnk2_item_values_read(
 
 					return( -1 );
 				}
-				endian_little_convert_16bit(
-				 item_values->entry[ item_value_entry_iterator ].value_data_size,
-				 value_data_size_data );
+				byte_stream_copy_to_uint16_little_endian(
+				 value_data_size_data,
+				 item_values->entry[ item_value_entry_iterator ].value_data_size );
 
 				break;
 
@@ -419,12 +416,15 @@ int libnk2_item_values_read(
 				return( -1 );
 		}
 #if defined( HAVE_VERBOSE_OUTPUT )
-		libnotify_verbose_printf(
-		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data size\t: %" PRIu32 "\n",
-		 function,
-		 item_iterator,
-		 item_value_entry_iterator,
-		 item_values->entry[ item_value_entry_iterator ].value_data_size );
+		if( libnotify_verbose != 0 )
+		{
+			libnotify_printf(
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data size\t: %" PRIu32 "\n",
+			 function,
+			 item_iterator,
+			 item_value_entry_iterator,
+			 item_values->entry[ item_value_entry_iterator ].value_data_size );
+		}
 #endif
 
 		if( item_values->entry[ item_value_entry_iterator ].value_data_size > (uint32_t) SSIZE_MAX )
@@ -462,7 +462,7 @@ int libnk2_item_values_read(
 				/* Read the value data
 				 */
 				read_count = libbfio_handle_read(
-					      io_handle->file_io_handle,
+					      file_io_handle,
 					      item_values->entry[ item_value_entry_iterator ].value_data,
 					      (size_t) item_values->entry[ item_value_entry_iterator ].value_data_size,
 					      error );
@@ -504,28 +504,31 @@ int libnk2_item_values_read(
 				break;
 		}
 #if defined( HAVE_VERBOSE_OUTPUT )
-		libnotify_verbose_printf(
-		 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data:\n",
-		 function,
-		 item_iterator,
-		 item_value_entry_iterator );
-
-		if( libnk2_debug_mapi_value_print(
-		     item_values->entry[ item_value_entry_iterator ].entry_type,
-		     item_values->entry[ item_value_entry_iterator ].value_type,
-		     item_values->entry[ item_value_entry_iterator ].value_data,
-		     item_values->entry[ item_value_entry_iterator ].value_data_size,
-		     LIBUNA_CODEPAGE_ASCII,
-		     error ) != 1 )
+		if( libnotify_verbose != 0 )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print value data.",
-			 function );
+			libnotify_printf(
+			 "%s: item: %03" PRIu32 " value entry: %03" PRIu32 " value data:\n",
+			 function,
+			 item_iterator,
+			 item_value_entry_iterator );
 
-			return( -1 );
+			if( libnk2_debug_mapi_value_print(
+			     item_values->entry[ item_value_entry_iterator ].entry_type,
+			     item_values->entry[ item_value_entry_iterator ].value_type,
+			     item_values->entry[ item_value_entry_iterator ].value_data,
+			     item_values->entry[ item_value_entry_iterator ].value_data_size,
+			     LIBUNA_CODEPAGE_ASCII,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print value data.",
+				 function );
+
+				return( -1 );
+			}
 		}
 #endif
 	}

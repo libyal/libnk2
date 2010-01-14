@@ -1,8 +1,8 @@
 /*
  * Common input functions for the nk2tools
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -36,7 +36,7 @@
 
 #include <libsystem.h>
 
-#include "nk2common.h"
+#include "nk2input.h"
 
 /* Determines the codepage from an argument string
  * Returns 1 if successful or -1 on error

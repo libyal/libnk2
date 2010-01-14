@@ -1,8 +1,8 @@
 /*
  * libnk2 file
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -29,15 +29,14 @@
 #include <liberror.h>
 #include <libnotify.h>
 
-#include <libnk2/codepage.h>
-
 #include "libnk2_array_type.h"
+#include "libnk2_codepage.h"
+#include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_item.h"
 #include "libnk2_file.h"
 #include "libnk2_libbfio.h"
-#include "libnk2_list_type.h"
 
 /* Initialize a file
  * Make sure the value file is pointing to is set to NULL
@@ -94,22 +93,6 @@ int libnk2_file_initialize(
 
 			return( -1 );
 		}
-		if( libnk2_list_initialize(
-		     &( internal_file->item_reference_list ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create item reference list.",
-			 function );
-
-			memory_free(
-			 internal_file );
-
-			return( -1 );
-		}
 		if( libnk2_array_initialize(
 		     &( internal_file->item_array ),
 		     0,
@@ -122,10 +105,6 @@ int libnk2_file_initialize(
 			 "%s: unable to create item array.",
 			 function );
 
-			libnk2_list_free(
-			 &( internal_file->item_reference_list ),
-			 NULL,
-			 NULL );
 			memory_free(
 			 internal_file );
 
@@ -146,16 +125,12 @@ int libnk2_file_initialize(
 			 &( internal_file->item_array ),
 			 NULL,
 			 NULL );
-			libnk2_list_free(
-			 &( internal_file->item_reference_list ),
-			 NULL,
-			 NULL );
 			memory_free(
 			 internal_file );
 
 			return( -1 );
 		}
-		internal_file->ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1250;
+		internal_file->ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1252;
 
 		*file = (libnk2_file_t *) internal_file;
 	}
@@ -187,8 +162,8 @@ int libnk2_file_free(
 	if( *file != NULL )
 	{
 		internal_file = (libnk2_internal_file_t *) *file;
+		*file         = NULL;
 
-		/* TODO item free function */
 		if( libnk2_array_free(
 		     &( internal_file->item_array ),
 		     &libnk2_item_values_free_as_referenced_value,
@@ -198,43 +173,48 @@ int libnk2_file_free(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free item list.",
+			 "%s: unable to free item array.",
 			 function );
 
 			result = -1;
 		}
-		if( libnk2_list_free(
-		     &( internal_file->item_reference_list ),
-		     &libnk2_item_free_no_detach,
-		     error ) != 1 )
+		if( internal_file->io_handle != NULL )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free item reference list.",
-			 function );
+			if( libnk2_io_handle_free(
+			     &( internal_file->io_handle ),
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free io handle.",
+				 function );
 
-			result = -1;
+				result = -1;
+			}
 		}
-		if( ( internal_file->io_handle != NULL )
-		 && ( libnk2_io_handle_free(
-		       &( internal_file->io_handle ),
-		       error ) != 1 ) )
+		if( internal_file->file_io_handle_created_in_library != 0 )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free io handle.",
-			 function );
+			if( internal_file->file_io_handle != NULL )
+			{
+				if( libbfio_handle_free(
+				     &( internal_file->file_io_handle ),
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free file io handle.",
+					 function );
 
-			result = -1;
+					result = -1;
+				}
+			}
 		}
 		memory_free(
 		 internal_file );
-
-		*file = NULL;
 	}
 	return( result );
 }
@@ -397,7 +377,7 @@ int libnk2_file_open(
 
 		return( -1 );
 	}
-	internal_file->io_handle->handle_created_in_library = 1;
+	internal_file->file_io_handle_created_in_library = 1;
 
 	return( 1 );
 }
@@ -537,7 +517,7 @@ int libnk2_file_open_wide(
 
 		return( -1 );
 	}
-	internal_file->io_handle->handle_created_in_library = 1;
+	internal_file->file_io_handle_created_in_library = 1;
 
 	return( 1 );
 }
@@ -556,6 +536,7 @@ int libnk2_file_open_file_io_handle(
 	libnk2_internal_file_t *internal_file = NULL;
 	static char *function                 = "libnk2_file_open_file_io_handle";
 	int file_io_flags                     = 0;
+	int file_io_handle_is_open            = 0;
 
 	if( file == NULL )
 	{
@@ -564,6 +545,19 @@ int libnk2_file_open_file_io_handle(
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libnk2_internal_file_t *) file;
+
+	if( internal_file->file_io_handle != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid internal file - file io handle already set.",
 		 function );
 
 		return( -1 );
@@ -597,31 +591,48 @@ int libnk2_file_open_file_io_handle(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to nickfiles currently not supported.",
+		 "%s: write access to OLE Compound File currently not supported.",
 		 function );
 
 		return( -1 );
 	}
-	internal_file = (libnk2_internal_file_t *) file;
-
 	if( ( flags & LIBNK2_FLAG_READ ) == LIBNK2_FLAG_READ )
 	{
 		file_io_flags = LIBBFIO_FLAG_READ;
 	}
-	if( libnk2_io_handle_open(
-	     internal_file->io_handle,
-	     file_io_handle,
-	     file_io_flags,
-	     error ) != 1 )
+	internal_file->file_io_handle = file_io_handle;
+
+	file_io_handle_is_open = libbfio_handle_is_open(
+	                          internal_file->file_io_handle,
+	                          error );
+
+	if( file_io_handle_is_open == -1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file handle.",
+		 "%s: unable to open file.",
 		 function );
 
 		return( -1 );
+	}
+	else if( file_io_handle_is_open == 0 )
+	{
+		if( libbfio_handle_open(
+		     internal_file->file_io_handle,
+		     flags,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open file io handle.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	if( libnk2_file_open_read(
 	     internal_file,
@@ -663,29 +674,50 @@ int libnk2_file_close(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
-	if( internal_file->io_handle == NULL )
+	if( internal_file->file_io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid file - missing io handle.",
+		 "%s: invalid file - missing file IO handle.",
 		 function );
 
 		return( -1 );
 	}
-	result = libnk2_io_handle_close(
-	          internal_file->io_handle,
-	          error );
-
-	if( result != 0 )
+	if( internal_file->file_io_handle_created_in_library != 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close io handle.",
-		 function );
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libnotify_verbose != 0 )
+		{
+			if( libnk2_debug_print_read_offsets(
+			     internal_file->file_io_handle,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print the read offsets.",
+				 function );
+
+				result = -1;
+			}
+		}
+#endif
+		if( libbfio_handle_close(
+		     internal_file->file_io_handle,
+		     error ) != 0 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_CLOSE_FAILED,
+			 "%s: unable to close file io handle.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	return( result );
 }
@@ -723,11 +755,15 @@ int libnk2_file_open_read(
 		return( -1 );
 	}
 #if defined( HAVE_VERBOSE_OUTPUT )
-	libnotify_verbose_printf(
-	 "Reading file header:\n" );
+	if( libnotify_verbose != 0 )
+	{
+		libnotify_printf(
+		 "Reading file header:\n" );
+	}
 #endif
 	if( libnk2_io_handle_read_file_header(
 	     internal_file->io_handle,
+	     internal_file->file_io_handle,
 	     &amount_of_items,
 	     error ) != 1 )
 	{
@@ -741,11 +777,15 @@ int libnk2_file_open_read(
 		return( -1 );
 	}
 #if defined( HAVE_VERBOSE_OUTPUT )
-	libnotify_verbose_printf(
-	 "Reading items:\n" );
+	if( libnotify_verbose != 0 )
+	{
+		libnotify_printf(
+		 "Reading items:\n" );
+	}
 #endif
 	if( libnk2_io_handle_read_items(
 	     internal_file->io_handle,
+	     internal_file->file_io_handle,
 	     amount_of_items,
 	     internal_file->item_array,
 	     error ) != 1 )
@@ -934,7 +974,7 @@ int libnk2_file_get_item(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing item list.",
+		 "%s: invalid internal file - missing item array.",
 		 function );
 
 		return( -1 );
@@ -980,8 +1020,10 @@ int libnk2_file_get_item(
 	}
 	if( libnk2_item_attach(
 	     (libnk2_internal_item_t *) *item,
+	     internal_file->file_io_handle,
 	     internal_file,
 	     item_values,
+	     0,
 	     error ) != 1 )
 	{
 		liberror_error_set(

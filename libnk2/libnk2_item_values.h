@@ -1,8 +1,8 @@
 /*
  * Item values functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -29,6 +29,7 @@
 #include <liberror.h>
 
 #include "libnk2_io_handle.h"
+#include "libnk2_libbfio.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -84,6 +85,7 @@ int libnk2_item_values_free_as_referenced_value(
 int libnk2_item_values_read(
      libnk2_item_values_t *item_values,
      libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      liberror_error_t **error );
 
 int libnk2_item_values_get_amount_of_entries(

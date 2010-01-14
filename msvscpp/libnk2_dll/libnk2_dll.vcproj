@@ -125,10 +125,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_list_type.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libnk2\libnk2_notify.c"
 				>
 			</File>
@@ -148,6 +144,10 @@
 			>
 			<File
 				RelativePath="..\..\libnk2\libnk2_array_type.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libnk2\libnk2_codepage.h"
 				>
 			</File>
 			<File
@@ -195,7 +195,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libnk2\libnk2_list_type.h"
+				RelativePath="..\..\libnk2\libnk2_mapi.h"
 				>
 			</File>
 			<File

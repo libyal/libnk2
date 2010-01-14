@@ -1,8 +1,8 @@
 /*
  * Item functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -21,7 +21,6 @@
  */
 
 #include <common.h>
-#include <endian.h>
 #include <memory.h>
 #include <types.h>
 
@@ -31,7 +30,7 @@
 #include "libnk2_item.h"
 #include "libnk2_item_values.h"
 #include "libnk2_libfmapi.h"
-#include "libnk2_list_type.h"
+#include "libnk2_mapi.h"
 #include "libnk2_value_type.h"
 
 /* Initializes the item and its values
@@ -88,42 +87,6 @@ int libnk2_item_initialize(
 
 			return( -1 );
 		}
-		internal_item->list_element = (libnk2_list_element_t *) memory_allocate(
-		                                                         sizeof( libnk2_list_element_t ) );
-	
-		if( internal_item->list_element == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create list element.",
-			 function );
-
-			memory_free(
-			 internal_item );
-
-			return( -1 );
-		}
-		if( memory_set(
-		     internal_item->list_element,
-		     0,
-		     sizeof( libnk2_list_element_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear list element.",
-			 function );
-
-			memory_free(
-			 internal_item->list_element );
-			memory_free(
-			 internal_item );
-
-			return( -1 );
-		}
 		*item = (libnk2_item_t *) internal_item;
 	}
 	return( 1 );
@@ -172,40 +135,10 @@ int libnk2_item_free(
 
 			return( -1 );
 		}
-		if( internal_item->list_element != NULL )
-		{
-			memory_free(
-			 internal_item->list_element );
-		}
 		memory_free(
 		 internal_item );
 	}
 	return( 1 );
-}
-
-/* Frees an item
- * Return 1 if successful or -1 on error
- */
-int libnk2_item_free_no_detach(
-     intptr_t *internal_item,
-     liberror_error_t **error )
-{
-	int result = 1;
-
-	if( internal_item != NULL )
-	{
-		if( ( (libnk2_internal_item_t *) internal_item )->internal_file != NULL )
-		{
-			memory_free(
-			 ( (libnk2_internal_item_t *) internal_item )->list_element );
-		}
-		/* The internal_file, item_values and list_element references
-		 * are freed elsewhere
-		 */
-		memory_free(
-		 internal_item );
-	}
-	return( result );
 }
 
 /* Attaches the item to the file
@@ -213,8 +146,10 @@ int libnk2_item_free_no_detach(
  */
 int libnk2_item_attach(
      libnk2_internal_item_t *internal_item,
+     libbfio_handle_t *file_io_handle,
      libnk2_internal_file_t *internal_file,
      libnk2_item_values_t *item_values,
+     uint8_t flags,
      liberror_error_t **error )
 {
 	static char *function = "libnk2_item_attach";
@@ -230,17 +165,6 @@ int libnk2_item_attach(
 
 		return( -1 );
 	}
-	if( internal_item->list_element == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal item - missing list element.",
-		 function );
-
-		return( -1 );
-	}
 	if( internal_item->internal_file != NULL )
 	{
 		liberror_error_set(
@@ -252,23 +176,55 @@ int libnk2_item_attach(
 
 		return( -1 );
 	}
-	/* Add item to file
-	 */
-	if( libnk2_list_append_element(
-	     internal_file->item_reference_list,
-	     internal_item->list_element,
-	     error ) != 1 )
+	if( ( flags & ~( LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) ) != 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to append internal item to file.",
-		 function );
+		 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported flags: 0x%02" PRIx8 ".",
+		 function,
+		 flags );
 
 		return( -1 );
 	}
+	if( ( flags & LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) == 0 )
+	{
+		internal_item->file_io_handle = file_io_handle;
+	}
+	else
+	{
+		if( libbfio_handle_clone(
+		     &( internal_item->file_io_handle ),
+		     file_io_handle,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy file io handle.",
+			 function );
+
+			return( -1 );
+		}
+		if( libbfio_handle_set_open_on_demand(
+		     internal_item->file_io_handle,
+		     1,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to set open on demand in file io handle.",
+			 function );
+
+			return( -1 );
+		}
+	}
 	internal_item->internal_file = internal_file;
+	internal_item->flags         = flags;
 	internal_item->item_values   = item_values;
 
 	return( 1 );
@@ -294,38 +250,42 @@ int libnk2_item_detach(
 
 		return( -1 );
 	}
-	if( internal_item->list_element == NULL )
+	if( ( internal_item->flags & LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) != 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal item - missing list element.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_item->internal_file != NULL )
-	{
-		/* Remove item from file
-		 */
-		if( libnk2_list_remove_element(
-		     internal_item->internal_file->item_reference_list,
-		     internal_item->list_element,
-		     error ) != 1 )
+		if( internal_item->file_io_handle != NULL )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
-			 "%s: unable to remove internal item from file.",
-			 function );
+			if( libbfio_handle_close(
+			     internal_item->file_io_handle,
+			     error ) != 0 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_IO,
+				 LIBERROR_IO_ERROR_CLOSE_FAILED,
+				 "%s: unable to close file io handle.",
+				 function );
 
-			return( -1 );
+				return( -1 );
+			}
+			if( libbfio_handle_free(
+			     &( internal_item->file_io_handle ),
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free file io handle.",
+				 function );
+
+				return( -1 );
+			}
 		}
-		internal_item->internal_file = NULL;
-		internal_item->item_values   = NULL;
 	}
+	internal_item->internal_file = NULL;
+	internal_item->flags         = 0;
+	internal_item->item_values   = NULL;
+
 	return( 1 );
 }
 

@@ -1,8 +1,8 @@
 /*
  * libnk2 Input/Output (IO) handle
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -41,13 +41,9 @@ typedef struct libnk2_io_handle libnk2_io_handle_t;
 
 struct libnk2_io_handle
 {
-	/* The file io handle
+	/* Dummy
 	 */
-	libbfio_handle_t *file_io_handle;
-
-	/* Value to indicate if the file io handle was created inside the library
-	 */
-	uint8_t handle_created_in_library;
+	int dummy;
 };
 
 int libnk2_io_handle_initialize(
@@ -58,23 +54,15 @@ int libnk2_io_handle_free(
      libnk2_io_handle_t **io_handle,
      liberror_error_t **error );
 
-int libnk2_io_handle_open(
-     libnk2_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     int flags,
-     liberror_error_t **error );
-
-int libnk2_io_handle_close(
-     libnk2_io_handle_t *io_handle,
-     liberror_error_t **error );
-
 int libnk2_io_handle_read_file_header(
      libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      uint32_t *amount_of_items,
      liberror_error_t **error );
 
 int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
      uint32_t amount_of_items,
      libnk2_array_t *item_table,
      liberror_error_t **error );

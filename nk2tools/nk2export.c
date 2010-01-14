@@ -1,8 +1,8 @@
 /*
  * Extracts items from a Nickfile (NK2)
  *
- * Copyright (c) 2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2009-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -48,9 +48,7 @@
 #include <libsystem.h>
 
 #include "export_handle.h"
-#include "filetime.h"
 #include "log_handle.h"
-#include "nk2common.h"
 #include "nk2input.h"
 #include "nk2output.h"
 
@@ -69,9 +67,9 @@ void usage_fprint(
 
 	fprintf( stream, "\tsource: the source file\n\n" );
 
-	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-1250 (default),\n"
-	                 "\t        windows-1251, windows-1252, windows-1253, windows-1254,\n"
-	                 "\t        windows-1255, windows-1256, windows-1257 or windows-1258\n" );
+	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-1250, windows-1251,\n"
+	                 "\t        windows-1252 (default), windows-1253, windows-1254, windows-1255,\n"
+	                 "\t        windows-1256, windows-1257 or windows-1258\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-l:     logs information about the exported items\n" );
 	fprintf( stream, "\t-t:     specify the target directory to export to\n"
@@ -90,6 +88,7 @@ int main( int argc, char * const argv[] )
 {
 	export_handle_t *export_handle            = NULL;
 	liberror_error_t *error                   = NULL;
+	libnk2_file_t *nk2_file                   = NULL;
 	log_handle_t *log_handle                  = NULL;
 	libsystem_character_t *log_filename       = NULL;
 	libsystem_character_t *option_target_path = NULL;
@@ -100,7 +99,7 @@ int main( int argc, char * const argv[] )
 	size_t source_length                      = 0;
 	size_t target_path_length                 = 0;
 	libsystem_integer_t option                = 0;
-	int ascii_codepage                        = LIBNK2_CODEPAGE_WINDOWS_1250;
+	int ascii_codepage                        = LIBNK2_CODEPAGE_WINDOWS_1252;
 	int result                                = 0;
 	int verbose                               = 0;
 
@@ -139,7 +138,7 @@ int main( int argc, char * const argv[] )
 			default:
 				fprintf(
 				 stderr,
-				 "Invalid argument: %s\n",
+				 "Invalid argument: %" PRIs_LIBSYSTEM "\n",
 				 argv[ optind ] );
 
 				usage_fprint(
@@ -158,11 +157,11 @@ int main( int argc, char * const argv[] )
 					liberror_error_free(
 					 &error );
 
-					ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1250;
+					ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1252;
 
 					fprintf(
 					 stderr,
-					 "Unsupported ASCII codepage defaulting to: windows-1250.\n" );
+					 "Unsupported ASCII codepage defaulting to: windows-1252.\n" );
 				}
 				break;
 
@@ -249,7 +248,7 @@ int main( int argc, char * const argv[] )
 
 		path_separator = libsystem_string_search_reverse(
 		                  source,
-		                  (libsystem_character_t) NK2COMMON_PATH_SEPARATOR,
+		                  (libsystem_character_t) LIBSYSTEM_PATH_SEPARATOR,
 		                  source_length );
 
 		if( path_separator == NULL )
@@ -367,15 +366,13 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
-	if( log_handle_open(
-	     log_handle,
-	     log_filename,
+	if( libnk2_file_initialize(
+	     &nk2_file,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open log file: %" PRIs_LIBSYSTEM ".\n",
-		 log_filename );
+		 "Unable to initialize NK2 file.\n" );
 
 		libsystem_notify_print_error_backtrace(
 		 error );
@@ -393,14 +390,52 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
+	if( log_handle_open(
+	     log_handle,
+	     log_filename,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to open log file: %" PRIs_LIBSYSTEM ".\n",
+		 log_filename );
+
+		libsystem_notify_print_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+
+		libnk2_file_free(
+		 &nk2_file,
+		 NULL );
+		export_handle_free(
+		 &export_handle,
+		 NULL );
+		log_handle_free(
+		 &log_handle,
+		 NULL );
+		memory_free(
+		 target_path );
+
+		return( EXIT_FAILURE );
+	}
 	fprintf(
 	 stdout,
 	 "Opening file.\n" );
 
-	if( export_handle_open(
-	     export_handle,
+#if defined( LIBSYSTEM_HAVE_WIDE_CHARACTER )
+	if( libnk2_file_open_wide(
+	     nk2_file,
 	     source,
+	     LIBNK2_OPEN_READ,
 	     &error ) != 1 )
+#else
+	if( libnk2_file_open(
+	     nk2_file,
+	     source,
+	     LIBNK2_OPEN_READ,
+	     &error ) != 1 )
+#endif
 	{
 		fprintf(
 		 stderr,
@@ -412,6 +447,9 @@ int main( int argc, char * const argv[] )
 		liberror_error_free(
 		 &error );
 
+		libnk2_file_free(
+		 &nk2_file,
+		 NULL );
 		export_handle_free(
 		 &export_handle,
 		 NULL );
@@ -429,6 +467,7 @@ int main( int argc, char * const argv[] )
 
 	result = export_handle_export_file(
 	          export_handle,
+	          nk2_file,
 	          target_path,
 	          target_path_length + 1,
 	          log_handle,
@@ -445,6 +484,12 @@ int main( int argc, char * const argv[] )
 		liberror_error_free(
 		 &error );
 
+		libnk2_file_close(
+		 nk2_file,
+		 NULL );
+		libnk2_file_free(
+		 &nk2_file,
+		 NULL );
 		export_handle_free(
 		 &export_handle,
 		 NULL );
@@ -459,14 +504,39 @@ int main( int argc, char * const argv[] )
 	memory_free(
 	 target_path );
 
-	if( export_handle_close(
-	     export_handle,
+	if( libnk2_file_close(
+	     nk2_file,
 	     &error ) != 0 )
 	{
 		fprintf(
 		 stderr,
 		 "Error closing file: %" PRIs_LIBSYSTEM ".\n",
 		 source );
+
+		libsystem_notify_print_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+
+		libnk2_file_free(
+		 &nk2_file,
+		 NULL );
+		export_handle_free(
+		 &export_handle,
+		 NULL );
+		log_handle_free(
+		 &log_handle,
+		 NULL );
+
+		return( EXIT_FAILURE );
+	}
+	if( libnk2_file_free(
+	     &nk2_file,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to free NK2 file.\n" );
 
 		libsystem_notify_print_error_backtrace(
 		 error );

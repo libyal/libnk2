@@ -1,8 +1,8 @@
 /* 
  * Export handle
  *
- * Copyright (C) 2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (C) 2009-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -49,9 +49,9 @@ typedef struct export_handle export_handle_t;
 
 struct export_handle
 {
-	/* The libnk2 input handle
+	/* The nofication output stream
 	 */
-	libnk2_file_t *input_handle;
+	FILE *notify_stream;
 };
 
 int export_handle_initialize(
@@ -62,26 +62,20 @@ int export_handle_free(
      export_handle_t **export_handle,
      liberror_error_t **error );
 
-int export_handle_open(
-     export_handle_t *export_handle,
-     const libsystem_character_t *filename,
-     liberror_error_t **error );
-
-int export_handle_close(
-     export_handle_t *export_handle,
-     liberror_error_t **error );
-
 int export_handle_make_directory(
+     export_handle_t *export_handle,
      libsystem_character_t *directory_name,
      log_handle_t *log_handle,
      liberror_error_t **error );
 
 int export_handle_sanitize_filename(
+     export_handle_t *export_handle,
      libsystem_character_t *filename,
      size_t filename_size,
      liberror_error_t **error );
 
 int export_handle_create_target_path(
+     export_handle_t *export_handle,
      libsystem_character_t *export_path,
      size_t export_path_size,
      uint8_t *utf8_filename,
@@ -90,7 +84,15 @@ int export_handle_create_target_path(
      size_t *target_path_size,
      liberror_error_t **error );
 
+int export_handle_print_data(
+     export_handle_t *export_handle,
+     FILE *stream,
+     const uint8_t *data,
+     size_t data_size,
+     liberror_error_t **error );
+
 int export_handle_export_alias(
+     export_handle_t *export_handle,
      libnk2_item_t *item,
      int item_index,
      int amount_of_items,
@@ -100,6 +102,7 @@ int export_handle_export_alias(
      liberror_error_t **error );
 
 int export_handle_export_item_values(
+     export_handle_t *export_handle,
      libnk2_item_t *item,
      libsystem_character_t *export_path,
      size_t export_path_size,
@@ -108,6 +111,7 @@ int export_handle_export_item_values(
 
 int export_handle_export_file(
      export_handle_t *export_handle,
+     libnk2_file_t *file,
      libsystem_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,

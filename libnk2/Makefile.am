@@ -14,6 +14,7 @@ lib_LTLIBRARIES = libnk2.la
 libnk2_la_SOURCES = \
 	libnk2.c \
 	libnk2_array_type.c libnk2_array_type.h \
+	libnk2_codepage.h \
 	libnk2_debug.c libnk2_debug.h \
 	libnk2_definitions.h \
 	libnk2_error.c libnk2_error.h \
@@ -25,7 +26,7 @@ libnk2_la_SOURCES = \
 	libnk2_libbfio.h \
 	libnk2_libfmapi.h \
 	libnk2_libuna.h \
-	libnk2_list_type.c libnk2_list_type.h \
+	libnk2_mapi.h \
 	libnk2_notify.c libnk2_notify.h \
 	libnk2_string.h \
 	libnk2_support.c libnk2_support.h \

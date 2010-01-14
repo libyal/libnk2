@@ -1,8 +1,8 @@
 /*
  * libnk2 file
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -31,7 +31,8 @@
 #include "libnk2_array_type.h"
 #include "libnk2_extern.h"
 #include "libnk2_io_handle.h"
-#include "libnk2_list_type.h"
+#include "libnk2_libbfio.h"
+#include "libnk2_types.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -41,10 +42,6 @@ typedef struct libnk2_internal_file libnk2_internal_file_t;
 
 struct libnk2_internal_file
 {
-	/* The item reference list
-	 */
-	libnk2_list_t *item_reference_list;
-
 	/* The item array
 	 */
 	libnk2_array_t *item_array;
@@ -52,6 +49,14 @@ struct libnk2_internal_file
 	/* The io handle
 	 */
 	libnk2_io_handle_t *io_handle;
+
+	/* The file IO handle
+	 */
+	libbfio_handle_t *file_io_handle;
+
+	/* Value to indicate if the file io handle was created inside the library
+	 */
+	uint8_t file_io_handle_created_in_library;
 
 	/* The codepage of the extended ASCII strings
 	 */

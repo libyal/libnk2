@@ -16,10 +16,8 @@ bin_PROGRAMS = nk2export nk2info
 
 nk2export_SOURCES = \
 	export_handle.c export_handle.h \
-	filetime.c filetime.h \
 	guid.c guid.h \
 	log_handle.c log_handle.h \
-	nk2common.h \
 	nk2export.c \
 	nk2input.c nk2input.h \
 	nk2output.c nk2output.h
@@ -32,7 +30,6 @@ nk2export_LDADD = \
 	@MEMWATCH_LIBADD@
 
 nk2info_SOURCES = \
-	nk2common.h \
 	nk2info.c \
 	nk2output.c nk2output.h
 

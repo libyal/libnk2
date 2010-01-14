@@ -1,8 +1,8 @@
 /* 
  * Array type functions
  *
- * Copyright (C) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (C) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -52,7 +52,9 @@ int libnk2_array_initialize(
 
 int libnk2_array_free(
      libnk2_array_t **array,
-     int (*entry_free_function)( intptr_t *entry, liberror_error_t **error ),
+     int (*entry_free_function)(
+            intptr_t *entry,
+            liberror_error_t **error ),
      liberror_error_t **error );
 
 int libnk2_array_resize(

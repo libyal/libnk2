@@ -2,7 +2,7 @@
  * Library to support the Nickfile (NK2) format
  *
  * Copyright (c) 2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -71,7 +71,7 @@ LIBNK2_EXTERN int libnk2_check_file_signature_wide(
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBNK2_EXTERN int libnk2_check_file_signature_file_io_handle(
-                   libbfio_handle_t *bfio_handle,
+                   libbfio_handle_t *file_io_handle,
                    libnk2_error_t **error );
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Message API (MAPI) definitions for libnk2
+ * Message API (MAPI) definitions
  *
  * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
@@ -20,14 +20,25 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBNK2_MAPI_H )
-#define _LIBNK2_MAPI_H
+#if !defined( _LIBNK2_INTERNAL_MAPI_H )
+#define _LIBNK2NK2_INTERNAL_H
 
-#include <libnk2/types.h>
+#include <common.h>
+#include <types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#if !defined( HAVE_LOCAL_LIBNK2 )
+
+#include <libnk2/mapi.h>
+
+/* Define HAVE_LOCAL_LIBNK2 for local use of libnk2
+ * The definitions in <libnk2/mapi.h> are copied here
+ * for local use of libnk2
+ */
+#else
 
 /* The attachment methods
  */
@@ -340,6 +351,8 @@ enum LIBNK2_ENTRY_TYPES
 
 	LIBNK2_ENTRY_TYPE_MESSAGE_REMINDER_SIGNAL_TIME				= 0x8550
 };
+
+#endif
 
 #ifdef __cplusplus
 }

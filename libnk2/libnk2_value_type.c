@@ -1,8 +1,8 @@
 /*
  * Values type functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -21,7 +21,7 @@
  */
 
 #include <common.h>
-#include <endian.h>
+#include <byte_stream.h>
 #include <memory.h>
 #include <types.h>
 
@@ -128,9 +128,9 @@ int libnk2_value_type_copy_to_16bit(
 
 		return( -1 );
 	}
-	endian_little_convert_16bit(
-	 *value_16bit,
-	 value_data );
+	byte_stream_copy_to_uint16_little_endian(
+	 value_data,
+	 *value_16bit );
 
 	return( 1 );
 }
@@ -181,9 +181,9 @@ int libnk2_value_type_copy_to_32bit(
 
 		return( -1 );
 	}
-	endian_little_convert_32bit(
-	 *value_32bit,
-	 value_data );
+	byte_stream_copy_to_uint32_little_endian(
+	 value_data,
+	 *value_32bit );
 
 	return( 1 );
 }
@@ -234,9 +234,9 @@ int libnk2_value_type_copy_to_64bit(
 
 		return( -1 );
 	}
-	endian_little_convert_64bit(
-	 *value_64bit,
-	 value_data );
+	byte_stream_copy_to_uint64_little_endian(
+	 value_data,
+	 *value_64bit );
 
 	return( 1 );
 }
@@ -290,15 +290,15 @@ int libnk2_value_type_copy_to_size(
 	}
 	if( value_data_size == 4 )
 	{
-		endian_little_convert_32bit(
-		 *value_size,
-		 value_data );
+		byte_stream_copy_to_uint32_little_endian(
+		 value_data,
+		 *value_size );
 	}
 	else if( value_data_size == 8 )
 	{
-		endian_little_convert_64bit(
-		 *value_size,
-		 value_data );
+		byte_stream_copy_to_uint64_little_endian(
+		 value_data,
+		 *value_size );
 	}
 	return( 1 );
 }
@@ -312,9 +312,10 @@ int libnk2_value_type_copy_to_floating_point(
      double *value_floating_point,
      liberror_error_t **error )
 {
+	byte_stream_float64_t value_double;
+	byte_stream_float32_t value_float;
+
 	static char *function = "libnk2_value_type_copy_to_floating_point";
-	double value_double   = 0.0;
-	float value_float     = 0.0;
 
 	if( value_data == NULL )
 	{
@@ -354,47 +355,19 @@ int libnk2_value_type_copy_to_floating_point(
 	}
 	if( value_data_size == 4 )
 	{
-		endian_little_convert_32bit(
-		 value_float,
-		 value_data );
+		byte_stream_copy_to_uint32_little_endian(
+		 value_data,
+		 value_float.integer );
 
-		if( memory_copy(
-		     &value_float,
-		     value_data,
-		     4 ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-			 "%s: unable to copy float value data.",
-			 function );
-
-			return( -1 );
-		}
-		*value_floating_point = (double) value_float;
+		*value_floating_point = (double) value_float.floating_point;
 	}
 	else if( value_data_size == 8 )
 	{
-		endian_little_convert_64bit(
-		 value_double,
-		 value_data );
+		byte_stream_copy_to_uint64_little_endian(
+		 value_data,
+		 value_double.integer );
 
-		if( memory_copy(
-		     &value_double,
-		     value_data,
-		     8 ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-			 "%s: unable to copy double value data.",
-			 function );
-
-			return( -1 );
-		}
-		*value_floating_point = value_double;
+		*value_floating_point = value_double.floating_point;
 	}
 	return( 1 );
 }

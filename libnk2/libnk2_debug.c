@@ -1,8 +1,8 @@
 /*
  * Debug functions
  *
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -74,13 +74,13 @@ int libnk2_debug_mapi_value_print(
 
 		if( value_data != NULL )
 		{
-			libnotify_verbose_print_data(
+			libnotify_print_data(
 			 value_data,
 			 value_data_size );
 		}
 		else
 		{
-			libnotify_verbose_printf(
+			libnotify_printf(
 			 "<NULL>\n\n" );
 		}
 	}
@@ -125,7 +125,7 @@ int libnk2_debug_print_read_offsets(
 
 		return( -1 );
 	}
-	libnotify_verbose_printf(
+	libnotify_printf(
 	 "Offsets read:\n" );
 
 	for( offset_iterator = 0;
@@ -149,15 +149,15 @@ int libnk2_debug_print_read_offsets(
 
 			return( -1 );
 		}
-		libnotify_verbose_printf(
+		libnotify_printf(
 		 "%08" PRIu64 " ( 0x%08" PRIx64 " ) - %08" PRIu64 " ( 0x%08" PRIx64 " ) size: %" PRIu64 "\n",
 		 offset,
 		 offset,
-		 ( offset + size ),
-		 ( offset + size ),
+		 offset + size,
+		 offset + size,
 		 size );
 	}
-	libnotify_verbose_printf(
+	libnotify_printf(
 	 "\n" );
 
 	return( 1 );

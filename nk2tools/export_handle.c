@@ -1,8 +1,8 @@
 /* 
  * Export handle
  *
- * Copyright (C) 2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (C) 2009-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -35,11 +35,26 @@
 
 #include <libnk2.h>
 
+#if defined( HAVE_LOCAL_LIBFDATETIME )
+#include <libfdatetime_date_time_values.h>
+#include <libfdatetime_definitions.h>
+#include <libfdatetime_filetime.h>
+#include <libfdatetime_types.h>
+#elif defined( HAVE_LIBDATETIME_H )
+#include <libfdatetime.h>
+#endif
+
+#if defined( HAVE_LOCAL_LIBFMAPI )
+#include <libfmapi_definitions.h>
+#include <libfmapi_guid.h>
+#elif defined( HAVE_LIBMAPI_H )
+#include <libfmapi.h>
+#endif
+
 #include <libsystem.h>
 
 #include "export_handle.h"
 #include "log_handle.h"
-#include "nk2common.h"
 
 /* Initializes the export handle
  * Returns 1 if successful or -1 on error
@@ -96,24 +111,6 @@ int export_handle_initialize(
 
 			return( -1 );
 		}
-		if( libnk2_file_initialize(
-		     &( ( *export_handle )->input_handle ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create input handle.",
-			 function );
-
-			memory_free(
-			 *export_handle );
-
-			*export_handle = NULL;
-
-			return( -1 );
-		}
 	}
 	return( 1 );
 }
@@ -140,18 +137,6 @@ int export_handle_free(
 	}
 	if( *export_handle != NULL )
 	{
-		if( ( ( *export_handle )->input_handle != NULL )
-		 && ( libnk2_file_free(
-		       &( ( *export_handle )->input_handle ),
-		       error ) != 1 ) )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free input handle.",
-			 function );
-		}
 		memory_free(
 		 *export_handle );
 
@@ -160,143 +145,28 @@ int export_handle_free(
 	return( 1 );
 }
 
-/* Opens the export handle
- * Returns 1 if successful or -1 on error
- */
-int export_handle_open(
-     export_handle_t *export_handle,
-     const libsystem_character_t *filename,
-     liberror_error_t **error )
-{
-	static char *function = "export_handle_open";
-
-	if( export_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( export_handle->input_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid export handle - missing input handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( filename == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( LIBSYSTEM_HAVE_WIDE_CHARACTER )
-	if( libnk2_file_open_wide(
-	     export_handle->input_handle,
-	     filename,
-	     LIBNK2_OPEN_READ,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file.",
-		 function );
-
-		return( -1 );
-	}
-#else
-	if( libnk2_file_open(
-	     export_handle->input_handle,
-	     filename,
-	     LIBNK2_OPEN_READ,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-	return( 1 );
-}
-
-/* Closes the export handle
- * Returns the 0 if succesful or -1 on error
- */
-int export_handle_close(
-     export_handle_t *export_handle,
-     liberror_error_t **error )
-{
-	static char *function = "export_handle_close";
-	int result            = 0;
-
-	if( export_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( export_handle->input_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid export handle - missing input handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( libnk2_file_close(
-	     export_handle->input_handle,
-	     error ) != 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close input handle.",
-		 function );
-
-		result = -1;
-	}
-	return( result );
-}
-
 /* Create a directory
  * Return 1 if successful or -1 on error
  */
 int export_handle_make_directory(
+     export_handle_t *export_handle,
      libsystem_character_t *directory_name,
      log_handle_t *log_handle,
      liberror_error_t **error )
 {
 	static char *function = "export_handle_make_directory";
 
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( directory_name == NULL )
 	{
 		liberror_error_set(
@@ -333,6 +203,7 @@ int export_handle_make_directory(
  * Return 1 if successful or -1 on error
  */
 int export_handle_sanitize_filename(
+     export_handle_t *export_handle,
      libsystem_character_t *filename,
      size_t filename_size,
      liberror_error_t **error )
@@ -340,6 +211,17 @@ int export_handle_sanitize_filename(
 	static char *function = "export_handle_sanitize_filename";
 	size_t iterator       = 0;
 
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( filename == NULL )
 	{
 		liberror_error_set(
@@ -393,6 +275,7 @@ int export_handle_sanitize_filename(
  * Returns 1 if successful or -1 on error
  */
 int export_handle_create_target_path(
+     export_handle_t *export_handle,
      libsystem_character_t *export_path,
      size_t export_path_size,
      uint8_t *utf8_filename,
@@ -404,6 +287,17 @@ int export_handle_create_target_path(
 	static char *function = "export_handle_create_target_path";
 	size_t filename_size  = 0;
 
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( export_path == NULL )
 	{
 		liberror_error_set(
@@ -531,7 +425,7 @@ int export_handle_create_target_path(
 
 		return( -1 );
 	}
-	( *target_path )[ export_path_size - 1 ] = (libsystem_character_t) NK2COMMON_PATH_SEPARATOR;
+	( *target_path )[ export_path_size - 1 ] = (libsystem_character_t) LIBSYSTEM_PATH_SEPARATOR;
 
 	if( libsystem_string_copy_from_utf8_string(
 	     &( ( *target_path )[ export_path_size ] ),
@@ -556,6 +450,7 @@ int export_handle_create_target_path(
 		return( -1 );
 	}
 	if( export_handle_sanitize_filename(
+	     export_handle,
 	     &( ( *target_path )[ export_path_size ] ),
 	     filename_size,
 	     error ) != 1 )
@@ -578,10 +473,224 @@ int export_handle_create_target_path(
 	return( 1 );
 }
 
+/* Prints the data on the stream
+ * Returns the amount of printed characters if successful or -1 on error
+ */
+int export_handle_print_data(
+     export_handle_t *export_handle,
+     FILE *stream,
+     const uint8_t *data,
+     size_t data_size,
+     liberror_error_t **error )
+{
+	static char *function = "export_handle_print_data";
+	size_t byte_iterator  = 0;
+	size_t data_iterator  = 0;
+	int print_count       = 0;
+	int total_print_count = 0;
+
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( stream == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid stream.",
+		 function );
+
+		return( -1 );
+	}
+	if( data == NULL )
+	{
+		return( 0 );
+	}
+	while( data_iterator < data_size )
+	{
+		while( byte_iterator < data_size )
+		{
+			if( byte_iterator % 16 == 0 )
+			{
+				print_count = fprintf(
+					       stream,
+					       "%.8" PRIzx ": ",
+					       byte_iterator );
+
+				/* TODO check return value upper range */
+
+				if( print_count <= -1 )
+				{
+					return( -1 );
+				}
+				total_print_count += print_count;
+			}
+			print_count = fprintf(
+				       stream,
+				       "%.2" PRIx8 " ",
+				       data[ byte_iterator++ ] );
+
+			/* TODO check return value upper range */
+
+			if( print_count <= -1 )
+			{
+				return( -1 );
+			}
+			total_print_count += print_count;
+
+			if( byte_iterator % 16 == 0 )
+			{
+				break;
+			}
+			else if( byte_iterator % 8 == 0 )
+			{
+				print_count = fprintf(
+					       stream,
+					       " " );
+
+				/* TODO check return value upper range */
+
+				if( print_count <= -1 )
+				{
+					return( -1 );
+				}
+				total_print_count += print_count;
+			}
+		}
+		while( byte_iterator % 16 != 0 )
+		{
+			byte_iterator++;
+
+			print_count = fprintf(
+				       stream,
+				       "   " );
+
+			/* TODO check return value upper range */
+
+			if( print_count <= -1 )
+			{
+				return( -1 );
+			}
+			total_print_count += print_count;
+
+			if( ( byte_iterator % 8 == 0 )
+			 && ( byte_iterator % 16 != 0 ) )
+			{
+				print_count = fprintf(
+					       stream,
+					       " " );
+
+				/* TODO check return value upper range */
+
+				if( print_count <= -1 )
+				{
+					return( -1 );
+				}
+				total_print_count += print_count;
+			}
+		}
+		print_count = fprintf(
+			       stream,
+			       "  " );
+
+		/* TODO check return value upper range */
+
+		if( print_count <= -1 )
+		{
+			return( -1 );
+		}
+		total_print_count += print_count;
+
+		byte_iterator = data_iterator;
+
+		while( byte_iterator < data_size )
+		{
+			if( ( data[ byte_iterator ] >= 0x20 )
+			 && ( data[ byte_iterator ] <= 0x7e ) )
+			{
+				print_count = fprintf(
+					       stream,
+					       "%c",
+					       (char) data[ byte_iterator ] );
+			}
+			else
+			{
+				print_count = fprintf(
+					       stream,
+					       "." );
+			}
+			/* TODO check return value upper range */
+
+			if( print_count <= -1 )
+			{
+				return( -1 );
+			}
+			total_print_count += print_count;
+
+			byte_iterator++;
+
+			if( byte_iterator % 16 == 0 )
+			{
+				break;
+			}
+			else if( byte_iterator % 8 == 0 )
+			{
+				print_count = fprintf(
+					       stream,
+					       " " );
+
+				/* TODO check return value upper range */
+
+				if( print_count <= -1 )
+				{
+					return( -1 );
+				}
+				total_print_count += print_count;
+			}
+		}
+		print_count = fprintf(
+			       stream,
+			       "\n" );
+
+		/* TODO check return value upper range */
+
+		if( print_count <= -1 )
+		{
+			return( -1 );
+		}
+		total_print_count += print_count;
+
+		data_iterator = byte_iterator;
+	}
+	print_count = fprintf(
+		       stream,
+		       "\n" );
+
+	/* TODO check return value upper range */
+
+	if( print_count <= -1 )
+	{
+		return( -1 );
+	}
+	total_print_count += print_count;
+
+	return( total_print_count );
+}
+
 /* Exports the alias
  * Returns 1 if successful or -1 on error
  */
 int export_handle_export_alias(
+     export_handle_t *export_handle,
      libnk2_item_t *alias,
      int alias_index,
      int amount_of_aliases,
@@ -605,6 +714,17 @@ int export_handle_export_alias(
 	size_t target_path_size            = 0;
 #endif
 
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( alias == NULL )
 	{
 		liberror_error_set(
@@ -657,6 +777,7 @@ int export_handle_export_alias(
 	alias_directory_size = 11;
 
 	if( export_handle_create_target_path(
+	     export_handle,
 	     export_path,
 	     export_path_size,
 	     alias_directory,
@@ -685,7 +806,6 @@ int export_handle_export_alias(
 
 		return( -1 );
 	}
-fprintf( stderr, "X: %s, %s, %s\n", export_path, alias_directory, alias_path );
 	result = libsystem_file_exists(
 	          alias_path,
 	          error );
@@ -718,6 +838,7 @@ fprintf( stderr, "X: %s, %s, %s\n", export_path, alias_directory, alias_path );
 		return( -1 );
 	}
 	if( export_handle_make_directory(
+	     export_handle,
 	     alias_path,
 	     log_handle,
 	     error ) != 1 )
@@ -736,16 +857,19 @@ fprintf( stderr, "X: %s, %s, %s\n", export_path, alias_directory, alias_path );
 		return( -1 );
 	}
 	if( export_handle_export_item_values(
+	     export_handle,
 	     alias,
 	     alias_path,
 	     alias_path_size,
 	     log_handle,
 	     error ) != 1 )
 	{
-		libsystem_notify_verbose_printf(
-		 "%s: unable to export item values.\n",
-		 function );
-
+		if( libsystem_notify_verbose != 0 )
+		{
+			libsystem_notify_printf(
+			 "%s: unable to export item values.\n",
+			 function );
+		}
 		if( ( error != NULL )
 		 && ( *error != NULL ) )
 		{
@@ -763,6 +887,7 @@ fprintf( stderr, "X: %s, %s, %s\n", export_path, alias_directory, alias_path );
 	/* Create the alias file
 	 */
 	if( export_handle_create_target_path(
+	     export_handle,
 	     alias_path,
 	     alias_path_size,
 	     (uint8_t *) "Alias.txt",
@@ -885,6 +1010,7 @@ fprintf( stderr, "X: %s, %s, %s\n", export_path, alias_directory, alias_path );
  * Returns 1 if successful or -1 on error
  */
 int export_handle_export_item_values(
+     export_handle_t *export_handle,
      libnk2_item_t *item,
      libsystem_character_t *export_path,
      size_t export_path_size,
@@ -903,6 +1029,17 @@ int export_handle_export_item_values(
 	uint32_t value_type                = LIBNK2_VALUE_TYPE_UNSPECIFIED;
 	int result                         = 0;
 
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( item == NULL )
 	{
 		liberror_error_set(
@@ -928,6 +1065,7 @@ int export_handle_export_item_values(
 	/* Create the item value file
 	 */
 	if( export_handle_create_target_path(
+	     export_handle,
 	     export_path,
 	     export_path_size,
 	     (uint8_t *) "ItemValues.txt",
@@ -1094,10 +1232,12 @@ int export_handle_export_item_values(
 		fprintf(
 		 item_values_file_stream,
 		 "Value:\n" );
-		libsystem_notify_fprint_data(
+		export_handle_print_data(
+		 export_handle,
 		 item_values_file_stream,
 		 value_data,
-		 value_data_size );
+		 value_data_size,
+		 NULL );
 	}
 	if( libsystem_file_stream_close(
 	     item_values_file_stream ) != 0 )
@@ -1119,6 +1259,7 @@ int export_handle_export_item_values(
  */
 int export_handle_export_file(
      export_handle_t *export_handle,
+     libnk2_file_t *file,
      libsystem_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,
@@ -1140,13 +1281,13 @@ int export_handle_export_file(
 
 		return( -1 );
 	}
-	if( export_handle->input_handle == NULL )
+	if( file == NULL )
 	{
 		liberror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid export handle - missing input handle.",
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
 		 function );
 
 		return( -1 );
@@ -1176,7 +1317,7 @@ int export_handle_export_file(
 		return( -1 );
 	}
 	if( libnk2_file_get_amount_of_items(
-	     export_handle->input_handle,
+	     file,
 	     &amount_of_items,
 	     error ) != 1 )
 	{
@@ -1198,7 +1339,7 @@ int export_handle_export_file(
 	     item_iterator++ )
 	{
 		if( libnk2_file_get_item(
-		     export_handle->input_handle,
+		     file,
 		     item_iterator,
 		     &item,
 		     error ) != 1 )
@@ -1214,6 +1355,7 @@ int export_handle_export_file(
 			return( -1 );
 		}
 		if( export_handle_export_alias(
+		     export_handle,
 		     item,
 		     item_iterator,
 		     amount_of_items,
@@ -1228,11 +1370,13 @@ int export_handle_export_file(
 			 item_iterator + 1,
 			 amount_of_items );
 
-			libsystem_notify_verbose_printf(
-			 "%s: unable to export alias: %d.\n",
-			 function,
-			 item_iterator + 1 );
-
+			if( libsystem_notify_verbose != 0 )
+			{
+				libsystem_notify_printf(
+				 "%s: unable to export alias: %d.\n",
+				 function,
+				 item_iterator + 1 );
+			}
 			if( ( error != NULL )
 			 && ( *error != NULL ) )
 			{

@@ -1,8 +1,8 @@
 /*
  * Configuration file for Microsoft Visual Studio C++ compiler
  *
- * Copyright (c) 2006-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations. All rights reserved.
+ * Copyright (c) 2006-2010, Joachim Metz <forensics@hoffmannbv.nl>,
+ * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -62,11 +62,11 @@
  */
 
 /* Enable verbose output
-#define HAVE_VERBOSE_OUTPUT     1
+#define HAVE_VERBOSE_OUTPUT	1
  */
 
 /* Enable debug output
-#define HAVE_DEBUG_OUTPUT       1
+#define HAVE_DEBUG_OUTPUT	1
  */
 
 #endif
