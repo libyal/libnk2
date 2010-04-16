@@ -1,6 +1,7 @@
 /*
  * libnk2 file
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -21,11 +22,10 @@
  */
 
 #include <common.h>
-#include <narrow_string.h>
 #include <memory.h>
 #include <types.h>
-#include <wide_string.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 #include <libnotify.h>
 
@@ -340,7 +340,7 @@ int libnk2_file_open(
 	if( libbfio_file_set_name(
 	     file_io_handle,
 	     filename,
-	     narrow_string_length(
+	     libcstring_narrow_string_length(
 	      filename ) + 1,
 	     error ) != 1 )
 	{
@@ -480,7 +480,7 @@ int libnk2_file_open_wide(
 	if( libbfio_file_set_name_wide(
 	     file_io_handle,
 	     filename,
-	     wide_string_length(
+	     libcstring_wide_string_length(
 	      filename ) + 1,
 	     error ) != 1 )
 	{

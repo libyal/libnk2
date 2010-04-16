@@ -1,6 +1,7 @@
 /* 
  * Export handle
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (C) 2009-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -24,6 +25,7 @@
 #include <memory.h>
 #include <types.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 
 /* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
@@ -150,7 +152,7 @@ int export_handle_free(
  */
 int export_handle_make_directory(
      export_handle_t *export_handle,
-     libsystem_character_t *directory_name,
+     libcstring_system_character_t *directory_name,
      log_handle_t *log_handle,
      liberror_error_t **error )
 {
@@ -185,7 +187,7 @@ int export_handle_make_directory(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to make directory: %" PRIs_LIBSYSTEM ".",
+		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
 		 directory_name );
 
@@ -193,7 +195,7 @@ int export_handle_make_directory(
 	}
 	log_handle_printf(
 	 log_handle,
-	 "Created directory: %" PRIs_LIBSYSTEM ".\n",
+	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 	 directory_name );
 
 	return( 1 );
@@ -204,7 +206,7 @@ int export_handle_make_directory(
  */
 int export_handle_sanitize_filename(
      export_handle_t *export_handle,
-     libsystem_character_t *filename,
+     libcstring_system_character_t *filename,
      size_t filename_size,
      liberror_error_t **error )
 {
@@ -248,24 +250,24 @@ int export_handle_sanitize_filename(
 	{
 		if( ( ( filename[ iterator ] >= 0x01 )
 		  && ( filename[ iterator ] <= 0x1f ) )
-		 || ( filename[ iterator ] == (libsystem_character_t) '!' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '$' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '%' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '&' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '*' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '+' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '/' )
-		 || ( filename[ iterator ] == (libsystem_character_t) ':' )
-		 || ( filename[ iterator ] == (libsystem_character_t) ';' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '<' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '>' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '?' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '@' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '\\' )
-		 || ( filename[ iterator ] == (libsystem_character_t) '~' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '!' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '$' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '%' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '&' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '*' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '+' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '/' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) ':' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) ';' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '<' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '>' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '?' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '@' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '\\' )
+		 || ( filename[ iterator ] == (libcstring_system_character_t) '~' )
 		 || ( filename[ iterator ] == 0x7e ) )
 		{
-			filename[ iterator ] = (libsystem_character_t) '_';
+			filename[ iterator ] = (libcstring_system_character_t) '_';
 		}
 	}
 	return( 1 );
@@ -276,11 +278,11 @@ int export_handle_sanitize_filename(
  */
 int export_handle_create_target_path(
      export_handle_t *export_handle,
-     libsystem_character_t *export_path,
+     libcstring_system_character_t *export_path,
      size_t export_path_size,
      uint8_t *utf8_filename,
      size_t utf8_filename_size,
-     libsystem_character_t **target_path,
+     libcstring_system_character_t **target_path,
      size_t *target_path_size,
      liberror_error_t **error )
 {
@@ -367,7 +369,7 @@ int export_handle_create_target_path(
 	/* Make sure to check the UTF-8 filename length
 	 * the conversion routines are very strict about the string size
 	 */
-	utf8_filename_size = 1 + narrow_string_length(
+	utf8_filename_size = 1 + libcstring_narrow_string_length(
 	                          (char *) utf8_filename );
 
 	if( libsystem_string_size_from_utf8_string(
@@ -389,8 +391,8 @@ int export_handle_create_target_path(
 	 */
 	*target_path_size = export_path_size + filename_size;
 
-	*target_path = (libsystem_character_t *) memory_allocate(
-	                                          sizeof( libsystem_character_t ) * *target_path_size );
+	*target_path = (libcstring_system_character_t *) memory_allocate(
+	                                                  sizeof( libcstring_system_character_t ) * *target_path_size );
 
 	if( *target_path == NULL )
 	{
@@ -405,7 +407,7 @@ int export_handle_create_target_path(
 
 		return( -1 );
 	}
-	if( libsystem_string_copy(
+	if( libcstring_system_string_copy(
 	     *target_path,
 	     export_path,
 	     export_path_size ) == NULL )
@@ -425,7 +427,7 @@ int export_handle_create_target_path(
 
 		return( -1 );
 	}
-	( *target_path )[ export_path_size - 1 ] = (libsystem_character_t) LIBSYSTEM_PATH_SEPARATOR;
+	( *target_path )[ export_path_size - 1 ] = (libcstring_system_character_t) LIBSYSTEM_PATH_SEPARATOR;
 
 	if( libsystem_string_copy_from_utf8_string(
 	     &( ( *target_path )[ export_path_size ] ),
@@ -694,14 +696,14 @@ int export_handle_export_alias(
      libnk2_item_t *alias,
      int alias_index,
      int amount_of_aliases,
-     libsystem_character_t *export_path,
+     libcstring_system_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,
      liberror_error_t **error )
 {
 	uint8_t alias_directory[ 11 ];
 
-	libsystem_character_t *alias_path  = NULL;
+	libcstring_system_character_t *alias_path  = NULL;
 	static char *function              = "export_handle_export_alias";
 	size_t alias_directory_size        = 0;
 	size_t alias_path_size             = 0;
@@ -709,7 +711,7 @@ int export_handle_export_alias(
 	int result                         = 0;
 
 #ifdef TODO
-	libsystem_character_t *target_path = NULL;
+	libcstring_system_character_t *target_path = NULL;
 	FILE *alias_file_stream            = NULL;
 	size_t target_path_size            = 0;
 #endif
@@ -755,7 +757,7 @@ int export_handle_export_alias(
 
 	/* Create the alias directory
 	 */
-	print_count = narrow_string_snprintf(
+	print_count = libcstring_narrow_string_snprintf(
 	               (char *) alias_directory,
 	               11,
 	               "Alias%05d",
@@ -816,7 +818,7 @@ int export_handle_export_alias(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if %" PRIs_LIBSYSTEM " exists.",
+		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
 		 function,
 		 alias_path );
 	}
@@ -826,7 +828,7 @@ int export_handle_export_alias(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_GENERIC,
-		 "%s: %" PRIs_LIBSYSTEM " already exists.",
+		 "%s: %" PRIs_LIBCSTRING_SYSTEM " already exists.",
 		 function,
 		 alias_path );
 	}
@@ -847,7 +849,7 @@ int export_handle_export_alias(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to create directory: %" PRIs_LIBSYSTEM "",
+		 "%s: unable to create directory: %" PRIs_LIBCSTRING_SYSTEM "",
 		 function,
 		 alias_path );
 
@@ -932,7 +934,7 @@ int export_handle_export_alias(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if %" PRIs_LIBSYSTEM " exists.",
+		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
 		 function,
 		 target_path );
 
@@ -958,7 +960,7 @@ int export_handle_export_alias(
 	}
 	alias_file_stream = libsystem_file_stream_open(
 	                     target_path,
-	                     _LIBSYSTEM_CHARACTER_T_STRING( "w" ) );
+	                     _LIBCSTRING_SYSTEM_STRING( "w" ) );
 
 	if( alias_file_stream == NULL )
 	{
@@ -966,7 +968,7 @@ int export_handle_export_alias(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open: %" PRIs_LIBSYSTEM ".",
+		 "%s: unable to open: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
 		 target_path );
 
@@ -1012,12 +1014,12 @@ int export_handle_export_alias(
 int export_handle_export_item_values(
      export_handle_t *export_handle,
      libnk2_item_t *item,
-     libsystem_character_t *export_path,
+     libcstring_system_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,
      liberror_error_t **error )
 {
-	libsystem_character_t *target_path = NULL;
+	libcstring_system_character_t *target_path = NULL;
 	FILE *item_values_file_stream      = NULL;
 	uint8_t *value_data                = NULL;
 	static char *function              = "export_handle_export_item_values";
@@ -1104,7 +1106,7 @@ int export_handle_export_item_values(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if %" PRIs_LIBSYSTEM " exists.",
+		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
 		 function,
 		 target_path );
 
@@ -1122,7 +1124,7 @@ int export_handle_export_item_values(
 	}
 	item_values_file_stream = libsystem_file_stream_open(
 	                           target_path,
-	                           _LIBSYSTEM_CHARACTER_T_STRING( "w" ) );
+	                           _LIBCSTRING_SYSTEM_STRING( "w" ) );
 
 	if( item_values_file_stream == NULL )
 	{
@@ -1130,7 +1132,7 @@ int export_handle_export_item_values(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open: %" PRIs_LIBSYSTEM ".",
+		 "%s: unable to open: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
 		 target_path );
 
@@ -1260,7 +1262,7 @@ int export_handle_export_item_values(
 int export_handle_export_file(
      export_handle_t *export_handle,
      libnk2_file_t *file,
-     libsystem_character_t *export_path,
+     libcstring_system_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,
      liberror_error_t **error )
@@ -1310,7 +1312,7 @@ int export_handle_export_file(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: unable to make directory: %" PRIs_LIBSYSTEM ".\n",
+		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 function,
 		 export_path );
 

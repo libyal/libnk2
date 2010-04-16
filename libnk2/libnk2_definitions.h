@@ -1,6 +1,7 @@
 /*
  * The internal definitions
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -38,11 +39,11 @@
  * for local use of libnk2
  */
 #else
-#define LIBNK2_VERSION					201001114
+#define LIBNK2_VERSION					20100416
 
 /* The libnk2 version string
  */
-#define LIBNK2_VERSION_STRING				"201001114"
+#define LIBNK2_VERSION_STRING				"20100416"
 
 /* The libnk2 file access
  * bit 1        set to 1 for read access

@@ -1,6 +1,7 @@
 /*
  * Debug functions
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -31,7 +32,6 @@
 #include "libnk2_definitions.h"
 #include "libnk2_libbfio.h"
 #include "libnk2_libfmapi.h"
-#include "libnk2_string.h"
 
 #if defined( HAVE_DEBUG_OUTPUT )
 

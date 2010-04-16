@@ -1,6 +1,7 @@
 /* 
  * Export handle
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (C) 2009-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -26,6 +27,7 @@
 #include <common.h>
 #include <types.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 
 /* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
@@ -64,23 +66,23 @@ int export_handle_free(
 
 int export_handle_make_directory(
      export_handle_t *export_handle,
-     libsystem_character_t *directory_name,
+     libcstring_system_character_t *directory_name,
      log_handle_t *log_handle,
      liberror_error_t **error );
 
 int export_handle_sanitize_filename(
      export_handle_t *export_handle,
-     libsystem_character_t *filename,
+     libcstring_system_character_t *filename,
      size_t filename_size,
      liberror_error_t **error );
 
 int export_handle_create_target_path(
      export_handle_t *export_handle,
-     libsystem_character_t *export_path,
+     libcstring_system_character_t *export_path,
      size_t export_path_size,
      uint8_t *utf8_filename,
      size_t utf8_filename_size,
-     libsystem_character_t **target_path,
+     libcstring_system_character_t **target_path,
      size_t *target_path_size,
      liberror_error_t **error );
 
@@ -96,7 +98,7 @@ int export_handle_export_alias(
      libnk2_item_t *item,
      int item_index,
      int amount_of_items,
-     libsystem_character_t *export_path,
+     libcstring_system_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,
      liberror_error_t **error );
@@ -104,7 +106,7 @@ int export_handle_export_alias(
 int export_handle_export_item_values(
      export_handle_t *export_handle,
      libnk2_item_t *item,
-     libsystem_character_t *export_path,
+     libcstring_system_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,
      liberror_error_t **error );
@@ -112,7 +114,7 @@ int export_handle_export_item_values(
 int export_handle_export_file(
      export_handle_t *export_handle,
      libnk2_file_t *file,
-     libsystem_character_t *export_path,
+     libcstring_system_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,
      liberror_error_t **error );

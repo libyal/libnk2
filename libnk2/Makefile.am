@@ -1,6 +1,7 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
+	-I$(top_srcdir)/libcstring \
 	-I$(top_srcdir)/liberror \
 	-I$(top_srcdir)/libnotify \
 	@LIBUNA_CPPFLAGS@ \
@@ -28,7 +29,6 @@ libnk2_la_SOURCES = \
 	libnk2_libuna.h \
 	libnk2_mapi.h \
 	libnk2_notify.c libnk2_notify.h \
-	libnk2_string.h \
 	libnk2_support.c libnk2_support.h \
 	libnk2_types.h \
 	libnk2_value_type.c libnk2_value_type.h \
@@ -36,6 +36,7 @@ libnk2_la_SOURCES = \
 	nk2_item.h
 
 libnk2_la_LIBADD = \
+	../libcstring/libcstring.la \
 	../liberror/liberror.la \
 	../libnotify/libnotify.la \
 	@LIBUNA_LIBADD@ \

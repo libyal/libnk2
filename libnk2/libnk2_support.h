@@ -1,6 +1,7 @@
 /*
  * Support functions
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -24,9 +25,7 @@
 #define _LIBNK2_SUPPORT_H
 
 #include <common.h>
-#include <narrow_string.h>
 #include <types.h>
-#include <wide_string.h>
 
 #include <liberror.h>
 

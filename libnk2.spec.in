@@ -70,6 +70,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man1/*
 
 %changelog
+* Fri Apr 16 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100416-1
+- Email change
+
 * Fri Sep  4 2009 Joachim Metz <forensics@hoffmannbv.nl> 20090904-1
 - Correction for handling no requires and build requires
 

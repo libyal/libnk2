@@ -1,6 +1,7 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
+	-I$(top_srcdir)/libcstring \
 	-I$(top_srcdir)/liberror \
 	-I$(top_srcdir)/libsystem \
 	@LIBUNA_CPPFLAGS@ \
@@ -23,6 +24,7 @@ nk2export_SOURCES = \
 	nk2output.c nk2output.h
 
 nk2export_LDADD = \
+	../libcstring/libcstring.la \
 	../liberror/liberror.la \
 	../libnk2/libnk2.la \
 	../libsystem/libsystem.la \
@@ -34,6 +36,7 @@ nk2info_SOURCES = \
 	nk2output.c nk2output.h
 
 nk2info_LDADD = \
+	../libcstring/libcstring.la \
 	../liberror/liberror.la \
 	../libnk2/libnk2.la \
 	../libsystem/libsystem.la \

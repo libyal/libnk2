@@ -1,9 +1,7 @@
 TODO
+* update msvscpp files
+* update macosx files
 * locale support
-  - library data returns UTF-8 (done)
-  - input filenames remain system string (done)
-  - move character_t functionality to system_character_t (done)
-  - remove string conversion code (done)
   - print output convert to system string
   - to reduce conversions use as much as possible the system string
     type in the tools
@@ -25,6 +23,14 @@ Tools
 Deployment:
 * create debian package files
 * implement macosx package files (add to configure scripts)
+
+20100416
+* added libcstring
+* email change
+* updated configure.ac
+* updated common, liberror, libnotify, libuna, libbfio, libsystem,
+  libfdatetime, libfmapi
+* updated guid.[ch] log_handle.[ch]
 
 20100114
 * 2010 update

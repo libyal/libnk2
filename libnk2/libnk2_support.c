@@ -1,6 +1,7 @@
 /*
  * Support functions
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -22,10 +23,9 @@
 
 #include <common.h>
 #include <memory.h>
-#include <narrow_string.h>
 #include <types.h>
-#include <wide_string.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 
 #include "libnk2_definitions.h"
@@ -64,7 +64,7 @@ int libnk2_check_file_signature(
 
 		return( -1 );
 	}
-	filename_length = narrow_string_length(
+	filename_length = libcstring_narrow_string_length(
 	                   filename );
 
 	if( filename_length == 0 )
@@ -170,7 +170,7 @@ int libnk2_check_file_signature_wide(
 
 		return( -1 );
 	}
-	filename_length = wide_string_length(
+	filename_length = libcstring_wide_string_length(
 	                   filename );
 
 	if( filename_length == 0 )

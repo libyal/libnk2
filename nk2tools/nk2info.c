@@ -1,6 +1,7 @@
 /*
  * Shows information obtained from a Nickfile (NK2)
  *
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
  * Hoffmann Investigations.
  *
@@ -24,6 +25,7 @@
 #include <memory.h>
 #include <types.h>
 
+#include <libcstring.h>
 #include <liberror.h>
 
 #include <stdio.h>
@@ -32,7 +34,7 @@
 #include <unistd.h>
 #endif
 
-#if defined( HAVE_STDLIB_H )
+#if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
@@ -134,18 +136,18 @@ int nk2info_file_info_fprint(
 
 /* The main program
  */
-#if defined( LIBSYSTEM_HAVE_WIDE_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
 #endif
 {
-	liberror_error_t *error       = NULL;
-	libnk2_file_t *nk2_file       = NULL;
-	libsystem_character_t *source = NULL;
-	char *program                 = "nk2info";
-	libsystem_integer_t option    = 0;
-	int verbose                   = 0;
+	liberror_error_t *error               = NULL;
+	libnk2_file_t *nk2_file               = NULL;
+	libcstring_system_character_t *source = NULL;
+	char *program                         = "nk2info";
+	libcstring_system_integer_t option    = 0;
+	int verbose                           = 0;
 
 	libsystem_notify_set_stream(
 	 stderr,
@@ -174,15 +176,15 @@ int main( int argc, char * const argv[] )
 	while( ( option = libsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBSYSTEM_CHARACTER_T_STRING( "hvV" ) ) ) != (libsystem_integer_t) -1 )
+	                   _LIBCSTRING_SYSTEM_STRING( "hvV" ) ) ) != (libcstring_system_integer_t) -1 )
 	{
 		switch( option )
 		{
-			case (libsystem_integer_t) '?':
+			case (libcstring_system_integer_t) '?':
 			default:
 				fprintf(
 				 stderr,
-				 "Invalid argument: %" PRIs_LIBSYSTEM "\n",
+				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
 				 argv[ optind ] );
 
 				usage_fprint(
@@ -190,18 +192,18 @@ int main( int argc, char * const argv[] )
 
 				return( EXIT_FAILURE );
 
-			case (libsystem_integer_t) 'h':
+			case (libcstring_system_integer_t) 'h':
 				usage_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
 
-			case (libsystem_integer_t) 'v':
+			case (libcstring_system_integer_t) 'v':
 				verbose = 1;
 
 				break;
 
-			case (libsystem_integer_t) 'V':
+			case (libcstring_system_integer_t) 'V':
 				nk2output_copyright_fprint(
 				 stdout );
 
@@ -260,7 +262,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Error opening file: %" PRIs_LIBSYSTEM ".\n",
+		 "Error opening file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 argv[ optind ] );
 
 		libsystem_notify_print_error_backtrace(
@@ -303,7 +305,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Error closing file: %" PRIs_LIBSYSTEM ".\n",
+		 "Error closing file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 argv[ optind ] );
 
 		libsystem_notify_print_error_backtrace(
