@@ -85,9 +85,9 @@ int libnk2_item_detach(
      libnk2_internal_item_t *internal_item,
      liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_amount_of_entries(
+LIBNK2_EXTERN int libnk2_item_get_number_of_entries(
                    libnk2_item_t *item,
-                   uint32_t *amount_of_entries,
+                   uint32_t *number_of_entries,
                    liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_item_get_entry_type(

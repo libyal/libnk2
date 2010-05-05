@@ -80,7 +80,7 @@ int nk2info_file_info_fprint(
      liberror_error_t **error )
 {
 	static char *function = "nk2info_file_info_fprint";
-	int amount_of_items   = 0;
+	int number_of_items   = 0;
 
 	if( stream == NULL )
 	{
@@ -104,16 +104,16 @@ int nk2info_file_info_fprint(
 
 		return( -1 );
 	}
-	if( libnk2_file_get_amount_of_items(
+	if( libnk2_file_get_number_of_items(
 	     file,
-	     &amount_of_items,
+	     &number_of_items,
 	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve amount of items.",
+		 "%s: unable to retrieve number of items.",
 		 function );
 
 		return( -1 );
@@ -124,8 +124,8 @@ int nk2info_file_info_fprint(
 
 	fprintf(
 	 stream,
-	 "\tAmount of aliases:\t%d\n",
-	 amount_of_items );
+	 "\tNumber of aliases:\t%d\n",
+	 number_of_items );
 
 	fprintf(
 	 stream,

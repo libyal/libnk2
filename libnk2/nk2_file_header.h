@@ -51,10 +51,10 @@ struct nk2_file_header
 	 */
 	uint8_t unknown2[ 4 ];
 
-	/* Amount of items
+	/* Number of items
 	 * Consists of 4 bytes
 	 */
-	uint8_t amount_of_items[ 4 ];
+	uint8_t number_of_items[ 4 ];
 };
 
 #if defined( __cplusplus )

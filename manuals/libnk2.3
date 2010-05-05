@@ -1,4 +1,4 @@
-.Dd January 14, 2010
+.Dd May 5, 2010
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
@@ -58,6 +58,10 @@ File functions
 .Fn libnk2_file_get_ascii_codepage "libnk2_file_t *file, int *ascii_codepage, libnk2_error_t **error"
 .Ft int
 .Fn libnk2_file_set_ascii_codepage "libnk2_file_t *file, int ascii_codepage, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_file_get_number_of_items "libnk2_file_t *file, int *number_of_items, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_file_get_item "libnk2_file_t *file, int item_index, libnk2_item_t **item, libnk2_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
@@ -73,7 +77,7 @@ Item functions
 .Ft int
 .Fn libnk2_item_get_identifier "libnk2_item_t *item, uint32_t *identifier, libnk2_error_t **error
 .Ft int
-.Fn libnk2_item_get_amount_of_entries "libnk2_item_t *item, uint32_t *amount_of_entries, libnk2_error_t **error"
+.Fn libnk2_item_get_number_of_entries "libnk2_item_t *item, uint32_t *number_of_entries, libnk2_error_t **error"
 .Ft int
 .Fn libnk2_item_get_entry_type "libnk2_item_t *item, int entry_index, uint32_t *entry_type, uint32_t *value_type, libnk2_error_t **error"
 .Ft int
@@ -141,6 +145,7 @@ http://libnk2.sourceforge.net/
 .Sh AUTHOR
 These man pages were written by Joachim Metz.
 .Sh COPYRIGHT
+Copyright 2010 Joachim Metz <jbmetz@users.sourceforge.net>.
 Copyright 2009-2010 Joachim Metz, Hoffmann Investigations <forensics@hoffmannbv.nl> and contributors.
 This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO

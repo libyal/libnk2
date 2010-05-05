@@ -476,7 +476,7 @@ int export_handle_create_target_path(
 }
 
 /* Prints the data on the stream
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 int export_handle_print_data(
      export_handle_t *export_handle,
@@ -695,7 +695,7 @@ int export_handle_export_alias(
      export_handle_t *export_handle,
      libnk2_item_t *alias,
      int alias_index,
-     int amount_of_aliases,
+     int number_of_aliases,
      libcstring_system_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,
@@ -753,7 +753,7 @@ int export_handle_export_alias(
 	 stdout,
 	 "Processing alias %d out of %d.\n",
 	 alias_index + 1,
-	 amount_of_aliases );
+	 number_of_aliases );
 
 	/* Create the alias directory
 	 */
@@ -1025,7 +1025,7 @@ int export_handle_export_item_values(
 	static char *function              = "export_handle_export_item_values";
 	size_t target_path_size            = 0;
 	size_t value_data_size             = 0;
-	uint32_t amount_of_entries         = 0;
+	uint32_t number_of_entries         = 0;
 	uint32_t entry_iterator            = 0;
 	uint32_t entry_type                = 0;
 	uint32_t value_type                = LIBNK2_VALUE_TYPE_UNSPECIFIED;
@@ -1144,16 +1144,16 @@ int export_handle_export_item_values(
 	memory_free(
 	 target_path );
 
-	if( libnk2_item_get_amount_of_entries(
+	if( libnk2_item_get_number_of_entries(
 	     item,
-	     &amount_of_entries,
+	     &number_of_entries,
 	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve amount of entries.",
+		 "%s: unable to retrieve number of entries.",
 		 function );
 
 		libsystem_file_stream_close(
@@ -1163,14 +1163,14 @@ int export_handle_export_item_values(
 	}
 	fprintf(
 	 item_values_file_stream,
-	 "Amount of entries:\t%" PRIu32 "\n",
-	 amount_of_entries );
+	 "Number of entries:\t%" PRIu32 "\n",
+	 number_of_entries );
 	fprintf(
 	 item_values_file_stream,
 	 "\n" );
 
 	for( entry_iterator = 0;
-	     entry_iterator < amount_of_entries;
+	     entry_iterator < number_of_entries;
 	     entry_iterator++ )
 	{
 		fprintf(
@@ -1269,7 +1269,7 @@ int export_handle_export_file(
 {
 	libnk2_item_t *item   = NULL;
 	static char *function = "export_handle_export_file";
-	int amount_of_items   = 0;
+	int number_of_items   = 0;
 	int item_iterator     = 0;
 
 	if( export_handle == NULL )
@@ -1318,26 +1318,26 @@ int export_handle_export_file(
 
 		return( -1 );
 	}
-	if( libnk2_file_get_amount_of_items(
+	if( libnk2_file_get_number_of_items(
 	     file,
-	     &amount_of_items,
+	     &number_of_items,
 	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve amount of items.",
+		 "%s: unable to retrieve number of items.",
 		 function );
 
 		return( -1 );
 	}
-	if( amount_of_items == 0 )
+	if( number_of_items == 0 )
 	{
 		return( 0 );
 	}
 	for( item_iterator = 0;
-	     item_iterator < amount_of_items;
+	     item_iterator < number_of_items;
 	     item_iterator++ )
 	{
 		if( libnk2_file_get_item(
@@ -1360,7 +1360,7 @@ int export_handle_export_file(
 		     export_handle,
 		     item,
 		     item_iterator,
-		     amount_of_items,
+		     number_of_items,
 		     export_path,
 		     export_path_size,
 		     log_handle,
@@ -1370,7 +1370,7 @@ int export_handle_export_file(
 			 stdout,
 			 "Unable to export alias %d out of %d.\n",
 			 item_iterator + 1,
-			 amount_of_items );
+			 number_of_items );
 
 			if( libsystem_notify_verbose != 0 )
 			{

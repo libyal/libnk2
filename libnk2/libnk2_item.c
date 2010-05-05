@@ -290,17 +290,17 @@ int libnk2_item_detach(
 	return( 1 );
 }
 
-/* Retrieves the amount of entries of the referenced item
- * All sets in an item contain the same amount of entries
+/* Retrieves the number of entries of the referenced item
+ * All sets in an item contain the same number of entries
  * Returns 1 if successful or -1 on error
  */
-int libnk2_item_get_amount_of_entries(
+int libnk2_item_get_number_of_entries(
      libnk2_item_t *item,
-     uint32_t *amount_of_entries,
+     uint32_t *number_of_entries,
      liberror_error_t **error )
 {
 	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_amount_of_entries";
+	static char *function                 = "libnk2_item_get_number_of_entries";
 
 	if( item == NULL )
 	{
@@ -326,16 +326,16 @@ int libnk2_item_get_amount_of_entries(
 
 		return( -1 );
 	}
-	if( libnk2_item_values_get_amount_of_entries(
+	if( libnk2_item_values_get_number_of_entries(
 	     internal_item->item_values,
-	     amount_of_entries,
+	     number_of_entries,
 	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to get amount of entries.",
+		 "%s: unable to get number of entries.",
 		 function );
 
 		return( -1 );

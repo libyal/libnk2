@@ -39,7 +39,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\liberror;..\..\libuna"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror;..\..\libuna"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBBFIO"
 				RuntimeLibrary="2"
 				WarningLevel="4"
@@ -98,6 +98,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libbfio\libbfio_legacy.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libbfio\libbfio_list_type.c"
 				>
 			</File>
@@ -115,10 +119,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libbfio\libbfio_support.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_system_string.c"
 				>
 			</File>
 		</Filter>
@@ -152,6 +152,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libbfio\libbfio_legacy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libbfio\libbfio_libuna.h"
 				>
 			</File>
@@ -173,10 +177,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libbfio\libbfio_support.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_system_string.h"
 				>
 			</File>
 			<File

@@ -16,6 +16,9 @@ EXTRA_DIST = \
 	libnk2/features.h.in \
 	libnk2/types.h.in
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 distclean: clean
 	/bin/rm -f libnk2.h
 	/bin/rm -f libnk2/definitions.h

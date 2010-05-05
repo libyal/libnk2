@@ -730,7 +730,7 @@ int libnk2_file_open_read(
      liberror_error_t **error )
 {
 	static char *function    = "libnk2_file_open_read";
-	uint32_t amount_of_items = 0;
+	uint32_t number_of_items = 0;
 
 	if( internal_file == NULL )
 	{
@@ -764,7 +764,7 @@ int libnk2_file_open_read(
 	if( libnk2_io_handle_read_file_header(
 	     internal_file->io_handle,
 	     internal_file->file_io_handle,
-	     &amount_of_items,
+	     &number_of_items,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -786,7 +786,7 @@ int libnk2_file_open_read(
 	if( libnk2_io_handle_read_items(
 	     internal_file->io_handle,
 	     internal_file->file_io_handle,
-	     amount_of_items,
+	     number_of_items,
 	     internal_file->item_array,
 	     error ) != 1 )
 	{
@@ -891,16 +891,16 @@ int libnk2_file_set_ascii_codepage(
 	return( 1 );
 }
 
-/* Retrieves the amount of items
+/* Retrieves the number of items
  * Returns 1 if successful or -1 on error
  */
-int libnk2_file_get_amount_of_items(
+int libnk2_file_get_number_of_items(
      libnk2_file_t *file,
-     int *amount_of_items,
+     int *number_of_items,
      liberror_error_t **error )
 {
 	libnk2_internal_file_t *internal_file = NULL;
-	static char *function                 = "libnk2_file_get_amount_of_items";
+	static char *function                 = "libnk2_file_get_number_of_items";
 
 	if( file == NULL )
 	{
@@ -915,30 +915,20 @@ int libnk2_file_get_amount_of_items(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
-	if( internal_file->item_array == NULL )
+	if( libnk2_array_get_number_of_entries(
+	     internal_file->item_array,
+	     number_of_items,
+	     error ) != 1 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing item array.",
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of items.",
 		 function );
 
 		return( -1 );
 	}
-	if( amount_of_items == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid amount of items.",
-		 function );
-
-		return( -1 );
-	}
-	*amount_of_items = internal_file->item_array->amount_of_entries;
-
 	return( 1 );
 }
 
@@ -990,19 +980,6 @@ int libnk2_file_get_item(
 
 		return( -1 );
 	}
-	if( libnk2_item_initialize(
-	     item,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create item.",
-		 function );
-
-		return( -1 );
-	}
 	if( libnk2_array_get_entry(
 	     internal_file->item_array,
 	     item_index,
@@ -1014,6 +991,19 @@ int libnk2_file_get_item(
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve item values.",
+		 function );
+
+		return( -1 );
+	}
+	if( libnk2_item_initialize(
+	     item,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create item.",
 		 function );
 
 		return( -1 );

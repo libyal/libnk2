@@ -135,7 +135,7 @@ int libnk2_io_handle_free(
 int libnk2_io_handle_read_file_header(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t *amount_of_items,
+     uint32_t *number_of_items,
      liberror_error_t **error )
 {
 	nk2_file_header_t file_header;
@@ -158,13 +158,13 @@ int libnk2_io_handle_read_file_header(
 
 		return( -1 );
 	}
-	if( amount_of_items == NULL )
+	if( number_of_items == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid amount of items.",
+		 "%s: invalid number of items.",
 		 function );
 
 		return( -1 );
@@ -238,8 +238,8 @@ int libnk2_io_handle_read_file_header(
 		return( -1 );
 	}
 	byte_stream_copy_to_uint32_little_endian(
-	 file_header.amount_of_items,
-	 *amount_of_items );
+	 file_header.number_of_items,
+	 *number_of_items );
 
 #if defined( HAVE_VERBOSE_OUTPUT )
 	if( libnotify_verbose != 0 )
@@ -269,9 +269,9 @@ int libnk2_io_handle_read_file_header(
 		 value_32bit );
 
 		libnotify_printf(
-		 "%s: amount of items\t: %" PRIu32 "\n",
+		 "%s: number of items\t: %" PRIu32 "\n",
 		 function,
-		 *amount_of_items );
+		 *number_of_items );
 
 		libnotify_printf(
 		 "\n" );
@@ -287,16 +287,16 @@ int libnk2_io_handle_read_file_header(
 int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t amount_of_items,
+     uint32_t number_of_items,
      libnk2_array_t *item_table,
      liberror_error_t **error )
 {
-	uint8_t amount_of_item_values_data[ 4 ];
+	uint8_t number_of_item_values_data[ 4 ];
 
 	libnk2_item_values_t *item_values = NULL;
 	static char *function             = "libnk2_io_handle_read_items";
 	ssize_t read_count                = 0;
-	uint32_t amount_of_item_values    = 0;
+	uint32_t number_of_item_values    = 0;
 	uint32_t item_iterator            = 0;
 	int item_entry_index              = 0;
 
@@ -322,11 +322,13 @@ int libnk2_io_handle_read_items(
 
 		return( -1 );
 	}
-	for( item_iterator = 0; item_iterator < amount_of_items; item_iterator++ )
+	for( item_iterator = 0;
+	     item_iterator < number_of_items;
+	     item_iterator++ )
 	{
 		read_count = libbfio_handle_read(
 			      file_io_handle,
-			      amount_of_item_values_data,
+			      number_of_item_values_data,
 			      4,
 			      error );
 
@@ -336,16 +338,16 @@ int libnk2_io_handle_read_items(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read amount of item values data.",
+			 "%s: unable to read number of item values data.",
 			 function );
 
 			return( -1 );
 		}
 		byte_stream_copy_to_uint32_little_endian(
-		 amount_of_item_values_data,
-		 amount_of_item_values );
+		 number_of_item_values_data,
+		 number_of_item_values );
 
-		if( amount_of_item_values == 0 )
+		if( number_of_item_values == 0 )
 		{
 			break;
 		}
@@ -353,16 +355,16 @@ int libnk2_io_handle_read_items(
 		if( libnotify_verbose != 0 )
 		{
 			libnotify_printf(
-			 "%s: item: %03" PRIu32 " amount of item values\t: %" PRIu32 "\n",
+			 "%s: item: %03" PRIu32 " number of item values\t: %" PRIu32 "\n",
 			 function,
 			 item_iterator,
-			 amount_of_item_values );
+			 number_of_item_values );
 		}
 #endif
 
 		if( libnk2_item_values_initialize(
 		     &item_values,
-		     amount_of_item_values,
+		     number_of_item_values,
 		     error ) != 1 )
 		{
 			liberror_error_set(

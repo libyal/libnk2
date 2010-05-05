@@ -25,6 +25,9 @@ EXTRA_DIST = \
         $(REDHAT_FILES) \
 	libnk2.pc.in
 
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
 pkgconfigdir = $(libdir)/pkgconfig
 
 pkgconfig_DATA = \

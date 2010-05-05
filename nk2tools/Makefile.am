@@ -13,7 +13,9 @@ AM_CPPFLAGS = \
 
 AM_LDFLAGS = @STATIC_LDFLAGS@
 
-bin_PROGRAMS = nk2export nk2info
+bin_PROGRAMS = \
+	nk2export \
+	nk2info
 
 nk2export_SOURCES = \
 	export_handle.c export_handle.h \
@@ -42,6 +44,9 @@ nk2info_LDADD = \
 	../libsystem/libsystem.la \
 	@LIBUNA_LIBADD@ \
 	@MEMWATCH_LIBADD@
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
 
 distclean: clean
 	/bin/rm -f Makefile

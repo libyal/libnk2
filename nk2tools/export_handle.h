@@ -97,7 +97,7 @@ int export_handle_export_alias(
      export_handle_t *export_handle,
      libnk2_item_t *item,
      int item_index,
-     int amount_of_items,
+     int number_of_items,
      libcstring_system_character_t *export_path,
      size_t export_path_size,
      log_handle_t *log_handle,

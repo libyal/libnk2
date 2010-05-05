@@ -125,6 +125,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libnk2\libnk2_legacy.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libnk2\libnk2_notify.c"
 				>
 			</File>
@@ -180,6 +184,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libnk2\libnk2_item_values.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libnk2\libnk2_legacy.h"
 				>
 			</File>
 			<File

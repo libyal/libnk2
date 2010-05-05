@@ -1,5 +1,8 @@
 TODO
-* update msvscpp files
+* configure update libfmapi check
+* configure validate libuna and libbfio check
+
+* update nk2 specific msvscpp files
 * update macosx files
 * locale support
   - print output convert to system string
@@ -12,6 +15,7 @@ Performance improvement
 
 library
 * what about multiple alias entries 0x6001 of a single item?
+* remove attach and detach ?
 
 Tools
 * nk2export
@@ -23,6 +27,24 @@ Tools
 Deployment:
 * create debian package files
 * implement macosx package files (add to configure scripts)
+* create nk2info and nk2export man pages
+
+Test:
+* add autoconf/make test suite
+
+Beta release
+* remove deprecated functions in libnk2_legacy.[ch]
+* remove deprecated definition in include/libnk2/mapi.h
+* check if libnk2.3 manual file is up to date
+
+20100505
+* updated common, libcstring, liberror, libnotify, libfdatetime, libfmapi,
+  libuna, libbfio, libsystem
+* changed amount of in number of
+* updated array type
+* removed list type
+* updated manpage libuna.3
+* updated msvscpp files of sub libraries
 
 20100416
 * added libcstring
@@ -80,7 +102,7 @@ Deployment:
 * updated configure.ac
 * updated common, linbuna, libbfio, libsystem
 * updated array and list type
-* updated value types with libpff version
+* updated value types
 * updated libfmapi
 * added libfdatetime support
 * implemented utf16 string item entry functions
@@ -131,13 +153,10 @@ Deployment:
 * worked on item API
 
 20090514
-* updated liberror with libewf version
-* updated libuna with libewf version
-* updated libfmapi with libpff version
-* updated libbfio with libewf version
-* updated nk2tools/system_string.[ch] with ewftools version
-* updated nk2tools/file_io.[ch] with ewftools version
-* updated common/endian.h with libewf version
+* updated liberror, libuna, libfmapi, libbfio
+* updated nk2tools/system_string.[ch]
+* updated nk2tools/file_io.[ch]
+* updated common/endian.h
 * Strings are now formatted to UTF-8 in debug output
 
 20090324

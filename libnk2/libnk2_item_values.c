@@ -43,7 +43,7 @@
  */
 int libnk2_item_values_initialize(
      libnk2_item_values_t **item_values,
-     uint32_t amount_of_entries,
+     uint32_t number_of_entries,
      liberror_error_t **error )
 {
 	static char *function = "libnk2_item_values_initialize";
@@ -95,9 +95,9 @@ int libnk2_item_values_initialize(
 
 			return( -1 );
 		}
-		if( amount_of_entries > 0 )
+		if( number_of_entries > 0 )
 		{
-			entries_size = sizeof( libnk2_item_entry_t ) * amount_of_entries;
+			entries_size = sizeof( libnk2_item_entry_t ) * number_of_entries;
 
 			if( entries_size > (size_t) SSIZE_MAX )
 			{
@@ -138,7 +138,7 @@ int libnk2_item_values_initialize(
 
 				return( -1 );
 			}
-			( *item_values )->amount_of_entries = amount_of_entries;
+			( *item_values )->number_of_entries = number_of_entries;
 		}
 	}
 	return( 1 );
@@ -169,7 +169,9 @@ int libnk2_item_values_free(
 	{
 		if( ( *item_values )->entry != NULL )
 		{
-			for( entry_iterator = 0; entry_iterator < ( *item_values )->amount_of_entries; entry_iterator++ )
+			for( entry_iterator = 0;
+			     entry_iterator < ( *item_values )->number_of_entries;
+			     entry_iterator++ )
 			{
 				if( ( *item_values )->entry[ entry_iterator ].value_data != NULL )
 				{
@@ -263,7 +265,7 @@ int libnk2_item_values_read(
 	/* Loop through all item value entries
 	 */
 	for( item_value_entry_iterator = 0;
-	     item_value_entry_iterator < item_values->amount_of_entries;
+	     item_value_entry_iterator < item_values->number_of_entries;
 	     item_value_entry_iterator++ )
 	{
 		read_count = libbfio_handle_read(
@@ -536,15 +538,15 @@ int libnk2_item_values_read(
 	return( 1 );
 }
 
-/* Retrieves the amount of item entries
+/* Retrieves the number of item entries
  * Returns 1 if successful or -1 on error
  */
-int libnk2_item_values_get_amount_of_entries(
+int libnk2_item_values_get_number_of_entries(
      libnk2_item_values_t *item_values,
-     uint32_t *amount_of_entries,
+     uint32_t *number_of_entries,
      liberror_error_t **error )
 {
-	static char *function = "libnk2_item_values_get_amount_of_entries";
+	static char *function = "libnk2_item_values_get_number_of_entries";
 
 	if( item_values == NULL )
 	{
@@ -557,18 +559,18 @@ int libnk2_item_values_get_amount_of_entries(
 
 		return( -1 );
 	}
-	if( amount_of_entries == NULL )
+	if( number_of_entries == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid amount of entries.",
+		 "%s: invalid number of entries.",
 		 function );
 
 		return( -1 );
 	}
-	*amount_of_entries = item_values->amount_of_entries;
+	*number_of_entries = item_values->number_of_entries;
 
 	return( 1 );
 }
@@ -608,7 +610,7 @@ int libnk2_item_values_get_entry_type(
 		return( -1 );
 	}
 	if( ( entry_index < 0 )
-	 || ( (uint32_t) entry_index >= item_values->amount_of_entries ) )
+	 || ( (uint32_t) entry_index >= item_values->number_of_entries ) )
 	{
 		liberror_error_set(
 		 error,
@@ -725,7 +727,7 @@ int libnk2_item_values_get_entry_value(
 		return( -1 );
 	}
 	for( entry_iterator = 0;
-	     (uint32_t) entry_iterator < item_values->amount_of_entries;
+	     (uint32_t) entry_iterator < item_values->number_of_entries;
 	     entry_iterator++ )
 	{
 		if( item_values->entry[ entry_iterator ].entry_type == entry_type )

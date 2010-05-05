@@ -116,14 +116,14 @@ LIBNK2_EXTERN void libnk2_error_free(
                     libnk2_error_t **error );
 
 /* Prints a descriptive string of the error to the stream
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 LIBNK2_EXTERN int libnk2_error_fprint(
                    libnk2_error_t *error,
                    FILE *stream );
 
 /* Prints a descriptive string of the error to the string
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 LIBNK2_EXTERN int libnk2_error_sprint(
                    libnk2_error_t *error,
@@ -131,14 +131,14 @@ LIBNK2_EXTERN int libnk2_error_sprint(
                    size_t size );
 
 /* Prints a backtrace of the error to the stream
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 LIBNK2_EXTERN int libnk2_error_backtrace_fprint(
                    libnk2_error_t *error,
                    FILE *stream );
 
 /* Prints a backtrace of the error to the string
- * Returns the amount of printed characters if successful or -1 on error
+ * Returns the number of printed characters if successful or -1 on error
  */
 LIBNK2_EXTERN int libnk2_error_backtrace_sprint(
                    libnk2_error_t *error,
@@ -225,9 +225,20 @@ LIBNK2_EXTERN int libnk2_file_set_ascii_codepage(
                    int ascii_codepage,
                    libnk2_error_t **error );
 
-/* Retrieves the amount of items
+/* Retrieves the number of items
  * Returns 1 if successful or -1 on error
  */
+LIBNK2_EXTERN int libnk2_file_get_number_of_items(
+                   libnk2_file_t *file,
+                   int *number_of_items,
+                   libnk2_error_t **error );
+
+/* Retrieves the amount of items
+ * Returns 1 if successful or -1 on error
+ *
+ * This function is deprecated use libnk2_file_get_number_of_items instead
+ */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN int libnk2_file_get_amount_of_items(
                    libnk2_file_t *file,
                    int *amount_of_items,
@@ -262,10 +273,22 @@ LIBNK2_EXTERN int libnk2_item_get_identifier(
                    uint32_t *identifier,
                    libnk2_error_t **error );
 
+/* Retrieves the number of entries of the referenced item
+ * All sets in an item contain the same number of entries
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN int libnk2_item_get_number_of_entries(
+                   libnk2_item_t *item,
+                   uint32_t *number_of_entries,
+                   libnk2_error_t **error );
+
 /* Retrieves the amount of entries of the referenced item
  * All sets in an item contain the same amount of entries
  * Returns 1 if successful or -1 on error
+ *
+ * This function is deprecated use libnk2_item_get_number_of_entries instead
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN int libnk2_item_get_amount_of_entries(
                    libnk2_item_t *item,
                    uint32_t *amount_of_entries,

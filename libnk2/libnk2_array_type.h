@@ -37,9 +37,9 @@ typedef struct libnk2_array libnk2_array_t;
 
 struct libnk2_array
 {
-	/* The amount of entries
+	/* The number of entries
 	 */
-	int amount_of_entries;
+	int number_of_entries;
 
 	/* The entries
 	 */
@@ -48,7 +48,7 @@ struct libnk2_array
 
 int libnk2_array_initialize(
      libnk2_array_t **array,
-     int amount_of_entries,
+     int number_of_entries,
      liberror_error_t **error );
 
 int libnk2_array_free(
@@ -60,12 +60,12 @@ int libnk2_array_free(
 
 int libnk2_array_resize(
      libnk2_array_t *array,
-     int amount_of_entries,
+     int number_of_entries,
      liberror_error_t **error );
 
-int libnk2_array_get_amount_of_entries(
+int libnk2_array_get_number_of_entries(
      libnk2_array_t *array,
-     int *amount_of_entries,
+     int *number_of_entries,
      liberror_error_t **error );
 
 int libnk2_array_get_entry(

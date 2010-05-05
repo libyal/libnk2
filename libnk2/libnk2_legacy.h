@@ -1,9 +1,7 @@
 /*
- * Features of libnk2
+ * Legacy functions
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2008-2009, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -11,38 +9,47 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBNK2_FEATURES_H )
-#define _LIBNK2_FEATURES_H
+#if !defined( _LIBNK2_LEGACY_H )
+#define _LIBNK2_LEGACY_H
 
-/* The libnk2 type support features
- */
-#if @HAVE_WIDE_CHARACTER_TYPE@ || defined( HAVE_WIDE_CHARACTER_TYPE )
-#define LIBNK2_HAVE_WIDE_CHARACTER_TYPE		1
+#include <common.h>
+#include <types.h>
 
+#include <liberror.h>
+
+#include "libnk2_extern.h"
+#include "libnk2_types.h"
+
+#if defined( __cplusplus )
+extern "C" {
 #endif
 
-#if defined( HAVE_LIBBFIO ) || ( !defined( WINAPI ) && @HAVE_LIBBFIO@ )
-#define LIBNK2_HAVE_BFIO			1
-#endif
+#if !defined( HAVE_LOCAL_LIBNK2 )
 
-#if !defined( LIBNK2_DEPRECATED )
-#if defined( __GNUC__ ) && __GNUC__ >= 3
-#define LIBNK2_DEPRECATED	__attribute__ ((__deprecated__))
-#elif defined( _MSC_VER )
-#define LIBNK2_DEPRECATED	__declspec(deprecated)
-#else
-#define LIBNK2_DEPRECATED
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
+
+LIBNK2_EXTERN int libnk2_file_get_amount_of_items(
+                   libnk2_file_t *file,
+                   int *amount_of_items,
+                   liberror_error_t **error );
+
+LIBNK2_EXTERN int libnk2_item_get_amount_of_entries(
+                   libnk2_item_t *item,
+                   uint32_t *amount_of_entries,
+                   liberror_error_t **error );
+
+#if defined( __cplusplus )
+}
 #endif
 
 #endif

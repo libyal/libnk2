@@ -35,6 +35,14 @@
 #include "libnk2_libbfio.h"
 #include "libnk2_types.h"
 
+#if defined( _MSC_VER ) || defined( __BORLANDC__ )
+
+/* This inclusion is needed otherwise some linkers
+ * mess up exporting the legacy functions
+ */
+#include "libnk2_legacy.h"
+#endif
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
@@ -118,9 +126,9 @@ LIBNK2_EXTERN int libnk2_file_set_ascii_codepage(
                    int ascii_codepage,
                    liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_file_get_amount_of_items(
+LIBNK2_EXTERN int libnk2_file_get_number_of_items(
                    libnk2_file_t *file,
-                   int *amount_of_items,
+                   int *number_of_items,
                    liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_file_get_item(

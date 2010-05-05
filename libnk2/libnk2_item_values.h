@@ -65,14 +65,14 @@ struct libnk2_item_values
 	 */
 	libnk2_item_entry_t *entry;
 
-	/* The amount of item entries
+	/* The number of item entries
 	 */
-	uint32_t amount_of_entries;
+	uint32_t number_of_entries;
 };
 
 int libnk2_item_values_initialize(
      libnk2_item_values_t **item_values,
-     uint32_t amount_of_entries,
+     uint32_t number_of_entries,
      liberror_error_t **error );
 
 int libnk2_item_values_free(
@@ -89,9 +89,9 @@ int libnk2_item_values_read(
      libbfio_handle_t *file_io_handle,
      liberror_error_t **error );
 
-int libnk2_item_values_get_amount_of_entries(
+int libnk2_item_values_get_number_of_entries(
      libnk2_item_values_t *item_values,
-     uint32_t *amount_of_entries,
+     uint32_t *number_of_entries,
      liberror_error_t **error );
 
 int libnk2_item_values_get_entry_type(

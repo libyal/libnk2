@@ -58,13 +58,13 @@ int libnk2_io_handle_free(
 int libnk2_io_handle_read_file_header(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t *amount_of_items,
+     uint32_t *number_of_items,
      liberror_error_t **error );
 
 int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t amount_of_items,
+     uint32_t number_of_items,
      libnk2_array_t *item_table,
      liberror_error_t **error );
 
