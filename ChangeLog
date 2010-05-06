@@ -1,21 +1,13 @@
 TODO
-* configure update libfmapi check
-* configure validate libuna and libbfio check
-
 * update nk2 specific msvscpp files
 * update macosx files
-* locale support
-  - print output convert to system string
-  - to reduce conversions use as much as possible the system string
-    type in the tools
 
-Performance improvement
+Optimizations:
 * map (file offset and size) items and item values first read on demand
 * pre allocate item array entries
 
 library
 * what about multiple alias entries 0x6001 of a single item?
-* remove attach and detach ?
 
 Tools
 * nk2export

@@ -330,62 +330,12 @@ AC_DEFUN([LIBNK2_CHECK_LIBUNA],
   dnl Byte stream functions
   AC_CHECK_LIB(
    una,
-   libuna_utf8_string_size_from_byte_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_copy_from_byte_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_compare_with_byte_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_byte_stream_size_from_utf8,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_byte_stream_copy_from_utf8,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_size_from_byte_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_copy_from_byte_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_compare_with_byte_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
    libuna_byte_stream_size_from_utf16,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
   AC_CHECK_LIB(
    una,
    libuna_byte_stream_copy_from_utf16,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf32_string_size_from_byte_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf32_string_copy_from_byte_stream,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
   AC_CHECK_LIB(
@@ -398,135 +348,26 @@ AC_DEFUN([LIBNK2_CHECK_LIBUNA],
    libuna_byte_stream_copy_from_utf32,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
- 
-  dnl UTF-7 stream functions
   AC_CHECK_LIB(
    una,
-   libuna_utf8_string_size_from_utf7_stream,
+   libuna_byte_stream_size_from_utf8,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
   AC_CHECK_LIB(
    una,
-   libuna_utf8_string_copy_from_utf7_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_compare_with_utf7_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_size_from_utf7_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_copy_from_utf7_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_compare_with_utf7_stream,
+   libuna_byte_stream_copy_from_utf8,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
 
-  dnl UTF-8 stream functions
+  dnl UTF-16 string functions
   AC_CHECK_LIB(
    una,
-   libuna_utf8_string_size_from_utf8_stream,
+   libuna_utf16_string_size_from_byte_stream,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
   AC_CHECK_LIB(
    una,
-   libuna_utf8_string_copy_from_utf8_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_compare_with_utf8_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_stream_size_from_utf8,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_stream_copy_from_utf8,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_size_from_utf8_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_copy_from_utf8_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_string_compare_with_utf8_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_stream_size_from_utf16,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_stream_copy_from_utf16,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf32_string_size_from_utf8_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf32_string_copy_from_utf8_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_stream_size_from_utf32,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_stream_copy_from_utf32,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-
-  dnl UTF-16 stream functions
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_size_from_utf16_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_copy_from_utf16_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_compare_with_utf16_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_stream_size_from_utf8,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_stream_copy_from_utf8,
+   libuna_utf16_string_copy_from_byte_stream,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
   AC_CHECK_LIB(
@@ -541,65 +382,6 @@ AC_DEFUN([LIBNK2_CHECK_LIBUNA],
    [ac_libnk2_have_libuna=no])
   AC_CHECK_LIB(
    una,
-   libuna_utf16_string_compare_with_utf16_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_stream_size_from_utf16,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_stream_copy_from_utf16,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf32_string_size_from_utf16_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf32_string_copy_from_utf16_stream,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_stream_size_from_utf32,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf16_stream_copy_from_utf32,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-
-  dnl UTF-8 string functions
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_size_from_utf16,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_copy_from_utf16,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_size_from_utf32,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-  AC_CHECK_LIB(
-   una,
-   libuna_utf8_string_copy_from_utf32,
-   [ac_libnk2_dummy=yes],
-   [ac_libnk2_have_libuna=no])
-
-  dnl UTF-16 string functions
-  AC_CHECK_LIB(
-   una,
    libuna_utf16_string_size_from_utf8,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
@@ -612,6 +394,16 @@ AC_DEFUN([LIBNK2_CHECK_LIBUNA],
   dnl UTF-32 string functions
   AC_CHECK_LIB(
    una,
+   libuna_utf32_string_size_from_byte_stream,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf32_string_copy_from_byte_stream,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
    libuna_utf32_string_size_from_utf8,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
@@ -621,15 +413,65 @@ AC_DEFUN([LIBNK2_CHECK_LIBUNA],
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
 
-  dnl compare string functions
+  dnl UTF-8 string functions
   AC_CHECK_LIB(
    una,
-   libuna_compare_utf8_with_utf16,
+   libuna_utf8_string_size_from_byte_stream,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
   AC_CHECK_LIB(
    una,
-   libuna_compare_utf8_with_utf32,
+   libuna_utf8_string_copy_from_byte_stream,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_size_from_utf16,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_copy_from_utf16,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_size_from_utf16_stream,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_copy_from_utf16_stream,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_size_from_utf32,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_copy_from_utf32,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_size_from_utf7_stream,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_copy_from_utf7_stream,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_size_from_utf8_stream,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libuna=no])
+  AC_CHECK_LIB(
+   una,
+   libuna_utf8_string_copy_from_utf8_stream,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libuna=no])
   ])
@@ -657,6 +499,11 @@ AC_DEFUN([LIBNK2_CHECK_LIBBFIO],
    [ac_libnk2_have_libbfio=no])
   AC_CHECK_LIB(
    bfio,
+   libbfio_handle_clone,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libbfio=no])
+  AC_CHECK_LIB(
+   bfio,
    libbfio_handle_open,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libbfio=no])
@@ -668,6 +515,26 @@ AC_DEFUN([LIBNK2_CHECK_LIBBFIO],
   AC_CHECK_LIB(
    bfio,
    libbfio_handle_read,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libbfio=no])
+  AC_CHECK_LIB(
+   bfio,
+   libbfio_handle_seek_offset,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libbfio=no])
+  AC_CHECK_LIB(
+   bfio,
+   libbfio_handle_is_open,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libbfio=no])
+  AC_CHECK_LIB(
+   bfio,
+   libbfio_handle_set_open_on_demand,
+   [ac_libnk2_dummy=yes],
+   [ac_libnk2_have_libbfio=no])
+  AC_CHECK_LIB(
+   bfio,
+   libbfio_handle_set_track_offsets_read,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libbfio=no])
 
@@ -683,7 +550,7 @@ AC_DEFUN([LIBNK2_CHECK_LIBBFIO],
    [ac_libnk2_have_libbfio=no])
   AC_CHECK_LIB(
    bfio,
-   libbfio_handle_get_amount_of_offsets_read,
+   libbfio_handle_get_number_of_offsets_read,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libbfio=no])
 
@@ -754,6 +621,23 @@ AC_DEFUN([LIBNK2_CHECK_LIBFDATETIME],
    libfdatetime_filetime_add,
    [ac_libnk2_dummy=yes],
    [ac_libnk2_have_libfdatetime=no])
+  ])
+ ])
+
+dnl Function to detect if libfmapi available
+AC_DEFUN([LIBNK2_CHECK_LIBFMAPI],
+ [AC_CHECK_HEADERS([libfmapi.h])
+
+ AS_IF(
+  [test "x$ac_cv_header_libfmapi_h" = xno],
+  [ac_libnk2_have_libfmapi=no],
+  [ac_libnk2_have_libfmapi=yes
+  AC_CHECK_LIB(
+   fmapi,
+   libfmapi_get_version,
+   [],
+   [ac_libnk2_have_libfmapi=no])
+ 
   ])
  ])
 

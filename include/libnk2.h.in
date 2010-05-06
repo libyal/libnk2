@@ -80,12 +80,12 @@ LIBNK2_EXTERN int libnk2_check_file_signature_file_io_handle(
  * Notify functions
  * ------------------------------------------------------------------------- */
 
-/* Set the verbose notification
+/* Sets the verbose notification
  */
 LIBNK2_EXTERN void libnk2_notify_set_verbose(
                     int verbose );
 
-/* Set the notification stream
+/* Sets the notification stream
  * Returns 1 if successful or -1 on error
  */
 LIBNK2_EXTERN int libnk2_notify_set_stream(

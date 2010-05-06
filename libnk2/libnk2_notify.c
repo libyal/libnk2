@@ -37,7 +37,7 @@
 
 #if !defined( HAVE_LOCAL_LIBNK2 )
 
-/* Set the verbose notification
+/* Sets the verbose notification
  */
 void libnk2_notify_set_verbose(
       int verbose )
@@ -46,7 +46,7 @@ void libnk2_notify_set_verbose(
 	 verbose );
 }
 
-/* Set the notification stream
+/* Sets the notification stream
  * Returns 1 if successful or -1 on error
  */
 int libnk2_notify_set_stream(

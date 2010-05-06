@@ -39,11 +39,11 @@
  * for local use of libnk2
  */
 #else
-#define LIBNK2_VERSION					20100505
+#define LIBNK2_VERSION					20100506
 
 /* The libnk2 version string
  */
-#define LIBNK2_VERSION_STRING				"20100505"
+#define LIBNK2_VERSION_STRING				"20100506"
 
 /* The libnk2 file access
  * bit 1        set to 1 for read access

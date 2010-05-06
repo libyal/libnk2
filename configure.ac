@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20100505],
+  [20100506],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -697,63 +697,50 @@ AM_CONDITIONAL(
  [test "x$ac_libnk2_have_libfdatetime" = xlocal])
 
 dnl Check for enabling libfmapi for file MAPI types support
-AC_CHECK_HEADERS(
- [libfmapi.h],
- [],
- [ac_libnk2_have_libfmapi=no])
+LIBNK2_CHECK_LIBFMAPI
 
 AS_IF(
-	[test "x$ac_libnk2_have_libfmapi" != xno],
-	[ac_libnk2_have_libfmapi=yes
-	AC_CHECK_LIB(
-	 fmapi,
-	 libfmapi_get_version,
-	 [],
-	 [ac_libnk2_have_libfmapi=no])
-
-	])
-
-AS_IF(
-	[test "x$ac_libnk2_have_libfmapi" = xyes],
-	[AC_SUBST(
-	 [libnk2_pc_libs_private_libfmapi],
-	 [-lfmapi])
-	AC_SUBST(
-	 [libnk2_spec_requires_libfmapi],
-	 [libfmapi])
-	AC_SUBST(
-	 [libnk2_spec_build_requires_libfmapi],
-	 [libfmapi-devel])
-	AC_SUBST(
-	 [LIBFMAPI_CPPFLAGS],
-	 [])
-	AC_SUBST(
-	 [LIBFMAPI_LIBADD],
-	 []) ],
-	[dnl If libfmapi is not available use the (local) version that came with libnk2
-	AC_DEFINE(
-	 [HAVE_LOCAL_LIBFMAPI],
-	 [1],
-	 [Define to 1 if the local version of libfmapi is used.])
-	AC_SUBST(
-	 [HAVE_LOCAL_LIBFMAPI],
-	 [1])
-	AC_SUBST(
-	 [libnk2_pc_libs_private_libfmapi],
-	 [])
-	AC_SUBST(
-	 [libnk2_spec_requires_libfmapi],
-	 [])
-	AC_SUBST(
-	 [libnk2_spec_build_requires_libfmapi],
-	 [])
-	AC_SUBST(
-	 [LIBFMAPI_CPPFLAGS],
-	 [-I../libfmapi])
-	AC_SUBST(
-	 [LIBFMAPI_LIBADD],
-	 [../libfmapi/libfmapi.la])
-	ac_libnk2_have_libfmapi=local])
+ [test "x$ac_libnk2_have_libfmapi" = xyes],
+ [dnl libfdatetime is available
+ AC_SUBST(
+  [libnk2_pc_libs_private_libfmapi],
+  [-lfmapi])
+ AC_SUBST(
+  [libnk2_spec_requires_libfmapi],
+  [libfmapi])
+ AC_SUBST(
+  [libnk2_spec_build_requires_libfmapi],
+  [libfmapi-devel])
+ AC_SUBST(
+  [LIBFMAPI_CPPFLAGS],
+  [])
+ AC_SUBST(
+  [LIBFMAPI_LIBADD],
+  []) ],
+ [dnl libfdatetime is not available, using the (local) version that came with the source package
+ AC_DEFINE(
+  [HAVE_LOCAL_LIBFMAPI],
+  [1],
+  [Define to 1 if the local version of libfmapi is used.])
+ AC_SUBST(
+  [HAVE_LOCAL_LIBFMAPI],
+  [1])
+ AC_SUBST(
+  [libnk2_pc_libs_private_libfmapi],
+  [])
+ AC_SUBST(
+  [libnk2_spec_requires_libfmapi],
+  [])
+ AC_SUBST(
+  [libnk2_spec_build_requires_libfmapi],
+  [])
+ AC_SUBST(
+  [LIBFMAPI_CPPFLAGS],
+  [-I../libfmapi])
+ AC_SUBST(
+  [LIBFMAPI_LIBADD],
+  [../libfmapi/libfmapi.la])
+ ac_libnk2_have_libfmapi=local])
 
 AM_CONDITIONAL(
  [HAVE_LOCAL_LIBFMAPI],
@@ -761,137 +748,142 @@ AM_CONDITIONAL(
 
 dnl Check if libnk2 should be build with wide character type support
 AS_IF(
-	[test "x$ac_cv_libnk2_enable_wide_character_type" != xno ],
-	[dnl Check for the wide character header
-	AC_CHECK_HEADERS(
-	 [wchar.h],
-	 [AC_DEFINE(
-	  [HAVE_WCHAR_H],
-	  [1],
-	  [Define to 1 if you have the <wchar.h> header file.])
-	 AC_SUBST(
-	  [HAVE_WCHAR_H],
-	  [1]) ],
-	 [AC_MSG_FAILURE(
-	  [Missing header: wchar.h],
-	  [1]) ])
+ [test "x$ac_cv_libnk2_enable_winapi" = xyes],
+ [ac_cv_libnk2_enable_wide_character_type=yes])
 
-	dnl Determine wide character byte size
-	AC_CHECK_SIZEOF([wchar_t])
+AS_IF(
+ [test "x$ac_cv_libnk2_enable_wide_character_type" != xno ],
+ [dnl Check for the wide character header
+ AC_CHECK_HEADERS(
+  [wchar.h],
+  [AC_DEFINE(
+   [HAVE_WCHAR_H],
+   [1],
+   [Define to 1 if you have the <wchar.h> header file.])
+  AC_SUBST(
+   [HAVE_WCHAR_H],
+   [1]) ],
+  [AC_MSG_FAILURE(
+   [Missing header: wchar.h],
+   [1]) ])
 
-	dnl Check for wide character string functions
+ dnl Determine wide character byte size
+ AC_CHECK_SIZEOF([wchar_t])
 
-	dnl Wide character string functions used in libcstring/libcstring_wide_string.h
-	AC_CHECK_FUNCS(
-	 [fgetws],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: fgetws],
-	  [1]) ])
+ dnl Check for wide character string functions
 
-	AC_CHECK_FUNCS(
-	 [swprintf],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: swprintf],
-	  [1]) ])
+ dnl Wide character string functions used in common/file_stream.h
+ AC_CHECK_FUNCS(
+  [fgetws],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: fgetws],
+   [1]) ])
 
-	AC_CHECK_FUNCS(
-	 [wmemchr],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcschr],
-	  [],
-	  [AC_MSG_FAILURE(
-	   [Missing functions: wmemchr and wcschr],
-	   [1]) ]) ])
+ dnl Wide character string functions used in libcstring/libcstring_wide_string.h
+ AC_CHECK_FUNCS(
+  [swprintf],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: swprintf],
+   [1]) ])
 
-	AC_CHECK_FUNCS(
-	 [wmemcmp],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcsncmp],
-	  [],
-	  [AC_CHECK_FUNCS(
-	   [wcscmp],
-	   [],
-	   [AC_MSG_FAILURE(
-	    [Missing functions: wmemcmp, wcsncmp and wcscmp],
-	    [1]) ]) ]) ])
+ AC_CHECK_FUNCS(
+  [wmemchr],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcschr],
+   [],
+   [AC_MSG_FAILURE(
+    [Missing functions: wmemchr and wcschr],
+    [1]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wmemcpy],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcsncpy],
-	  [],
-	  [AC_CHECK_FUNCS(
-	   [wcscpy],
-	   [],
-	   [AC_MSG_FAILURE(
-	    [Missing functions: wmemcpy, wcsncpy and wcscpy],
-	    [1]) ]) ]) ])
+ AC_CHECK_FUNCS(
+  [wmemcmp],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcsncmp],
+   [],
+   [AC_CHECK_FUNCS(
+    [wcscmp],
+    [],
+    [AC_MSG_FAILURE(
+     [Missing functions: wmemcmp, wcsncmp and wcscmp],
+     [1]) ]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wmemrchr],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcsrchr],
-	  [],
-	  [AC_MSG_FAILURE(
-	   [Missing functions: wmemrchr and wcsrchr],
-	   [1]) ]) ])
+ AC_CHECK_FUNCS(
+  [wmemcpy],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcsncpy],
+   [],
+   [AC_CHECK_FUNCS(
+    [wcscpy],
+    [],
+    [AC_MSG_FAILURE(
+     [Missing functions: wmemcpy, wcsncpy and wcscpy],
+     [1]) ]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wcslen],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: wcslen],
-	  [1]) ])
+ AC_CHECK_FUNCS(
+  [wmemrchr],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcsrchr],
+   [],
+   [AC_MSG_FAILURE(
+    [Missing functions: wmemrchr and wcsrchr],
+    [1]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wcsncasecmp],
-	 [],
-	 [AC_CHECK_FUNCS(
-	  [wcscasecmp],
-	  [],
-	  [AC_CHECK_FUNCS(
-	   [towlower],
-	   [],
-	   [AC_MSG_FAILURE(
-	    [Missing functions: wcsncasecmp, wcscasecmp and towlower],
-	    [1]) ]) ]) ])
+ AC_CHECK_FUNCS(
+  [wcslen],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: wcslen],
+   [1]) ])
 
-	AC_CHECK_FUNCS(
-	 [wcstoll],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: wcstoll],
-	  [1]) ])
+ AC_CHECK_FUNCS(
+  [wcsncasecmp],
+  [],
+  [AC_CHECK_FUNCS(
+   [wcscasecmp],
+   [],
+   [AC_CHECK_FUNCS(
+    [towlower],
+    [],
+    [AC_MSG_FAILURE(
+     [Missing functions: wcsncasecmp, wcscasecmp and towlower],
+     [1]) ]) ]) ])
 
-	AC_CHECK_FUNCS(
-	 [wcstoull],
-	 [],
-	 [AC_MSG_FAILURE(
-	  [Missing function: wcstoull],
-	  [1]) ])
+ AC_CHECK_FUNCS(
+  [wcstoll],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: wcstoll],
+   [1]) ])
 
-	dnl Make the necessary definitions
-	AC_DEFINE(
-	 [HAVE_WIDE_CHARACTER_TYPE],
-	 [1],
-	 [Define to 1 if wide character type should be used.])
-	AC_SUBST(
-	 [HAVE_WIDE_CHARACTER_TYPE],
-	 [1])
-	ac_cv_libnk2_enable_wide_character_type=yes],
+ AC_CHECK_FUNCS(
+  [wcstoull],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: wcstoull],
+   [1]) ])
 
-	[AC_SUBST(
-	 [HAVE_WIDE_CHARACTER_TYPE],
-	 [0])
-	AC_SUBST(
-	 [HAVE_WCHAR_H],
-	 [0]) ])
+ dnl Make the necessary definitions
+ AC_DEFINE(
+  [HAVE_WIDE_CHARACTER_TYPE],
+  [1],
+  [Define to 1 if wide character type should be used.])
+ AC_SUBST(
+  [HAVE_WIDE_CHARACTER_TYPE],
+  [1])
+ ac_cv_libnk2_enable_wide_character_type=yes],
+ 
+ [AC_SUBST(
+  [HAVE_WIDE_CHARACTER_TYPE],
+  [0])
+ AC_SUBST(
+  [HAVE_WCHAR_H],
+  [0]) ])
 
 AC_SUBST(
  [HAVE_WIDE_CHARACTER_SUPPORT_FUNCTIONS],
@@ -899,58 +891,58 @@ AC_SUBST(
 
 dnl Check if nk2tools should be build as static executables
 AS_IF(
-	[test "x$ac_cv_libnk2_enable_static_executables" != xno],
-	[STATIC_LDFLAGS="-all-static";
-	AC_SUBST(
-	 [STATIC_LDFLAGS])
-	ac_cv_libnk2_enable_static_executables=yes])
+ [test "x$ac_cv_libnk2_enable_static_executables" != xno],
+ [STATIC_LDFLAGS="-all-static";
+ AC_SUBST(
+  [STATIC_LDFLAGS])
+ ac_cv_libnk2_enable_static_executables=yes])
 
 dnl Check if libnk2 should be build with verbose output
 AS_IF(
-	[test "x$ac_cv_libnk2_enable_verbose_output" != xno ],
-	[AC_DEFINE(
-	 [HAVE_VERBOSE_OUTPUT],
-	 [1],
-	 [Define to 1 if verbose output should be used.])
-	ac_cv_libnk2_enable_verbose_output=yes])
+ [test "x$ac_cv_libnk2_enable_verbose_output" != xno ],
+ [AC_DEFINE(
+  [HAVE_VERBOSE_OUTPUT],
+  [1],
+  [Define to 1 if verbose output should be used.])
+ ac_cv_libnk2_enable_verbose_output=yes])
 
 dnl Check if libnk2 should be build with debug output
 AS_IF(
-	[test "x$ac_cv_libnk2_enable_debug_output" != xno ],
-	[AC_DEFINE(
-	 [HAVE_DEBUG_OUTPUT],
-	 [1],
-	 [Define to 1 if debug output should be used.])
-	ac_cv_libnk2_enable_debug_output=yes])
+ [test "x$ac_cv_libnk2_enable_debug_output" != xno ],
+ [AC_DEFINE(
+  [HAVE_DEBUG_OUTPUT],
+  [1],
+  [Define to 1 if debug output should be used.])
+ ac_cv_libnk2_enable_debug_output=yes])
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
-	[test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes || test "x$ac_libnk2_have_libfdatetime" = xyes || test "x$ac_libnk2_have_libfmapi" = xyes],
-	[AC_SUBST(
-	 [libnk2_spec_requires],
-	 [Requires:])
-	AC_SUBST(
-	 [libnk2_spec_build_requires],
-	 [BuildRequires:]) ],
-	[AC_SUBST(
-	 [libnk2_spec_requires],
-	 [])
-	AC_SUBST(
-	 [libnk2_spec_build_requires],
-	 [])
-	ac_libnk2_dummy=yes])
+ [test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes || test "x$ac_libnk2_have_libfdatetime" = xyes || test "x$ac_libnk2_have_libfmapi" = xyes],
+ [AC_SUBST(
+  [libnk2_spec_requires],
+  [Requires:])
+ AC_SUBST(
+  [libnk2_spec_build_requires],
+  [BuildRequires:]) ],
+ [AC_SUBST(
+  [libnk2_spec_requires],
+  [])
+ AC_SUBST(
+  [libnk2_spec_build_requires],
+  [])
+ ac_libnk2_dummy=yes])
 
 dnl Set memwatch support
 ac_libnk2_have_memwatch=no
 
 AS_IF(
-	[test "x$ac_libnk2_have_memwatch" != xno ],
-	[AC_SUBST(
-	 [MEMWATCH_CPPFLAGS],
-	 ["-DMEMWATCH -DMEMWATCH_STDIO"])
-	AC_SUBST(
-	 [MEMWATCH_LIBADD],
-	 [../common/libmemwatch.la]) ])
+ [test "x$ac_libnk2_have_memwatch" != xno ],
+ [AC_SUBST(
+  [MEMWATCH_CPPFLAGS],
+  ["-DMEMWATCH -DMEMWATCH_STDIO"])
+ AC_SUBST(
+  [MEMWATCH_LIBADD],
+  [../common/libmemwatch.la]) ])
 
 AM_CONDITIONAL(
  [HAVE_MEMWATCH],
@@ -961,15 +953,15 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if DLL support is needed in nk2tools
 AS_IF(
-	[test x"$enable_shared" = xyes],
-	[AS_CASE(
-		[$host],
-		[*cygwin* | *mingw*],
-		[AC_SUBST(
-		 [LIBNK2_DLL_IMPORT],
-		 ["-DLIBNK2_DLL_IMPORT"])
-		])
-	])
+ [test x"$enable_shared" = xyes],
+ [AS_CASE(
+  [$host],
+  [*cygwin* | *mingw*],
+  [AC_SUBST(
+   [LIBNK2_DLL_IMPORT],
+   ["-DLIBNK2_DLL_IMPORT"])
+  ])
+ ])
 
 dnl Have configure make the Makefiles
 AC_CONFIG_FILES([Makefile])

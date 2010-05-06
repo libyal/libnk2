@@ -178,21 +178,18 @@ int libnk2_file_free(
 
 			result = -1;
 		}
-		if( internal_file->io_handle != NULL )
+		if( libnk2_io_handle_free(
+		     &( internal_file->io_handle ),
+		     error ) != 1 )
 		{
-			if( libnk2_io_handle_free(
-			     &( internal_file->io_handle ),
-			     error ) != 1 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free io handle.",
-				 function );
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free io handle.",
+			 function );
 
-				result = -1;
-			}
+			result = -1;
 		}
 		if( internal_file->file_io_handle_created_in_library != 0 )
 		{
