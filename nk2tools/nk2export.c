@@ -425,7 +425,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 "Opening file.\n" );
 
-#if defined( LIBSYSTEM_HAVE_WIDE_CHARACTER )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libnk2_file_open_wide(
 	     nk2_file,
 	     source,

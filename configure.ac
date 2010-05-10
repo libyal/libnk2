@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20100506],
+  [20100510],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -988,6 +988,7 @@ AC_CONFIG_FILES([include/libnk2/types.h])
 AC_CONFIG_FILES([libnk2/libnk2_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libnk2.pc])
 AC_CONFIG_FILES([libnk2.spec])
 dnl Have configure write its configuration
