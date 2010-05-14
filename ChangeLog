@@ -24,6 +24,10 @@ Beta release
 * update man pages
 * add documentation
 
+20100514
+* small change in libnk2_file.c
+* updated common, liberror
+
 20100510
 * updated msvscpp files
 * updated macosx files

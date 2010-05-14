@@ -548,7 +548,7 @@ int libnk2_file_open_file_io_handle(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
-	if( internal_file->file_io_handle != 0 )
+	if( internal_file->file_io_handle != NULL )
 	{
 		liberror_error_set(
 		 error,
