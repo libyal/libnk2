@@ -1,3 +1,6 @@
+TODO:
+* update msvcpp files
+
 Optimizations:
 * map (file offset and size) items and item values first read on demand
 * pre allocate item array entries
@@ -47,7 +50,7 @@ Beta release
 * changed amount of in number of
 * updated array type
 * removed list type
-* updated manpage libuna.3
+* updated manpage libnk2.3
 * updated msvscpp files of sub libraries
 
 20100416

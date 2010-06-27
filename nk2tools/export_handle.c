@@ -44,11 +44,47 @@
 #include <libfdatetime.h>
 #endif
 
+/* Define HAVE_LOCAL_LIBFGUID for local use of libfguid
+ */
+#if defined( HAVE_LOCAL_LIBFGUID )
+
+#include <libfguid_definitions.h>
+#include <libfguid_identifier.h>
+#include <libfguid_types.h>
+
+#elif defined( HAVE_LIBFGUID_H )
+
+/* If libtool DLL support is enabled set LIBFGUID_DLL_IMPORT
+ * before including libfguid.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBFGUID_DLL_IMPORT
+#endif
+
+#include <libfguid.h>
+
+#else
+#error Missing libfguid.h
+#endif
+
+/* Define HAVE_LOCAL_LIBFMAPI for local use of libfmapi
+ */
 #if defined( HAVE_LOCAL_LIBFMAPI )
 #include <libfmapi_definitions.h>
-#include <libfmapi_guid.h>
+#include <libfmapi_types.h>
 #elif defined( HAVE_LIBMAPI_H )
+
+/* If libtool DLL support is enabled set LIBFMAPI_DLL_IMPORT
+ * before including libfmapi.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBFMAPI_DLL_IMPORT
+#endif
+
 #include <libfmapi.h>
+
+#else
+#error Missing libfmapi.h
 #endif
 
 #include <libsystem.h>
