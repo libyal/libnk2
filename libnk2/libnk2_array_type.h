@@ -1,9 +1,7 @@
 /* 
  * Array type functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (C) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
+ * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -43,7 +41,7 @@ struct libnk2_array
 
 	/* The entries
 	 */
-	intptr_t **entry;
+	intptr_t **entries;
 };
 
 int libnk2_array_initialize(
@@ -53,6 +51,13 @@ int libnk2_array_initialize(
 
 int libnk2_array_free(
      libnk2_array_t **array,
+     int (*entry_free_function)(
+            intptr_t *entry,
+            liberror_error_t **error ),
+     liberror_error_t **error );
+
+int libnk2_array_empty(
+     libnk2_array_t *array,
      int (*entry_free_function)(
             intptr_t *entry,
             liberror_error_t **error ),

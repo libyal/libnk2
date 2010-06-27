@@ -7,8 +7,8 @@ License: LGPL
 Source: %{name}-%{version}.tar.gz
 URL: http://libnk2.sourceforge.net
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-@libnk2_spec_requires@ @libppf_spec_requires_libbfio@ @libppf_spec_requires_libfdatetime@ @libppf_spec_requires_libfmapi@ @libppf_spec_requires_libuna@
-@libnk2_spec_build_requires@ @libppf_spec_build_requires_libbfio@ @libppf_spec_build_requires_libfdatetime@ @libppf_spec_build_requires_libfmapi@ @libppf_spec_build_requires_libuna@
+@libnk2_spec_requires@ @libppf_spec_requires_libbfio@ @libppf_spec_requires_libfdatetime@ @libppf_spec_requires_libfguid@ @libppf_spec_requires_libfwnt@ @libppf_spec_requires_libfmapi@ @libppf_spec_requires_libuna@
+@libnk2_spec_build_requires@ @libppf_spec_build_requires_libbfio@ @libppf_spec_build_requires_libfdatetime@ @libppf_spec_build_requires_libfguid@ @libppf_spec_build_requires_libfwnt@ @libppf_spec_build_requires_libfmapi@ @libppf_spec_build_requires_libuna@
 
 %description
 libnk2 is a library to support the Nickfile (NK2) format
@@ -70,12 +70,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man1/*
 
 %changelog
-* Fri Apr 16 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100416-1
-- Email change
-
-* Fri Sep  4 2009 Joachim Metz <forensics@hoffmannbv.nl> 20090904-1
-- Correction for handling no requires and build requires
-
-* Wed Jan 28 2009 Joachim Metz <forensics@hoffmannbv.nl> 20090128-1
-- Initial version based on libpff spec file
+* Sun Jun 27 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100627-1
+- Clean up of previous version of spec file
 

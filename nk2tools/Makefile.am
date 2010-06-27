@@ -7,6 +7,8 @@ AM_CPPFLAGS = \
 	@LIBUNA_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
+	@LIBFGUID_CPPFLAGS@ \
+	@LIBFWNT_CPPFLAGS@ \
 	@LIBFMAPI_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@ \
 	@LIBNK2_DLL_IMPORT@
@@ -19,7 +21,6 @@ bin_PROGRAMS = \
 
 nk2export_SOURCES = \
 	export_handle.c export_handle.h \
-	guid.c guid.h \
 	log_handle.c log_handle.h \
 	nk2export.c \
 	nk2input.c nk2input.h \

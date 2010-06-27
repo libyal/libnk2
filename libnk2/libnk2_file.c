@@ -1,9 +1,7 @@
 /*
  * libnk2 file
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
+ * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -865,6 +863,7 @@ int libnk2_file_set_ascii_codepage(
 	internal_file = (libnk2_internal_file_t *) file;
 
 	if( ( ascii_codepage != LIBNK2_CODEPAGE_ASCII )
+	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_874 )
 	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1250 )
 	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1251 )
 	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1252 )

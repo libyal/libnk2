@@ -1,9 +1,7 @@
 /*
  * Common output functions for the nk2tools
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2008-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
+ * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -43,6 +41,18 @@
 #include <libfdatetime.h>
 #endif
 
+#if defined( HAVE_LOCAL_LIBFGUID )
+#include <libfguid_definitions.h>
+#elif defined( HAVE_LIBFGUID_H )
+#include <libfguid.h>
+#endif
+
+#if defined( HAVE_LOCAL_LIBFWNT )
+#include <libfwnt_definitions.h>
+#elif defined( HAVE_LIBFWNT_H )
+#include <libfwnt.h>
+#endif
+
 #if defined( HAVE_LOCAL_LIBFMAPI )
 #include <libfmapi_definitions.h>
 #elif defined( HAVE_LIBFMAPI_H )
@@ -73,7 +83,7 @@ void nk2output_copyright_fprint(
 	}
 	fprintf(
 	 stream,
-	 "Copyright (c) 2009-2010, Joachim Metz <%s> and contributors.\n"
+	 "Copyright (c) 2009-2010, Joachim Metz <%s>.\n"
 	 "This is free software; see the source for copying conditions. There is NO\n"
 	 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n",
 	 PACKAGE_BUGREPORT );
@@ -114,6 +124,16 @@ void nk2output_version_fprint(
 	 stream,
 	 ", libfdatetime %s",
 	 LIBFDATETIME_VERSION_STRING );
+
+	fprintf(
+	 stream,
+	 ", libfguid %s",
+	 LIBFGUID_VERSION_STRING );
+
+	fprintf(
+	 stream,
+	 ", libfwnt %s",
+	 LIBFWNT_VERSION_STRING );
 
 	fprintf(
 	 stream,

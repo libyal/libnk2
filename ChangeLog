@@ -24,6 +24,14 @@ Beta release
 * update man pages
 * add documentation
 
+20100627
+* updated common, libcstring, liberror, libnotify, libsystem, libuna,
+  libbfio, libfdatetime, libfmapi
+* clean up
+* updated codepages
+* updated array type
+* added libfguid, libfwnt
+
 20100514
 * small change in libnk2_file.c
 * updated common, liberror

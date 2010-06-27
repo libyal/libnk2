@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20100514],
+  [20100627],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -696,6 +696,134 @@ AM_CONDITIONAL(
  [HAVE_LOCAL_LIBFDATETIME],
  [test "x$ac_libnk2_have_libfdatetime" = xlocal])
 
+dnl Check for enabling libfguid for file GUID/UUID support
+AC_CHECK_HEADERS(
+ [libfguid.h],
+ [],
+ [ac_libnk2_have_libfguid=no])
+
+AS_IF(
+	[test "x$ac_libnk2_have_libfguid" != xno],
+	[ac_libnk2_have_libfguid=yes
+	AC_CHECK_LIB(
+	 fguid,
+	 libfguid_get_version,
+	 [],
+	 [ac_libnk2_have_libfguid=no])
+
+	])
+
+AS_IF(
+[test "x$ac_libnk2_have_libfguid" = xyes],
+ [dnl libfguid is available
+ AC_SUBST(
+  [libnk2_pc_libs_private_libfguid],
+  [-lfguid])
+ AC_SUBST(
+  [libnk2_spec_requires_libfguid],
+  [libfguid])
+ AC_SUBST(
+  [libnk2_spec_build_requires_libfguid],
+  [libfguid-devel])
+ AC_SUBST(
+  [LIBFGUID_CPPFLAGS],
+  [])
+ AC_SUBST(
+  [LIBFGUID_LIBADD],
+  []) ],
+ [dnl libfguid is not available, using the (local) version that came with the source package
+ AC_DEFINE(
+  [HAVE_LOCAL_LIBFGUID],
+  [1],
+  [Define to 1 if the local version of libfguid is used.])
+ AC_SUBST(
+  [HAVE_LOCAL_LIBFGUID],
+  [1])
+ AC_SUBST(
+  [libnk2_pc_libs_private_libfguid],
+  [])
+ AC_SUBST(
+  [libnk2_spec_requires_libfguid],
+  [])
+ AC_SUBST(
+  [libnk2_spec_build_requires_libfguid],
+  [])
+ AC_SUBST(
+  [LIBFGUID_CPPFLAGS],
+  [-I../libfguid])
+ AC_SUBST(
+  [LIBFGUID_LIBADD],
+  [../libfguid/libfguid.la])
+ ac_libnk2_have_libfguid=local])
+
+AM_CONDITIONAL(
+ [HAVE_LOCAL_LIBFGUID],
+ [test "x$ac_libnk2_have_libfguid" = xlocal])
+
+dnl Check for enabling libfwnt for file Windows NT type support
+AC_CHECK_HEADERS(
+ [libfwnt.h],
+ [],
+ [ac_libnk2_have_libfwnt=no])
+
+AS_IF(
+	[test "x$ac_libnk2_have_libfwnt" != xno],
+	[ac_libnk2_have_libfwnt=yes
+	AC_CHECK_LIB(
+	 fwnt,
+	 libfwnt_get_version,
+	 [],
+	 [ac_libnk2_have_libfwnt=no])
+
+	])
+
+AS_IF(
+[test "x$ac_libnk2_have_libfwnt" = xyes],
+ [dnl libfwnt is available
+ AC_SUBST(
+  [libnk2_pc_libs_private_libfwnt],
+  [-lfwnt])
+ AC_SUBST(
+  [libnk2_spec_requires_libfwnt],
+  [libfwnt])
+ AC_SUBST(
+  [libnk2_spec_build_requires_libfwnt],
+  [libfwnt-devel])
+ AC_SUBST(
+  [LIBFWNT_CPPFLAGS],
+  [])
+ AC_SUBST(
+  [LIBFWNT_LIBADD],
+  []) ],
+ [dnl libfwnt is not available, using the (local) version that came with the source package
+ AC_DEFINE(
+  [HAVE_LOCAL_LIBFWNT],
+  [1],
+  [Define to 1 if the local version of libfwnt is used.])
+ AC_SUBST(
+  [HAVE_LOCAL_LIBFWNT],
+  [1])
+ AC_SUBST(
+  [libnk2_pc_libs_private_libfwnt],
+  [])
+ AC_SUBST(
+  [libnk2_spec_requires_libfwnt],
+  [])
+ AC_SUBST(
+  [libnk2_spec_build_requires_libfwnt],
+  [])
+ AC_SUBST(
+  [LIBFWNT_CPPFLAGS],
+  [-I../libfwnt])
+ AC_SUBST(
+  [LIBFWNT_LIBADD],
+  [../libfwnt/libfwnt.la])
+ ac_libnk2_have_libfwnt=local])
+
+AM_CONDITIONAL(
+ [HAVE_LOCAL_LIBFWNT],
+ [test "x$ac_libnk2_have_libfwnt" = xlocal])
+
 dnl Check for enabling libfmapi for file MAPI types support
 LIBNK2_CHECK_LIBFMAPI
 
@@ -917,7 +1045,7 @@ AS_IF(
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes || test "x$ac_libnk2_have_libfdatetime" = xyes || test "x$ac_libnk2_have_libfmapi" = xyes],
+ [test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes || test "x$ac_libnk2_have_libfdatetime" = xyes || test "x$ac_libnk2_have_libfguid" = xyes || test "x$ac_libnk2_have_libfwnt" = xyes || test "x$ac_libnk2_have_libfmapi" = xyes],
  [AC_SUBST(
   [libnk2_spec_requires],
   [Requires:])
@@ -973,6 +1101,8 @@ AC_CONFIG_FILES([libnotify/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
+AC_CONFIG_FILES([libfguid/Makefile])
+AC_CONFIG_FILES([libfwnt/Makefile])
 AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([libsystem/Makefile])
@@ -1002,6 +1132,8 @@ Building:
    libuna support:                           $ac_libnk2_have_libuna
    libbfio support:                          $ac_libnk2_have_libbfio
    libfdatetime support:                     $ac_libnk2_have_libfdatetime
+   libfguid support:                         $ac_libnk2_have_libfguid
+   libfwnt support:                          $ac_libnk2_have_libfwnt
    libfmapi support:                         $ac_libnk2_have_libfmapi
 
 Features:

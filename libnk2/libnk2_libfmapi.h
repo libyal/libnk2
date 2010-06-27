@@ -1,9 +1,7 @@
 /*
  * The libfmapi header wrapper
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
- * Copyright (c) 2009-2010, Joachim Metz <forensics@hoffmannbv.nl>,
- * Hoffmann Investigations.
+ * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -37,7 +35,6 @@
 #include <libfmapi_guid.h>
 #include <libfmapi_lzfu.h>
 #include <libfmapi_property_type.h>
-#include <libfmapi_security_identifier.h>
 #include <libfmapi_service_provider_identifier.h>
 #include <libfmapi_types.h>
 #include <libfmapi_value_type.h>

@@ -43,6 +43,8 @@ libnk2_la_LIBADD = \
 	@LIBUNA_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
+	@LIBFGUID_LIBADD@ \
+	@LIBFWNT_LIBADD@ \
 	@LIBFMAPI_LIBADD@
 
 libnk2_la_LDFLAGS = -no-undefined -version-info 1:0:0

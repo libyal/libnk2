@@ -3,6 +3,7 @@ EXTRA_DIST = \
 	libcstring/libcstring.vcproj \
 	liberror/liberror.vcproj \
 	libfdatetime/libfdatetime.vcproj \
+	libfguid/libfguid.vcproj \
 	libfmapi/libfmapi.vcproj \
 	libnk2_dll/libnk2_dll.vcproj \
 	libnotify/libnotify.vcproj \
