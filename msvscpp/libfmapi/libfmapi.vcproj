@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="libfmapi"
 	ProjectGUID="{CDB03E65-C81B-47E0-B70F-C880D841DD61}"
 	RootNamespace="libfmapi"
@@ -39,8 +39,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror;..\..\libnotify;..\..\libuna;..\..\libfdatetime"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFMAPI"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror;..\..\libnotify;..\..\libuna;..\..\libfdatetime;..\..\libfguid;..\..\libfwnt"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFGUID;HAVE_LOCAL_LIBFWNT;HAVE_LOCAL_LIBFMAPI"
 				RuntimeLibrary="2"
 				WarningLevel="4"
 				CompileAs="1"
@@ -106,10 +106,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfmapi\libfmapi_guid.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libfmapi\libfmapi_lcid.c"
 				>
 			</File>
@@ -118,11 +114,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfmapi\libfmapi_property_type.c"
+				RelativePath="..\..\libfmapi\libfmapi_one_off_entry_identifier.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfmapi\libfmapi_security_identifier.c"
+				RelativePath="..\..\libfmapi\libfmapi_property_type.c"
 				>
 			</File>
 			<File
@@ -164,15 +160,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfmapi\libfmapi_guid.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libfmapi\libfmapi_lcid.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libfmapi\libfmapi_libfdatetime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfmapi\libfmapi_libfguid.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfmapi\libfmapi_libfwnt.h"
 				>
 			</File>
 			<File
@@ -184,11 +184,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfmapi\libfmapi_property_type.h"
+				RelativePath="..\..\libfmapi\libfmapi_one_off_entry_identifier.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libfmapi\libfmapi_security_identifier.h"
+				RelativePath="..\..\libfmapi\libfmapi_property_type.h"
 				>
 			</File>
 			<File
@@ -201,6 +201,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libfmapi\libfmapi_value_type.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfmapi\libfmapi_x400_object_identifier.h"
 				>
 			</File>
 		</Filter>

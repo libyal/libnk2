@@ -1,5 +1,4 @@
 TODO:
-* update msvcpp files
 
 Optimizations:
 * map (file offset and size) items and item values first read on demand
@@ -26,6 +25,10 @@ Beta release
 * remove deprecated definition in include/libnk2/mapi.h
 * update man pages
 * add documentation
+
+20100628
+* update for libfmapi
+* updated msvcpp files
 
 20100627
 * updated common, libcstring, liberror, libnotify, libsystem, libuna,
