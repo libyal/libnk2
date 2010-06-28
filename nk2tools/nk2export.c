@@ -419,6 +419,34 @@ int main( int argc, char * const argv[] )
 
 		return( EXIT_FAILURE );
 	}
+	if( libnk2_file_set_ascii_codepage(
+	     nk2_file,
+	     ascii_codepage,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to set ASCII codepage.\n" );
+
+		libsystem_notify_print_error_backtrace(
+		 error );
+		libnk2_error_free(
+		 &error );
+
+		libnk2_file_free(
+		 &nk2_file,
+		 NULL );
+		export_handle_free(
+		 &export_handle,
+		 NULL );
+		log_handle_free(
+		 &log_handle,
+		 NULL );
+		memory_free(
+		 target_path );
+
+		return( EXIT_FAILURE );
+	}
 	fprintf(
 	 stdout,
 	 "Opening file.\n" );
