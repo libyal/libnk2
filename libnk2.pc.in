@@ -7,6 +7,6 @@ Name: libnk2
 Description: Library to support the Nickfile (NK2) format
 Version: @VERSION@
 Libs: -L${libdir} -lnk2
-Libs.private: @libnk2_pc_libs_private_libbfio@ @libnk2_pc_libs_private_libfdatetime@ @libnk2_pc_libs_private_libfguid@ @libnk2_pc_libs_private_libfwnt@ @libnk2_pc_libs_private_libfmapi@ @libnk2_pc_libs_private_libuna@
+Libs.private: @libnk2_pc_libs_private_libbfio@ @libnk2_pc_libs_private_libfdatetime@ @libnk2_pc_libs_private_libfguid@ @libnk2_pc_libs_private_libfmapi@ @libnk2_pc_libs_private_libfwnt@ @libnk2_pc_libs_private_libuna@
 Cflags: -I${includedir}
 
