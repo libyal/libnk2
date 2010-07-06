@@ -31,6 +31,36 @@
 extern "C" {
 #endif
 
+/* The array comparison definitions
+ */
+enum LIBNK2_ARRAY_COMPARE_DEFINITIONS
+{
+	/* The first value is less than the second value
+	 */
+        LIBNK2_ARRAY_COMPARE_LESS,
+
+	/* The first and second values are equal
+	 */
+        LIBNK2_ARRAY_COMPARE_EQUAL,
+
+	/* The first value is greater than the second value
+	 */
+        LIBNK2_ARRAY_COMPARE_GREATER
+};
+
+/* The array insert flag definitions
+ */
+enum LIBNK2_ARRAY_INSERT_FLAGS
+{
+	/* Allow duplicate entries
+	 */
+	LIBNK2_ARRAY_INSERT_FLAG_NON_UNIQUE_ENTRIES	= 0x00,
+
+	/* Only allow unique entries, no duplicates
+	 */
+	LIBNK2_ARRAY_INSERT_FLAG_UNIQUE_ENTRIES		= 0x01,
+};
+
 typedef struct libnk2_array libnk2_array_t;
 
 struct libnk2_array
@@ -89,6 +119,17 @@ int libnk2_array_append_entry(
      libnk2_array_t *array,
      int *entry_index,
      intptr_t *entry,
+     liberror_error_t **error );
+
+int libnk2_array_insert_entry(
+     libnk2_array_t *array,
+     int *entry_index,
+     intptr_t *entry,
+     int (*entry_compare_function)(
+            intptr_t *first_entry,
+            intptr_t *second_entry,
+            liberror_error_t **error ),
+     uint8_t insert_flags,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

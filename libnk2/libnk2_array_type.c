@@ -554,3 +554,186 @@ int libnk2_array_append_entry(
 	return( 1 );
 }
 
+/* Inserts an entry in the array
+ *
+ * Uses the entry_compare_function to determine the order of the entries
+ * The entry_compare_function should return LIBNK2_ARRAY_COMPARE_LESS,
+ * LIBNK2_ARRAY_COMPARE_EQUAL, LIBNK2_ARRAY_COMPARE_GREATER if successful or -1 on error
+ *
+ * Duplicate entries are allowed by default and inserted after the last duplicate entry.
+ * Only allowing unique entries can be enforced by setting the flag LIBNK2_ARRAY_INSERT_FLAG_UNIQUE_ENTRIES
+ *
+ * Returns 1 if successful, 0 if the node already exists or -1 on error
+ */
+int libnk2_array_insert_entry(
+     libnk2_array_t *array,
+     int *entry_index,
+     intptr_t *entry,
+     int (*entry_compare_function)(
+            intptr_t *first_entry,
+            intptr_t *second_entry,
+            liberror_error_t **error ),
+     uint8_t insert_flags,
+     liberror_error_t **error )
+{
+	static char *function = "libpff_tree_node_insert_node";
+	int entry_iterator    = 0;
+	int result            = -1;
+
+	if( array == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid array.",
+		 function );
+
+		return( -1 );
+	}
+	if( entry_index == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry index.",
+		 function );
+
+		return( -1 );
+	}
+	if( entry_compare_function == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry compare function.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( insert_flags & ~( LIBNK2_ARRAY_INSERT_FLAG_UNIQUE_ENTRIES ) ) != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported insert flags: 0x%02" PRIx8 ".",
+		 function,
+		 insert_flags );
+
+		return( -1 );
+	}
+	if( array->entries != NULL )
+	{
+		for( entry_iterator = 0;
+		     entry_iterator < array->number_of_entries;
+		     entry_iterator++ )
+		{
+			result = entry_compare_function(
+			          entry,
+			          array->entries[ entry_iterator ],
+			          error );
+
+			if( result == -1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to compare entry: %d.",
+				 function,
+				 entry_iterator );
+
+				return( -1 );
+			}
+			else if( ( result == LIBNK2_ARRAY_COMPARE_EQUAL )
+			      && ( ( insert_flags & LIBNK2_ARRAY_INSERT_FLAG_UNIQUE_ENTRIES ) != 0 ) )
+			{
+				return( 0 );
+			}
+			else if( result == LIBNK2_ARRAY_COMPARE_LESS )
+			{
+				break;
+			}
+		}
+	}
+	if( ( result == LIBNK2_ARRAY_COMPARE_EQUAL )
+	 && ( ( insert_flags & LIBNK2_ARRAY_INSERT_FLAG_UNIQUE_ENTRIES ) == 0 ) )
+	{
+		result = LIBNK2_ARRAY_COMPARE_GREATER;
+	}
+	if( ( array->entries == NULL )
+	 || ( result == LIBNK2_ARRAY_COMPARE_GREATER ) )
+	{
+		*entry_index = array->number_of_entries;
+
+		if( libnk2_array_resize(
+		     array,
+		     array->number_of_entries + 1,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_RESIZE_FAILED,
+			 "%s: unable to resize array.",
+			 function );
+
+			return( -1 );
+		}
+		if( array->entries == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid array - missing entries.",
+			 function );
+
+			return( -1 );
+		}
+		array->entries[ *entry_index ] = entry;
+	}
+	else if( result == LIBNK2_ARRAY_COMPARE_LESS )
+	{
+		*entry_index = entry_iterator;
+
+		if( libnk2_array_resize(
+		     array,
+		     array->number_of_entries + 1,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_RESIZE_FAILED,
+			 "%s: unable to resize array.",
+			 function );
+
+			return( -1 );
+		}
+		if( array->entries == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid array - missing entries.",
+			 function );
+
+			return( -1 );
+		}
+		/* TODO can this loop safely be replaced by a memcpy ? */
+		for( entry_iterator = array->number_of_entries - 1;
+		     entry_iterator > *entry_index;
+		     entry_iterator-- )
+		{
+			array->entries[ entry_iterator ] = array->entries[ entry_iterator - 1 ];
+		}
+		array->entries[ *entry_index ] = entry;
+	}
+	return( 1 );
+}
+

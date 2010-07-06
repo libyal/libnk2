@@ -26,6 +26,11 @@ Beta release
 * update man pages
 * add documentation
 
+20100706
+* updated configure.ac, common, libuna, libbfio, libsystem, libfdatetime,
+  libfmapi, libfwnt
+* updated array type
+
 20100628
 * update for libfmapi
 * updated msvcpp files
