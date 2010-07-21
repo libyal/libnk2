@@ -35,6 +35,7 @@
 #include "libnk2_item.h"
 #include "libnk2_file.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libfvalue.h"
 
 /* Initializes a file
  * Make sure the value file is pointing to is set to NULL
@@ -162,7 +163,7 @@ int libnk2_file_free(
 
 		if( libnk2_array_free(
 		     &( internal_file->items ),
-		     &libnk2_item_values_free_as_referenced_value,
+		     &libfvalue_table_free,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -972,7 +973,7 @@ int libnk2_file_get_item(
      liberror_error_t **error )
 {
 	libnk2_internal_file_t *internal_file = NULL;
-	libnk2_item_values_t *item_values     = NULL;
+	libfvalue_table_t *values_table       = NULL;
 	static char *function                 = "libnk2_file_get_item";
 
 	if( file == NULL )
@@ -1013,7 +1014,7 @@ int libnk2_file_get_item(
 	if( libnk2_array_get_entry_by_index(
 	     internal_file->items,
 	     item_index,
-	     (intptr_t **) &item_values,
+	     (intptr_t **) &values_table,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -1030,7 +1031,7 @@ int libnk2_file_get_item(
 	     item,
 	     internal_file->io_handle,
 	     internal_file->file_io_handle,
-	     item_values,
+	     values_table,
 	     LIBNK2_ITEM_FLAGS_DEFAULT,
 	     error ) != 1 )
 	{

@@ -1132,7 +1132,7 @@ AS_IF(
  ac_libnk2_dummy=yes])
 
 dnl Set memwatch support
-ac_libnk2_have_memwatch=no
+ac_libnk2_have_memwatch=yes
 
 AS_IF(
  [test "x$ac_libnk2_have_memwatch" != xno ],

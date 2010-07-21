@@ -29,6 +29,7 @@
 
 #include "libnk2_array_type.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libfvalue.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -67,7 +68,15 @@ int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t number_of_items,
-     libnk2_array_t *item_table,
+     libnk2_array_t *items_array,
+     liberror_error_t **error );
+
+int libnk2_io_handle_read_item_values(
+     libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     uint32_t item_index,
+     uint32_t number_of_item_values,
+     libfvalue_table_t *values_table,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

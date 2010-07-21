@@ -318,7 +318,7 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value(
 LIBNK2_EXTERN int libnk2_item_get_entry_value_boolean(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   uint8_t *entry_value,
+                   uint8_t *value_boolean,
                    libnk2_error_t **error );
 
 /* Retrieves the 32-bit value of a specific entry
@@ -327,7 +327,7 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_boolean(
 LIBNK2_EXTERN int libnk2_item_get_entry_value_32bit(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   uint32_t *entry_value,
+                   uint32_t *value_32bit,
                    libnk2_error_t **error );
 
 /* Retrieves the 64-bit value of a specific entry
@@ -336,7 +336,7 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_32bit(
 LIBNK2_EXTERN int libnk2_item_get_entry_value_64bit(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   uint64_t *entry_value,
+                   uint64_t *value_64bit,
                    libnk2_error_t **error );
 
 /* Retrieves the size value of a specific entry
@@ -345,10 +345,11 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_64bit(
 LIBNK2_EXTERN int libnk2_item_get_entry_value_size(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   size_t *entry_value,
+                   size_t *value_size,
                    libnk2_error_t **error );
 
-/* Retrieves the UTF-8 string size of a string value of a specific entry
+/* Retrieves the size of the UTF-8 encoded string of a specific entry
+ * The function uses a codepage if necessary, it uses the codepage set for the library
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
@@ -358,8 +359,7 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string_size(
                    size_t *utf8_string_size,
                    libnk2_error_t **error );
 
-/* Retrieves the UTF-8 string value of a specific entry
- * The string is formatted in UTF-8
+/* Retrieves the UTF-8 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The size should include the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
@@ -371,7 +371,8 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string(
                    size_t utf8_string_size,
                    libnk2_error_t **error );
 
-/* Retrieves the UTF-16 string size of a string value of a specific entry
+/* Retrieves the size of the UTF-16 encoded string of a specific entry
+ * The function uses a codepage if necessary, it uses the codepage set for the library
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
@@ -381,8 +382,7 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_utf16_string_size(
                    size_t *utf16_string_size,
                    libnk2_error_t **error );
 
-/* Retrieves the UTF-16 string value of a specific entry
- * The string is formatted in UTF-16
+/* Retrieves the UTF-16 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The size should include the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error

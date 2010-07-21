@@ -29,8 +29,8 @@
 
 #include "libnk2_extern.h"
 #include "libnk2_io_handle.h"
-#include "libnk2_item_values.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libfvalue.h"
 #include "libnk2_types.h"
 
 #if defined( __cplusplus )
@@ -57,9 +57,9 @@ struct libnk2_internal_item
 	 */
 	libbfio_handle_t *file_io_handle;
 
-	/* The item values
+	/* The values table
 	 */
-	libnk2_item_values_t *item_values;
+	libfvalue_table_t *values_table;
 
 	/* The flags
 	 */
@@ -70,7 +70,7 @@ int libnk2_item_initialize(
      libnk2_item_t **item,
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     libnk2_item_values_t *item_values,
+     libfvalue_table_t *values_table,
      uint8_t flags,
      liberror_error_t **error );
 
@@ -102,31 +102,25 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value(
 LIBNK2_EXTERN int libnk2_item_get_entry_value_boolean(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   uint8_t *entry_value,
+                   uint8_t *value_boolean,
                    liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_item_get_entry_value_32bit(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   uint32_t *entry_value,
+                   uint32_t *value_32bit,
                    liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_item_get_entry_value_64bit(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   uint64_t *entry_value,
-                   liberror_error_t **error );
-
-LIBNK2_EXTERN int libnk2_item_get_entry_value_filetime(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint64_t *entry_value,
+                   uint64_t *value_64bit,
                    liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_item_get_entry_value_size(
                    libnk2_item_t *item,
                    uint32_t entry_type,
-                   size_t *entry_value,
+                   size_t *value_size,
                    liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string_size(
