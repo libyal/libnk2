@@ -188,25 +188,6 @@ int libnk2_file_free(
 
 			result = -1;
 		}
-		if( internal_file->file_io_handle_created_in_library != 0 )
-		{
-			if( internal_file->file_io_handle != NULL )
-			{
-				if( libbfio_handle_free(
-				     &( internal_file->file_io_handle ),
-				     error ) != 1 )
-				{
-					liberror_error_set(
-					 error,
-					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free file IO handle.",
-					 function );
-
-					result = -1;
-				}
-			}
-		}
 		memory_free(
 		 internal_file );
 	}
@@ -599,7 +580,7 @@ int libnk2_file_open_file_io_handle(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to OLE Compound File currently not supported.",
+		 "%s: write access to Nickfile currently not supported.",
 		 function );
 
 		return( -1 );
@@ -724,8 +705,39 @@ int libnk2_file_close(
 			 "%s: unable to close file IO handle.",
 			 function );
 
-			return( -1 );
+			result = -1;
 		}
+		if( libbfio_handle_free(
+		     &( internal_file->file_io_handle ),
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free file IO handle.",
+			 function );
+
+			result = -1;
+		}
+	}
+	internal_file->file_io_handle                    = NULL;
+	internal_file->file_io_handle_created_in_library = 0;
+
+	if( libnk2_array_resize(
+	     internal_file->items,
+	     0,
+	     &libfvalue_table_free,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_RESIZE_FAILED,
+		 "%s: unable to resize items array.",
+		 function );
+
+		result = -1;
 	}
 	return( result );
 }
@@ -739,6 +751,7 @@ int libnk2_file_open_read(
 {
 	static char *function    = "libnk2_file_open_read";
 	uint32_t number_of_items = 0;
+	int result               = 1;
 
 	if( internal_file == NULL )
 	{
@@ -762,7 +775,11 @@ int libnk2_file_open_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_VERBOSE_OUTPUT )
+	if( internal_file->io_handle->abort != 0 )
+	{
+		internal_file->io_handle->abort = 0;
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
 	{
 		libnotify_printf(
@@ -784,19 +801,21 @@ int libnk2_file_open_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_VERBOSE_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
 	{
 		libnotify_printf(
 		 "Reading items:\n" );
 	}
 #endif
-	if( libnk2_io_handle_read_items(
-	     internal_file->io_handle,
-	     internal_file->file_io_handle,
-	     number_of_items,
-	     internal_file->items,
-	     error ) != 1 )
+	result = libnk2_io_handle_read_items(
+	          internal_file->io_handle,
+	          internal_file->file_io_handle,
+	          number_of_items,
+	          internal_file->items,
+	          error );
+
+	if( result != 1 )
 	{
 		liberror_error_set(
 		 error,
@@ -804,11 +823,36 @@ int libnk2_file_open_read(
 		 LIBERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read items.",
 		 function );
-
-		return( -1 );
 	}
-	/* TODO read footer */
-	return( 1 );
+	if( result == 1 )
+	{
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libnotify_verbose != 0 )
+		{
+			libnotify_printf(
+			 "Reading file footer:\n" );
+		}
+#endif
+		if( libnk2_io_handle_read_file_footer(
+		     internal_file->io_handle,
+		     internal_file->file_io_handle,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_IO,
+			 LIBERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read file footer.",
+			 function );
+
+			result = -1;
+		}
+	}
+	if( internal_file->io_handle->abort != 0 )
+	{
+		internal_file->io_handle->abort = 0;
+	}
+	return( result );
 }
 
 /* Retrieves the file ASCII codepage
@@ -898,15 +942,15 @@ int libnk2_file_set_ascii_codepage(
 		return( -1 );
 	}
 	if( ( ascii_codepage != LIBNK2_CODEPAGE_ASCII )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_874 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1250 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1251 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1252 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1253 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1254 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1256 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1257 )
-	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1258 ) )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_874 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1250 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1251 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1252 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1253 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1254 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1256 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1257 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1258 ) )
 	{
 		liberror_error_set(
 		 error,

@@ -33,11 +33,13 @@
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libfdatetime.h"
 #include "libnk2_libfmapi.h"
 #include "libnk2_libfvalue.h"
 #include "libnk2_mapi.h"
 #include "libnk2_value_identifier.h"
 
+#include "nk2_file_footer.h"
 #include "nk2_file_header.h"
 #include "nk2_item.h"
 
@@ -493,6 +495,10 @@ int libnk2_io_handle_read_item_values(
 			 "%s: unable to read item value.",
 			 function );
 
+			libfvalue_table_empty(
+			 values_table,
+			 NULL );
+
 			return( -1 );
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -528,6 +534,7 @@ int libnk2_io_handle_read_item_values(
 			  value_identifier.value_type ),
 			 libfmapi_value_type_get_description(
 			  value_identifier.value_type ) );
+
 			libnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " entry type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
 			 function,
@@ -638,6 +645,10 @@ int libnk2_io_handle_read_item_values(
 				 function,
 				 value_identifier.value_type );
 
+				libfvalue_table_empty(
+				 values_table,
+				 NULL );
+
 				return( -1 );
 		}
 		if( value_data_size == 0 )
@@ -658,6 +669,10 @@ int libnk2_io_handle_read_item_values(
 				 LIBERROR_IO_ERROR_READ_FAILED,
 				 "%s: unable to read value data size.",
 				 function );
+
+				libfvalue_table_empty(
+				 values_table,
+				 NULL );
 
 				return( -1 );
 			}
@@ -693,6 +708,10 @@ int libnk2_io_handle_read_item_values(
 			 value_identifier.entry_type,
 			 value_identifier.value_type );
 
+			libfvalue_table_empty(
+			 values_table,
+			 NULL );
+
 			return( -1 );
 		}
 		if( libfvalue_table_set_value_by_index(
@@ -713,6 +732,9 @@ int libnk2_io_handle_read_item_values(
 			libfvalue_value_free(
 			 (intptr_t *) value,
 			 NULL );
+			libfvalue_table_empty(
+			 values_table,
+			 NULL );
 
 			return( -1 );
 		}
@@ -727,6 +749,10 @@ int libnk2_io_handle_read_item_values(
 			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create value data.",
 			 function );
+
+			libfvalue_table_empty(
+			 values_table,
+			 NULL );
 
 			return( -1 );
 		}
@@ -754,6 +780,9 @@ int libnk2_io_handle_read_item_values(
 
 					memory_free(
 					 value_data );
+					libfvalue_table_empty(
+					 values_table,
+					 NULL );
 
 					return( -1 );
 				}
@@ -776,6 +805,9 @@ int libnk2_io_handle_read_item_values(
 
 					memory_free(
 					 value_data );
+					libfvalue_table_empty(
+					 values_table,
+					 NULL );
 
 					return( -1 );
 				}
@@ -807,6 +839,9 @@ int libnk2_io_handle_read_item_values(
 
 				memory_free(
 				 value_data );
+				libfvalue_table_empty(
+				 values_table,
+				 NULL );
 
 				return( -1 );
 			}
@@ -834,6 +869,9 @@ int libnk2_io_handle_read_item_values(
 
 				memory_free(
 				 value_data );
+				libfvalue_table_empty(
+				 values_table,
+				 NULL );
 
 				return( -1 );
 			}
@@ -863,6 +901,9 @@ int libnk2_io_handle_read_item_values(
 
 				memory_free(
 				 value_data );
+				libfvalue_table_empty(
+				 values_table,
+				 NULL );
 
 				return( -1 );
 			}
@@ -883,11 +924,193 @@ int libnk2_io_handle_read_item_values(
 				 value_identifier.entry_type,
 				 value_identifier.value_type );
 
+				libfvalue_table_empty(
+				 values_table,
+				 NULL );
+
 				return( -1 );
 			}
 		}
 		value = NULL;
+
+		if( io_handle->abort != 0 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_ABORT_REQUESTED,
+			 "%s: abort requested.",
+			 function );
+
+			libfvalue_table_empty(
+			 values_table,
+			 NULL );
+
+			return( -1 );
+		}
 	}
+	return( 1 );
+}
+
+/* Reads the file footer
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_io_handle_read_file_footer(
+     libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     liberror_error_t **error )
+{
+	nk2_file_footer_t file_footer;
+
+	static char *function             = "libnk2_io_handle_read_file_footer";
+	ssize_t read_count                = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	libcstring_system_character_t filetime_string[ 24 ];
+
+	libfdatetime_filetime_t *filetime = NULL;
+	uint32_t value_32bit              = 0;
+	int result                        = 0;
+#endif
+
+	if( io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	read_count = libbfio_handle_read(
+	              file_io_handle,
+	              (uint8_t *) &file_footer,
+	              sizeof( nk2_file_footer_t ),
+	              error );
+
+	if( read_count != (ssize_t) sizeof( nk2_file_footer_t ) )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read file footer.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libnotify_verbose != 0 )
+	{
+		libnotify_printf(
+		 "%s: file footer:\n",
+		 function );
+		libnotify_print_data(
+		 (uint8_t *) &file_footer,
+		 sizeof( nk2_file_footer_t ) );
+	}
+#endif
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libnotify_verbose != 0 )
+	{
+		if( libfdatetime_filetime_initialize(
+		     &filetime,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create filetime.",
+			 function );
+
+			return( -1 );
+		}
+		byte_stream_copy_to_uint32_little_endian(
+		 file_footer.unknown1,
+		 value_32bit );
+		libnotify_printf(
+		 "%s: unknown1\t\t: 0x%08" PRIx32 "\n",
+		 function,
+		 value_32bit );
+
+		if( libfdatetime_filetime_copy_from_byte_stream(
+		     filetime,
+		     file_footer.unknown_time,
+		     8,
+		     LIBFDATETIME_ENDIAN_LITTLE,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy byte stream to filetime.",
+			 function );
+
+			libfdatetime_filetime_free(
+			 &filetime,
+			 NULL );
+
+			return( -1 );
+		}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libfdatetime_filetime_copy_to_utf16_string(
+			  filetime,
+			  (uint16_t *) filetime_string,
+			  24,
+			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+			  error );
+#else
+		result = libfdatetime_filetime_copy_to_utf8_string(
+			  filetime,
+			  (uint8_t *) filetime_string,
+			  24,
+			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+			  error );
+#endif
+		if( result != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy filetime to string.",
+			 function );
+
+			libfdatetime_filetime_free(
+			 &filetime,
+			 NULL );
+
+			return( -1 );
+		}
+		libnotify_printf(
+		 "%s: unknown time\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n\n",
+		 function,
+		 filetime_string );
+
+		libnotify_printf(
+		 "\n" );
+
+		if( libfdatetime_filetime_free(
+		     &filetime,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free filetime.",
+			 function );
+
+			return( -1 );
+		}
+	}
+#endif
 	return( 1 );
 }
 

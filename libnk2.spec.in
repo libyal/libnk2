@@ -54,7 +54,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files devel
 %defattr(644,root,root,755)
-%doc AUTHORS COPYING NEWS README ChangeLog
+%doc AUTHORS COPYING NEWS README README_mingw ChangeLog
 %{_libdir}/*.a
 %{_libdir}/*.la
 %{_libdir}/*.so
@@ -72,6 +72,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Wed Jul 21 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100721-1
 - Added support for libfvalue
+- Added README_mingw
 
 * Sun Jun 27 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100627-1
 - Clean up of previous version of spec file

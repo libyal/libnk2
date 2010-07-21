@@ -1,5 +1,5 @@
 /*
- * Notification function
+ * The libfdatetime header wrapper
  *
  * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,42 +19,35 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBNK2_NOTIFY_H )
-#define _LIBNK2_NOTIFY_H
+#if !defined( _LIBNK2_LIBFDATETIME_H )
+#define _LIBNK2_LIBFDATETIME_H
 
 #include <common.h>
-#include <types.h>
 
-#include <liberror.h>
+/* Define HAVE_LOCAL_LIBFDATETIME for local use of libfdatetime
+ */
+#if defined( HAVE_LOCAL_LIBFDATETIME )
 
-#include <stdio.h>
+#include <libfdatetime_date_time_values.h>
+#include <libfdatetime_definitions.h>
+#include <libfdatetime_fat_date_time.h>
+#include <libfdatetime_filetime.h>
+#include <libfdatetime_nsf_timedate.h>
+#include <libfdatetime_types.h>
 
-#include "libnk2_extern.h"
+#elif defined( HAVE_LIBFDATETIME_H )
 
-#if defined( __cplusplus )
-extern "C" {
+/* If libtool DLL support is enabled set LIBFDATETIME_DLL_IMPORT
+ * before including libfdatetime.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBFDATETIME_DLL_IMPORT
 #endif
 
-#if !defined( HAVE_LOCAL_LIBNK2 )
+#include <libfdatetime.h>
 
-LIBNK2_EXTERN void libnk2_notify_set_verbose(
-                    int verbose );
-
-LIBNK2_EXTERN int libnk2_notify_set_stream(
-                   FILE *stream,
-                   liberror_error_t **error );
-
-LIBNK2_EXTERN int libnk2_notify_stream_open(
-                   const char *filename,
-                   liberror_error_t **error );
-
-LIBNK2_EXTERN int libnk2_notify_stream_close(
-                   liberror_error_t **error );
-
-#endif
-
-#if defined( __cplusplus )
-}
+#else
+#error Missing libfdatetime.h
 #endif
 
 #endif

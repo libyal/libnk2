@@ -1,5 +1,5 @@
 /*
- * Notification function
+ * The file footer definition of a Nickfile
  *
  * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -9,49 +9,41 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBNK2_NOTIFY_H )
-#define _LIBNK2_NOTIFY_H
+#if !defined( _NK2_FILE_FOOTER_H )
+#define _NK2_FILE_FOOTER_H
 
 #include <common.h>
 #include <types.h>
-
-#include <liberror.h>
-
-#include <stdio.h>
-
-#include "libnk2_extern.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-#if !defined( HAVE_LOCAL_LIBNK2 )
+typedef struct nk2_file_footer nk2_file_footer_t;
 
-LIBNK2_EXTERN void libnk2_notify_set_verbose(
-                    int verbose );
+struct nk2_file_footer
+{
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown1[ 4 ];
 
-LIBNK2_EXTERN int libnk2_notify_set_stream(
-                   FILE *stream,
-                   liberror_error_t **error );
-
-LIBNK2_EXTERN int libnk2_notify_stream_open(
-                   const char *filename,
-                   liberror_error_t **error );
-
-LIBNK2_EXTERN int libnk2_notify_stream_close(
-                   liberror_error_t **error );
-
-#endif
+	/* Unknown date and time
+	 * Consists of 8 bytes
+	 * Contains a filetime
+	 */
+	uint8_t unknown_time[ 8 ];
+};
 
 #if defined( __cplusplus )
 }

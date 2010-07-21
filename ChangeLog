@@ -2,16 +2,22 @@ TODO:
 * update msvscpp files
 
 Optimizations:
-* map (file offset and size) items and item values first read on demand
+* map (file offset and size) items and item values first read on demand ?
 * pre allocate item array entries
 
 library
+* additional value type support functions
+  - filetime
 * what about multiple alias entries 0x6001 of a single item?
+  - they are set in values table but identifier lookup will return first only
+* local library support
 
 Tools
+* add signal handling
 * nk2export
   - add export mode like pffexport
   - export alias files instead of item values
+  - export to CSV/TSV, HTML, XML
 * nk2info
   - create info handle ?
 
@@ -34,6 +40,10 @@ Beta release
   libfmapi, libwnt
 * updated array type
 * added libfvalue
+* clean up and refactoring
+* fix in set codepage function
+* updated codepage support for nk2export
+* added README_mingw
 
 20100706
 * updated configure.ac, common, libuna, libbfio, libsystem, libfdatetime,

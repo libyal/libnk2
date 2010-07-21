@@ -33,7 +33,6 @@
 #include "libnk2_libfvalue.h"
 #include "libnk2_mapi.h"
 #include "libnk2_value_identifier.h"
-#include "libnk2_value_type.h"
 
 /* Initializes the item and its values
  * Returns 1 if successful or -1 on error

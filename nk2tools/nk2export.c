@@ -63,13 +63,14 @@ void usage_fprint(
 	}
 	fprintf( stream, "Use nk2export to export items stored in a Nickfile (NK2).\n\n" );
 
-	fprintf( stream, "Usage: nk2export [ -c codepage ] [ -l logfile ] [ -t target ] [ -hvV ] source\n\n" );
+	fprintf( stream, "Usage: nk2export [ -c codepage ] [ -l logfile ] [ -t target ] [ -hvV ]"
+	                 "                 source\n\n" );
 
 	fprintf( stream, "\tsource: the source file\n\n" );
 
-	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-1250, windows-1251,\n"
-	                 "\t        windows-1252 (default), windows-1253, windows-1254, windows-1255,\n"
-	                 "\t        windows-1256, windows-1257 or windows-1258\n" );
+	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-874, windows-1250,\n"
+	                 "\t        windows-1251, windows-1252 (default), windows-1253, windows-1254,\n"
+	                 "\t        windows-1255, windows-1256, windows-1257 or windows-1258\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-l:     logs information about the exported items\n" );
 	fprintf( stream, "\t-t:     specify the target directory to export to\n"

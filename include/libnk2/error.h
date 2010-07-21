@@ -276,7 +276,11 @@ enum LIBNK2_RUNTIME_ERROR
 
 	/* The value is unsupported
 	 */
-	LIBNK2_RUNTIME_ERROR_UNSUPPORTED_VALUE		= 14
+	LIBNK2_RUNTIME_ERROR_UNSUPPORTED_VALUE		= 14,
+
+	/* An abort was requested
+	 */
+	LIBNK2_RUNTIME_ERROR_ABORT_REQUESTED		= 15
 };
 
 /* TODO deprecated remove after a while */

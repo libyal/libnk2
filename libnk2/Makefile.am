@@ -25,10 +25,10 @@ libnk2_la_SOURCES = \
 	libnk2_extern.h \
 	libnk2_file.c libnk2_file.h \
 	libnk2_item.c libnk2_item.h \
-	libnk2_item_values.c libnk2_item_values.h \
 	libnk2_io_handle.c libnk2_io_handle.h \
 	libnk2_legacy.c libnk2_legacy.h \
 	libnk2_libbfio.h \
+	libnk2_libfdatetime.h \
 	libnk2_libfmapi.h \
 	libnk2_libfvalue.h \
 	libnk2_libuna.h \
@@ -37,7 +37,7 @@ libnk2_la_SOURCES = \
 	libnk2_support.c libnk2_support.h \
 	libnk2_types.h \
 	libnk2_value_identifier.h \
-	libnk2_value_type.c libnk2_value_type.h \
+	nk2_file_footer.h \
 	nk2_file_header.h \
 	nk2_item.h
 

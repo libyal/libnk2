@@ -26,7 +26,8 @@ REDHAT_FILES = \
 
 EXTRA_DIST = \
         $(REDHAT_FILES) \
-	libnk2.pc.in
+	libnk2.pc.in \
+	README_mingw
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

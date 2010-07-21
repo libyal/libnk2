@@ -79,6 +79,11 @@ int libnk2_io_handle_read_item_values(
      libfvalue_table_t *values_table,
      liberror_error_t **error );
 
+int libnk2_io_handle_read_file_footer(
+     libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     liberror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif
