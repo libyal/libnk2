@@ -49,6 +49,17 @@ int libnk2_array_initialize(
 
 		return( -1 );
 	}
+	if( number_of_entries < 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid number of entries.",
+		 function );
+
+		return( -1 );
+	}
 	if( *array == NULL )
 	{
 		*array = (libnk2_array_t *) memory_allocate(
@@ -139,7 +150,8 @@ int libnk2_array_initialize(
 
 				return( -1 );
 			}
-			( *array )->number_of_entries = number_of_entries;
+			( *array )->number_of_allocated_entries = number_of_entries;
+			( *array )->number_of_entries           = number_of_entries;
 		}
 	}
 	return( 1 );
@@ -233,22 +245,170 @@ int libnk2_array_empty(
 		{
 			if( array->entries[ entry_iterator ] != NULL )
 			{
-				if( ( entry_free_function != NULL )
-				 && ( entry_free_function(
-				       array->entries[ entry_iterator ],
-				       error ) != 1 ) )
+				if( entry_free_function != NULL )
+				{
+					if( entry_free_function(
+					     array->entries[ entry_iterator ],
+					     error ) != 1 )
+					{
+						liberror_error_set(
+						 error,
+						 LIBERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+						 "%s: unable to free array entry: %d.",
+						 function,
+						 entry_iterator );
+
+						result = -1;
+					}
+				}
+				array->entries[ entry_iterator ] = NULL;
+			}
+		}
+	}
+	return( result );
+}
+
+/* Clones the array and its entries
+ *
+ * The entries are cloned using the entry_clone_function
+ * On error the entries are freed using the entry_free_function
+ *
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_array_clone(
+     libnk2_array_t **destination_array,
+     libnk2_array_t *source_array,
+     int (*entry_free_function)(
+            intptr_t *entry,
+            liberror_error_t **error ),
+     int (*entry_clone_function)(
+            intptr_t **destination,
+            intptr_t *source,
+            liberror_error_t **error ),
+     liberror_error_t **error )
+{
+	static char *function = "libnk2_array_clone";
+	int entry_iterator    = 0;
+	int result            = 1;
+
+	if( destination_array == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid destination array.",
+		 function );
+
+		return( -1 );
+	}
+	if( *destination_array != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid destination array already set.",
+		 function );
+
+		return( -1 );
+	}
+	if( entry_free_function == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry free function.",
+		 function );
+
+		return( -1 );
+	}
+	if( entry_clone_function == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid entry clone function.",
+		 function );
+
+		return( -1 );
+	}
+	if( source_array == NULL )
+	{
+		*destination_array = NULL;
+
+		return( 1 );
+	}
+	if( libnk2_array_initialize(
+	     destination_array,
+	     source_array->number_of_entries,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create destination array.",
+		 function );
+
+		return( -1 );
+	}
+	if( *destination_array == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: missing destination array.",
+		 function );
+
+		return( -1 );
+	}
+	if( source_array->entries != NULL )
+	{
+		for( entry_iterator = 0;
+		     entry_iterator < source_array->number_of_entries;
+		     entry_iterator++ )
+		{
+			if( source_array->entries[ entry_iterator ] != NULL )
+			{
+				result = entry_clone_function(
+					  &( ( *destination_array )->entries[ entry_iterator ] ),
+					  source_array->entries[ entry_iterator ],
+					  error );
+
+				if( result != 1 )
 				{
 					liberror_error_set(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free array entry: %d.",
+					 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+					 "%s: unable to clone array entry: %d.",
 					 function,
 					 entry_iterator );
 
-					result = -1;
+					break;
 				}
-				array->entries[ entry_iterator ] = NULL;
+			}
+		}
+		if( result != 1 )
+		{
+			if( libnk2_array_free(
+			     destination_array,
+			     entry_free_function,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free destination array.",
+				 function );
+
+				result = -1;
 			}
 		}
 	}
@@ -261,11 +421,16 @@ int libnk2_array_empty(
 int libnk2_array_resize(
      libnk2_array_t *array,
      int number_of_entries,
+     int (*entry_free_function)(
+            intptr_t *entry,
+            liberror_error_t **error ),
      liberror_error_t **error )
 {
 	void *reallocation    = NULL;
 	static char *function = "libnk2_array_resize";
 	size_t entries_size   = 0;
+	int entry_iterator    = 0;
+	int result            = 1;
 
 	if( array == NULL )
 	{
@@ -278,7 +443,7 @@ int libnk2_array_resize(
 
 		return( -1 );
 	}
-	if( number_of_entries == 0 )
+	if( number_of_entries < 0 )
 	{
 		liberror_error_set(
 		 error,
@@ -289,7 +454,7 @@ int libnk2_array_resize(
 
 		return( -1 );
 	}
-	if( number_of_entries > array->number_of_entries )
+	if( number_of_entries > array->number_of_allocated_entries )
 	{
 		entries_size = sizeof( intptr_t * ) * number_of_entries;
 
@@ -322,9 +487,9 @@ int libnk2_array_resize(
 		array->entries = (intptr_t **) reallocation;
 
 		if( memory_set(
-		     &( array->entries[ array->number_of_entries ] ),
+		     &( array->entries[ array->number_of_allocated_entries ] ),
 		     0,
-		     sizeof( intptr_t ) * ( number_of_entries - array->number_of_entries ) ) == NULL )
+		     sizeof( intptr_t ) * ( number_of_entries - array->number_of_allocated_entries ) ) == NULL )
 		{
 			liberror_error_set(
 			 error,
@@ -333,11 +498,57 @@ int libnk2_array_resize(
 			 "%s: unable to clear array entries.",
 			 function );
 
+			result = -1;
+		}
+		array->number_of_allocated_entries = number_of_entries;
+		array->number_of_entries           = number_of_entries;
+	}
+	else if( number_of_entries > array->number_of_entries )
+	{
+		array->number_of_entries = number_of_entries;
+	}
+	else if( array->entries != NULL )
+	{
+		if( entry_free_function == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+			 "%s: invalid entry free function.",
+			 function );
+
 			return( -1 );
+		}
+		for( entry_iterator = number_of_entries;
+		     entry_iterator < array->number_of_entries;
+		     entry_iterator++ )
+		{
+			if( array->entries[ entry_iterator ] != NULL )
+			{
+				if( entry_free_function != NULL )
+				{
+					if( entry_free_function(
+					     array->entries[ entry_iterator ],
+					     error ) != 1 )
+					{
+						liberror_error_set(
+						 error,
+						 LIBERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+						 "%s: unable to free array entry: %d.",
+						 function,
+						 entry_iterator );
+
+						result = -1;
+					}
+				}
+				array->entries[ entry_iterator ] = NULL;
+			}
 		}
 		array->number_of_entries = number_of_entries;
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Retrieves the number of entries in the array
@@ -377,16 +588,16 @@ int libnk2_array_get_number_of_entries(
 	return( 1 );
 }
 
-/* Retrieves an entry
+/* Retrieves a specific entry from the array
  * Returns 1 if successful or -1 on error
  */
-int libnk2_array_get_entry(
+int libnk2_array_get_entry_by_index(
      libnk2_array_t *array,
      int entry_index,
      intptr_t **entry,
      liberror_error_t **error )
 {
-	static char *function = "libnk2_array_get_entry";
+	static char *function = "libnk2_array_get_entry_by_index";
 
 	if( array == NULL )
 	{
@@ -416,8 +627,8 @@ int libnk2_array_get_entry(
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
-		 "%s: invalid entry index value out of range.",
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid entry index value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -438,16 +649,16 @@ int libnk2_array_get_entry(
 	return( 1 );
 }
 
-/* Sets an entry
+/* Sets a specific entry in the array
  * Returns 1 if successful or -1 on error
  */
-int libnk2_array_set_entry(
+int libnk2_array_set_entry_by_index(
      libnk2_array_t *array,
      int entry_index,
      intptr_t *entry,
      liberror_error_t **error )
 {
-	static char *function = "libnk2_array_set_entry";
+	static char *function = "libnk2_array_set_entry_by_index";
 
 	if( array == NULL )
 	{
@@ -477,8 +688,8 @@ int libnk2_array_set_entry(
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
-		 "%s: invalid entry index value out of range.",
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid entry index value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -527,6 +738,7 @@ int libnk2_array_append_entry(
 	if( libnk2_array_resize(
 	     array,
 	     array->number_of_entries + 1,
+	     NULL,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -576,7 +788,7 @@ int libnk2_array_insert_entry(
      uint8_t insert_flags,
      liberror_error_t **error )
 {
-	static char *function = "libpff_tree_node_insert_node";
+	static char *function = "libnk2_tree_node_insert_node";
 	int entry_iterator    = 0;
 	int result            = -1;
 
@@ -648,61 +860,40 @@ int libnk2_array_insert_entry(
 
 				return( -1 );
 			}
-			else if( ( result == LIBNK2_ARRAY_COMPARE_EQUAL )
-			      && ( ( insert_flags & LIBNK2_ARRAY_INSERT_FLAG_UNIQUE_ENTRIES ) != 0 ) )
+			else if( result == LIBNK2_ARRAY_COMPARE_EQUAL )
 			{
-				return( 0 );
+				if( ( insert_flags & LIBNK2_ARRAY_INSERT_FLAG_UNIQUE_ENTRIES ) != 0 )
+				{
+					return( 0 );
+				}
 			}
 			else if( result == LIBNK2_ARRAY_COMPARE_LESS )
 			{
 				break;
 			}
+			else if( result != LIBNK2_ARRAY_COMPARE_GREATER )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+				 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+				 "%s: unsupported entry compare function return value: %d.",
+				 function,
+				 result );
+
+				return( -1 );
+			}
 		}
 	}
-	if( ( result == LIBNK2_ARRAY_COMPARE_EQUAL )
-	 && ( ( insert_flags & LIBNK2_ARRAY_INSERT_FLAG_UNIQUE_ENTRIES ) == 0 ) )
-	{
-		result = LIBNK2_ARRAY_COMPARE_GREATER;
-	}
-	if( ( array->entries == NULL )
-	 || ( result == LIBNK2_ARRAY_COMPARE_GREATER ) )
-	{
-		*entry_index = array->number_of_entries;
-
-		if( libnk2_array_resize(
-		     array,
-		     array->number_of_entries + 1,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_RESIZE_FAILED,
-			 "%s: unable to resize array.",
-			 function );
-
-			return( -1 );
-		}
-		if( array->entries == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: invalid array - missing entries.",
-			 function );
-
-			return( -1 );
-		}
-		array->entries[ *entry_index ] = entry;
-	}
-	else if( result == LIBNK2_ARRAY_COMPARE_LESS )
+	if( ( array->entries != NULL )
+	 && ( result == LIBNK2_ARRAY_COMPARE_LESS ) )
 	{
 		*entry_index = entry_iterator;
 
 		if( libnk2_array_resize(
 		     array,
 		     array->number_of_entries + 1,
+		     NULL,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -731,6 +922,38 @@ int libnk2_array_insert_entry(
 		     entry_iterator-- )
 		{
 			array->entries[ entry_iterator ] = array->entries[ entry_iterator - 1 ];
+		}
+		array->entries[ *entry_index ] = entry;
+	}
+	else
+	{
+		*entry_index = array->number_of_entries;
+
+		if( libnk2_array_resize(
+		     array,
+		     array->number_of_entries + 1,
+		     NULL,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_RESIZE_FAILED,
+			 "%s: unable to resize array.",
+			 function );
+
+			return( -1 );
+		}
+		if( array->entries == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid array - missing entries.",
+			 function );
+
+			return( -1 );
 		}
 		array->entries[ *entry_index ] = entry;
 	}

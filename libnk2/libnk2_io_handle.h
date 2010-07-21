@@ -40,9 +40,13 @@ typedef struct libnk2_io_handle libnk2_io_handle_t;
 
 struct libnk2_io_handle
 {
-	/* Dummy
+	/* The codepage of the extended ASCII strings
 	 */
-	int dummy;
+	int ascii_codepage;
+
+	/* Value to indicate if abort was signalled
+	 */
+	int abort;
 };
 
 int libnk2_io_handle_initialize(

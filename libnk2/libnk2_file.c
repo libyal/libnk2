@@ -36,7 +36,7 @@
 #include "libnk2_file.h"
 #include "libnk2_libbfio.h"
 
-/* Initialize a file
+/* Initializes a file
  * Make sure the value file is pointing to is set to NULL
  * Returns 1 if successful or -1 on error
  */
@@ -92,7 +92,7 @@ int libnk2_file_initialize(
 			return( -1 );
 		}
 		if( libnk2_array_initialize(
-		     &( internal_file->item_array ),
+		     &( internal_file->items ),
 		     0,
 		     error ) != 1 )
 		{
@@ -100,7 +100,7 @@ int libnk2_file_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create item array.",
+			 "%s: unable to create items array.",
 			 function );
 
 			memory_free(
@@ -116,11 +116,11 @@ int libnk2_file_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create io handle.",
+			 "%s: unable to create IO handle.",
 			 function );
 
 			libnk2_array_free(
-			 &( internal_file->item_array ),
+			 &( internal_file->items ),
 			 NULL,
 			 NULL );
 			memory_free(
@@ -128,14 +128,12 @@ int libnk2_file_initialize(
 
 			return( -1 );
 		}
-		internal_file->ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1252;
-
 		*file = (libnk2_file_t *) internal_file;
 	}
 	return( 1 );
 }
 
-/* Frees an exisisting file
+/* Frees a file
  * Returns 1 if successful or -1 on error
  */
 int libnk2_file_free(
@@ -163,7 +161,7 @@ int libnk2_file_free(
 		*file         = NULL;
 
 		if( libnk2_array_free(
-		     &( internal_file->item_array ),
+		     &( internal_file->items ),
 		     &libnk2_item_values_free_as_referenced_value,
 		     error ) != 1 )
 		{
@@ -171,7 +169,7 @@ int libnk2_file_free(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free item array.",
+			 "%s: unable to free items array.",
 			 function );
 
 			result = -1;
@@ -184,7 +182,7 @@ int libnk2_file_free(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free io handle.",
+			 "%s: unable to free IO handle.",
 			 function );
 
 			result = -1;
@@ -201,7 +199,7 @@ int libnk2_file_free(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free file io handle.",
+					 "%s: unable to free file IO handle.",
 					 function );
 
 					result = -1;
@@ -214,14 +212,15 @@ int libnk2_file_free(
 	return( result );
 }
 
-/* Signals the libnk2 file to abort its current activity
+/* Signals the file to abort its current activity
  * Returns 1 if successful or -1 on error
  */
 int libnk2_file_signal_abort(
      libnk2_file_t *file,
      liberror_error_t **error )
 {
-	static char *function = "libnk2_file_signal_abort";
+	libnk2_internal_file_t *internal_file = NULL;
+	static char *function                 = "libnk2_file_signal_abort";
 
 	if( file == NULL )
 	{
@@ -234,12 +233,25 @@ int libnk2_file_signal_abort(
 
 		return( -1 );
 	}
-	( (libnk2_internal_file_t *) file )->abort = 1;
+	internal_file = (libnk2_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file->io_handle->abort = 1;
 
 	return( 1 );
 }
 
-/* Opens a Nickfile
+/* Opens a file
  * Returns 1 if successful or -1 on error
  */
 int libnk2_file_open(
@@ -263,6 +275,8 @@ int libnk2_file_open(
 
 		return( -1 );
 	}
+	internal_file = (libnk2_internal_file_t *) file;
+
 	if( filename == NULL )
 	{
 		liberror_error_set(
@@ -297,8 +311,6 @@ int libnk2_file_open(
 
 		return( -1 );
 	}
-	internal_file = (libnk2_internal_file_t *) file;
-
 	if( libbfio_file_initialize(
 	     &file_io_handle,
 	     error ) != 1 )
@@ -307,7 +319,7 @@ int libnk2_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file io handle.",
+		 "%s: unable to create file IO handle.",
 		 function );
 
 		return( -1 );
@@ -322,7 +334,7 @@ int libnk2_file_open(
                  error,
                  LIBERROR_ERROR_DOMAIN_RUNTIME,
                  LIBERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set track offsets read in file io handle.",
+                 "%s: unable to set track offsets read in file IO handle.",
                  function );
 
 		libbfio_handle_free(
@@ -343,7 +355,7 @@ int libnk2_file_open(
                  error,
                  LIBERROR_ERROR_DOMAIN_RUNTIME,
                  LIBERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set filename in file io handle.",
+                 "%s: unable to set filename in file IO handle.",
                  function );
 
 		libbfio_handle_free(
@@ -379,7 +391,7 @@ int libnk2_file_open(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Opens a Nickfile
+/* Opens a file
  * Returns 1 if successful or -1 on error
  */
 int libnk2_file_open_wide(
@@ -403,6 +415,8 @@ int libnk2_file_open_wide(
 
 		return( -1 );
 	}
+	internal_file = (libnk2_internal_file_t *) file;
+
 	if( filename == NULL )
 	{
 		liberror_error_set(
@@ -432,13 +446,11 @@ int libnk2_file_open_wide(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to Nickfiles files currently not supported.",
+		 "%s: write access to Nickfiles currently not supported.",
 		 function );
 
 		return( -1 );
 	}
-	internal_file = (libnk2_internal_file_t *) file;
-
 	if( libbfio_file_initialize(
 	     &file_io_handle,
 	     error ) != 1 )
@@ -447,7 +459,7 @@ int libnk2_file_open_wide(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file io handle.",
+		 "%s: unable to create file IO handle.",
 		 function );
 
 		return( -1 );
@@ -462,7 +474,7 @@ int libnk2_file_open_wide(
                  error,
                  LIBERROR_ERROR_DOMAIN_RUNTIME,
                  LIBERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set track offsets read in file io handle.",
+                 "%s: unable to set track offsets read in file IO handle.",
                  function );
 
 		libbfio_handle_free(
@@ -483,7 +495,7 @@ int libnk2_file_open_wide(
                  error,
                  LIBERROR_ERROR_DOMAIN_RUNTIME,
                  LIBERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set filename in file io handle.",
+                 "%s: unable to set filename in file IO handle.",
                  function );
 
 		libbfio_handle_free(
@@ -519,7 +531,7 @@ int libnk2_file_open_wide(
 
 #endif
 
-/* Opens a Nickfile using a Basic File IO (bfio) handle
+/* Opens a file using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
 int libnk2_file_open_file_io_handle(
@@ -552,7 +564,7 @@ int libnk2_file_open_file_io_handle(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid internal file - file io handle already set.",
+		 "%s: invalid internal file - file IO handle already set.",
 		 function );
 
 		return( -1 );
@@ -563,7 +575,7 @@ int libnk2_file_open_file_io_handle(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file io handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
@@ -623,7 +635,7 @@ int libnk2_file_open_file_io_handle(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open file io handle.",
+			 "%s: unable to open file IO handle.",
 			 function );
 
 			return( -1 );
@@ -645,7 +657,7 @@ int libnk2_file_open_file_io_handle(
 	return( 1 );
 }
 
-/* Closes a Nickfile
+/* Closes a file
  * Returns 0 if successful or -1 on error
  */
 int libnk2_file_close(
@@ -708,7 +720,7 @@ int libnk2_file_close(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_CLOSE_FAILED,
-			 "%s: unable to close file io handle.",
+			 "%s: unable to close file IO handle.",
 			 function );
 
 			return( -1 );
@@ -717,7 +729,7 @@ int libnk2_file_close(
 	return( result );
 }
 
-/* Opens a Nickfile for reading
+/* Opens a file for reading
  * Returns 1 if successful or -1 on error
  */
 int libnk2_file_open_read(
@@ -744,7 +756,7 @@ int libnk2_file_open_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing io handle.",
+		 "%s: invalid internal file - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -782,7 +794,7 @@ int libnk2_file_open_read(
 	     internal_file->io_handle,
 	     internal_file->file_io_handle,
 	     number_of_items,
-	     internal_file->item_array,
+	     internal_file->items,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -822,6 +834,17 @@ int libnk2_file_get_ascii_codepage(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
+	if( internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( ascii_codepage == NULL )
 	{
 		liberror_error_set(
@@ -833,7 +856,7 @@ int libnk2_file_get_ascii_codepage(
 
 		return( -1 );
 	}
-	*ascii_codepage = internal_file->ascii_codepage;
+	*ascii_codepage = internal_file->io_handle->ascii_codepage;
 
 	return( 1 );
 }
@@ -862,6 +885,17 @@ int libnk2_file_set_ascii_codepage(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
+	if( internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( ( ascii_codepage != LIBNK2_CODEPAGE_ASCII )
 	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_874 )
 	 || ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1250 )
@@ -882,7 +916,7 @@ int libnk2_file_set_ascii_codepage(
 
 		return( -1 );
 	}
-	internal_file->ascii_codepage = ascii_codepage;
+	internal_file->io_handle->ascii_codepage = ascii_codepage;
 
 	return( 1 );
 }
@@ -912,7 +946,7 @@ int libnk2_file_get_number_of_items(
 	internal_file = (libnk2_internal_file_t *) file;
 
 	if( libnk2_array_get_number_of_entries(
-	     internal_file->item_array,
+	     internal_file->items,
 	     number_of_items,
 	     error ) != 1 )
 	{
@@ -954,13 +988,13 @@ int libnk2_file_get_item(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
-	if( internal_file->item_array == NULL )
+	if( internal_file->items == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing item array.",
+		 "%s: invalid internal file - missing items array.",
 		 function );
 
 		return( -1 );
@@ -976,8 +1010,8 @@ int libnk2_file_get_item(
 
 		return( -1 );
 	}
-	if( libnk2_array_get_entry(
-	     internal_file->item_array,
+	if( libnk2_array_get_entry_by_index(
+	     internal_file->items,
 	     item_index,
 	     (intptr_t **) &item_values,
 	     error ) != 1 )
@@ -986,13 +1020,18 @@ int libnk2_file_get_item(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve item values.",
-		 function );
+		 "%s: unable to retrieve item values: %d.",
+		 function,
+		 item_index );
 
 		return( -1 );
 	}
 	if( libnk2_item_initialize(
 	     item,
+	     internal_file->io_handle,
+	     internal_file->file_io_handle,
+	     item_values,
+	     LIBNK2_ITEM_FLAGS_DEFAULT,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -1001,27 +1040,6 @@ int libnk2_file_get_item(
 		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create item.",
 		 function );
-
-		return( -1 );
-	}
-	if( libnk2_item_attach(
-	     (libnk2_internal_item_t *) *item,
-	     internal_file->file_io_handle,
-	     internal_file,
-	     item_values,
-	     0,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to attach item.",
-		 function );
-
-		libnk2_item_free(
-		 item,
-		 NULL );
 
 		return( -1 );
 	}

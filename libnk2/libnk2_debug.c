@@ -104,7 +104,7 @@ int libnk2_debug_print_read_offsets(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file io handle.",
+		 "%s: invalid file IO handle.",
 		 function );
 
 		return( -1 );
@@ -148,7 +148,7 @@ int libnk2_debug_print_read_offsets(
 			return( -1 );
 		}
 		libnotify_printf(
-		 "%08" PRIu64 " ( 0x%08" PRIx64 " ) - %08" PRIu64 " ( 0x%08" PRIx64 " ) size: %" PRIu64 "\n",
+		 "%08" PRIi64 " ( 0x%08" PRIx64 " ) - %08" PRIi64 " ( 0x%08" PRIx64 " ) size: %" PRIu64 "\n",
 		 offset,
 		 offset,
 		 offset + size,

@@ -47,6 +47,12 @@
 #include <libfguid.h>
 #endif
 
+#if defined( HAVE_LOCAL_LIBFVALUE )
+#include <libfvalue_definitions.h>
+#elif defined( HAVE_LIBFVALUE_H )
+#include <libfvalue.h>
+#endif
+
 #if defined( HAVE_LOCAL_LIBFWNT )
 #include <libfwnt_definitions.h>
 #elif defined( HAVE_LIBFWNT_H )
@@ -129,6 +135,11 @@ void nk2output_version_fprint(
 	 stream,
 	 ", libfguid %s",
 	 LIBFGUID_VERSION_STRING );
+
+	fprintf(
+	 stream,
+	 ", libfvalue %s",
+	 LIBFVALUE_VERSION_STRING );
 
 	fprintf(
 	 stream,

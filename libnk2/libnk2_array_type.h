@@ -65,6 +65,10 @@ typedef struct libnk2_array libnk2_array_t;
 
 struct libnk2_array
 {
+	/* The number of allocated entries
+	 */
+	int number_of_allocated_entries;
+
 	/* The number of entries
 	 */
 	int number_of_entries;
@@ -93,9 +97,24 @@ int libnk2_array_empty(
             liberror_error_t **error ),
      liberror_error_t **error );
 
+int libnk2_array_clone(
+     libnk2_array_t **destination_array,
+     libnk2_array_t *source_array,
+     int (*entry_free_function)(
+            intptr_t *entry,
+            liberror_error_t **error ),
+     int (*entry_clone_function)(
+            intptr_t **destination,
+            intptr_t *source,
+            liberror_error_t **error ),
+     liberror_error_t **error );
+
 int libnk2_array_resize(
      libnk2_array_t *array,
      int number_of_entries,
+     int (*entry_free_function)(
+            intptr_t *entry,
+            liberror_error_t **error ),
      liberror_error_t **error );
 
 int libnk2_array_get_number_of_entries(
@@ -103,13 +122,13 @@ int libnk2_array_get_number_of_entries(
      int *number_of_entries,
      liberror_error_t **error );
 
-int libnk2_array_get_entry(
+int libnk2_array_get_entry_by_index(
      libnk2_array_t *array,
      int entry_index,
      intptr_t **entry,
      liberror_error_t **error );
 
-int libnk2_array_set_entry(
+int libnk2_array_set_entry_by_index(
      libnk2_array_t *array,
      int entry_index,
      intptr_t *entry,

@@ -1,4 +1,5 @@
 TODO:
+* update msvscpp files
 
 Optimizations:
 * map (file offset and size) items and item values first read on demand
@@ -25,6 +26,14 @@ Beta release
 * remove deprecated definition in include/libnk2/mapi.h
 * update man pages
 * add documentation
+
+20100721
+* updated include/codepage.h
+* updated include/error.h and liberror
+* updated common, libsystem, libuna, libbfio, libfdatetime, libfguid,
+  libfmapi, libwnt
+* updated array type
+* added libfvalue
 
 20100706
 * updated configure.ac, common, libuna, libbfio, libsystem, libfdatetime,

@@ -244,7 +244,7 @@ int libnk2_item_values_read(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid io handle.",
+		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -613,8 +613,8 @@ int libnk2_item_values_get_entry_type(
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_RANGE,
-		 "%s: invalid entry index out of range.",
+		 LIBERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid entry index out of bounds.",
 		 function );
 
 		return( -1 );

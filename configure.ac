@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20100706],
+  [20100721],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -767,6 +767,70 @@ AM_CONDITIONAL(
  [HAVE_LOCAL_LIBFGUID],
  [test "x$ac_libnk2_have_libfguid" = xlocal])
 
+dnl Check for enabling libfvalue for file GUID/UUID support
+AC_CHECK_HEADERS(
+ [libfvalue.h],
+ [],
+ [ac_libnk2_have_libfvalue=no])
+
+AS_IF(
+	[test "x$ac_libnk2_have_libfvalue" != xno],
+	[ac_libnk2_have_libfvalue=yes
+	AC_CHECK_LIB(
+	 fvalue,
+	 libfvalue_get_version,
+	 [],
+	 [ac_libnk2_have_libfvalue=no])
+
+	])
+
+AS_IF(
+[test "x$ac_libnk2_have_libfvalue" = xyes],
+ [dnl libfvalue is available
+ AC_SUBST(
+  [libnk2_pc_libs_private_libfvalue],
+  [-lfvalue])
+ AC_SUBST(
+  [libnk2_spec_requires_libfvalue],
+  [libfvalue])
+ AC_SUBST(
+  [libnk2_spec_build_requires_libfvalue],
+  [libfvalue-devel])
+ AC_SUBST(
+  [LIBFVALUE_CPPFLAGS],
+  [])
+ AC_SUBST(
+  [LIBFVALUE_LIBADD],
+  []) ],
+ [dnl libfvalue is not available, using the (local) version that came with the source package
+ AC_DEFINE(
+  [HAVE_LOCAL_LIBFVALUE],
+  [1],
+  [Define to 1 if the local version of libfvalue is used.])
+ AC_SUBST(
+  [HAVE_LOCAL_LIBFVALUE],
+  [1])
+ AC_SUBST(
+  [libnk2_pc_libs_private_libfvalue],
+  [])
+ AC_SUBST(
+  [libnk2_spec_requires_libfvalue],
+  [])
+ AC_SUBST(
+  [libnk2_spec_build_requires_libfvalue],
+  [])
+ AC_SUBST(
+  [LIBFVALUE_CPPFLAGS],
+  [-I../libfvalue])
+ AC_SUBST(
+  [LIBFVALUE_LIBADD],
+  [../libfvalue/libfvalue.la])
+ ac_libnk2_have_libfvalue=local])
+
+AM_CONDITIONAL(
+ [HAVE_LOCAL_LIBFVALUE],
+ [test "x$ac_libnk2_have_libfvalue" = xlocal])
+
 dnl Check for enabling libfwnt for file Windows NT type support
 AC_CHECK_HEADERS(
  [libfwnt.h],
@@ -1052,7 +1116,7 @@ AS_IF(
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes || test "x$ac_libnk2_have_libfdatetime" = xyes || test "x$ac_libnk2_have_libfguid" = xyes || test "x$ac_libnk2_have_libfwnt" = xyes || test "x$ac_libnk2_have_libfmapi" = xyes],
+ [test "x$ac_libnk2_have_libuna" = xyes || test "x$ac_libnk2_have_libbfio" = xyes || test "x$ac_libnk2_have_libfdatetime" = xyes || test "x$ac_libnk2_have_libfguid" = xyes || test "x$ac_libnk2_have_libfvalue" = xyes || test "x$ac_libnk2_have_libfwnt" = xyes || test "x$ac_libnk2_have_libfmapi" = xyes],
  [AC_SUBST(
   [libnk2_spec_requires],
   [Requires:])
@@ -1109,6 +1173,7 @@ AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
+AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libfwnt/Makefile])
 AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
@@ -1140,6 +1205,7 @@ Building:
    libbfio support:                          $ac_libnk2_have_libbfio
    libfdatetime support:                     $ac_libnk2_have_libfdatetime
    libfguid support:                         $ac_libnk2_have_libfguid
+   libfvalue support:                        $ac_libnk2_have_libfvalue
    libfwnt support:                          $ac_libnk2_have_libfwnt
    libfmapi support:                         $ac_libnk2_have_libfmapi
 

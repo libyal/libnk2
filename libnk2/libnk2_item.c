@@ -26,6 +26,7 @@
 #include <liberror.h>
 
 #include "libnk2_definitions.h"
+#include "libnk2_io_handle.h"
 #include "libnk2_item.h"
 #include "libnk2_item_values.h"
 #include "libnk2_libfmapi.h"
@@ -37,6 +38,10 @@
  */
 int libnk2_item_initialize(
      libnk2_item_t **item,
+     libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libnk2_item_values_t *item_values,
+     uint8_t flags,
      liberror_error_t **error )
 {
 	libnk2_internal_item_t *internal_item = NULL;
@@ -50,6 +55,18 @@ int libnk2_item_initialize(
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid item.",
 		 function );
+
+		return( -1 );
+	}
+	if( ( flags & ~( LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) ) != 0 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported flags: 0x%02" PRIx8 ".",
+		 function,
+		 flags );
 
 		return( -1 );
 	}
@@ -86,13 +103,51 @@ int libnk2_item_initialize(
 
 			return( -1 );
 		}
+		if( ( flags & LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) == 0 )
+		{
+			internal_item->file_io_handle = file_io_handle;
+		}
+		else
+		{
+			if( libbfio_handle_clone(
+			     &( internal_item->file_io_handle ),
+			     file_io_handle,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+				 "%s: unable to copy file IO handle.",
+				 function );
+
+				return( -1 );
+			}
+			if( libbfio_handle_set_open_on_demand(
+			     internal_item->file_io_handle,
+			     1,
+			     error ) != 1 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+				 "%s: unable to set open on demand in file IO handle.",
+				 function );
+
+				return( -1 );
+			}
+		}
+		internal_item->io_handle   = io_handle;
+		internal_item->flags       = flags;
+		internal_item->item_values = item_values;
+
 		*item = (libnk2_item_t *) internal_item;
 	}
 	return( 1 );
 }
 
 /* Frees an item
- * Detaches the reference from the file if necessary
  * Return 1 if successful or -1 on error
  */
 int libnk2_item_free(
@@ -118,21 +173,39 @@ int libnk2_item_free(
 		internal_item = (libnk2_internal_item_t *) *item;
 		*item         = NULL;
 
-		/* The internal_file and item_values references
-		 * are freed elsewhere
+		/* The io_handle and item_values references are freed elsewhere
 		 */
-		if( libnk2_item_detach(
-		     internal_item,
-		     error ) != 1 )
+		if( ( internal_item->flags & LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) != 0 )
 		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_REMOVE_FAILED,
-			 "%s: unable to detach internal item.",
-			 function );
+			if( internal_item->file_io_handle != NULL )
+			{
+				if( libbfio_handle_close(
+				     internal_item->file_io_handle,
+				     error ) != 0 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_IO,
+					 LIBERROR_IO_ERROR_CLOSE_FAILED,
+					 "%s: unable to close file IO handle.",
+					 function );
 
-			return( -1 );
+					return( -1 );
+				}
+				if( libbfio_handle_free(
+				     &( internal_item->file_io_handle ),
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free file IO handle.",
+					 function );
+
+					return( -1 );
+				}
+			}
 		}
 		memory_free(
 		 internal_item );
@@ -140,155 +213,7 @@ int libnk2_item_free(
 	return( 1 );
 }
 
-/* Attaches the item to the file
- * Returns 1 if successful or -1 on error
- */
-int libnk2_item_attach(
-     libnk2_internal_item_t *internal_item,
-     libbfio_handle_t *file_io_handle,
-     libnk2_internal_file_t *internal_file,
-     libnk2_item_values_t *item_values,
-     uint8_t flags,
-     liberror_error_t **error )
-{
-	static char *function = "libnk2_item_attach";
-
-	if( internal_item == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid internal item.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_item->internal_file != NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid internal item - already attached to file.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( flags & ~( LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) ) != 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags: 0x%02" PRIx8 ".",
-		 function,
-		 flags );
-
-		return( -1 );
-	}
-	if( ( flags & LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) == 0 )
-	{
-		internal_item->file_io_handle = file_io_handle;
-	}
-	else
-	{
-		if( libbfio_handle_clone(
-		     &( internal_item->file_io_handle ),
-		     file_io_handle,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy file io handle.",
-			 function );
-
-			return( -1 );
-		}
-		if( libbfio_handle_set_open_on_demand(
-		     internal_item->file_io_handle,
-		     1,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to set open on demand in file io handle.",
-			 function );
-
-			return( -1 );
-		}
-	}
-	internal_item->internal_file = internal_file;
-	internal_item->flags         = flags;
-	internal_item->item_values   = item_values;
-
-	return( 1 );
-}
-
-/* Detaches the item from its file reference
- * Returns 1 if successful or -1 on error
- */
-int libnk2_item_detach(
-     libnk2_internal_item_t *internal_item,
-     liberror_error_t **error )
-{
-	static char *function = "libnk2_item_detach";
-
-	if( internal_item == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid internal item.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( internal_item->flags & LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) != 0 )
-	{
-		if( internal_item->file_io_handle != NULL )
-		{
-			if( libbfio_handle_close(
-			     internal_item->file_io_handle,
-			     error ) != 0 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_CLOSE_FAILED,
-				 "%s: unable to close file io handle.",
-				 function );
-
-				return( -1 );
-			}
-			if( libbfio_handle_free(
-			     &( internal_item->file_io_handle ),
-			     error ) != 1 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free file io handle.",
-				 function );
-
-				return( -1 );
-			}
-		}
-	}
-	internal_item->internal_file = NULL;
-	internal_item->flags         = 0;
-	internal_item->item_values   = NULL;
-
-	return( 1 );
-}
-
-/* Retrieves the number of entries of the referenced item
+/* Retrieves the number of entries
  * All sets in an item contain the same number of entries
  * Returns 1 if successful or -1 on error
  */
@@ -313,17 +238,6 @@ int libnk2_item_get_number_of_entries(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	if( libnk2_item_values_get_number_of_entries(
 	     internal_item->item_values,
 	     number_of_entries,
@@ -341,7 +255,7 @@ int libnk2_item_get_number_of_entries(
 	return( 1 );
 }
 
-/* Retrieves the entry and value type of a specific entry from the referenced item
+/* Retrieves the entry and value type of a specific entry
  * Returns 1 if successful or -1 on error
  */
 int libnk2_item_get_entry_type(
@@ -367,17 +281,6 @@ int libnk2_item_get_entry_type(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	if( libnk2_item_values_get_entry_type(
 	     internal_item->item_values,
 	     entry_index,
@@ -397,7 +300,7 @@ int libnk2_item_get_entry_type(
 	return( 1 );
 }
 
-/* Retrieves the value of a specific entry from the referenced item
+/* Retrieves the value of a specific entry
  *
  * When the LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE is set
  * the value type is ignored and set. The default behavior is a strict
@@ -432,17 +335,6 @@ int libnk2_item_get_entry_value(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -466,7 +358,7 @@ int libnk2_item_get_entry_value(
 	return( result );
 }
 
-/* Retrieves the boolean value of a specific entry from the referenced item
+/* Retrieves the boolean value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value_boolean(
@@ -495,17 +387,6 @@ int libnk2_item_get_entry_value_boolean(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -547,7 +428,7 @@ int libnk2_item_get_entry_value_boolean(
 	return( result );
 }
 
-/* Retrieves the 32-bit value of a specific entry from the referenced item
+/* Retrieves the 32-bit value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value_32bit(
@@ -576,17 +457,6 @@ int libnk2_item_get_entry_value_32bit(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -628,7 +498,7 @@ int libnk2_item_get_entry_value_32bit(
 	return( result );
 }
 
-/* Retrieves the 64-bit value of a specific entry from the referenced item
+/* Retrieves the 64-bit value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value_64bit(
@@ -657,17 +527,6 @@ int libnk2_item_get_entry_value_64bit(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -709,7 +568,7 @@ int libnk2_item_get_entry_value_64bit(
 	return( result );
 }
 
-/* Retrieves the 64-bit filetime value of a specific entry from the referenced item
+/* Retrieves the 64-bit filetime value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value_filetime(
@@ -738,17 +597,6 @@ int libnk2_item_get_entry_value_filetime(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -790,7 +638,7 @@ int libnk2_item_get_entry_value_filetime(
 	return( result );
 }
 
-/* Retrieves the size value of a specific entry from the referenced item
+/* Retrieves the size value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value_size(
@@ -819,17 +667,6 @@ int libnk2_item_get_entry_value_size(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -871,7 +708,7 @@ int libnk2_item_get_entry_value_size(
 	return( result );
 }
 
-/* Retrieves the UTF-8 string size of a specific entry from the referenced item
+/* Retrieves the UTF-8 string size of a specific entry
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
@@ -902,13 +739,13 @@ int libnk2_item_get_entry_value_utf8_string_size(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
+	if( internal_item->io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
+		 "%s: invalid item - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -954,7 +791,7 @@ int libnk2_item_get_entry_value_utf8_string_size(
 		     value_data,
 		     value_data_size,
 		     is_ascii_string,
-		     internal_item->internal_file->ascii_codepage,
+		     internal_item->io_handle->ascii_codepage,
 		     utf8_string_size,
 		     error ) != 1 )
 		{
@@ -971,7 +808,7 @@ int libnk2_item_get_entry_value_utf8_string_size(
 	return( result );
 }
 
-/* Retrieves the UTF-8 string value of a specific entry from the referenced item
+/* Retrieves the UTF-8 string value of a specific entry
  * The string is formatted in UTF-8
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The size should include the end of string character
@@ -1005,13 +842,13 @@ int libnk2_item_get_entry_value_utf8_string(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
+	if( internal_item->io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
+		 "%s: invalid item - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -1059,7 +896,7 @@ int libnk2_item_get_entry_value_utf8_string(
 		     value_data,
 		     value_data_size,
 		     is_ascii_string,
-		     internal_item->internal_file->ascii_codepage,
+		     internal_item->io_handle->ascii_codepage,
 		     utf8_string,
 		     utf8_string_size,
 		     error ) != 1 )
@@ -1077,7 +914,7 @@ int libnk2_item_get_entry_value_utf8_string(
 	return( result );
 }
 
-/* Retrieves the UTF-16 string size of a specific entry from the referenced item
+/* Retrieves the UTF-16 string size of a specific entry
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
@@ -1108,13 +945,13 @@ int libnk2_item_get_entry_value_utf16_string_size(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
+	if( internal_item->io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
+		 "%s: invalid item - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -1160,7 +997,7 @@ int libnk2_item_get_entry_value_utf16_string_size(
 		     value_data,
 		     value_data_size,
 		     is_ascii_string,
-		     internal_item->internal_file->ascii_codepage,
+		     internal_item->io_handle->ascii_codepage,
 		     utf16_string_size,
 		     error ) != 1 )
 		{
@@ -1177,7 +1014,7 @@ int libnk2_item_get_entry_value_utf16_string_size(
 	return( result );
 }
 
-/* Retrieves the UTF-16 string value of a specific entry from the referenced item
+/* Retrieves the UTF-16 string value of a specific entry
  * The string is formatted in UTF-16
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The size should include the end of string character
@@ -1211,13 +1048,13 @@ int libnk2_item_get_entry_value_utf16_string(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
+	if( internal_item->io_handle == NULL )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
+		 "%s: invalid item - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -1265,7 +1102,7 @@ int libnk2_item_get_entry_value_utf16_string(
 		     value_data,
 		     value_data_size,
 		     is_ascii_string,
-		     internal_item->internal_file->ascii_codepage,
+		     internal_item->io_handle->ascii_codepage,
 		     utf16_string,
 		     utf16_string_size,
 		     error ) != 1 )
@@ -1283,7 +1120,7 @@ int libnk2_item_get_entry_value_utf16_string(
 	return( result );
 }
 
-/* Retrieves the binary data size of a specific entry from the referenced item
+/* Retrieves the binary data size of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value_binary_data_size(
@@ -1312,17 +1149,6 @@ int libnk2_item_get_entry_value_binary_data_size(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -1364,7 +1190,7 @@ int libnk2_item_get_entry_value_binary_data_size(
 	return( result );
 }
 
-/* Retrieves the binary data value of a specific entry from the referenced item
+/* Retrieves the binary data value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value_binary_data(
@@ -1394,17 +1220,6 @@ int libnk2_item_get_entry_value_binary_data(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,
@@ -1447,7 +1262,7 @@ int libnk2_item_get_entry_value_binary_data(
 	return( result );
 }
 
-/* Retrieves the GUID value of a specific entry from the referenced item
+/* Retrieves the GUID value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value_guid(
@@ -1477,17 +1292,6 @@ int libnk2_item_get_entry_value_guid(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	if( internal_item->internal_file == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing internal file.",
-		 function );
-
-		return( -1 );
-	}
 	result = libnk2_item_values_get_entry_value(
 	          internal_item->item_values,
 	          entry_type,

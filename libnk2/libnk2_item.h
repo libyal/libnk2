@@ -28,7 +28,7 @@
 #include <liberror.h>
 
 #include "libnk2_extern.h"
-#include "libnk2_file.h"
+#include "libnk2_io_handle.h"
 #include "libnk2_item_values.h"
 #include "libnk2_libbfio.h"
 #include "libnk2_types.h"
@@ -37,8 +37,11 @@
 extern "C" {
 #endif
 
+#define LIBNK2_ITEM_FLAGS_DEFAULT			LIBNK2_ITEM_FLAG_NON_MANAGED_FILE_IO_HANDLE
+
 enum LIBNK2_ITEM_FLAGS
 {
+	LIBNK2_ITEM_FLAG_NON_MANAGED_FILE_IO_HANDLE	= 0x00,
 	LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE		= 0x01,
 };
 
@@ -46,13 +49,13 @@ typedef struct libnk2_internal_item libnk2_internal_item_t;
 
 struct libnk2_internal_item
 {
+	/* The IO handle
+	 */
+	libnk2_io_handle_t *io_handle;
+
 	/* The file IO handle
 	 */
 	libbfio_handle_t *file_io_handle;
-
-	/* The internal file
-	 */
-	libnk2_internal_file_t *internal_file;
 
 	/* The item values
 	 */
@@ -65,23 +68,15 @@ struct libnk2_internal_item
 
 int libnk2_item_initialize(
      libnk2_item_t **item,
+     libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libnk2_item_values_t *item_values,
+     uint8_t flags,
      liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_item_free(
                    libnk2_item_t **item,
                    liberror_error_t **error );
-
-int libnk2_item_attach(
-     libnk2_internal_item_t *internal_item,
-     libbfio_handle_t *file_io_handle,
-     libnk2_internal_file_t *internal_file,
-     libnk2_item_values_t *item_values,
-     uint8_t flags,
-     liberror_error_t **error );
-
-int libnk2_item_detach(
-     libnk2_internal_item_t *internal_item,
-     liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_item_get_number_of_entries(
                    libnk2_item_t *item,

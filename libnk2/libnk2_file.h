@@ -49,11 +49,11 @@ typedef struct libnk2_internal_file libnk2_internal_file_t;
 
 struct libnk2_internal_file
 {
-	/* The item array
+	/* The items array
 	 */
-	libnk2_array_t *item_array;
+	libnk2_array_t *items;
 
-	/* The io handle
+	/* The IO handle
 	 */
 	libnk2_io_handle_t *io_handle;
 
@@ -61,17 +61,9 @@ struct libnk2_internal_file
 	 */
 	libbfio_handle_t *file_io_handle;
 
-	/* Value to indicate if the file io handle was created inside the library
+	/* Value to indicate if the file IO handle was created inside the library
 	 */
 	uint8_t file_io_handle_created_in_library;
-
-	/* The codepage of the extended ASCII strings
-	 */
-	int ascii_codepage;
-
-	/* Value to indicate if abort was signalled
-	 */
-	int abort;
 };
 
 LIBNK2_EXTERN int libnk2_file_initialize(

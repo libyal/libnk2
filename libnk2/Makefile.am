@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
+	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@LIBFMAPI_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@
@@ -29,6 +30,7 @@ libnk2_la_SOURCES = \
 	libnk2_legacy.c libnk2_legacy.h \
 	libnk2_libbfio.h \
 	libnk2_libfmapi.h \
+	libnk2_libfvalue.h \
 	libnk2_libuna.h \
 	libnk2_mapi.h \
 	libnk2_notify.c libnk2_notify.h \
@@ -46,6 +48,7 @@ libnk2_la_LIBADD = \
 	@LIBBFIO_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
+	@LIBFVALUE_LIBADD@ \
 	@LIBFWNT_LIBADD@ \
 	@LIBFMAPI_LIBADD@
 

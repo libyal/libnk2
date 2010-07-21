@@ -28,6 +28,7 @@
 #include <libnotify.h>
 
 #include "libnk2_array_type.h"
+#include "libnk2_codepage.h"
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_item_values.h"
@@ -37,7 +38,7 @@
 
 const uint8_t nk2_file_signature[ 4 ] = { 0x0d, 0xf0, 0xad, 0xba };
 
-/* Initialize an io handle
+/* Initialize an IO handle
  * Make sure the value io_handle is pointing to is set to NULL
  * Returns 1 if successful or -1 on error
  */
@@ -53,7 +54,7 @@ int libnk2_io_handle_initialize(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid io handle.",
+		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -69,7 +70,7 @@ int libnk2_io_handle_initialize(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_MEMORY,
 			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create io handle.",
+			 "%s: unable to create IO handle.",
 			 function );
 
 			return( -1 );
@@ -93,11 +94,12 @@ int libnk2_io_handle_initialize(
 
 			return( -1 );
 		}
+		( *io_handle )->ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1252;
 	}
 	return( 1 );
 }
 
-/* Frees an exisisting io handle
+/* Frees an exisisting IO handle
  * Returns 1 if successful or -1 on error
  */
 int libnk2_io_handle_free(
@@ -112,7 +114,7 @@ int libnk2_io_handle_free(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid io handle.",
+		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -141,7 +143,7 @@ int libnk2_io_handle_read_file_header(
 	static char *function = "libnk2_io_handle_read_file_header";
 	ssize_t read_count    = 0;
 
-#if defined( HAVE_VERBOSE_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT )
 	uint32_t value_32bit  = 0;
 #endif
 
@@ -151,7 +153,7 @@ int libnk2_io_handle_read_file_header(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid io handle.",
+		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -171,11 +173,10 @@ int libnk2_io_handle_read_file_header(
 	if( libnotify_verbose != 0 )
 	{
 		libnotify_printf(
-		 "%s: reading file header at offset: %0 (0x00000000)\n",
+		 "%s: reading file header at offset: 0 (0x00000000)\n",
 		 function );
 	}
 #endif
-
 	if( libbfio_handle_seek_offset(
 	     file_io_handle,
 	     0,
@@ -186,9 +187,8 @@ int libnk2_io_handle_read_file_header(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek file header offset: %" PRIu64 ".",
-		 function,
-		 0 );
+		 "%s: unable to seek file header offset: 0.",
+		 function );
 
 		return( -1 );
 	}
@@ -239,7 +239,7 @@ int libnk2_io_handle_read_file_header(
 	 file_header.number_of_items,
 	 *number_of_items );
 
-#if defined( HAVE_VERBOSE_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
@@ -275,7 +275,6 @@ int libnk2_io_handle_read_file_header(
 		 "\n" );
 	}
 #endif
-
 	return( 1 );
 }
 
@@ -304,7 +303,7 @@ int libnk2_io_handle_read_items(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid io handle.",
+		 "%s: invalid IO handle.",
 		 function );
 
 		return( -1 );
@@ -349,7 +348,7 @@ int libnk2_io_handle_read_items(
 		{
 			break;
 		}
-#if defined( HAVE_VERBOSE_OUTPUT )
+#if defined( HAVE_DEBUG_OUTPUT )
 		if( libnotify_verbose != 0 )
 		{
 			libnotify_printf(
@@ -359,7 +358,6 @@ int libnk2_io_handle_read_items(
 			 number_of_item_values );
 		}
 #endif
-
 		if( libnk2_item_values_initialize(
 		     &item_values,
 		     number_of_item_values,
