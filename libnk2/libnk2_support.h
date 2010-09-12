@@ -37,6 +37,9 @@ extern "C" {
 LIBNK2_EXTERN const char *libnk2_get_version(
                            void );
 
+LIBNK2_EXTERN int libnk2_get_access_flags_read(
+                   void );
+
 LIBNK2_EXTERN int libnk2_check_file_signature(
                    const char *filename,
                    liberror_error_t **error );

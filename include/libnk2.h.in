@@ -49,6 +49,11 @@ extern "C" {
 LIBNK2_EXTERN const char *libnk2_get_version(
                            void );
 
+/* Returns the access flags for reading
+ */
+LIBNK2_EXTERN int libnk2_get_access_flags_read(
+                   void );
+
 /* Determines if a file is a Nickfile (check for the NK2 file signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
@@ -175,7 +180,7 @@ LIBNK2_EXTERN int libnk2_file_signal_abort(
 LIBNK2_EXTERN int libnk2_file_open(
                    libnk2_file_t *file,
                    const char *filename,
-                   int flags,
+                   int access_flags,
                    libnk2_error_t **error );
 
 #if defined( LIBNK2_HAVE_WIDE_CHARACTER_TYPE )
@@ -185,7 +190,7 @@ LIBNK2_EXTERN int libnk2_file_open(
 LIBNK2_EXTERN int libnk2_file_open_wide(
                    libnk2_file_t *file,
                    const wchar_t *filename,
-                   int flags,
+                   int access_flags,
                    libnk2_error_t **error );
 #endif
 
@@ -196,7 +201,7 @@ LIBNK2_EXTERN int libnk2_file_open_wide(
 LIBNK2_EXTERN int libnk2_file_open_file_io_handle(
                    libnk2_file_t *file,
                    libbfio_handle_t *file_io_handle,
-                   int flags,
+                   int access_flags,
                    libnk2_error_t **error );
 #endif
 
@@ -260,7 +265,7 @@ LIBNK2_EXTERN int libnk2_file_get_amount_of_items(
  * ------------------------------------------------------------------------- */
 
 /* Frees an item
- * Return 1 if successful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBNK2_EXTERN int libnk2_item_free(
                    libnk2_item_t **item,

@@ -1,5 +1,5 @@
 TODO:
-* update msvscpp files
+* check msvscpp build
 
 Optimizations:
 * map (file offset and size) items and item values first read on demand ?
@@ -32,6 +32,17 @@ Beta release
 * remove deprecated definition in include/libnk2/mapi.h
 * update man pages
 * add documentation
+
+20100912
+* updated configure
+* updated libcstring, libsystem, libuna, libbfio, libfdatetime, libfguid,
+  libfmapi, libfvalue, libfwnt
+* updated array type
+* code clean up
+* changes for libfvalue update
+* updated msvscpp files
+* corrected help output of nk2export
+* updated manuals
 
 20100721
 * updated include/codepage.h

@@ -160,7 +160,7 @@ int libnk2_item_initialize(
 }
 
 /* Frees an item
- * Return 1 if successful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libnk2_item_free(
      libnk2_item_t **item,
@@ -457,7 +457,7 @@ int libnk2_item_get_entry_value(
 
 		return( -1 );
 	}
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 
 	if( ( flags & LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE ) == 0 )
 	{
@@ -467,7 +467,7 @@ int libnk2_item_get_entry_value(
 	}
 	else
 	{
-		value_identifier.value_type = *value_type;
+		value_identifier.value_type = (uint16_t) *value_type;
 		value_identifier_size       = sizeof( libnk2_value_identifier_t );
 	}
 	result = libfvalue_table_get_value_by_identifier(
@@ -543,7 +543,7 @@ int libnk2_item_get_entry_value_boolean(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = LIBNK2_VALUE_TYPE_BOOLEAN;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -571,6 +571,7 @@ int libnk2_item_get_entry_value_boolean(
 	{
 		if( libfvalue_value_copy_to_boolean(
 		     value,
+		     0,
 		     value_boolean,
 		     error ) != 1 )
 		{
@@ -618,7 +619,7 @@ int libnk2_item_get_entry_value_32bit(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -646,6 +647,7 @@ int libnk2_item_get_entry_value_32bit(
 	{
 		if( libfvalue_value_copy_to_32bit(
 		     value,
+		     0,
 		     value_32bit,
 		     error ) != 1 )
 		{
@@ -693,7 +695,7 @@ int libnk2_item_get_entry_value_64bit(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -721,6 +723,7 @@ int libnk2_item_get_entry_value_64bit(
 	{
 		if( libfvalue_value_copy_to_64bit(
 		     value,
+		     0,
 		     value_64bit,
 		     error ) != 1 )
 		{
@@ -770,7 +773,7 @@ int libnk2_item_get_entry_value_size(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = 0;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -835,10 +838,35 @@ int libnk2_item_get_entry_value_size(
 
 			return( -1 );
 		}
-		if( libfvalue_value_copy_to_size(
-		     value,
-		     value_size,
-		     error ) != 1 )
+		if( ( sizeof( size_t ) != 8 )
+		 && ( sizeof( size_t ) != 4 ) )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupported size of size_t.",
+			 function );
+
+			return( -1 );
+		}
+		if( sizeof( size_t ) == 8 )
+		{
+			result = libfvalue_value_copy_to_64bit(
+			          value,
+			          0,
+			          (uint64_t *) value_size,
+			          error );
+		}
+		else
+		{
+			result = libfvalue_value_copy_to_32bit(
+			          value,
+			          0,
+			          (uint32_t *) value_size,
+			          error );
+		}
+		if( result != 1 )
 		{
 			liberror_error_set(
 			 error,
@@ -899,7 +927,7 @@ int libnk2_item_get_entry_value_utf8_string_size(
 
 		return( -1 );
 	}
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = 0;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -966,6 +994,7 @@ int libnk2_item_get_entry_value_utf8_string_size(
 		}
 		if( libfvalue_value_get_utf8_string_size(
 		     value,
+		     0,
 		     utf8_string_size,
 		     error ) != 1 )
 		{
@@ -1029,7 +1058,7 @@ int libnk2_item_get_entry_value_utf8_string(
 
 		return( -1 );
 	}
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = 0;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -1096,6 +1125,7 @@ int libnk2_item_get_entry_value_utf8_string(
 		}
 		if( libfvalue_value_copy_to_utf8_string(
 		     value,
+		     0,
 		     utf8_string,
 		     utf8_string_size,
 		     error ) != 1 )
@@ -1159,7 +1189,7 @@ int libnk2_item_get_entry_value_utf16_string_size(
 
 		return( -1 );
 	}
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = 0;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -1226,6 +1256,7 @@ int libnk2_item_get_entry_value_utf16_string_size(
 		}
 		if( libfvalue_value_get_utf16_string_size(
 		     value,
+		     0,
 		     utf16_string_size,
 		     error ) != 1 )
 		{
@@ -1289,7 +1320,7 @@ int libnk2_item_get_entry_value_utf16_string(
 
 		return( -1 );
 	}
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = 0;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -1356,6 +1387,7 @@ int libnk2_item_get_entry_value_utf16_string(
 		}
 		if( libfvalue_value_copy_to_utf16_string(
 		     value,
+		     0,
 		     utf16_string,
 		     utf16_string_size,
 		     error ) != 1 )
@@ -1406,7 +1438,7 @@ int libnk2_item_get_entry_value_binary_data_size(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = LIBNK2_VALUE_TYPE_BINARY_DATA;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -1484,7 +1516,7 @@ int libnk2_item_get_entry_value_binary_data(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = LIBNK2_VALUE_TYPE_BINARY_DATA;
 
 	result = libfvalue_table_get_value_by_identifier(
@@ -1561,7 +1593,7 @@ int libnk2_item_get_entry_value_guid(
 	}
 	internal_item = (libnk2_internal_item_t *) item;
 
-	value_identifier.entry_type = entry_type;
+	value_identifier.entry_type = (uint16_t) entry_type;
 	value_identifier.value_type = LIBNK2_VALUE_TYPE_GUID;
 
 	result = libfvalue_table_get_value_by_identifier(

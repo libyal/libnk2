@@ -159,7 +159,24 @@ int libnk2_file_free(
 	if( *file != NULL )
 	{
 		internal_file = (libnk2_internal_file_t *) *file;
-		*file         = NULL;
+
+		if( internal_file->file_io_handle != NULL )
+		{
+			if( libnk2_file_close(
+			     *file,
+			     error ) != 0 )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_IO,
+				 LIBERROR_IO_ERROR_CLOSE_FAILED,
+				 "%s: unable to close file.",
+				 function );
+
+				result = -1;
+			}
+		}
+		*file = NULL;
 
 		if( libnk2_array_free(
 		     &( internal_file->items ),
@@ -239,7 +256,7 @@ int libnk2_file_signal_abort(
 int libnk2_file_open(
      libnk2_file_t *file,
      const char *filename,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle      = NULL;
@@ -270,19 +287,19 @@ int libnk2_file_open(
 
 		return( -1 );
 	}
-	if( ( ( flags & LIBNK2_FLAG_READ ) != LIBNK2_FLAG_READ )
-	 && ( ( flags & LIBNK2_FLAG_WRITE ) != LIBNK2_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBNK2_ACCESS_FLAG_READ ) == 0 )
+	 && ( ( access_flags & LIBNK2_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
+		 "%s: unsupported access flags.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( flags & LIBNK2_FLAG_WRITE ) == LIBNK2_FLAG_WRITE )
+	if( ( access_flags & LIBNK2_ACCESS_FLAG_WRITE ) != 0 )
 	{
 		liberror_error_set(
 		 error,
@@ -349,7 +366,7 @@ int libnk2_file_open(
 	if( libnk2_file_open_file_io_handle(
 	     file,
 	     file_io_handle,
-	     flags,
+	     access_flags,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -379,7 +396,7 @@ int libnk2_file_open(
 int libnk2_file_open_wide(
      libnk2_file_t *file,
      const wchar_t *filename,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle      = NULL;
@@ -410,19 +427,19 @@ int libnk2_file_open_wide(
 
 		return( -1 );
 	}
-	if( ( ( flags & LIBNK2_FLAG_READ ) != LIBNK2_FLAG_READ )
-	 && ( ( flags & LIBNK2_FLAG_WRITE ) != LIBNK2_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBNK2_ACCESS_FLAG_READ ) == 0 )
+	 && ( ( access_flags & LIBNK2_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
+		 "%s: unsupported access flags.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( flags & LIBNK2_FLAG_WRITE ) == LIBNK2_FLAG_WRITE )
+	if( ( access_flags & LIBNK2_ACCESS_FLAG_WRITE ) != 0 )
 	{
 		liberror_error_set(
 		 error,
@@ -489,7 +506,7 @@ int libnk2_file_open_wide(
 	if( libnk2_file_open_file_io_handle(
 	     file,
 	     file_io_handle,
-	     flags,
+	     access_flags,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -519,12 +536,12 @@ int libnk2_file_open_wide(
 int libnk2_file_open_file_io_handle(
      libnk2_file_t *file,
      libbfio_handle_t *file_io_handle,
-     int flags,
+     int access_flags,
      liberror_error_t **error )
 {
 	libnk2_internal_file_t *internal_file = NULL;
 	static char *function                 = "libnk2_file_open_file_io_handle";
-	int file_io_flags                     = 0;
+	int bfio_access_flags                 = 0;
 	int file_io_handle_is_open            = 0;
 
 	if( file == NULL )
@@ -562,19 +579,19 @@ int libnk2_file_open_file_io_handle(
 
 		return( -1 );
 	}
-	if( ( ( flags & LIBNK2_FLAG_READ ) != LIBNK2_FLAG_READ )
-	 && ( ( flags & LIBNK2_FLAG_WRITE ) != LIBNK2_FLAG_WRITE ) )
+	if( ( ( access_flags & LIBNK2_ACCESS_FLAG_READ ) == 0 )
+	 && ( ( access_flags & LIBNK2_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags.",
+		 "%s: unsupported access flags.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( flags & LIBNK2_FLAG_WRITE ) == LIBNK2_FLAG_WRITE )
+	if( ( access_flags & LIBNK2_ACCESS_FLAG_WRITE ) != 0 )
 	{
 		liberror_error_set(
 		 error,
@@ -585,9 +602,9 @@ int libnk2_file_open_file_io_handle(
 
 		return( -1 );
 	}
-	if( ( flags & LIBNK2_FLAG_READ ) == LIBNK2_FLAG_READ )
+	if( ( access_flags & LIBNK2_ACCESS_FLAG_READ ) != 0 )
 	{
-		file_io_flags = LIBBFIO_FLAG_READ;
+		bfio_access_flags = LIBBFIO_FLAG_READ;
 	}
 	internal_file->file_io_handle = file_io_handle;
 
@@ -610,7 +627,7 @@ int libnk2_file_open_file_io_handle(
 	{
 		if( libbfio_handle_open(
 		     internal_file->file_io_handle,
-		     flags,
+		     bfio_access_flags,
 		     error ) != 1 )
 		{
 			liberror_error_set(

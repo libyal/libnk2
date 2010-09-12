@@ -111,6 +111,27 @@ void nk2output_version_fprint(
 	}
         fprintf(
 	 stream,
+	 "%s %s\n\n",
+         program,
+	 LIBNK2_VERSION_STRING );
+}
+
+/* Prints the detailed version information
+ */
+void nk2output_version_detailed_fprint(
+      FILE *stream,
+      const char *program )
+{
+	if( stream == NULL )
+	{
+		return;
+	}
+	if( program == NULL )
+	{
+		return;
+	}
+        fprintf(
+	 stream,
 	 "%s %s (libnk2 %s",
          program,
 	 LIBNK2_VERSION_STRING,

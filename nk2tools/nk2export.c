@@ -63,7 +63,7 @@ void usage_fprint(
 	}
 	fprintf( stream, "Use nk2export to export items stored in a Nickfile (NK2).\n\n" );
 
-	fprintf( stream, "Usage: nk2export [ -c codepage ] [ -l logfile ] [ -t target ] [ -hvV ]"
+	fprintf( stream, "Usage: nk2export [ -c codepage ] [ -l logfile ] [ -t target ] [ -hvV ]\n"
 	                 "                 source\n\n" );
 
 	fprintf( stream, "\tsource: the source file\n\n" );
@@ -111,6 +111,7 @@ int main( int argc, char * const argv[] )
 	 1 );
 
         if( libsystem_initialize(
+             "nk2tools",
              &error ) != 1 )
 	{
 		fprintf(
@@ -247,7 +248,7 @@ int main( int argc, char * const argv[] )
 		source_length = libcstring_system_string_length(
 		                 source );
 
-		path_separator = libcstring_system_string_search_reverse(
+		path_separator = libcstring_system_string_search_character_reverse(
 		                  source,
 		                  (libcstring_system_character_t) LIBSYSTEM_PATH_SEPARATOR,
 		                  source_length );
@@ -492,7 +493,7 @@ int main( int argc, char * const argv[] )
 	}
 	fprintf(
 	 stdout,
-	 "Exporting items.\n" );
+	 "Exporting aliases.\n" );
 
 	result = export_handle_export_file(
 	          export_handle,
@@ -639,7 +640,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stdout,
-		 "No items to export.\n" );
+		 "No aliases to export.\n" );
 	}
 	else
 	{

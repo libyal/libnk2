@@ -20,14 +20,14 @@ SUBDIRS = \
 	macosx \
 	msvscpp
 
-REDHAT_FILES = \
+SPEC_FILES = \
 	libnk2.spec \
 	libnk2.spec.in
 
 EXTRA_DIST = \
-        $(REDHAT_FILES) \
+	README.mingw \
 	libnk2.pc.in \
-	README_mingw
+        $(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

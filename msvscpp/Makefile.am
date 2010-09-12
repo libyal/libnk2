@@ -4,8 +4,9 @@ EXTRA_DIST = \
 	liberror/liberror.vcproj \
 	libfdatetime/libfdatetime.vcproj \
 	libfguid/libfguid.vcproj \
-	libfwnt/libfwnt.vcproj \
 	libfmapi/libfmapi.vcproj \
+	libfvalue/libfvalue.vcproj \
+	libfwnt/libfwnt.vcproj \
 	libnk2_dll/libnk2_dll.vcproj \
 	libnotify/libnotify.vcproj \
 	libsystem/libsystem.vcproj \

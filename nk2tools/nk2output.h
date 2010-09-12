@@ -38,6 +38,10 @@ void nk2output_version_fprint(
       FILE *stream,
       const char *program );
 
+void nk2output_version_detailed_fprint(
+      FILE *stream,
+      const char *program );
+
 #if defined( __cplusplus )
 }
 #endif

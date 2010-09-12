@@ -182,7 +182,7 @@ int export_handle_free(
 }
 
 /* Create a directory
- * Return 1 if successful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int export_handle_make_directory(
      export_handle_t *export_handle,
@@ -236,7 +236,7 @@ int export_handle_make_directory(
 }
 
 /* Sanitizes the filename
- * Return 1 if successful or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int export_handle_sanitize_filename(
      export_handle_t *export_handle,

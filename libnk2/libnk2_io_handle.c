@@ -622,7 +622,7 @@ int libnk2_io_handle_read_item_values(
 				break;
 
 			case LIBNK2_VALUE_TYPE_STRING_ASCII:
-				value_type      = LIBFVALUE_VALUE_TYPE_STRING_ASCII;
+				value_type      = LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM;
 				value_data_size = 0;
 				break;
 
@@ -693,8 +693,6 @@ int libnk2_io_handle_read_item_values(
 #endif
 		if( libfvalue_value_initialize(
 		     &value,
-		     (uint8_t *) &value_identifier,
-		     sizeof( libnk2_value_identifier_t ),
 		     value_type,
 		     LIBFVALUE_VALUE_FLAG_IDENTIFIER_MANAGED | LIBFVALUE_VALUE_FLAG_DATA_MANAGED,
 		     error ) != 1 )
@@ -708,6 +706,30 @@ int libnk2_io_handle_read_item_values(
 			 value_identifier.entry_type,
 			 value_identifier.value_type );
 
+			libfvalue_table_empty(
+			 values_table,
+			 NULL );
+
+			return( -1 );
+		}
+		if( libfvalue_value_set_identifier(
+		     value,
+		     (uint8_t *) &value_identifier,
+		     sizeof( libnk2_value_identifier_t ),
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set identifier in value: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
+			 function,
+			 value_identifier.entry_type,
+			 value_identifier.value_type );
+
+			libfvalue_value_free(
+			 (intptr_t *) value,
+			 NULL );
 			libfvalue_table_empty(
 			 values_table,
 			 NULL );
@@ -855,6 +877,7 @@ int libnk2_io_handle_read_item_values(
 
 			if( libfvalue_value_copy_from_16bit(
 			     value,
+			     0,
 			     value_boolean,
 			     error ) != 1 )
 			{

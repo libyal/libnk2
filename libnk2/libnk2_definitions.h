@@ -37,28 +37,35 @@
  * for local use of libnk2
  */
 #else
-#define LIBNK2_VERSION					20100721
+#define LIBNK2_VERSION					20100912
 
-/* The libnk2 version string
+/* The version string
  */
-#define LIBNK2_VERSION_STRING				"20100721"
+#define LIBNK2_VERSION_STRING				"20100912"
 
-/* The libnk2 file access
+/* The access flags definitions
  * bit 1        set to 1 for read access
  * bit 2        set to 1 for write access
  * bit 3-8      not used
  */
-#define LIBNK2_FLAG_READ				0x01
+enum LIBNK2_ACCESS_FLAGS
+{
+	LIBNK2_ACCESS_FLAG_READ				= 0x01,
 /* Reserved: not supported yet */
-#define LIBNK2_FLAG_WRITE				0x02
+	LIBNK2_ACCESS_FLAG_WRITE			= 0x02
+};
 
-/* The libnk2 file access macros
+/* The file access macros
  */
-#define LIBNK2_OPEN_READ				( LIBNK2_FLAG_READ )
+#define LIBNK2_OPEN_READ				( LIBNK2_ACCESS_FLAG_READ )
 /* Reserved: not supported yet */
-#define LIBNK2_OPEN_WRITE				( LIBNK2_FLAG_WRITE )
+#define LIBNK2_OPEN_WRITE				( LIBNK2_ACCESS_FLAG_WRITE )
 /* Reserved: not supported yet */
-#define LIBNK2_OPEN_READ_WRITE				( LIBNK2_FLAG_READ | LIBNK2_FLAG_WRITE )
+#define LIBNK2_OPEN_READ_WRITE				( LIBNK2_ACCESS_FLAG_READ | LIBNK2_ACCESS_FLAG_WRITE )
+
+/* TODO deprecated remove after a while */
+#define LIBNK2_FLAG_READ				LIBNK2_ACCESS_FLAG_READ
+#define LIBNK2_FLAG_WRITE				LIBNK2_ACCESS_FLAG_WRITE
 
 /* The entry value flags
  */

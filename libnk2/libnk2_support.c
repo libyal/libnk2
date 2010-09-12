@@ -39,6 +39,14 @@ const char *libnk2_get_version(
 	return( (const char *) LIBNK2_VERSION_STRING );
 }
 
+/* Returns the access flags for reading
+ */
+int libnk2_get_access_flags_read(
+     void )
+{
+	return( (int) LIBNK2_ACCESS_FLAG_READ );
+}
+
 /* Determines if a file is a PPF file (check for the NK2 file signature)
  * Returns 1 if true, 0 if not or -1 on error
  */

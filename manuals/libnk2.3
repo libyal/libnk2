@@ -1,4 +1,4 @@
-.Dd June 27, 2010
+.Dd September 12, 2010
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
@@ -12,6 +12,8 @@
 Support functions
 .Ft const char *
 .Fn libnk2_get_version "void"
+.Ft int
+.Fn libnk2_get_access_flags_read
 .Ft int
 .Fn libnk2_check_file_signature "const char *filename, libnk2_error_t **error"
 .Pp
@@ -51,7 +53,7 @@ File functions
 .Ft int
 .Fn libnk2_file_free "libnk2_file_t **file, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_open "libnk2_file_t *file, const char *filename, int flags, libnk2_error_t **error"
+.Fn libnk2_file_open "libnk2_file_t *file, const char *filename, int access_flags, libnk2_error_t **error"
 .Ft int
 .Fn libnk2_file_close "libnk2_file_t *file, libnk2_error_t **error"
 .Ft int
@@ -65,11 +67,11 @@ File functions
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libnk2_file_open_wide "libnk2_file_t *file, const wchar_t *filename, int flags, libnk2_error_t **error"
+.Fn libnk2_file_open_wide "libnk2_file_t *file, const wchar_t *filename, int access_flags, libnk2_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libnk2_file_open_file_io_handle "libnk2_file_t *file, libbfio_handle_t *file_io_handle, int flags, libnk2_error_t **error"
+.Fn libnk2_file_open_file_io_handle "libnk2_file_t *file, libbfio_handle_t *file_io_handle, int access_flags, libnk2_error_t **error"
 .PP
 Item functions
 .Ft int
@@ -125,7 +127,9 @@ libnk2 allows to be compiled with wide character support.
 To compile libnk2 with wide character support use
 .Ar ./configure --enable-wide-character-type=yes
 or pass the definition
-.Ar HAVE_WIDE_CHARACTER_TYPE
+.Ar UNICODE
+ or
+.Ar _UNICODE
  to the compiler (i.e. in case of Microsoft Visual Studio (MSVS) C++).
 
 To have other code to determine if libnk2 was compiled with wide character support it defines
