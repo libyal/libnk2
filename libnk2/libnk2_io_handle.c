@@ -227,7 +227,6 @@ int libnk2_io_handle_read_file_header(
 		 sizeof( nk2_file_header_t ) );
 	}
 #endif
-
 	if( memory_compare(
 	     file_header.signature,
 	     nk2_file_signature,
@@ -342,8 +341,9 @@ int libnk2_io_handle_read_items(
 			 error,
 			 LIBERROR_ERROR_DOMAIN_IO,
 			 LIBERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read number of item values data.",
-			 function );
+			 "%s: unable to read item: %" PRIu32 " number of item values data.",
+			 function,
+			 item_iterator );
 
 			return( -1 );
 		}

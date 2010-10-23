@@ -37,11 +37,11 @@
  * for local use of libnk2
  */
 #else
-#define LIBNK2_VERSION					20100912
+#define LIBNK2_VERSION					20101023
 
 /* The version string
  */
-#define LIBNK2_VERSION_STRING				"20100912"
+#define LIBNK2_VERSION_STRING				"20101023"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access

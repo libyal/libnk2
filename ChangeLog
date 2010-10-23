@@ -1,5 +1,7 @@
 TODO:
-* check msvscpp build
+* add API function to retrieve last modification date/time
+* value_identifier initialize and free functions
+* in io_handle_read_items used set array value instead of append ?
 
 Optimizations:
 * map (file offset and size) items and item values first read on demand ?
@@ -11,6 +13,7 @@ library
 * what about multiple alias entries 0x6001 of a single item?
   - they are set in values table but identifier lookup will return first only
 * local library support
+* implement an alternative solution for sizeof( size_t ) == 8 ?
 
 Tools
 * add signal handling
@@ -20,9 +23,7 @@ Tools
   - export to CSV/TSV, HTML, XML
 * nk2info
   - create info handle ?
-
-Deployment:
-* create debian package files
+  - print last modification date/time
 
 Test:
 * add autoconf/make test suite
@@ -32,6 +33,10 @@ Beta release
 * remove deprecated definition in include/libnk2/mapi.h
 * update man pages
 * add documentation
+
+20101023
+* updated include/error.h
+* updated common, liberror, libnotify, libsystem, libbfio, libfmapi, libfvalue
 
 20100912
 * updated configure

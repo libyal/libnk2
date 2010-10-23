@@ -20,14 +20,12 @@
  */
 
 #include <common.h>
-#include <memory.h>
 #include <types.h>
 
 #include <liberror.h>
 #include <libnotify.h>
 
 #include "libnk2_debug.h"
-#include "libnk2_definitions.h"
 #include "libnk2_libbfio.h"
 #include "libnk2_libfmapi.h"
 
