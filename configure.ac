@@ -792,7 +792,7 @@ AM_CONDITIONAL(
  [HAVE_LOCAL_LIBFGUID],
  [test "x$ac_libnk2_have_libfguid" = xlocal])
 
-dnl Check for enabling libfvalue for file GUID/UUID support
+dnl Check for enabling libfvalue for file values support
 AC_CHECK_HEADERS(
  [libfvalue.h],
  [],
