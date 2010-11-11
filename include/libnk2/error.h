@@ -292,7 +292,11 @@ enum LIBNK2_RUNTIME_ERROR
  */
 enum LIBNK2_OUTPUT_ERROR
 {
-	LIBNK2_OUTPUT_ERROR_GENERIC			= 0
+	LIBNK2_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBNK2_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
 };
 
 #endif

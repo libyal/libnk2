@@ -38,11 +38,11 @@ struct nk2_file_footer
 	 */
 	uint8_t unknown1[ 4 ];
 
-	/* Unknown date and time
+	/* Last written/modification date and time
 	 * Consists of 8 bytes
 	 * Contains a filetime
 	 */
-	uint8_t unknown_time[ 8 ];
+	uint8_t modification_time[ 8 ];
 };
 
 #if defined( __cplusplus )

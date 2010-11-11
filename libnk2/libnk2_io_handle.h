@@ -82,6 +82,7 @@ int libnk2_io_handle_read_item_values(
 int libnk2_io_handle_read_file_footer(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
+     uint64_t *modification_time,
      liberror_error_t **error );
 
 #if defined( __cplusplus )

@@ -45,6 +45,7 @@ nk2info_LDADD = \
 	../libnk2/libnk2.la \
 	../libsystem/libsystem.la \
 	@LIBUNA_LIBADD@ \
+	@LIBFDATETIME_LIBADD@ \
 	@MEMWATCH_LIBADD@
 
 MAINTAINERCLEANFILES = \

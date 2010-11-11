@@ -1,4 +1,4 @@
-.Dd September 12, 2010
+.Dd November 11, 2010
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
@@ -60,6 +60,8 @@ File functions
 .Fn libnk2_file_get_ascii_codepage "libnk2_file_t *file, int *ascii_codepage, libnk2_error_t **error"
 .Ft int
 .Fn libnk2_file_set_ascii_codepage "libnk2_file_t *file, int ascii_codepage, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_file_get_modification_time "libnk2_file_t *file, uint64_t *modification_time, libnk2_error_t **error"
 .Ft int
 .Fn libnk2_file_get_number_of_items "libnk2_file_t *file, int *number_of_items, libnk2_error_t **error"
 .Ft int

@@ -981,6 +981,7 @@ int libnk2_io_handle_read_item_values(
 int libnk2_io_handle_read_file_footer(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
+     uint64_t *modification_time,
      liberror_error_t **error )
 {
 	nk2_file_footer_t file_footer;
@@ -1003,6 +1004,17 @@ int libnk2_io_handle_read_file_footer(
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( modification_time == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid modification time.",
 		 function );
 
 		return( -1 );
@@ -1035,6 +1047,10 @@ int libnk2_io_handle_read_file_footer(
 		 sizeof( nk2_file_footer_t ) );
 	}
 #endif
+	byte_stream_copy_to_uint64_little_endian(
+	 file_footer.modification_time,
+	 *modification_time );
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
 	{
@@ -1061,7 +1077,7 @@ int libnk2_io_handle_read_file_footer(
 
 		if( libfdatetime_filetime_copy_from_byte_stream(
 		     filetime,
-		     file_footer.unknown_time,
+		     file_footer.modification_time,
 		     8,
 		     LIBFDATETIME_ENDIAN_LITTLE,
 		     error ) != 1 )
@@ -1112,7 +1128,7 @@ int libnk2_io_handle_read_file_footer(
 			return( -1 );
 		}
 		libnotify_printf(
-		 "%s: unknown time\t\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n\n",
+		 "%s: modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n\n",
 		 function,
 		 filetime_string );
 

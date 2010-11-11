@@ -2,8 +2,8 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
-  [20101023],
-  [jbmetz@users.sourceforge.net])
+ [20101111],
+ [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
  [include/libnk2.h.in])
@@ -62,39 +62,29 @@ AC_C_VOLATILE
 
 dnl Check for headers
 dnl Headers included in libnk2/types.h
-AC_CHECK_HEADER(
- [sys/types.h],
- [AC_DEFINE(
-  [HAVE_SYS_TYPES_H],
-  [1],
-  [Define to 1 if you have the <sys/types.h> header file.])
- AC_SUBST(
+AC_CHECK_HEADERS([sys/types.h inttypes.h stdint.h])
+
+AS_IF(
+ [test "x$ac_cv_header_sys_types_h" = xyes],
+ [AC_SUBST(
   [HAVE_SYS_TYPES_H],
   [1])],
  [AC_SUBST(
   [HAVE_SYS_TYPES_H],
   [0])])
 
-AC_CHECK_HEADER(
- [inttypes.h],
- [AC_DEFINE(
-  [HAVE_INTTYPES_H],
-  [1],
-  [Define to 1 if you have the <inttypes.h> header file.])
- AC_SUBST(
+AS_IF(
+ [test "x$ac_cv_header_inttypes_h" = xyes],
+ [AC_SUBST(
   [HAVE_INTTYPES_H],
   [1])],
  [AC_SUBST(
   [HAVE_INTTYPES_H],
   [0])])
 
-AC_CHECK_HEADER(
- [stdint.h],
- [AC_DEFINE(
-  [HAVE_STDINT_H],
-  [1],
-  [Define to 1 if you have the <stdint.h> header file.])
- AC_SUBST(
+AS_IF(
+ [test "x$ac_cv_header_stdint_h" = xyes],
+ [AC_SUBST(
   [HAVE_STDINT_H],
   [1])],
  [AC_SUBST(
@@ -1222,6 +1212,7 @@ AC_CONFIG_FILES([include/libnk2/types.h])
 AC_CONFIG_FILES([libnk2/libnk2_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([libnk2/libnk2.rc])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libnk2.pc])
 AC_CONFIG_FILES([libnk2.spec])

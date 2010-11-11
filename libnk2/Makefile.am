@@ -56,13 +56,16 @@ libnk2_la_LIBADD = \
 libnk2_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
 EXTRA_DIST = \
-	libnk2_definitions.h.in
+	libnk2_definitions.h.in \
+	libnk2.rc \
+	libnk2.rc.in
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
 	/bin/rm -f libnk2_definitions.h
+	/bin/rm -f libnk2.rc
 	/bin/rm -f Makefile
 
 splint:

@@ -756,6 +756,8 @@ int libnk2_file_close(
 
 		result = -1;
 	}
+	internal_file->modification_time = 0;
+
 	return( result );
 }
 
@@ -853,6 +855,7 @@ int libnk2_file_open_read(
 		if( libnk2_io_handle_read_file_footer(
 		     internal_file->io_handle,
 		     internal_file->file_io_handle,
+		     &( internal_file->modification_time ),
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -979,6 +982,47 @@ int libnk2_file_set_ascii_codepage(
 		return( -1 );
 	}
 	internal_file->io_handle->ascii_codepage = ascii_codepage;
+
+	return( 1 );
+}
+
+/* Retrieves the modification time
+ * The returned time is a 64-bit version of a filetime value
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_file_get_modification_time(
+     libnk2_file_t *file,
+     uint64_t *modification_time,
+     liberror_error_t **error )
+{
+	libnk2_internal_file_t *internal_file = NULL;
+	static char *function                 = "libnk2_file_get_modification_time";
+
+	if( file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libnk2_internal_file_t *) file;
+
+	if( modification_time == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid modification time.",
+		 function );
+
+		return( -1 );
+	}
+	*modification_time = internal_file->modification_time;
 
 	return( 1 );
 }

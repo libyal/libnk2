@@ -64,6 +64,10 @@ struct libnk2_internal_file
 	/* Value to indicate if the file IO handle was created inside the library
 	 */
 	uint8_t file_io_handle_created_in_library;
+
+	/* The last modification date and time
+	 */
+	uint64_t modification_time;
 };
 
 LIBNK2_EXTERN int libnk2_file_initialize(
@@ -114,6 +118,11 @@ LIBNK2_EXTERN int libnk2_file_get_ascii_codepage(
 LIBNK2_EXTERN int libnk2_file_set_ascii_codepage(
                    libnk2_file_t *file,
                    int ascii_codepage,
+                   liberror_error_t **error );
+
+LIBNK2_EXTERN int libnk2_file_get_modification_time(
+                   libnk2_file_t *file,
+                   uint64_t *modification_time,
                    liberror_error_t **error );
 
 LIBNK2_EXTERN int libnk2_file_get_number_of_items(

@@ -36,6 +36,15 @@
 #include <stdlib.h>
 #endif
 
+#if defined( HAVE_LOCAL_LIBFDATETIME )
+#include <libfdatetime_date_time_values.h>
+#include <libfdatetime_definitions.h>
+#include <libfdatetime_filetime.h>
+#include <libfdatetime_types.h>
+#elif defined( HAVE_LIBDATETIME_H )
+#include <libfdatetime.h>
+#endif
+
 /* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
  * before including libnk2.h
  */
@@ -77,8 +86,13 @@ int nk2info_file_info_fprint(
      libnk2_file_t *file,
      liberror_error_t **error )
 {
-	static char *function = "nk2info_file_info_fprint";
-	int number_of_items   = 0;
+	libcstring_system_character_t filetime_string[ 24 ];
+
+	libfdatetime_filetime_t *filetime = NULL;
+	static char *function             = "nk2info_file_info_fprint";
+	uint64_t value_64bit              = 0;
+	int number_of_items               = 0;
+	int result                        = 0;
 
 	if( stream == NULL )
 	{
@@ -98,6 +112,96 @@ int nk2info_file_info_fprint(
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	if( libnk2_file_get_modification_time(
+	     file,
+	     &value_64bit,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve modification time.",
+		 function );
+
+		return( -1 );
+	}
+	if( libfdatetime_filetime_initialize(
+	     &filetime,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create filetime.",
+		 function );
+
+		return( -1 );
+	}
+	if( libfdatetime_filetime_copy_from_64bit(
+	     filetime,
+	     value_64bit,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy filetime from 64-bit value.",
+		 function );
+
+		libfdatetime_filetime_free(
+		 &filetime,
+		 NULL );
+
+		return( -1 );
+	}
+#if defined( LIBSYSTEM_HAVE_WIDE_CHARACTER )
+	result = libfdatetime_filetime_copy_to_utf16_string(
+		  filetime,
+		  (uint16_t *) filetime_string,
+		  24,
+		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+		  NULL );
+#else
+	result = libfdatetime_filetime_copy_to_utf8_string(
+		  filetime,
+		  (uint8_t *) filetime_string,
+		  24,
+		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+		  NULL );
+#endif
+	if( result != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy filetime to string.",
+		 function );
+
+		libfdatetime_filetime_free(
+		 &filetime,
+		 NULL );
+
+		return( -1 );
+	}
+	if( libfdatetime_filetime_free(
+	     &filetime,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free filetime.",
 		 function );
 
 		return( -1 );
@@ -122,7 +226,12 @@ int nk2info_file_info_fprint(
 
 	fprintf(
 	 stream,
-	 "\tNumber of aliases:\t%d\n",
+	 "\tLast modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+	 filetime_string );
+
+	fprintf(
+	 stream,
+	 "\tNumber of aliases\t: %d\n",
 	 number_of_items );
 
 	fprintf(
