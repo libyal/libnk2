@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
- [20101111],
+ [20101113],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -915,7 +915,7 @@ LIBNK2_CHECK_LIBFMAPI
 
 AS_IF(
  [test "x$ac_libnk2_have_libfmapi" = xyes],
- [dnl libfdatetime is available
+ [dnl libfmapi is available
  AC_SUBST(
   [libnk2_pc_libs_private_libfmapi],
   [-lfmapi])
@@ -931,7 +931,7 @@ AS_IF(
  AC_SUBST(
   [LIBFMAPI_LIBADD],
   []) ],
- [dnl libfdatetime is not available, using the (local) version that came with the source package
+ [dnl libfmapi is not available, using the (local) version that came with the source package
  AC_DEFINE(
   [HAVE_LOCAL_LIBFMAPI],
   [1],

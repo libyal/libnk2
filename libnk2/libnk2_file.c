@@ -305,7 +305,7 @@ int libnk2_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to Nickfiles currently not supported.",
+		 "%s: write access currently not supported.",
 		 function );
 
 		return( -1 );
@@ -445,7 +445,7 @@ int libnk2_file_open_wide(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to Nickfiles currently not supported.",
+		 "%s: write access currently not supported.",
 		 function );
 
 		return( -1 );
@@ -597,7 +597,7 @@ int libnk2_file_open_file_io_handle(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to Nickfile currently not supported.",
+		 "%s: write access currently not supported.",
 		 function );
 
 		return( -1 );

@@ -106,7 +106,7 @@ int libnk2_io_handle_initialize(
 	return( 1 );
 }
 
-/* Frees an exisisting IO handle
+/* Frees a IO handle
  * Returns 1 if successful or -1 on error
  */
 int libnk2_io_handle_free(

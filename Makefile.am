@@ -20,13 +20,16 @@ SUBDIRS = \
 	macosx \
 	msvscpp
 
+PKGCONFIG_FILES = \
+	libnk2.pc.in
+
 SPEC_FILES = \
 	libnk2.spec \
 	libnk2.spec.in
 
 EXTRA_DIST = \
 	README.mingw \
-	libnk2.pc.in \
+        $(PKGCONFIG_FILES) \
         $(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \

@@ -32,6 +32,11 @@ Beta release
 * update man pages
 * add documentation
 
+20101113
+* textual changes
+* updated libfmapi
+* updated nk2input.c
+
 20101111
 * updated configure.ac
 * updated include/error.h, include/types.h
