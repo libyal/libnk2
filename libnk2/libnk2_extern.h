@@ -14,7 +14,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,6 +24,10 @@
 
 #include <common.h>
 
+/* Define HAVE_LOCAL_LIBNK2 for local use of libnk2
+ */
+#if !defined( HAVE_LOCAL_LIBNK2 )
+
 /* If libtool DLL support is enabled set LIBNK2_DLL_EXPORT
  * before including libnk2/extern.h
  */
@@ -32,6 +36,12 @@
 #endif
 
 #include <libnk2/extern.h>
+
+#else
+
+#define LIBNK2_EXTERN  extern
+
+#endif
 
 #endif
 

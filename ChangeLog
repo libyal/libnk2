@@ -32,6 +32,9 @@ Beta release
 * update man pages
 * add documentation
 
+20101119
+* added local library support to libnk2_extern.h
+
 20101113
 * textual changes
 * updated libfmapi
