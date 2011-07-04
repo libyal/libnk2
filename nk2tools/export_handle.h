@@ -23,12 +23,11 @@
 #define _EXPORT_HANDLE_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
 
 #include <libcstring.h>
 #include <liberror.h>
-
-#include <libsystem.h>
 
 #include "log_handle.h"
 #include "nk2tools_libnk2.h"
@@ -41,9 +40,33 @@ typedef struct export_handle export_handle_t;
 
 struct export_handle
 {
+	/* The ascii codepage
+	 */
+	int ascii_codepage;
+
+	/* The target path
+	 */
+	libcstring_system_character_t *target_path;
+
+	/* The target path size
+	 */
+	size_t target_path_size;
+
+	/* The items export path
+	 */
+	libcstring_system_character_t *items_export_path;
+
+	/* The items export path size
+	 */
+	size_t items_export_path_size;
+
 	/* The nofication output stream
 	 */
 	FILE *notify_stream;
+
+	/* Value to indicate if abort was signalled
+	 */
+	int abort;
 };
 
 int export_handle_initialize(
@@ -54,17 +77,46 @@ int export_handle_free(
      export_handle_t **export_handle,
      liberror_error_t **error );
 
+int export_handle_signal_abort(
+     export_handle_t *export_handle,
+     liberror_error_t **error );
+
+int export_handle_set_export_mode(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *string,
+     liberror_error_t **error );
+
+int export_handle_set_ascii_codepage(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *string,
+     liberror_error_t **error );
+
+int export_handle_set_target_path(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *target_path,
+     liberror_error_t **error );
+
+int export_handle_set_export_path(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *base_path,
+     size_t base_path_length,
+     const libcstring_system_character_t *suffix,
+     size_t suffix_length,
+     libcstring_system_character_t **export_path,
+     size_t *export_path_size,
+     liberror_error_t **error );
+
+int export_handle_create_items_export_path(
+     export_handle_t *export_handle,
+     liberror_error_t **error );
+
 int export_handle_make_directory(
      export_handle_t *export_handle,
-     libcstring_system_character_t *directory_name,
+     const libcstring_system_character_t *directory_name,
      log_handle_t *log_handle,
      liberror_error_t **error );
 
-int export_handle_sanitize_filename(
-     export_handle_t *export_handle,
-     libcstring_system_character_t *filename,
-     size_t filename_size,
-     liberror_error_t **error );
+/* TODO refactor */
 
 int export_handle_create_target_path(
      export_handle_t *export_handle,

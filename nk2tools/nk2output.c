@@ -20,10 +20,9 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 #include <memory.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #if defined( HAVE_LOCAL_LIBUNA )
 #include <libuna_definitions.h>

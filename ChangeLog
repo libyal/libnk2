@@ -1,7 +1,7 @@
 TODO:
 * Code clean up:
   - use of memory_allocate_strucute and goto ?
-  - export handle
+  - export handle (check libpff/libesedb)
   - update libnk2.c
 * update msvscpp project files add, VSDebug configuration
 * value_identifier initialize and free functions

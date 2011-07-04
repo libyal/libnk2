@@ -30,7 +30,7 @@
 #include "nk2tools_libfdatetime.h"
 #include "nk2tools_libnk2.h"
 
-#define INFO_HANDLE_NOTIFY_STREAM		stdout
+#define INFO_HANDLE_NOTIFY_STREAM	stdout
 
 /* Initializes the info handle
  * Returns 1 if successful or -1 on error

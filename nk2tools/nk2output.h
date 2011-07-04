@@ -23,9 +23,8 @@
 #define _NK2OUTPUT_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #if defined( __cplusplus )
 extern "C" {

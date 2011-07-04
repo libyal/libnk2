@@ -30,7 +30,10 @@
 
 #include "export_handle.h"
 #include "log_handle.h"
+#include "nk2input.h"
 #include "nk2tools_libnk2.h"
+
+#define EXPORT_HANDLE_NOTIFY_STREAM	stdout
 
 /* Initializes the export handle
  * Returns 1 if successful or -1 on error
@@ -54,8 +57,8 @@ int export_handle_initialize(
 	}
 	if( *export_handle == NULL )
 	{
-		*export_handle = (export_handle_t *) memory_allocate(
-		                                      sizeof( export_handle_t ) );
+		*export_handle = memory_allocate_structure(
+		                  export_handle_t );
 
 		if( *export_handle == NULL )
 		{
@@ -66,7 +69,7 @@ int export_handle_initialize(
 			 "%s: unable to create export handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *export_handle,
@@ -80,15 +83,21 @@ int export_handle_initialize(
 			 "%s: unable to clear export handle.",
 			 function );
 
-			memory_free(
-			 *export_handle );
-
-			*export_handle = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
+		( *export_handle )->notify_stream = EXPORT_HANDLE_NOTIFY_STREAM;
 	}
 	return( 1 );
+
+on_error:
+	if( *export_handle != NULL )
+	{
+		memory_free(
+		 *export_handle );
+
+		*export_handle = NULL;
+	}
+	return( -1 );
 }
 
 /* Frees the export handle and its elements
@@ -121,12 +130,435 @@ int export_handle_free(
 	return( 1 );
 }
 
-/* Create a directory
+/* Signals the export handle to abort
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_signal_abort(
+     export_handle_t *export_handle,
+     liberror_error_t **error )
+{
+	static char *function = "export_handle_signal_abort";
+
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	export_handle->abort = 1;
+
+	return( 1 );
+}
+
+/* Sets the ascii codepage
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_set_ascii_codepage(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *string,
+     liberror_error_t **error )
+{
+	static char *function = "export_handle_set_ascii_codepage";
+	int result            = 0;
+
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = nk2input_determine_ascii_codepage(
+	          string,
+	          &( export_handle->ascii_codepage ),
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine ASCII codepage.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
+}
+
+/* Sets the target path
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_set_target_path(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *target_path,
+     liberror_error_t **error )
+{
+	static char *function                                      = "export_handle_set_target_path";
+	size_t target_path_length                                  = 0;
+
+#if defined( WINAPI )
+	libcstring_system_character_t *extended_length_target_path = NULL;
+        size_t extended_length_target_path_size                    = 0;
+	int result                                                 = 0;
+#endif
+
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( target_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid target path.",
+		 function );
+
+		return( -1 );
+	}
+	if( export_handle->target_path != NULL )
+	{
+		memory_free(
+		 export_handle->target_path );
+
+		export_handle->target_path      = NULL;
+		export_handle->target_path_size = 0;
+	}
+	target_path_length = libcstring_system_string_length(
+	                      target_path );
+
+#if defined( WINAPI )
+	result = libsystem_path_create_windows_extended(
+	          target_path,
+                  target_path_length,
+                  &extended_length_target_path,
+                  &extended_length_target_path_size,
+                  error );
+
+        if( result == -1 )
+        {
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create extended-length target path.",
+		 function );
+
+		goto on_error;
+        }
+        else if( result != 0 )
+        {
+                target_path        = extended_length_target_path;
+                target_path_length = extended_length_target_path_size - 1;
+        }
+#endif
+	if( target_path_length > 0 )
+	{
+		export_handle->target_path = libcstring_system_string_allocate(
+		                              target_path_length + 1 );
+
+		if( export_handle->target_path == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_MEMORY,
+			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create target path.",
+			 function );
+
+			goto on_error;
+		}
+		if( libcstring_system_string_copy(
+		     export_handle->target_path,
+		     target_path,
+		     target_path_length ) == NULL )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy target path.",
+			 function );
+
+			goto on_error;
+		}
+		( export_handle->target_path )[ target_path_length ] = 0;
+
+		export_handle->target_path_size = target_path_length + 1;
+	}
+#if defined( WINAPI )
+	memory_free(
+	 extended_length_target_path );
+#endif
+	return( 1 );
+
+on_error:
+	if( export_handle->target_path != NULL )
+	{
+		memory_free(
+		 export_handle->target_path );
+
+		export_handle->target_path      = NULL;
+		export_handle->target_path_size = 0;
+	}
+#if defined( WINAPI )
+	if( extended_length_target_path != NULL )
+	{
+		memory_free(
+		 extended_length_target_path );
+	}
+#endif
+	return( -1 );
+}
+
+/* Sets an export path consisting of a base path and a suffix
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_set_export_path(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *base_path,
+     size_t base_path_length,
+     const libcstring_system_character_t *suffix,
+     size_t suffix_length,
+     libcstring_system_character_t **export_path,
+     size_t *export_path_size,
+     liberror_error_t **error )
+{
+	static char *function = "export_handle_set_export_path";
+
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( base_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid base path.",
+		 function );
+
+		return( -1 );
+	}
+	if( base_path_length > (size_t) SSIZE_MAX )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid base path length value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( suffix == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid suffix.",
+		 function );
+
+		return( -1 );
+	}
+	if( suffix_length > (size_t) SSIZE_MAX )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid suffix length value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( export_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export path.",
+		 function );
+
+		return( -1 );
+	}
+	if( export_path_size == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export path size.",
+		 function );
+
+		return( -1 );
+	}
+	if( *export_path != NULL )
+	{
+		memory_free(
+		 *export_path );
+
+		*export_path      = NULL;
+		*export_path_size = 0;
+	}
+	*export_path_size = base_path_length + suffix_length + 1;
+
+	*export_path = libcstring_system_string_allocate(
+	                *export_path_size );
+
+	if( *export_path == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create export path.",
+		 function );
+
+		goto on_error;
+	}
+	if( libcstring_system_string_copy(
+	     *export_path,
+	     base_path,
+	     base_path_length ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy base path to item export path.",
+		 function );
+
+		goto on_error;
+	}
+	if( libcstring_system_string_copy(
+	     &( ( *export_path )[ base_path_length ] ),
+	     suffix,
+	     suffix_length ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+		 "%s: unable to copy suffix to item export path.",
+		 function );
+
+		goto on_error;
+	}
+	( *export_path )[ *export_path_size - 1 ] = 0;
+
+	return( 1 );
+
+on_error:
+	if( *export_path != NULL )
+	{
+		memory_free(
+		 *export_path );
+
+		*export_path      = NULL;
+		*export_path_size = 0;
+	}
+	return( -1 );
+}
+
+/* Creates the items export path
+ * Returns 1 if successful, 0 if already exists or -1 on error
+ */
+int export_handle_create_items_export_path(
+     export_handle_t *export_handle,
+     liberror_error_t **error )
+{
+	static char *function = "export_handle_create_items_export_path";
+	int result            = 0;
+
+	if( export_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( export_handle_set_export_path(
+	     export_handle,
+	     export_handle->target_path,
+	     export_handle->target_path_size - 1,
+	     _LIBCSTRING_SYSTEM_STRING( ".export" ),
+	     7,
+	     &( export_handle->items_export_path ),
+	     &( export_handle->items_export_path_size ),
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set items export path.",
+		 function );
+
+		return( -1 );
+	}
+	result = libsystem_file_exists(
+		  export_handle->items_export_path,
+		  error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_IO,
+		 LIBERROR_IO_ERROR_GENERIC,
+		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
+		 function,
+		 export_handle->items_export_path );
+
+		return( -1 );
+	}
+	else if( result == 1 )
+	{
+		return( 0 );
+	}
+	return( 1 );
+}
+
+/* Makes (creates) a directory
  * Returns 1 if successful or -1 on error
  */
 int export_handle_make_directory(
      export_handle_t *export_handle,
-     libcstring_system_character_t *directory_name,
+     const libcstring_system_character_t *directory_name,
      log_handle_t *log_handle,
      liberror_error_t **error )
 {
@@ -175,77 +607,7 @@ int export_handle_make_directory(
 	return( 1 );
 }
 
-/* Sanitizes the filename
- * Returns 1 if successful or -1 on error
- */
-int export_handle_sanitize_filename(
-     export_handle_t *export_handle,
-     libcstring_system_character_t *filename,
-     size_t filename_size,
-     liberror_error_t **error )
-{
-	static char *function = "export_handle_sanitize_filename";
-	size_t iterator       = 0;
-
-	if( export_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( filename == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
-		 function );
-
-		return( -1 );
-	}
-	if( filename_size > (size_t) SSIZE_MAX )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid filename size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	for( iterator = 0; iterator < filename_size; iterator++ )
-	{
-		if( ( ( filename[ iterator ] >= 0x01 )
-		  && ( filename[ iterator ] <= 0x1f ) )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '!' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '$' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '%' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '&' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '*' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '+' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '/' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) ':' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) ';' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '<' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '>' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '?' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '@' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '\\' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '~' )
-		 || ( filename[ iterator ] == 0x7e ) )
-		{
-			filename[ iterator ] = (libcstring_system_character_t) '_';
-		}
-	}
-	return( 1 );
-}
+/* TODO refactor */
 
 /* Creates the target path
  * Returns 1 if successful or -1 on error
@@ -365,8 +727,8 @@ int export_handle_create_target_path(
 	 */
 	*target_path_size = export_path_size + filename_size;
 
-	*target_path = (libcstring_system_character_t *) memory_allocate(
-	                                                  sizeof( libcstring_system_character_t ) * *target_path_size );
+	*target_path = libcstring_system_string_allocate(
+	                *target_path_size );
 
 	if( *target_path == NULL )
 	{
