@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle functions
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -68,8 +68,8 @@ int libnk2_io_handle_initialize(
 	}
 	if( *io_handle == NULL )
 	{
-		*io_handle = (libnk2_io_handle_t *) memory_allocate(
-		                                     sizeof( libnk2_io_handle_t ) );
+		*io_handle = memory_allocate_structure(
+		              libnk2_io_handle_t );
 
 		if( *io_handle == NULL )
 		{
@@ -80,7 +80,7 @@ int libnk2_io_handle_initialize(
 			 "%s: unable to create IO handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *io_handle,
@@ -94,16 +94,21 @@ int libnk2_io_handle_initialize(
 			 "%s: unable to clear file.",
 			 function );
 
-			memory_free(
-			 *io_handle );
-
-			*io_handle = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 		( *io_handle )->ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1252;
 	}
 	return( 1 );
+
+on_error:
+	if( *io_handle != NULL )
+	{
+		memory_free(
+		 *io_handle );
+
+		*io_handle = NULL;
+	}
+	return( -1 );
 }
 
 /* Frees a IO handle
@@ -345,7 +350,7 @@ int libnk2_io_handle_read_items(
 			 function,
 			 item_iterator );
 
-			return( -1 );
+			goto on_error;
 		}
 		byte_stream_copy_to_uint32_little_endian(
 		 number_of_item_values_data,
@@ -377,7 +382,7 @@ int libnk2_io_handle_read_items(
 			 "%s: unable to create item values table.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( libnk2_io_handle_read_item_values(
 		     io_handle,
@@ -395,11 +400,7 @@ int libnk2_io_handle_read_items(
 			 function,
 			 item_iterator );
 
-			libfvalue_table_free(
-			 (intptr_t *) values_table,
-			 error );
-
-			return( -1 );
+			goto on_error;
 		}
 		if( libnk2_array_append_entry(
 		     items_array,
@@ -414,15 +415,20 @@ int libnk2_io_handle_read_items(
 			 "%s: unable to append item values to items array.",
 			 function );
 
-			libfvalue_table_free(
-			 (intptr_t *) values_table,
-			 error );
-
-			return( -1 );
+			goto on_error;
 		}
 		values_table = NULL;
 	}
 	return( 1 );
+
+on_error:
+	if( values_table != NULL )
+	{
+		libfvalue_table_free(
+		 &values_table,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Reads the items value
@@ -495,11 +501,7 @@ int libnk2_io_handle_read_item_values(
 			 "%s: unable to read item value.",
 			 function );
 
-			libfvalue_table_empty(
-			 values_table,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libnotify_verbose != 0 )
@@ -645,11 +647,7 @@ int libnk2_io_handle_read_item_values(
 				 function,
 				 value_identifier.value_type );
 
-				libfvalue_table_empty(
-				 values_table,
-				 NULL );
-
-				return( -1 );
+				goto on_error;
 		}
 		if( value_data_size == 0 )
 		{
@@ -670,11 +668,7 @@ int libnk2_io_handle_read_item_values(
 				 "%s: unable to read value data size.",
 				 function );
 
-				libfvalue_table_empty(
-				 values_table,
-				 NULL );
-
-				return( -1 );
+				goto on_error;
 			}
 			byte_stream_copy_to_uint16_little_endian(
 			 value_data_size_data,
@@ -706,11 +700,7 @@ int libnk2_io_handle_read_item_values(
 			 value_identifier.entry_type,
 			 value_identifier.value_type );
 
-			libfvalue_table_empty(
-			 values_table,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 		if( libfvalue_value_set_identifier(
 		     value,
@@ -728,13 +718,10 @@ int libnk2_io_handle_read_item_values(
 			 value_identifier.value_type );
 
 			libfvalue_value_free(
-			 (intptr_t *) value,
-			 NULL );
-			libfvalue_table_empty(
-			 values_table,
+			 &value,
 			 NULL );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( libfvalue_table_set_value_by_index(
 		     values_table,
@@ -752,13 +739,10 @@ int libnk2_io_handle_read_item_values(
 			 value_identifier.value_type );
 
 			libfvalue_value_free(
-			 (intptr_t *) value,
-			 NULL );
-			libfvalue_table_empty(
-			 values_table,
+			 &value,
 			 NULL );
 
-			return( -1 );
+			goto on_error;
 		}
 		value_data = (uint8_t *) memory_allocate(
 		                          (size_t) value_data_size );
@@ -772,11 +756,7 @@ int libnk2_io_handle_read_item_values(
 			 "%s: unable to create value data.",
 			 function );
 
-			libfvalue_table_empty(
-			 values_table,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 		switch( value_identifier.value_type )
 		{
@@ -802,11 +782,8 @@ int libnk2_io_handle_read_item_values(
 
 					memory_free(
 					 value_data );
-					libfvalue_table_empty(
-					 values_table,
-					 NULL );
 
-					return( -1 );
+					goto on_error;
 				}
 				break;
 
@@ -827,11 +804,8 @@ int libnk2_io_handle_read_item_values(
 
 					memory_free(
 					 value_data );
-					libfvalue_table_empty(
-					 values_table,
-					 NULL );
 
-					return( -1 );
+					goto on_error;
 				}
 				break;
 		}
@@ -861,11 +835,8 @@ int libnk2_io_handle_read_item_values(
 
 				memory_free(
 				 value_data );
-				libfvalue_table_empty(
-				 values_table,
-				 NULL );
 
-				return( -1 );
+				goto on_error;
 			}
 		}
 #endif
@@ -892,11 +863,8 @@ int libnk2_io_handle_read_item_values(
 
 				memory_free(
 				 value_data );
-				libfvalue_table_empty(
-				 values_table,
-				 NULL );
 
-				return( -1 );
+				goto on_error;
 			}
 			memory_free(
 			 value_data );
@@ -924,11 +892,8 @@ int libnk2_io_handle_read_item_values(
 
 				memory_free(
 				 value_data );
-				libfvalue_table_empty(
-				 values_table,
-				 NULL );
 
-				return( -1 );
+				goto on_error;
 			}
 		}
 		if( value_identifier.value_type == LIBNK2_VALUE_TYPE_STRING_ASCII )
@@ -947,11 +912,7 @@ int libnk2_io_handle_read_item_values(
 				 value_identifier.entry_type,
 				 value_identifier.value_type );
 
-				libfvalue_table_empty(
-				 values_table,
-				 NULL );
-
-				return( -1 );
+				goto on_error;
 			}
 		}
 		value = NULL;
@@ -965,14 +926,17 @@ int libnk2_io_handle_read_item_values(
 			 "%s: abort requested.",
 			 function );
 
-			libfvalue_table_empty(
-			 values_table,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	libfvalue_table_empty(
+	 values_table,
+	 NULL );
+
+	return( -1 );
 }
 
 /* Reads the file footer
@@ -990,7 +954,7 @@ int libnk2_io_handle_read_file_footer(
 	ssize_t read_count                = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t filetime_string[ 24 ];
+	libcstring_system_character_t filetime_string[ 32 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 	uint32_t value_32bit              = 0;
@@ -1034,7 +998,7 @@ int libnk2_io_handle_read_file_footer(
 		 "%s: unable to read file footer.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libnotify_verbose != 0 )
@@ -1065,7 +1029,7 @@ int libnk2_io_handle_read_file_footer(
 			 "%s: unable to create filetime.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		byte_stream_copy_to_uint32_little_endian(
 		 file_footer.unknown1,
@@ -1089,26 +1053,22 @@ int libnk2_io_handle_read_file_footer(
 			 "%s: unable to copy byte stream to filetime.",
 			 function );
 
-			libfdatetime_filetime_free(
-			 &filetime,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_filetime_copy_to_utf16_string(
 			  filetime,
 			  (uint16_t *) filetime_string,
-			  24,
-			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+			  32,
+			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
 			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
 			  error );
 #else
 		result = libfdatetime_filetime_copy_to_utf8_string(
 			  filetime,
 			  (uint8_t *) filetime_string,
-			  24,
-			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+			  32,
+			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
 			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
 			  error );
 #endif
@@ -1121,11 +1081,7 @@ int libnk2_io_handle_read_file_footer(
 			 "%s: unable to copy filetime to string.",
 			 function );
 
-			libfdatetime_filetime_free(
-			 &filetime,
-			 NULL );
-
-			return( -1 );
+			goto on_error;
 		}
 		libnotify_printf(
 		 "%s: modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n\n",
@@ -1146,10 +1102,21 @@ int libnk2_io_handle_read_file_footer(
 			 "%s: unable to free filetime.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 	}
 #endif
 	return( 1 );
+
+on_error:
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( filetime != NULL )
+	{
+		libfdatetime_filetime_free(
+		 &filetime,
+		 NULL );
+	}
+#endif
+	return( -1 );
 }
 

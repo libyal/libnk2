@@ -1,7 +1,7 @@
 /*
  * Notification function
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -37,19 +37,23 @@ extern "C" {
 
 #if !defined( HAVE_LOCAL_LIBNK2 )
 
-LIBNK2_EXTERN void libnk2_notify_set_verbose(
-                    int verbose );
+LIBNK2_EXTERN \
+void libnk2_notify_set_verbose(
+      int verbose );
 
-LIBNK2_EXTERN int libnk2_notify_set_stream(
-                   FILE *stream,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_notify_set_stream(
+     FILE *stream,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_notify_stream_open(
-                   const char *filename,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_notify_stream_open(
+     const char *filename,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_notify_stream_close(
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_notify_stream_close(
+     liberror_error_t **error );
 
 #endif
 

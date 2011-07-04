@@ -1,5 +1,5 @@
 /*
- * Common output functions for the nk2tools
+ * The internal libnk2 header
  *
  * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -9,42 +9,31 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2OUTPUT_H )
-#define _NK2OUTPUT_H
+#if !defined( _NK2TOOLS_LIBNK2_H )
+#define _NK2TOOLS_LIBNK2_H
 
 #include <common.h>
-#include <types.h>
 
-#include <stdio.h>
-
-#if defined( __cplusplus )
-extern "C" {
+/* If Cygwin libtool DLL support is enabled set LIBNK2_DLL_IMPORT
+ * before including libnk2.h
+ */
+#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if !defined( HAVE_STATIC_EXECUTABLES )
+#define LIBNK2_DLL_IMPORT
+#endif
 #endif
 
-void nk2output_copyright_fprint(
-      FILE *stream );
-
-void nk2output_version_fprint(
-      FILE *stream,
-      const char *program );
-
-void nk2output_version_detailed_fprint(
-      FILE *stream,
-      const char *program );
-
-#if defined( __cplusplus )
-}
-#endif
+#include <libnk2.h>
 
 #endif
 

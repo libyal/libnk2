@@ -1,7 +1,7 @@
 /*
  * The internal definitions
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -37,11 +37,11 @@
  * for local use of libnk2
  */
 #else
-#define LIBNK2_VERSION					20101113
+#define LIBNK2_VERSION					20110704
 
 /* The version string
  */
-#define LIBNK2_VERSION_STRING				"20101113"
+#define LIBNK2_VERSION_STRING				"20110704"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access

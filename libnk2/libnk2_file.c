@@ -1,7 +1,7 @@
 /*
  * libnk2 file
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -61,8 +61,8 @@ int libnk2_file_initialize(
 	}
 	if( *file == NULL )
 	{
-		internal_file = (libnk2_internal_file_t *) memory_allocate(
-		                                            sizeof( libnk2_internal_file_t ) );
+		internal_file = memory_allocate_structure(
+		                 libnk2_internal_file_t );
 
 		if( internal_file == NULL )
 		{
@@ -73,7 +73,7 @@ int libnk2_file_initialize(
 			 "%s: unable to create file.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     internal_file,
@@ -104,10 +104,7 @@ int libnk2_file_initialize(
 			 "%s: unable to create items array.",
 			 function );
 
-			memory_free(
-			 internal_file );
-
-			return( -1 );
+			goto on_error;
 		}
 		if( libnk2_io_handle_initialize(
 		     &( internal_file->io_handle ),
@@ -120,18 +117,26 @@ int libnk2_file_initialize(
 			 "%s: unable to create IO handle.",
 			 function );
 
-			libnk2_array_free(
-			 &( internal_file->items ),
-			 NULL,
-			 NULL );
-			memory_free(
-			 internal_file );
-
-			return( -1 );
+			goto on_error;
 		}
 		*file = (libnk2_file_t *) internal_file;
 	}
 	return( 1 );
+
+on_error:
+	if( internal_file != NULL )
+	{
+		if( internal_file->items != NULL )
+		{
+			libnk2_array_free(
+			 &( internal_file->items ),
+			 NULL,
+			 NULL );
+		}
+		memory_free(
+		 internal_file );
+	}
+	return( -1 );
 }
 
 /* Frees a file
@@ -180,7 +185,7 @@ int libnk2_file_free(
 
 		if( libnk2_array_free(
 		     &( internal_file->items ),
-		     &libfvalue_table_free,
+		     &libfvalue_table_free_as_value,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -321,7 +326,7 @@ int libnk2_file_open(
 		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libbfio_handle_set_track_offsets_read(
@@ -336,11 +341,7 @@ int libnk2_file_open(
                  "%s: unable to set track offsets read in file IO handle.",
                  function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-                return( -1 );
+		goto on_error;
 	}
 #endif
 	if( libbfio_file_set_name(
@@ -357,11 +358,7 @@ int libnk2_file_open(
                  "%s: unable to set filename in file IO handle.",
                  function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-                return( -1 );
+		goto on_error;
 	}
 	if( libnk2_file_open_file_io_handle(
 	     file,
@@ -377,15 +374,20 @@ int libnk2_file_open(
 		 function,
 		 filename );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	internal_file->file_io_handle_created_in_library = 1;
 
 	return( 1 );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
@@ -461,7 +463,7 @@ int libnk2_file_open_wide(
 		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libbfio_handle_set_track_offsets_read(
@@ -476,11 +478,7 @@ int libnk2_file_open_wide(
                  "%s: unable to set track offsets read in file IO handle.",
                  function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-                return( -1 );
+		goto on_error;
 	}
 #endif
 	if( libbfio_file_set_name_wide(
@@ -497,11 +495,7 @@ int libnk2_file_open_wide(
                  "%s: unable to set filename in file IO handle.",
                  function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-                return( -1 );
+		goto on_error;
 	}
 	if( libnk2_file_open_file_io_handle(
 	     file,
@@ -517,15 +511,20 @@ int libnk2_file_open_wide(
 		 function,
 		 filename );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	internal_file->file_io_handle_created_in_library = 1;
 
 	return( 1 );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 #endif
@@ -744,7 +743,7 @@ int libnk2_file_close(
 	if( libnk2_array_resize(
 	     internal_file->items,
 	     0,
-	     &libfvalue_table_free,
+	     &libfvalue_table_free_as_value,
 	     error ) != 1 )
 	{
 		liberror_error_set(

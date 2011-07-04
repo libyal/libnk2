@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -26,71 +26,11 @@
 #include <libcstring.h>
 #include <liberror.h>
 
-/* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
- * before including libnk2_extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBNK2_DLL_EXPORT
-#endif
-
-#include <libnk2.h>
-
-#if defined( HAVE_LOCAL_LIBFDATETIME )
-#include <libfdatetime_date_time_values.h>
-#include <libfdatetime_definitions.h>
-#include <libfdatetime_filetime.h>
-#include <libfdatetime_types.h>
-#elif defined( HAVE_LIBDATETIME_H )
-#include <libfdatetime.h>
-#endif
-
-/* Define HAVE_LOCAL_LIBFGUID for local use of libfguid
- */
-#if defined( HAVE_LOCAL_LIBFGUID )
-
-#include <libfguid_definitions.h>
-#include <libfguid_identifier.h>
-#include <libfguid_types.h>
-
-#elif defined( HAVE_LIBFGUID_H )
-
-/* If libtool DLL support is enabled set LIBFGUID_DLL_IMPORT
- * before including libfguid.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFGUID_DLL_IMPORT
-#endif
-
-#include <libfguid.h>
-
-#else
-#error Missing libfguid.h
-#endif
-
-/* Define HAVE_LOCAL_LIBFMAPI for local use of libfmapi
- */
-#if defined( HAVE_LOCAL_LIBFMAPI )
-#include <libfmapi_definitions.h>
-#include <libfmapi_types.h>
-#elif defined( HAVE_LIBMAPI_H )
-
-/* If libtool DLL support is enabled set LIBFMAPI_DLL_IMPORT
- * before including libfmapi.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFMAPI_DLL_IMPORT
-#endif
-
-#include <libfmapi.h>
-
-#else
-#error Missing libfmapi.h
-#endif
-
 #include <libsystem.h>
 
 #include "export_handle.h"
 #include "log_handle.h"
+#include "nk2tools_libnk2.h"
 
 /* Initializes the export handle
  * Returns 1 if successful or -1 on error

@@ -1,7 +1,7 @@
 /*
  * Common output functions for the nk2tools
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -22,6 +22,8 @@
 #include <common.h>
 #include <memory.h>
 #include <types.h>
+
+#include <stdio.h>
 
 #if defined( HAVE_LOCAL_LIBUNA )
 #include <libuna_definitions.h>
@@ -65,18 +67,8 @@
 #include <libfmapi.h>
 #endif
 
-/* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
- * before including libnk2.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBNK2_DLL_IMPORT
-#endif
-
-#include <libnk2.h>
-
-#include <libsystem.h>
-
 #include "nk2output.h"
+#include "nk2tools_libnk2.h"
 
 /* Prints the copyright information
  */
@@ -89,7 +81,7 @@ void nk2output_copyright_fprint(
 	}
 	fprintf(
 	 stream,
-	 "Copyright (c) 2009-2010, Joachim Metz <%s>.\n"
+	 "Copyright (c) 2009-2011, Joachim Metz <%s>.\n"
 	 "This is free software; see the source for copying conditions. There is NO\n"
 	 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n",
 	 PACKAGE_BUGREPORT );

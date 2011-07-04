@@ -1,7 +1,7 @@
 /*
  * Item functions
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -84,8 +84,8 @@ int libnk2_item_initialize(
 	}
 	if( *item == NULL )
 	{
-		internal_item = (libnk2_internal_item_t *) memory_allocate(
-		                                            sizeof( libnk2_internal_item_t ) );
+		internal_item = memory_allocate_structure(
+		                 libnk2_internal_item_t );
 
 		if( internal_item == NULL )
 		{
@@ -96,7 +96,7 @@ int libnk2_item_initialize(
 			 "%s: unable to create internal item.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     internal_item,
@@ -133,7 +133,7 @@ int libnk2_item_initialize(
 				 "%s: unable to copy file IO handle.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 			if( libbfio_handle_set_open_on_demand(
 			     internal_item->file_io_handle,
@@ -147,7 +147,7 @@ int libnk2_item_initialize(
 				 "%s: unable to set open on demand in file IO handle.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 		}
 		internal_item->io_handle    = io_handle;
@@ -157,6 +157,23 @@ int libnk2_item_initialize(
 		*item = (libnk2_item_t *) internal_item;
 	}
 	return( 1 );
+
+on_error:
+	if( internal_item != NULL )
+	{
+		if( ( flags & LIBNK2_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) != 0 )
+		{
+			if( internal_item->file_io_handle != NULL )
+			{
+				libbfio_handle_free(
+				 &( internal_item->file_io_handle ),
+				 NULL );
+			}
+		}
+		memory_free(
+		 internal_item );
+	}
+	return( -1 );
 }
 
 /* Frees an item

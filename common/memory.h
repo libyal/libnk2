@@ -1,7 +1,7 @@
 /*
  * Memory functions
  *
- * Copyright (c) 2006-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2006-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -58,6 +58,12 @@ extern "C" {
 #define memory_allocate( size ) \
 	HeapAlloc( GetProcessHeap(), 0, (SIZE_T) size )
 #endif
+
+#define memory_allocate_structure( type ) \
+	(type *) memory_allocate( sizeof( type ) )
+
+#define memory_allocate_structure_as_value( type ) \
+	(intptr_t *) memory_allocate( sizeof( type ) )
 
 /* Memory reallocation
  */

@@ -1,4 +1,9 @@
 TODO:
+* Code clean up:
+  - use of memory_allocate_strucute and goto ?
+  - export handle
+  - update libnk2.c
+* update msvscpp project files add, VSDebug configuration
 * value_identifier initialize and free functions
 * in io_handle_read_items used set array value instead of append ?
 
@@ -21,7 +26,6 @@ Tools
   - export alias files instead of item values
   - export to CSV/TSV, HTML, XML
 * nk2info
-  - create info handle ?
 
 Test:
 * add autoconf/make test suite
@@ -31,6 +35,20 @@ Beta release
 * remove deprecated definition in include/libnk2/mapi.h
 * update man pages
 * add documentation
+
+20110704
+* updated configure
+* added gettext support
+* 2011 update
+* updated common, array type,
+* updated libcstring, liberror, libnotify, libsystem, libuna, libbfio,
+  libfdatetime, libfguid, libfvalue, libfmapi, libfwnt
+* code clean up
+  - corrected indentation of LIBNK2_EXTERN
+  - added info handle, refactored nk2info
+  - added nk2tools_libnk2.h, refactored nk2tools
+  - updated nk2input.[ch]
+* added system codepage functions
 
 20101119
 * added local library support to libnk2_extern.h

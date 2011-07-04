@@ -1,4 +1,4 @@
-.Dd November 11, 2010
+.Dd July 4, 2011
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
@@ -14,6 +14,10 @@ Support functions
 .Fn libnk2_get_version "void"
 .Ft int
 .Fn libnk2_get_access_flags_read
+.Ft int
+.Fn libnk2_get_codepage "int *codepage, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_set_codepage "int codepage, libnk2_error_t **error"
 .Ft int
 .Fn libnk2_check_file_signature "const char *filename, libnk2_error_t **error"
 .Pp
@@ -151,7 +155,7 @@ http://libnk2.sourceforge.net/
 .Sh AUTHOR
 These man pages were written by Joachim Metz.
 .Sh COPYRIGHT
-Copyright 2009-2010 Joachim Metz <jbmetz@users.sourceforge.net>.
+Copyright 2009-2011 Joachim Metz <jbmetz@users.sourceforge.net>.
 This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
 the libnk2.h include file

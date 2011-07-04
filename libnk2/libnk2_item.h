@@ -1,7 +1,7 @@
 /*
  * Item functions
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -74,100 +74,115 @@ int libnk2_item_initialize(
      uint8_t flags,
      liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_free(
-                   libnk2_item_t **item,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_free(
+     libnk2_item_t **item,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_number_of_entries(
-                   libnk2_item_t *item,
-                   uint32_t *number_of_entries,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_number_of_entries(
+     libnk2_item_t *item,
+     uint32_t *number_of_entries,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_type(
-                   libnk2_item_t *item,
-                   int entry_index,
-                   uint32_t *entry_type,
-                   uint32_t *value_type,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_type(
+     libnk2_item_t *item,
+     int entry_index,
+     uint32_t *entry_type,
+     uint32_t *value_type,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint32_t *value_type,
-                   uint8_t **value_data,
-                   size_t *value_data_size,
-                   uint8_t flags,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint32_t *value_type,
+     uint8_t **value_data,
+     size_t *value_data_size,
+     uint8_t flags,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_boolean(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *value_boolean,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_boolean(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *value_boolean,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_32bit(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint32_t *value_32bit,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_32bit(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint32_t *value_32bit,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_64bit(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint64_t *value_64bit,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_64bit(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint64_t *value_64bit,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_size(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   size_t *value_size,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *value_size,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string_size(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   size_t *utf8_string_size,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf8_string_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *utf8_string_size,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *utf8_string,
-                   size_t utf8_string_size,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf8_string(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_utf16_string_size(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   size_t *utf16_string_size,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf16_string_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *utf16_string_size,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_utf16_string(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint16_t *utf16_string,
-                   size_t utf16_string_size,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf16_string(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_binary_data_size(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   size_t *size,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_binary_data_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *size,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_binary_data(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *binary_data,
-                   size_t size,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_binary_data(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *binary_data,
+     size_t size,
+     liberror_error_t **error );
 
-LIBNK2_EXTERN int libnk2_item_get_entry_value_guid(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *guid,
-                   size_t size,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_guid(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *guid,
+     size_t size,
+     liberror_error_t **error );
 
 #if defined( __cplusplus )
 }

@@ -1,7 +1,7 @@
 /*
  * Common input functions for the nk2tools
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -28,14 +28,12 @@
 #include <libcstring.h>
 #include <liberror.h>
 
-#include <libsystem.h>
-
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
 int nk2input_determine_ascii_codepage(
-     const libcstring_system_character_t *argument,
+     const libcstring_system_character_t *string,
      int *ascii_codepage,
      liberror_error_t **error );
 

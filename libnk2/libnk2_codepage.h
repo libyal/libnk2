@@ -1,7 +1,7 @@
 /*
  * Codepage functions
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -65,6 +65,10 @@ enum LIBNK2_CODEPAGE
 	LIBNK2_CODEPAGE_KOI8_U				= 21866,
 
 	LIBNK2_CODEPAGE_WINDOWS_874			= 874,
+	LIBNK2_CODEPAGE_WINDOWS_932			= 932,
+	LIBNK2_CODEPAGE_WINDOWS_936			= 936,
+	LIBNK2_CODEPAGE_WINDOWS_949			= 949,
+	LIBNK2_CODEPAGE_WINDOWS_950			= 950,
 	LIBNK2_CODEPAGE_WINDOWS_1250			= 1250,
 	LIBNK2_CODEPAGE_WINDOWS_1251			= 1251,
 	LIBNK2_CODEPAGE_WINDOWS_1252			= 1252,

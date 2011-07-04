@@ -1,7 +1,7 @@
 /*
  * Support functions
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -34,25 +34,44 @@
 extern "C" {
 #endif
 
-LIBNK2_EXTERN const char *libnk2_get_version(
-                           void );
+#if !defined( HAVE_LOCAL_LIBNK2 )
 
-LIBNK2_EXTERN int libnk2_get_access_flags_read(
-                   void );
+LIBNK2_EXTERN \
+const char *libnk2_get_version(
+             void );
 
-LIBNK2_EXTERN int libnk2_check_file_signature(
-                   const char *filename,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_get_access_flags_read(
+     void );
+
+LIBNK2_EXTERN \
+int libnk2_get_codepage(
+     int *codepage,
+     liberror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_set_codepage(
+     int codepage,
+     liberror_error_t **error );
+
+#endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
+
+LIBNK2_EXTERN \
+int libnk2_check_file_signature(
+     const char *filename,
+     liberror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
-LIBNK2_EXTERN int libnk2_check_file_signature_wide(
-                   const wchar_t *filename,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_check_file_signature_wide(
+     const wchar_t *filename,
+     liberror_error_t **error );
 #endif
 
-LIBNK2_EXTERN int libnk2_check_file_signature_file_io_handle(
-                   libbfio_handle_t *file_io_handle,
-                   liberror_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_check_file_signature_file_io_handle(
+     libbfio_handle_t *file_io_handle,
+     liberror_error_t **error );
 
 #if defined( __cplusplus )
 }

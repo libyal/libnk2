@@ -1,7 +1,7 @@
 /*
  * Shows information obtained from a Nickfile (NK2)
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -36,27 +36,14 @@
 #include <stdlib.h>
 #endif
 
-#if defined( HAVE_LOCAL_LIBFDATETIME )
-#include <libfdatetime_date_time_values.h>
-#include <libfdatetime_definitions.h>
-#include <libfdatetime_filetime.h>
-#include <libfdatetime_types.h>
-#elif defined( HAVE_LIBDATETIME_H )
-#include <libfdatetime.h>
-#endif
-
-/* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
- * before including libnk2.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBNK2_DLL_IMPORT
-#endif
-
-#include <libnk2.h>
-
 #include <libsystem.h>
 
+#include "info_handle.h"
 #include "nk2output.h"
+#include "nk2tools_libnk2.h"
+
+info_handle_t *nk2info_info_handle = NULL;
+int nk2info_abort                  = 0;
 
 /* Prints the executable usage information
  */
@@ -78,167 +65,41 @@ void usage_fprint(
 	fprintf( stream, "\t-V:     print version\n" );
 }
 
-/* Prints file information
- * Returns 1 if successful or -1 on error
+/* Signal handler for nk2info
  */
-int nk2info_file_info_fprint(
-     FILE *stream,
-     libnk2_file_t *file,
-     liberror_error_t **error )
+void nk2info_signal_handler(
+      libsystem_signal_t signal )
 {
-	libcstring_system_character_t filetime_string[ 24 ];
+	liberror_error_t *error = NULL;
+	static char *function   = "nk2info_signal_handler";
 
-	libfdatetime_filetime_t *filetime = NULL;
-	static char *function             = "nk2info_file_info_fprint";
-	uint64_t value_64bit              = 0;
-	int number_of_items               = 0;
-	int result                        = 0;
+	nk2info_abort = 1;
 
-	if( stream == NULL )
+	if( nk2info_info_handle != NULL )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid stream.",
-		 function );
+		if( info_handle_signal_abort(
+		     nk2info_info_handle,
+		     &error ) != 1 )
+		{
+			libsystem_notify_printf(
+			 "%s: unable to signal info handle to abort.\n",
+			 function );
 
-		return( -1 );
+			libsystem_notify_print_error_backtrace(
+			 error );
+			liberror_error_free(
+			 &error );
+		}
 	}
-	if( file == NULL )
+	/* Force stdin to close otherwise any function reading it will remain blocked
+	 */
+	if( libsystem_file_io_close(
+	     0 ) != 0 )
 	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file.",
+		libsystem_notify_printf(
+		 "%s: unable to close stdin.\n",
 		 function );
-
-		return( -1 );
 	}
-	if( libnk2_file_get_modification_time(
-	     file,
-	     &value_64bit,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve modification time.",
-		 function );
-
-		return( -1 );
-	}
-	if( libfdatetime_filetime_initialize(
-	     &filetime,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create filetime.",
-		 function );
-
-		return( -1 );
-	}
-	if( libfdatetime_filetime_copy_from_64bit(
-	     filetime,
-	     value_64bit,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy filetime from 64-bit value.",
-		 function );
-
-		libfdatetime_filetime_free(
-		 &filetime,
-		 NULL );
-
-		return( -1 );
-	}
-#if defined( LIBSYSTEM_HAVE_WIDE_CHARACTER )
-	result = libfdatetime_filetime_copy_to_utf16_string(
-		  filetime,
-		  (uint16_t *) filetime_string,
-		  24,
-		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
-		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
-		  NULL );
-#else
-	result = libfdatetime_filetime_copy_to_utf8_string(
-		  filetime,
-		  (uint8_t *) filetime_string,
-		  24,
-		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
-		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
-		  NULL );
-#endif
-	if( result != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
-		 "%s: unable to copy filetime to string.",
-		 function );
-
-		libfdatetime_filetime_free(
-		 &filetime,
-		 NULL );
-
-		return( -1 );
-	}
-	if( libfdatetime_filetime_free(
-	     &filetime,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free filetime.",
-		 function );
-
-		return( -1 );
-	}
-	if( libnk2_file_get_number_of_items(
-	     file,
-	     &number_of_items,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of items.",
-		 function );
-
-		return( -1 );
-	}
-	fprintf(
-	 stream,
-	 "Nickfile information:\n" );
-
-	fprintf(
-	 stream,
-	 "\tLast modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
-	 filetime_string );
-
-	fprintf(
-	 stream,
-	 "\tNumber of aliases\t: %d\n",
-	 number_of_items );
-
-	fprintf(
-	 stream,
-	 "\n" );
-
-	return( 1 );
 }
 
 /* The main program
@@ -250,7 +111,6 @@ int main( int argc, char * const argv[] )
 #endif
 {
 	liberror_error_t *error               = NULL;
-	libnk2_file_t *nk2_file               = NULL;
 	libcstring_system_character_t *source = NULL;
 	char *program                         = "nk2info";
 	libcstring_system_integer_t option    = 0;
@@ -262,9 +122,9 @@ int main( int argc, char * const argv[] )
 	libsystem_notify_set_verbose(
 	 1 );
 
-        if( libsystem_initialize(
-             "nk2tools",
-             &error ) != 1 )
+	if( libsystem_initialize(
+	     "nk2tools",
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -293,7 +153,7 @@ int main( int argc, char * const argv[] )
 				fprintf(
 				 stderr,
 				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
-				 argv[ optind ] );
+				 argv[ optind - 1 ] );
 
 				usage_fprint(
 				 stdout );
@@ -339,109 +199,77 @@ int main( int argc, char * const argv[] )
 	libnk2_notify_set_verbose(
 	 verbose );
 
-	if( libnk2_file_initialize(
-	     &nk2_file,
+	if( info_handle_initialize(
+	     &nk2info_info_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize libnk2 file.\n" );
+		 "Unable to initialize info handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libnk2_file_open_wide(
-	     nk2_file,
+	if( info_handle_open_input(
+	     nk2info_info_handle,
 	     source,
-	     LIBNK2_OPEN_READ,
 	     &error ) != 1 )
-#else
-	if( libnk2_file_open(
-	     nk2_file,
-	     source,
-	     LIBNK2_OPEN_READ,
-	     &error ) != 1 )
-#endif
 	{
 		fprintf(
 		 stderr,
-		 "Error opening file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-		 argv[ optind ] );
+		 "Unable to open: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 source );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libnk2_file_free(
-		 &nk2_file,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
-	if( nk2info_file_info_fprint(
-	     stdout,
-	     nk2_file,
+	if( info_handle_file_fprint(
+	     nk2info_info_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
 		 "Unable to print file information.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libnk2_file_close(
-		 nk2_file,
-		 NULL );
-		libnk2_file_free(
-		 &nk2_file,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
-	if( libnk2_file_close(
-	     nk2_file,
+	if( info_handle_close(
+	     nk2info_info_handle,
 	     &error ) != 0 )
 	{
 		fprintf(
 		 stderr,
-		 "Error closing file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-		 argv[ optind ] );
+		 "Unable to close info handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libnk2_file_free(
-		 &nk2_file,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
-	if( libnk2_file_free(
-	     &nk2_file,
+	if( info_handle_free(
+	     &nk2info_info_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to free libnk2 file.\n" );
+		 "Unable to free info handle.\n" );
 
+		goto on_error;
+	}
+	return( EXIT_SUCCESS );
+
+on_error:
+	if( error != NULL )
+	{
 		libsystem_notify_print_error_backtrace(
 		 error );
 		liberror_error_free(
 		 &error );
-
-		return( EXIT_FAILURE );
 	}
-	return( EXIT_SUCCESS );
+	if( nk2info_info_handle != NULL )
+	{
+		info_handle_close(
+		 nk2info_info_handle,
+		 NULL );
+		info_handle_free(
+		 &nk2info_info_handle,
+		 NULL );
+	}
+	return( EXIT_FAILURE );
 }
 

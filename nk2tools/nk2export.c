@@ -1,7 +1,7 @@
 /*
  * Extracts items from a Nickfile (NK2)
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -36,21 +36,13 @@
 #include <stdlib.h>
 #endif
 
-/* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
- * before including libnk2.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBNK2_DLL_IMPORT
-#endif
-
-#include <libnk2.h>
-
 #include <libsystem.h>
 
 #include "export_handle.h"
 #include "log_handle.h"
 #include "nk2input.h"
 #include "nk2output.h"
+#include "nk2tools_libnk2.h"
 
 /* Prints the executable usage information
  */
@@ -142,7 +134,7 @@ int main( int argc, char * const argv[] )
 				fprintf(
 				 stderr,
 				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
-				 argv[ optind ] );
+				 argv[ optind - 1 ] );
 
 				usage_fprint(
 				 stdout );

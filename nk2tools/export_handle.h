@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -28,18 +28,10 @@
 #include <libcstring.h>
 #include <liberror.h>
 
-/* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
- * before including libnk2_extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBNK2_DLL_EXPORT
-#endif
-
-#include <libnk2.h>
-
 #include <libsystem.h>
 
 #include "log_handle.h"
+#include "nk2tools_libnk2.h"
 
 #if defined( __cplusplus )
 extern "C" {

@@ -16,9 +16,14 @@ SUBDIRS = \
 	libnk2 \
 	libsystem \
 	nk2tools \
+	po \
 	manuals \
 	macosx \
 	msvscpp
+
+GETTEXT_FILES = \
+	config.rpath \
+	po/Makevars.in
 
 PKGCONFIG_FILES = \
 	libnk2.pc.in
@@ -29,6 +34,7 @@ SPEC_FILES = \
 
 EXTRA_DIST = \
 	README.mingw \
+	$(GETTEXT_FILES) \
         $(PKGCONFIG_FILES) \
         $(SPEC_FILES)
 
@@ -58,6 +64,7 @@ library:
 	(cd $(srcdir)/libfwnt && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfmapi && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libnk2 && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 
 distclean: clean
 	/bin/rm -f Makefile
@@ -85,4 +92,5 @@ splint:
 	(cd $(srcdir)/libnk2 && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/nk2tools && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))
 

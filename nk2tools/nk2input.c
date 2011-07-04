@@ -1,7 +1,7 @@
 /*
  * Common input functions for the nk2tools
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -25,18 +25,8 @@
 #include <libcstring.h>
 #include <liberror.h>
 
-/* If libtool DLL support is enabled set LIBNK2_DLL_IMPORT
- * before including libnk2.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBNK2_DLL_IMPORT
-#endif
-
-#include <libnk2.h>
-
-#include <libsystem.h>
-
 #include "nk2input.h"
+#include "nk2tools_libnk2.h"
 
 /* Determines the codepage from a string
  * Returns 1 if successful, 0 if unsupported value or -1 on error
@@ -48,7 +38,7 @@ int nk2input_determine_ascii_codepage(
 {
 	static char *function = "nk2input_determine_ascii_codepage";
 	size_t string_length  = 0;
-	int result            = -1;
+	int result            = 0;
 
 	if( string == NULL )
 	{

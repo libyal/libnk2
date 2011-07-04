@@ -1,7 +1,7 @@
 /*
  * Error functions
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -52,6 +52,7 @@ int libnk2_error_fprint(
 }
 
 /* Prints a descriptive string of the error to the string
+ * The end-of-string character is not included in the return value
  * Returns the number of printed characters if successful or -1 on error
  */
 int libnk2_error_sprint(
@@ -78,6 +79,7 @@ int libnk2_error_backtrace_fprint(
 }
 
 /* Prints a backtrace of the error to the string
+ * The end-of-string character is not included in the return value
  * Returns the number of printed characters if successful or -1 on error
  */
 int libnk2_error_backtrace_sprint(

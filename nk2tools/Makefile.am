@@ -25,7 +25,8 @@ nk2export_SOURCES = \
 	log_handle.c log_handle.h \
 	nk2export.c \
 	nk2input.c nk2input.h \
-	nk2output.c nk2output.h
+	nk2output.c nk2output.h \
+	nk2tools_libnk2.h
 
 nk2export_LDADD = \
 	../libcstring/libcstring.la \
@@ -33,11 +34,15 @@ nk2export_LDADD = \
 	../libnk2/libnk2.la \
 	../libsystem/libsystem.la \
 	@LIBUNA_LIBADD@ \
+	@LIBINTL@ \
 	@MEMWATCH_LIBADD@
 
 nk2info_SOURCES = \
+	info_handle.c info_handle.h \
 	nk2info.c \
-	nk2output.c nk2output.h
+	nk2output.c nk2output.h \
+	nk2tools_libfdatetime.h \
+	nk2tools_libnk2.h
 
 nk2info_LDADD = \
 	../libcstring/libcstring.la \
@@ -46,6 +51,7 @@ nk2info_LDADD = \
 	../libsystem/libsystem.la \
 	@LIBUNA_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
+	@LIBINTL@ \
 	@MEMWATCH_LIBADD@
 
 MAINTAINERCLEANFILES = \

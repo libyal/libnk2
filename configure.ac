@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
- [20101119],
+ [20110704],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -28,7 +28,7 @@ LIBNK2_TEST_ENABLE(
  [winapi],
  [winapi],
  [enable WINAPI support for cross-compilation],
- [no])
+ [auto-detect])
 LIBNK2_TEST_ENABLE(
  [static-executables],
  [static_executables],
@@ -56,9 +56,29 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 
+dnl Support of internationalization (i18n)
+AM_GNU_GETTEXT([external])
+
 dnl Check for compiler language support
 AC_C_CONST
 AC_C_VOLATILE
+
+dnl Automatically enable winapi support for mingw
+AS_IF(
+ [test "x$ac_cv_libnk2_enable_winapi" = xauto-detect],
+ [ac_libnk2_target_string="$target";
+
+ AS_IF(
+  [test "x$ac_libnk2_target_string" = x],
+  [ac_libnk2_target_string="$build"])
+
+ AS_CASE(
+  [$ac_libnk2_target_string],
+  [*mingw*],[AC_MSG_NOTICE(
+             [Detected MinGW enabling WINAPI support for cross-compilation])
+            ac_cv_libnk2_enable_winapi=yes],
+  [*],[ac_cv_libnk2_enable_winapi=no])
+ ])
 
 dnl Check for headers
 dnl Headers included in libnk2/types.h
@@ -317,6 +337,15 @@ AC_CHECK_FUNCS(
   [1]) ])
 
 dnl Check for localization functions in libcstring/libcstring_locale.c
+AS_IF(
+ [test "x$ac_cv_libnk2_enable_winapi" = xno],
+ [AC_CHECK_FUNCS(
+  [localeconv],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: localeconv],
+   [1]) ]) ])
+
 AC_CHECK_FUNCS(
  [setlocale],
  [],
@@ -350,12 +379,9 @@ AC_CHECK_FUNCS(
  [AC_CHECK_FUNCS(
   [strncmp],
   [],
-  [AC_CHECK_FUNCS(
-   [strcmp],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: memcmp, strncmp and strcmp],
-    [1]) ]) ]) ])
+  [AC_MSG_FAILURE(
+   [Missing functions: memcmp and strncmp],
+   [1]) ]) ])
 
 AC_CHECK_FUNCS(
  [memcpy],
@@ -363,12 +389,9 @@ AC_CHECK_FUNCS(
  [AC_CHECK_FUNCS(
   [strncpy],
   [],
-  [AC_CHECK_FUNCS(
-   [strcpy],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: memcpy, strncpy and strcpy],
-    [1]) ]) ]) ])
+  [AC_MSG_FAILURE(
+   [Missing functions: memcpy and strncpy],
+   [1]) ]) ])
 
 AC_CHECK_FUNCS(
  [memrchr],
@@ -465,6 +488,13 @@ AC_CHECK_FUNCS(
  [],
  [AC_MSG_FAILURE(
   [Missing function: fstat],
+  [1]) ])
+
+AC_CHECK_FUNCS(
+ [ftruncate],
+ [],
+ [AC_MSG_FAILURE(
+  [Missing function: ftruncate],
   [1]) ])
 
 AC_CHECK_FUNCS(
@@ -1018,12 +1048,9 @@ AS_IF(
   [AC_CHECK_FUNCS(
    [wcsncmp],
    [],
-   [AC_CHECK_FUNCS(
-    [wcscmp],
-    [],
-    [AC_MSG_FAILURE(
-     [Missing functions: wmemcmp, wcsncmp and wcscmp],
-     [1]) ]) ]) ])
+   [AC_MSG_FAILURE(
+    [Missing functions: wmemcmp and wcsncmp],
+    [1]) ]) ])
 
  AC_CHECK_FUNCS(
   [wmemcpy],
@@ -1031,12 +1058,9 @@ AS_IF(
   [AC_CHECK_FUNCS(
    [wcsncpy],
    [],
-   [AC_CHECK_FUNCS(
-    [wcscpy],
-    [],
-    [AC_MSG_FAILURE(
-     [Missing functions: wmemcpy, wcsncpy and wcscpy],
-     [1]) ]) ]) ])
+   [AC_MSG_FAILURE(
+    [Missing functions: wmemcpy and wcsncpy],
+    [1]) ]) ])
 
  AC_CHECK_FUNCS(
   [wmemrchr],
@@ -1089,6 +1113,14 @@ AS_IF(
    [Missing function: wcstoull],
    [1]) ])
 
+ dnl Wide character string functions used in liberror/liberror_error.h
+ AC_CHECK_FUNCS(
+  [wcstombs],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: wcstombs],
+   [1]) ])
+
  dnl Make the necessary definitions
  AC_DEFINE(
   [HAVE_WIDE_CHARACTER_TYPE],
@@ -1116,6 +1148,10 @@ AS_IF(
  [STATIC_LDFLAGS="-all-static";
  AC_SUBST(
   [STATIC_LDFLAGS])
+ AC_DEFINE(
+  [HAVE_STATIC_EXECUTABLES],
+  [1],
+  [Define if executables should be static compiled.])
  ac_cv_libnk2_enable_static_executables=yes])
 
 dnl Check if libnk2 should be build with verbose output
@@ -1201,6 +1237,8 @@ AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([libsystem/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
+AC_CONFIG_FILES([po/Makefile.in])
+AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
 AC_CONFIG_FILES([macosx/Makefile])
 AC_CONFIG_FILES([msvscpp/Makefile])

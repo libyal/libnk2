@@ -1,7 +1,7 @@
 /* 
  * Array type functions
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -91,6 +91,13 @@ int libnk2_array_free(
      liberror_error_t **error );
 
 int libnk2_array_empty(
+     libnk2_array_t *array,
+     int (*entry_free_function)(
+            intptr_t *entry,
+            liberror_error_t **error ),
+     liberror_error_t **error );
+
+int libnk2_array_clear(
      libnk2_array_t *array,
      int (*entry_free_function)(
             intptr_t *entry,

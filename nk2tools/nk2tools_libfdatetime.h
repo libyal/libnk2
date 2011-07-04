@@ -1,5 +1,5 @@
 /*
- * Common output functions for the nk2tools
+ * The internal libfdatetime header
  *
  * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -9,41 +9,45 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2OUTPUT_H )
-#define _NK2OUTPUT_H
+#if !defined( _NK2TOOLS_LIBFDATETIME_H )
+#define _NK2TOOLS_LIBFDATETIME_H
 
 #include <common.h>
-#include <types.h>
 
-#include <stdio.h>
+/* Define HAVE_LOCAL_LIBFDATETIME for local use of libfdatetime
+ */
+#if defined( HAVE_LOCAL_LIBFDATETIME )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libfdatetime_date_time_values.h>
+#include <libfdatetime_definitions.h>
+#include <libfdatetime_fat_date_time.h>
+#include <libfdatetime_filetime.h>
+#include <libfdatetime_nsf_timedate.h>
+#include <libfdatetime_types.h>
+
+#elif defined( HAVE_LIBFDATETIME_H )
+
+/* If libtool DLL support is enabled set LIBFDATETIME_DLL_IMPORT
+ * before including libfdatetime.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBFDATETIME_DLL_IMPORT
 #endif
 
-void nk2output_copyright_fprint(
-      FILE *stream );
+#include <libfdatetime.h>
 
-void nk2output_version_fprint(
-      FILE *stream,
-      const char *program );
-
-void nk2output_version_detailed_fprint(
-      FILE *stream,
-      const char *program );
-
-#if defined( __cplusplus )
-}
+#else
+#error Missing libfdatetime.h
 #endif
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * Library to support the Nickfile (NK2) format
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -46,37 +46,60 @@ extern "C" {
 
 /* Returns the library version
  */
-LIBNK2_EXTERN const char *libnk2_get_version(
-                           void );
+LIBNK2_EXTERN \
+const char *libnk2_get_version(
+             void );
 
 /* Returns the access flags for reading
  */
-LIBNK2_EXTERN int libnk2_get_access_flags_read(
-                   void );
+LIBNK2_EXTERN \
+int libnk2_get_access_flags_read(
+     void );
+
+/* Retrieves the narrow system string codepage
+ * A value of 0 represents no codepage, UTF-8 encoding is used instead
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN \
+int libnk2_get_codepage(
+     int *codepage,
+     libnk2_error_t **error );
+
+/* Sets the narrow system string codepage
+ * A value of 0 represents no codepage, UTF-8 encoding is used instead
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_EXTERN \
+int libnk2_set_codepage(
+     int codepage,
+     libnk2_error_t **error );
 
 /* Determines if a file is a Nickfile (check for the NK2 file signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
-LIBNK2_EXTERN int libnk2_check_file_signature(
-                   const char *filename,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_check_file_signature(
+     const char *filename,
+     libnk2_error_t **error );
 
 #if defined( LIBNK2_HAVE_WIDE_CHARACTER_TYPE )
 /* Determines if a file is a Nickfile (check for the NK2 file signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
-LIBNK2_EXTERN int libnk2_check_file_signature_wide(
-                   const wchar_t *filename,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_check_file_signature_wide(
+     const wchar_t *filename,
+     libnk2_error_t **error );
 #endif
 
 #if defined( LIBNK2_HAVE_BFIO )
 /* Determines if a file is a Nickfile (check for the NK2 file signature) using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
-LIBNK2_EXTERN int libnk2_check_file_signature_file_io_handle(
-                   libbfio_handle_t *file_io_handle,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_check_file_signature_file_io_handle(
+     libbfio_handle_t *file_io_handle,
+     libnk2_error_t **error );
 #endif
 
 /* -------------------------------------------------------------------------
@@ -85,29 +108,33 @@ LIBNK2_EXTERN int libnk2_check_file_signature_file_io_handle(
 
 /* Sets the verbose notification
  */
-LIBNK2_EXTERN void libnk2_notify_set_verbose(
-                    int verbose );
+LIBNK2_EXTERN \
+void libnk2_notify_set_verbose(
+      int verbose );
 
 /* Sets the notification stream
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_notify_set_stream(
-                   FILE *stream,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_notify_set_stream(
+     FILE *stream,
+     libnk2_error_t **error );
 
 /* Opens the notification stream using a filename
  * The stream is opened in append mode
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_notify_stream_open(
-                   const char *filename,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_notify_stream_open(
+     const char *filename,
+     libnk2_error_t **error );
 
 /* Closes the notification stream if opened using a filename
  * Returns 0 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_notify_stream_close(
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_notify_stream_close(
+     libnk2_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Error functions
@@ -115,38 +142,45 @@ LIBNK2_EXTERN int libnk2_notify_stream_close(
 
 /* Frees the error including elements
  */
-LIBNK2_EXTERN void libnk2_error_free(
-                    libnk2_error_t **error );
+LIBNK2_EXTERN \
+void libnk2_error_free(
+      libnk2_error_t **error );
 
 /* Prints a descriptive string of the error to the stream
  * Returns the number of printed characters if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_error_fprint(
-                   libnk2_error_t *error,
-                   FILE *stream );
+LIBNK2_EXTERN \
+int libnk2_error_fprint(
+     libnk2_error_t *error,
+     FILE *stream );
 
 /* Prints a descriptive string of the error to the string
+ * The end-of-string character is not included in the return value
  * Returns the number of printed characters if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_error_sprint(
-                   libnk2_error_t *error,
-                   char *string,
-                   size_t size );
+LIBNK2_EXTERN \
+int libnk2_error_sprint(
+     libnk2_error_t *error,
+     char *string,
+     size_t size );
 
 /* Prints a backtrace of the error to the stream
  * Returns the number of printed characters if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_error_backtrace_fprint(
-                   libnk2_error_t *error,
-                   FILE *stream );
+LIBNK2_EXTERN \
+int libnk2_error_backtrace_fprint(
+     libnk2_error_t *error,
+     FILE *stream );
 
 /* Prints a backtrace of the error to the string
+ * The end-of-string character is not included in the return value
  * Returns the number of printed characters if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_error_backtrace_sprint(
-                   libnk2_error_t *error,
-                   char *string,
-                   size_t size );
+LIBNK2_EXTERN \
+int libnk2_error_backtrace_sprint(
+     libnk2_error_t *error,
+     char *string,
+     size_t size );
 
 /* -------------------------------------------------------------------------
  * File functions
@@ -156,103 +190,115 @@ LIBNK2_EXTERN int libnk2_error_backtrace_sprint(
  * Make sure the value file is pointing to is set to NULL
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_initialize(
-                   libnk2_file_t **file,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_initialize(
+     libnk2_file_t **file,
+     libnk2_error_t **error );
 
 /* Frees a file
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_free(
-                   libnk2_file_t **file,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_free(
+     libnk2_file_t **file,
+     libnk2_error_t **error );
 
 /* Signals the libnk2 file to abort its current activity
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_signal_abort(
-                   libnk2_file_t *file,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_signal_abort(
+     libnk2_file_t *file,
+     libnk2_error_t **error );
 
 /* Opens a file
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_open(
-                   libnk2_file_t *file,
-                   const char *filename,
-                   int access_flags,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_open(
+     libnk2_file_t *file,
+     const char *filename,
+     int access_flags,
+     libnk2_error_t **error );
 
 #if defined( LIBNK2_HAVE_WIDE_CHARACTER_TYPE )
 /* Opens a file
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_open_wide(
-                   libnk2_file_t *file,
-                   const wchar_t *filename,
-                   int access_flags,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_open_wide(
+     libnk2_file_t *file,
+     const wchar_t *filename,
+     int access_flags,
+     libnk2_error_t **error );
 #endif
 
 #if defined( LIBNK2_HAVE_BFIO )
 /* Opens a file using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_open_file_io_handle(
-                   libnk2_file_t *file,
-                   libbfio_handle_t *file_io_handle,
-                   int access_flags,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_open_file_io_handle(
+     libnk2_file_t *file,
+     libbfio_handle_t *file_io_handle,
+     int access_flags,
+     libnk2_error_t **error );
 #endif
 
 /* Closes a file
  * Returns 0 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_close(
-                   libnk2_file_t *file,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_close(
+     libnk2_file_t *file,
+     libnk2_error_t **error );
 
 /* Retrieves the file ASCII codepage
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_get_ascii_codepage(
-                   libnk2_file_t *file,
-                   int *ascii_codepage,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_get_ascii_codepage(
+     libnk2_file_t *file,
+     int *ascii_codepage,
+     libnk2_error_t **error );
 
 /* Sets the file ASCII codepage
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_set_ascii_codepage(
-                   libnk2_file_t *file,
-                   int ascii_codepage,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_set_ascii_codepage(
+     libnk2_file_t *file,
+     int ascii_codepage,
+     libnk2_error_t **error );
 
 /* Retrieves the modification time
  * The returned time is a 64-bit version of a filetime value
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_get_modification_time(
-                   libnk2_file_t *file,
-                   uint64_t *modification_time,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_get_modification_time(
+     libnk2_file_t *file,
+     uint64_t *modification_time,
+     libnk2_error_t **error );
 
 /* Retrieves the number of items
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_get_number_of_items(
-                   libnk2_file_t *file,
-                   int *number_of_items,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_get_number_of_items(
+     libnk2_file_t *file,
+     int *number_of_items,
+     libnk2_error_t **error );
 
 /* Retrieves a specific item
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_file_get_item(
-                   libnk2_file_t *file,
-                   int item_index,
-                   libnk2_item_t **item,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_get_item(
+     libnk2_file_t *file,
+     int item_index,
+     libnk2_item_t **item,
+     libnk2_error_t **error );
 
 /* -------------------------------------------------------------------------
  * File functions - deprecated
@@ -264,10 +310,11 @@ LIBNK2_EXTERN int libnk2_file_get_item(
  * This function is deprecated use libnk2_file_get_number_of_items instead
  */
 LIBNK2_DEPRECATED \
-LIBNK2_EXTERN int libnk2_file_get_amount_of_items(
-                   libnk2_file_t *file,
-                   int *amount_of_items,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_file_get_amount_of_items(
+     libnk2_file_t *file,
+     int *amount_of_items,
+     libnk2_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Item functions
@@ -276,37 +323,41 @@ LIBNK2_EXTERN int libnk2_file_get_amount_of_items(
 /* Frees an item
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_free(
-                   libnk2_item_t **item,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_free(
+     libnk2_item_t **item,
+     libnk2_error_t **error );
 
 /* Retrieves the identifier of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_identifier(
-                   libnk2_item_t *item,
-                   uint32_t *identifier,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_identifier(
+     libnk2_item_t *item,
+     uint32_t *identifier,
+     libnk2_error_t **error );
 
 /* Retrieves the number of entries
  * All sets in an item contain the same number of entries
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_number_of_entries(
-                   libnk2_item_t *item,
-                   uint32_t *number_of_entries,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_number_of_entries(
+     libnk2_item_t *item,
+     uint32_t *number_of_entries,
+     libnk2_error_t **error );
 
 /* Retrieves the entry and value type of a specific entry
  * The name to id map entry is set when available
  * Returns 1 if successful or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_type(
-                   libnk2_item_t *item,
-                   int entry_index,
-                   uint32_t *entry_type,
-                   uint32_t *value_type,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_type(
+     libnk2_item_t *item,
+     int entry_index,
+     uint32_t *entry_type,
+     uint32_t *value_type,
+     libnk2_error_t **error );
 
 /* Retrieves the value of a specific entry
  *
@@ -317,57 +368,63 @@ LIBNK2_EXTERN int libnk2_item_get_entry_type(
  *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint32_t *value_type,
-                   uint8_t **value_data,
-                   size_t *value_data_size,
-                   uint8_t flags,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint32_t *value_type,
+     uint8_t **value_data,
+     size_t *value_data_size,
+     uint8_t flags,
+     libnk2_error_t **error );
 
 /* Retrieves the boolean value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_boolean(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *value_boolean,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_boolean(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *value_boolean,
+     libnk2_error_t **error );
 
 /* Retrieves the 32-bit value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_32bit(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint32_t *value_32bit,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_32bit(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint32_t *value_32bit,
+     libnk2_error_t **error );
 
 /* Retrieves the 64-bit value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_64bit(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint64_t *value_64bit,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_64bit(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint64_t *value_64bit,
+     libnk2_error_t **error );
 
 /* Retrieves the size value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_size(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   size_t *value_size,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *value_size,
+     libnk2_error_t **error );
 
 /* Retrieves the size of the UTF-8 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string_size(
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf8_string_size(
                    libnk2_item_t *item,
                    uint32_t entry_type,
                    size_t *utf8_string_size,
@@ -378,65 +435,71 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string_size(
  * The size should include the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_utf8_string(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *utf8_string,
-                   size_t utf8_string_size,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf8_string(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libnk2_error_t **error );
 
 /* Retrieves the size of the UTF-16 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The returned size includes the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_utf16_string_size(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   size_t *utf16_string_size,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf16_string_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *utf16_string_size,
+     libnk2_error_t **error );
 
 /* Retrieves the UTF-16 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The size should include the end of string character
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_utf16_string(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *utf16_string,
-                   size_t utf16_string_size,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf16_string(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *utf16_string,
+     size_t utf16_string_size,
+     libnk2_error_t **error );
 
 /* Retrieves the size of a binary data value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_binary_data_size(
-                   libnk2_item_t *item,
-                   int set_index,
-                   uint32_t entry_type,
-                   size_t *size,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_binary_data_size(
+     libnk2_item_t *item,
+     int set_index,
+     uint32_t entry_type,
+     size_t *size,
+     libnk2_error_t **error );
 
 /* Retrieves the binary data value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_binary_data(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *binary_data,
-                   size_t size,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_binary_data(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *binary_data,
+     size_t size,
+     libnk2_error_t **error );
 
 /* Retrieves the GUID value of a specific entry
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
-LIBNK2_EXTERN int libnk2_item_get_entry_value_guid(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   uint8_t *guid,
-                   size_t size,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_guid(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *guid,
+     size_t size,
+     libnk2_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Item functions - deprecated
@@ -449,10 +512,11 @@ LIBNK2_EXTERN int libnk2_item_get_entry_value_guid(
  * This function is deprecated use libnk2_item_get_number_of_entries instead
  */
 LIBNK2_DEPRECATED \
-LIBNK2_EXTERN int libnk2_item_get_amount_of_entries(
-                   libnk2_item_t *item,
-                   uint32_t *amount_of_entries,
-                   libnk2_error_t **error );
+LIBNK2_EXTERN \
+int libnk2_item_get_amount_of_entries(
+     libnk2_item_t *item,
+     uint32_t *amount_of_entries,
+     libnk2_error_t **error );
 
 #if defined( __cplusplus )
 }
