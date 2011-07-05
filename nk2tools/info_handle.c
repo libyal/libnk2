@@ -177,6 +177,8 @@ int info_handle_signal_abort(
 
 		return( -1 );
 	}
+	info_handle->abort = 1;
+
 	if( info_handle->input_file != NULL )
 	{
 		if( libnk2_file_signal_abort(
@@ -196,15 +198,15 @@ int info_handle_signal_abort(
 	return( 1 );
 }
 
-/* Opens the input of the info handle
+/* Opens the info handle
  * Returns 1 if successful or -1 on error
  */
-int info_handle_open_input(
+int info_handle_open(
      info_handle_t *info_handle,
      const libcstring_system_character_t *filename,
      liberror_error_t **error )
 {
-	static char *function = "info_handle_open_input";
+	static char *function = "info_handle_open";
 
 	if( info_handle == NULL )
 	{
@@ -251,7 +253,6 @@ int info_handle_close(
      liberror_error_t **error )
 {
 	static char *function = "info_handle_close";
-	int result            = 0;
 
 	if( info_handle == NULL )
 	{
@@ -264,22 +265,6 @@ int info_handle_close(
 
 		return( -1 );
 	}
-	if( info_handle->root_item != NULL )
-	{
-		if( libnk2_item_free(
-		     &( info_handle->root_item ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free root item.",
-			 function );
-
-			result = -1;
-		}
-	}
 	if( libnk2_file_close(
 	     info_handle->input_file,
 	     error ) != 0 )
@@ -291,9 +276,9 @@ int info_handle_close(
 		 "%s: unable to close input file.",
 		 function );
 
-		result = -1;
+		return( -1 );
 	}
-	return( result );
+	return( 0 );
 }
 
 /* Prints the file information to a stream

@@ -43,13 +43,13 @@ struct info_handle
 	 */
 	libnk2_file_t *input_file;
 
-	/* The libnk2 root item
-	 */
-	libnk2_item_t *root_item;
-
 	/* The nofication output stream
 	 */
 	FILE *notify_stream;
+
+	/* Value to indicate if abort was signalled
+	 */
+	int abort;
 };
 
 int info_handle_initialize(
@@ -64,7 +64,7 @@ int info_handle_signal_abort(
      info_handle_t *info_handle,
      liberror_error_t **error );
 
-int info_handle_open_input(
+int info_handle_open(
      info_handle_t *info_handle,
      const libcstring_system_character_t *filename,
      liberror_error_t **error );

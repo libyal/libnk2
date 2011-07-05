@@ -40,6 +40,14 @@ typedef struct export_handle export_handle_t;
 
 struct export_handle
 {
+	/* Value to indicate item values should be dumped
+	 */
+	uint8_t dump_item_values;
+
+	/* The libnk2 input file
+	 */
+	libnk2_file_t *input_file;
+
 	/* The ascii codepage
 	 */
 	int ascii_codepage;
@@ -59,6 +67,11 @@ struct export_handle
 	/* The items export path size
 	 */
 	size_t items_export_path_size;
+
+	/* Value to indicate if status information
+	 * should be printed to the notify stream
+	 */
+	uint8_t print_status_information;
 
 	/* The nofication output stream
 	 */
@@ -116,18 +129,6 @@ int export_handle_make_directory(
      log_handle_t *log_handle,
      liberror_error_t **error );
 
-/* TODO refactor */
-
-int export_handle_create_target_path(
-     export_handle_t *export_handle,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
-     uint8_t *utf8_filename,
-     size_t utf8_filename_size,
-     libcstring_system_character_t **target_path,
-     size_t *target_path_size,
-     liberror_error_t **error );
-
 int export_handle_print_data(
      export_handle_t *export_handle,
      FILE *stream,
@@ -135,29 +136,69 @@ int export_handle_print_data(
      size_t data_size,
      liberror_error_t **error );
 
-int export_handle_export_alias(
+int export_handle_open(
      export_handle_t *export_handle,
-     libnk2_item_t *item,
+     const libcstring_system_character_t *filename,
+     liberror_error_t **error );
+
+int export_handle_close(
+     export_handle_t *export_handle,
+     liberror_error_t **error );
+
+/* Item generic export functions
+ */
+int export_handle_create_default_item_directory(
+     export_handle_t *export_handle,
      int item_index,
-     int number_of_items,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
+     const libcstring_system_character_t *item_prefix,
+     size_t item_prefix_length,
+     const libcstring_system_character_t *export_path,
+     size_t export_path_length,
+     libcstring_system_character_t **item_directory_path,
+     size_t *item_directory_path_size,
      log_handle_t *log_handle,
+     liberror_error_t **error );
+
+int export_handle_create_text_item_file(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *item_filename,
+     size_t item_filename_length,
+     const libcstring_system_character_t *export_path,
+     size_t export_path_length,
+     FILE **item_file_stream,
      liberror_error_t **error );
 
 int export_handle_export_item_values(
      export_handle_t *export_handle,
      libnk2_item_t *item,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
+     const libcstring_system_character_t *item_values_filename,
+     size_t item_values_filename_length,
+     const libcstring_system_character_t *export_path,
+     size_t export_path_length,
+     log_handle_t *log_handle,
+     liberror_error_t **error );
+
+/* Item specific export functions
+ */
+int export_handle_export_alias(
+     export_handle_t *export_handle,
+     libnk2_item_t *alias,
+     int alias_index,
+     const libcstring_system_character_t *export_path,
+     size_t export_path_length,
+     log_handle_t *log_handle,
+     liberror_error_t **error );
+
+/* File export functions
+ */
+int export_handle_export_items(
+     export_handle_t *export_handle,
+     libnk2_file_t *file,
      log_handle_t *log_handle,
      liberror_error_t **error );
 
 int export_handle_export_file(
      export_handle_t *export_handle,
-     libnk2_file_t *file,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
      log_handle_t *log_handle,
      liberror_error_t **error );
 

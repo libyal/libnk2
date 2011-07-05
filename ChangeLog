@@ -1,11 +1,17 @@
 TODO:
-* Code clean up:
-  - use of memory_allocate_strucute and goto ?
-  - export handle (check libpff/libesedb)
-  - update libnk2.c
 * update msvscpp project files add, VSDebug configuration
+  - libfdatetime
+  - libfguid
+  - libfmapi
+  - libfwnt
+  - libnk2_dll
+  - libnk2
+  - nk2export
+  - nk2info
 * value_identifier initialize and free functions
 * in io_handle_read_items used set array value instead of append ?
+* 2011 update
+  - macosx/libnk2.pmproj
 
 Optimizations:
 * map (file offset and size) items and item values first read on demand ?
@@ -35,6 +41,14 @@ Beta release
 * remove deprecated definition in include/libnk2/mapi.h
 * update man pages
 * add documentation
+
+20110705
+* refactored nk2export and export handle
+* nk2export added quiet option
+* updated libnk2.c
+* added libnk2_unused.h
+* updated README.mingw
+* updated libfmapi
 
 20110704
 * updated configure

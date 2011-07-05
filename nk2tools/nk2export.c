@@ -43,6 +43,9 @@
 #include "nk2output.h"
 #include "nk2tools_libnk2.h"
 
+export_handle_t *nk2export_export_handle = NULL;
+int nk2export_abort                      = 0;
+
 /* Prints the executable usage information
  */
 void usage_fprint(
@@ -65,10 +68,48 @@ void usage_fprint(
 	                 "\t        windows-1257 or windows-1258\n" );
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-l:     logs information about the exported items\n" );
+	fprintf( stream, "\t-q:     quiet shows minimal status information\n" );
 	fprintf( stream, "\t-t:     specify the target directory to export to\n"
 	                 "\t        (default is the source filename followed by .export)\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
 	fprintf( stream, "\t-V:     print version\n" );
+}
+
+/* Signal handler for nk2export
+ */
+void nk2export_signal_handler(
+      libsystem_signal_t signal )
+{
+	liberror_error_t *error = NULL;
+	static char *function   = "nk2export_signal_handler";
+
+	nk2export_abort = 1;
+
+	if( nk2export_export_handle != NULL )
+	{
+		if( export_handle_signal_abort(
+		     nk2export_export_handle,
+		     &error ) != 1 )
+		{
+			libsystem_notify_printf(
+			 "%s: unable to signal export handle to abort.\n",
+			 function );
+
+			libsystem_notify_print_error_backtrace(
+			 error );
+			liberror_error_free(
+			 &error );
+		}
+	}
+	/* Force stdin to close otherwise any function reading it will remain blocked
+	 */
+	if( libsystem_file_io_close(
+	     0 ) != 0 )
+	{
+		libsystem_notify_printf(
+		 "%s: unable to close stdin.\n",
+		 function );
+	}
 }
 
 /* The main program
@@ -79,22 +120,20 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	export_handle_t *export_handle                    = NULL;
-	liberror_error_t *error                           = NULL;
-	libnk2_file_t *nk2_file                           = NULL;
-	log_handle_t *log_handle                          = NULL;
-	libcstring_system_character_t *log_filename       = NULL;
-	libcstring_system_character_t *option_target_path = NULL;
-	libcstring_system_character_t *path_separator     = NULL;
-	libcstring_system_character_t *source             = NULL;
-	libcstring_system_character_t *target_path        = NULL;
-	char *program                                     = "nk2export";
-	size_t source_length                              = 0;
-	size_t target_path_length                         = 0;
-	libcstring_system_integer_t option                = 0;
-	int ascii_codepage                                = LIBNK2_CODEPAGE_WINDOWS_1252;
-	int result                                        = 0;
-	int verbose                                       = 0;
+	export_handle_t *export_handle                       = NULL;
+	liberror_error_t *error                              = NULL;
+	log_handle_t *log_handle                             = NULL;
+	libcstring_system_character_t *log_filename          = NULL;
+	libcstring_system_character_t *option_ascii_codepage = NULL;
+	libcstring_system_character_t *option_target_path    = NULL;
+	libcstring_system_character_t *path_separator        = NULL;
+	libcstring_system_character_t *source                = NULL;
+	char *program                                        = "nk2export";
+	size_t source_length                                 = 0;
+	libcstring_system_integer_t option                   = 0;
+	uint8_t print_status_information                     = 1;
+	int result                                           = 0;
+	int verbose                                          = 0;
 
 	libsystem_notify_set_stream(
 	 stderr,
@@ -102,9 +141,9 @@ int main( int argc, char * const argv[] )
 	libsystem_notify_set_verbose(
 	 1 );
 
-        if( libsystem_initialize(
-             "nk2tools",
-             &error ) != 1 )
+	if( libsystem_initialize(
+	     "nk2tools",
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -124,7 +163,7 @@ int main( int argc, char * const argv[] )
 	while( ( option = libsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:t:vV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:qt:vV" ) ) ) != (libcstring_system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -141,22 +180,8 @@ int main( int argc, char * const argv[] )
 				return( EXIT_FAILURE );
 
 			case (libcstring_system_integer_t) 'c':
-				if( nk2input_determine_ascii_codepage(
-				     optarg,
-				     &ascii_codepage,
-				     &error ) != 1 )
-				{
-					libsystem_notify_print_error_backtrace(
-					 error );
-					liberror_error_free(
-					 &error );
+				option_ascii_codepage = optarg;
 
-					ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1252;
-
-					fprintf(
-					 stderr,
-					 "Unsupported ASCII codepage defaulting to: windows-1252.\n" );
-				}
 				break;
 
 			case (libcstring_system_integer_t) 'h':
@@ -167,6 +192,11 @@ int main( int argc, char * const argv[] )
 
 			case (libcstring_system_integer_t) 'l':
 				log_filename = optarg;
+
+				break;
+
+			case (libcstring_system_integer_t) 'q':
+				print_status_information = 0;
 
 				break;
 
@@ -200,42 +230,7 @@ int main( int argc, char * const argv[] )
 	}
 	source = argv[ optind ];
 
-	if( option_target_path != NULL )
-	{
-		target_path_length = libcstring_system_string_length(
-		                      option_target_path );
-
-		if( target_path_length > 0 )
-		{
-			target_path = (libcstring_system_character_t *) memory_allocate(
-			                                                 sizeof( libcstring_system_character_t ) * ( target_path_length + 1 ) );
-
-			if( target_path == NULL )
-			{
-				fprintf(
-				 stderr,
-				 "Unable to create target path.\n" );
-
-				return( EXIT_FAILURE );
-			}
-			else if( libcstring_system_string_copy(
-			          target_path,
-			          option_target_path,
-			          target_path_length ) == NULL )
-			{
-				fprintf(
-				 stderr,
-				 "Unable to set target path.\n" );
-
-				memory_free(
-				 target_path );
-
-				return( EXIT_FAILURE );
-			}
-			target_path[ target_path_length ] = 0;
-		}
-	}
-	else
+	if( option_target_path == NULL )
 	{
 		source_length = libcstring_system_string_length(
 		                 source );
@@ -253,65 +248,7 @@ int main( int argc, char * const argv[] )
 		{
 			path_separator++;
 		}
-		target_path_length = 7 + libcstring_system_string_length(
-		                          path_separator );
-
-		target_path = (libcstring_system_character_t *) memory_allocate(
-		                                                 sizeof( libcstring_system_character_t ) * ( target_path_length + 1 ) );
-
-		if( target_path == NULL )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to create target path.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		if( libcstring_system_string_sprintf(
-		     target_path,
-		     target_path_length + 1,
-		     _LIBCSTRING_SYSTEM_STRING( "%" ) _LIBCSTRING_SYSTEM_STRING( PRIs_LIBCSTRING_SYSTEM ) _LIBCSTRING_SYSTEM_STRING( ".export" ),
-		     path_separator ) == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to set target path.\n" );
-
-			memory_free(
-			 target_path );
-
-			return( EXIT_FAILURE );
-		}
-	}
-	result = libsystem_file_exists(
-	          target_path,
-	          &error );
-
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.\n",
-		 target_path );
-
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-	}
-	else if( result == 1 )
-	{
-		fprintf(
-		 stderr,
-		 "%" PRIs_LIBCSTRING_SYSTEM " already exists.\n",
-		 target_path );
-	}
-	if( result != 0 )
-	{
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		option_target_path = path_separator;
 	}
 	libsystem_notify_set_verbose(
 	 verbose );
@@ -329,60 +266,73 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to initialize log handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( export_handle_initialize(
-	     &export_handle,
+	     &nk2export_export_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
 		 "Unable to initialize export handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
-	if( libnk2_file_initialize(
-	     &nk2_file,
+	nk2export_export_handle->print_status_information = print_status_information;
+
+	if( option_ascii_codepage != NULL )
+	{
+		result = export_handle_set_ascii_codepage(
+		          nk2export_export_handle,
+		          option_ascii_codepage,
+		          &error );
+
+		if( result == -1 )
+		{
+			fprintf(
+			 stderr,
+			 "Unable to set ASCII codepage in export handle.\n" );
+
+			goto on_error;
+		}
+		else if( result == 0 )
+		{
+			fprintf(
+			 stderr,
+			 "Unsupported ASCII codepage defaulting to: windows-1252.\n" );
+		}
+	}
+	if( export_handle_set_target_path(
+	     nk2export_export_handle,
+	     option_target_path,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize NK2 file.\n" );
+		 "Unable to set target path.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
+		goto on_error;
+	}
+	result = export_handle_create_items_export_path(
+	          nk2export_export_handle,
+	          &error );
 
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
+	if( result == -1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to create items export path.\n" );
 
-		return( EXIT_FAILURE );
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		fprintf(
+		 stderr,
+		 "%" PRIs_LIBCSTRING_SYSTEM " already exists.\n",
+		 nk2export_export_handle->items_export_path );
+
+		goto on_error;
 	}
 	if( log_handle_open(
 	     log_handle,
@@ -394,94 +344,23 @@ int main( int argc, char * const argv[] )
 		 "Unable to open log file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 log_filename );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libnk2_file_free(
-		 &nk2_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
-	}
-	if( libnk2_file_set_ascii_codepage(
-	     nk2_file,
-	     ascii_codepage,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to set ASCII codepage.\n" );
-
-		libsystem_notify_print_error_backtrace(
-		 error );
-		libnk2_error_free(
-		 &error );
-
-		libnk2_file_free(
-		 &nk2_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	fprintf(
 	 stdout,
 	 "Opening file.\n" );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libnk2_file_open_wide(
-	     nk2_file,
+	if( export_handle_open(
+	     nk2export_export_handle,
 	     source,
-	     LIBNK2_OPEN_READ,
 	     &error ) != 1 )
-#else
-	if( libnk2_file_open(
-	     nk2_file,
-	     source,
-	     LIBNK2_OPEN_READ,
-	     &error ) != 1 )
-#endif
 	{
 		fprintf(
 		 stderr,
-		 "Error opening file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Unable to open: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 source );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libnk2_file_free(
-		 &nk2_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	fprintf(
 	 stdout,
@@ -489,9 +368,6 @@ int main( int argc, char * const argv[] )
 
 	result = export_handle_export_file(
 	          export_handle,
-	          nk2_file,
-	          target_path,
-	          target_path_length + 1,
 	          log_handle,
 	          &error );
 
@@ -501,97 +377,27 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to export file.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libnk2_file_close(
-		 nk2_file,
-		 NULL );
-		libnk2_file_free(
-		 &nk2_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
-	memory_free(
-	 target_path );
-
-	if( libnk2_file_close(
-	     nk2_file,
+	if( export_handle_close(
+	     nk2export_export_handle,
 	     &error ) != 0 )
 	{
 		fprintf(
 		 stderr,
-		 "Error closing file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-		 source );
+		 "Unable to close export handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libnk2_file_free(
-		 &nk2_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-
-		return( EXIT_FAILURE );
-	}
-	if( libnk2_file_free(
-	     &nk2_file,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to free NK2 file.\n" );
-
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( export_handle_free(
-	     &export_handle,
+	     &nk2export_export_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
 		 "Unable to free export handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( log_handle_close(
 	     log_handle,
@@ -599,19 +405,9 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to close log file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-		 log_filename );
+		 "Unable to close log handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( log_handle_free(
 	     &log_handle,
@@ -621,12 +417,7 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to free log handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( result == 0 )
 	{
@@ -641,5 +432,27 @@ int main( int argc, char * const argv[] )
 		 "Export completed.\n" );
 	}
 	return( EXIT_SUCCESS );
+
+on_error:
+	if( error != NULL )
+	{
+		libsystem_notify_print_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+	}
+	if( nk2export_export_handle != NULL )
+	{
+		export_handle_free(
+		 &nk2export_export_handle,
+		 NULL );
+	}
+	if( log_handle != NULL )
+	{
+		log_handle_free(
+		 &log_handle,
+		 NULL );
+	}
+	return( EXIT_FAILURE );
 }
 

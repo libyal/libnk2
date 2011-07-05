@@ -208,7 +208,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( info_handle_open_input(
+	if( info_handle_open(
 	     nk2info_info_handle,
 	     source,
 	     &error ) != 1 )
@@ -262,9 +262,6 @@ on_error:
 	}
 	if( nk2info_info_handle != NULL )
 	{
-		info_handle_close(
-		 nk2info_info_handle,
-		 NULL );
 		info_handle_free(
 		 &nk2info_info_handle,
 		 NULL );

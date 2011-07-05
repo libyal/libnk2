@@ -3,33 +3,13 @@ Creating a DLL using MinGW
 To compile a libnk2 DLL using mingw you'll need:
 * mingw
 
-If no mingw build of zlib is availble, you'll need to build it from the sources.
-For this you can use a script similar to the following:
-
-#!/bin/sh
-CC=/opt/local/bin/i386-mingw32-gcc
-CXX=/opt/local/bin/i386-mingw32-g++
-AR=/opt/local/bin/i386-mingw32-ar
-OBJDUMP=/opt/local/bin/i386-mingw32-objdump
-RANLIB=/opt/local/bin/i386-mingw32-ranlib
-STRIP=/opt/local/bin/i386-mingw32-strip
-MINGWFLAGS="-mwin32 -mconsole -march=i586 "
-CFLAGS="$MINGWFLAGS"
-CXXFLAGS="$MINGWFLAGS"
-
-./configure --prefix=/opt/local/i386-mingw32
-CC=$CC CXX=$CXX AR=$AR OBJDUMP=$OBJDUMP RANLIB=$RANLIB STRIP=$STRIP CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" make
-
-And install it in the mingw build tree with:
-sudo make install
-
-To build a DLL use:
+To build a DLL using mingw use:
 mingw32-configure --enable-winapi=yes
 mingw32-make
 
-It is possible to compile libnk2 without WINAPI support (--enable-winapi=no).
-libnk2 will need a mingw build of openssl libcrypto for MD5 and SHA1 support
-and optionally a mingw build of libuuid for GUID/UUID support.
+It is recommended that you use WINAPI support but it is possible to compile 
+libnk2 without it (--enable-winapi=no). As of version 20110704 the default
+behaviour is that libnk2 will try to auto-detect MinGW and enable WINAPI support.
 
 If mingw32-configure and mingw32-make are not available you'll need to build
 it by hand. For this you can use a script similar to the following:
@@ -49,5 +29,5 @@ CC=$CC CXX=$CXX AR=$AR OBJDUMP=$OBJDUMP RANLIB=$RANLIB STRIP=$STRIP ./configure 
 CC=$CC CXX=$CXX AR=$AR OBJDUMP=$OBJDUMP RANLIB=$RANLIB STRIP=$STRIP CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" make
 
 You should end up with the following DLL:
-libnk2-<version>/libnk2/.libs/libnk2-2.dll
+libnk2-<version>/libnk2/.libs/libnk2-1.dll
 

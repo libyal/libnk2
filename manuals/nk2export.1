@@ -9,7 +9,7 @@
 .Op Fl c Ar codepage
 .Op Fl l Ar logfile
 .Op Fl t Ar target
-.Op Fl hvV
+.Op Fl hqvV
 .Va Ar source
 .Sh DESCRIPTION
 .Nm nk2export
@@ -33,6 +33,8 @@ specify the codepage of ASCII strings, options: ascii, windows-874, windows-1250
 shows this help
 .It Fl l Ar logfile
 specify the file in which to log information about the exported items
+.It Fl q
+quiet shows minimal status information
 .It Fl t Ar target
 specify the target directory to export to (default is the source filename followed by .export)
 .It Fl v
