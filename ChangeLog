@@ -1,14 +1,4 @@
 TODO:
-* update msvscpp project files add, VSDebug configuration
-  - libfdatetime
-  - libfguid
-  - libfmapi
-  - libfwnt
-  - libnk2_dll
-  - libnk2
-  - nk2export
-  - nk2info
-* value_identifier initialize and free functions
 * in io_handle_read_items used set array value instead of append ?
 * 2011 update
   - macosx/libnk2.pmproj
@@ -37,10 +27,26 @@ Test:
 * add autoconf/make test suite
 
 Beta release
+* have automated test suite
 * remove deprecated functions in libnk2_legacy.[ch]
 * remove deprecated definition in include/libnk2/mapi.h
 * update man pages
 * add documentation
+* check inclusion of local libraries
+
+Bindings:
+* python
+* .net
+* java
+
+20110706
+* code clean up
+* updated msvscpp files, added VSDebug
+* updated nk2tools/log_handle.[ch]
+* added open_close example
+* worked on automated test
+* added value_identifier initialize and free functions
+* added codepage functionality to info handle
 
 20110705
 * refactored nk2export and export handle

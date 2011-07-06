@@ -18,6 +18,8 @@ SUBDIRS = \
 	nk2tools \
 	po \
 	manuals \
+	examples \
+	tests \
 	macosx \
 	msvscpp
 

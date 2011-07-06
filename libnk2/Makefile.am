@@ -37,7 +37,7 @@ libnk2_la_SOURCES = \
 	libnk2_support.c libnk2_support.h \
 	libnk2_types.h \
 	libnk2_unused.h \
-	libnk2_value_identifier.h \
+	libnk2_value_identifier.c libnk2_value_identifier.h \
 	nk2_file_footer.h \
 	nk2_file_header.h \
 	nk2_item.h

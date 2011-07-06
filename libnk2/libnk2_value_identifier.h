@@ -42,6 +42,14 @@ struct libnk2_value_identifier
 	uint16_t value_type;
 };
 
+int libnk2_value_identifier_initialize(
+     libnk2_value_identifier_t **value_identifier,
+     liberror_error_t **error );
+
+int libnk2_value_identifier_free(
+     libnk2_value_identifier_t **value_identifier,
+     liberror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

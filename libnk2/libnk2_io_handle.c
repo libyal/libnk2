@@ -37,6 +37,7 @@
 #include "libnk2_libfmapi.h"
 #include "libnk2_libfvalue.h"
 #include "libnk2_mapi.h"
+#include "libnk2_unused.h"
 #include "libnk2_value_identifier.h"
 
 #include "nk2_file_footer.h"
@@ -437,28 +438,30 @@ on_error:
 int libnk2_io_handle_read_item_values(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t item_index,
+     uint32_t item_index LIBNK2_ATTRIBUTE_UNUSED,
      uint32_t number_of_item_values,
      libfvalue_table_t *values_table,
      liberror_error_t **error )
 {
 	uint8_t value_data_size_data[ 4 ];
 
-	libnk2_value_identifier_t value_identifier;
 	nk2_item_value_entry_t item_value_entry;
 
-	libfvalue_value_t *value     = NULL;
-	uint8_t *value_data          = NULL;
-	static char *function        = "libnk2_io_handle_read_item_values";
-	ssize_t read_count           = 0;
-	uint32_t item_value_iterator = 0;
-	uint16_t value_data_size     = 0;
-	uint16_t value_boolean       = 0;
-	uint8_t value_type           = 0;
+	libnk2_value_identifier_t *value_identifier = NULL;
+	libfvalue_value_t *value                    = NULL;
+	uint8_t *value_data                         = NULL;
+	static char *function                       = "libnk2_io_handle_read_item_values";
+	ssize_t read_count                          = 0;
+	uint32_t item_value_index                   = 0;
+	uint16_t value_data_size                    = 0;
+	uint16_t value_boolean                      = 0;
+	uint8_t value_type                          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint32_t value_32bit         = 0;
+	uint32_t value_32bit                        = 0;
 #endif
+
+	LIBNK2_UNREFERENCED_PARAMETER( item_index )
 
 	if( io_handle == NULL )
 	{
@@ -482,9 +485,22 @@ int libnk2_io_handle_read_item_values(
 
 		return( -1 );
 	}
-	for( item_value_iterator = 0;
-	     item_value_iterator < number_of_item_values;
-	     item_value_iterator++ )
+	if( libnk2_value_identifier_initialize(
+	     &value_identifier,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create value identifier.",
+		 function );
+
+		goto on_error;
+	}
+	for( item_value_index = 0;
+	     item_value_index < number_of_item_values;
+	     item_value_index++ )
 	{
 		read_count = libbfio_handle_read(
 			      file_io_handle,
@@ -510,7 +526,7 @@ int libnk2_io_handle_read_item_values(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 "\n",
 			 function,
 			 item_index,
-			 item_value_iterator );
+			 item_value_index );
 			libnotify_print_data(
 			 (uint8_t *) &item_value_entry,
 			 sizeof( nk2_item_value_entry_t ) );
@@ -518,10 +534,10 @@ int libnk2_io_handle_read_item_values(
 #endif
 		byte_stream_copy_to_uint16_little_endian(
 		 item_value_entry.value_type,
-		 value_identifier.value_type );
+		 value_identifier->value_type );
 		byte_stream_copy_to_uint16_little_endian(
 		 item_value_entry.entry_type,
-		 value_identifier.entry_type );
+		 value_identifier->entry_type );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libnotify_verbose != 0 )
@@ -530,27 +546,27 @@ int libnk2_io_handle_read_item_values(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " value type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
 			 function,
 			 item_index,
-			 item_value_iterator,
-			 value_identifier.value_type,
+			 item_value_index,
+			 value_identifier->value_type,
 			 libfmapi_value_type_get_identifier(
-			  value_identifier.value_type ),
+			  value_identifier->value_type ),
 			 libfmapi_value_type_get_description(
-			  value_identifier.value_type ) );
+			  value_identifier->value_type ) );
 
 			libnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " entry type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
 			 function,
 			 item_index,
-			 item_value_iterator,
-			 value_identifier.entry_type,
+			 item_value_index,
+			 value_identifier->entry_type,
 			 libfmapi_property_type_get_identifier(
 			  NULL,
-			  value_identifier.entry_type,
-			  value_identifier.value_type ),
+			  value_identifier->entry_type,
+			  value_identifier->value_type ),
 			 libfmapi_property_type_get_description(
 			  NULL,
-			  value_identifier.entry_type,
-			  value_identifier.value_type ) );
+			  value_identifier->entry_type,
+			  value_identifier->value_type ) );
 
 			byte_stream_copy_to_uint32_little_endian(
 			 item_value_entry.unknown1,
@@ -559,14 +575,14 @@ int libnk2_io_handle_read_item_values(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " unknown1\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 item_index,
-			 item_value_iterator,
+			 item_value_index,
 			 value_32bit );
 
 			libnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " value data array:\n",
 			 function,
 			 item_index,
-			 item_value_iterator );
+			 item_value_index );
 			libnotify_print_data(
 			 item_value_entry.value_data_array,
 			 8 );
@@ -574,7 +590,7 @@ int libnk2_io_handle_read_item_values(
 #endif
 		/* TODO add other value types to the item entry
 		 */
-		switch( value_identifier.value_type )
+		switch( value_identifier->value_type )
 		{
 			case LIBNK2_VALUE_TYPE_BOOLEAN:
 				value_type      = LIBFVALUE_VALUE_TYPE_BOOLEAN;
@@ -645,7 +661,7 @@ int libnk2_io_handle_read_item_values(
 				 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 				 "%s: unsupported value type: 0x%04" PRIx16 ".",
 				 function,
-				 value_identifier.value_type );
+				 value_identifier->value_type );
 
 				goto on_error;
 		}
@@ -681,7 +697,7 @@ int libnk2_io_handle_read_item_values(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " value data size\t: %" PRIu16 "\n",
 			 function,
 			 item_index,
-			 item_value_iterator,
+			 item_value_index,
 			 value_data_size );
 		}
 #endif
@@ -697,14 +713,14 @@ int libnk2_io_handle_read_item_values(
 			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create value: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 value_identifier->entry_type,
+			 value_identifier->value_type );
 
 			goto on_error;
 		}
 		if( libfvalue_value_set_identifier(
 		     value,
-		     (uint8_t *) &value_identifier,
+		     (uint8_t *) value_identifier,
 		     sizeof( libnk2_value_identifier_t ),
 		     error ) != 1 )
 		{
@@ -714,8 +730,8 @@ int libnk2_io_handle_read_item_values(
 			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set identifier in value: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 value_identifier->entry_type,
+			 value_identifier->value_type );
 
 			libfvalue_value_free(
 			 &value,
@@ -725,7 +741,7 @@ int libnk2_io_handle_read_item_values(
 		}
 		if( libfvalue_table_set_value_by_index(
 		     values_table,
-		     item_value_iterator,
+		     item_value_index,
 		     value,
 		     error ) != 1 )
 		{
@@ -735,8 +751,8 @@ int libnk2_io_handle_read_item_values(
 			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set value: 0x%04" PRIx16 " 0x%04" PRIx16 " in values table.",
 			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 value_identifier->entry_type,
+			 value_identifier->value_type );
 
 			libfvalue_value_free(
 			 &value,
@@ -758,7 +774,7 @@ int libnk2_io_handle_read_item_values(
 
 			goto on_error;
 		}
-		switch( value_identifier.value_type )
+		switch( value_identifier->value_type )
 		{
 			case LIBNK2_VALUE_TYPE_STRING_ASCII:
 			case LIBNK2_VALUE_TYPE_STRING_UNICODE:
@@ -816,11 +832,11 @@ int libnk2_io_handle_read_item_values(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " value data:\n",
 			 function,
 			 item_index,
-			 item_value_iterator );
+			 item_value_index );
 
 			if( libnk2_debug_mapi_value_print(
-			     value_identifier.entry_type,
-			     value_identifier.value_type,
+			     value_identifier->entry_type,
+			     value_identifier->value_type,
 			     value_data,
 			     (size_t) value_data_size,
 			     io_handle->ascii_codepage,
@@ -840,7 +856,7 @@ int libnk2_io_handle_read_item_values(
 			}
 		}
 #endif
-		if( value_identifier.value_type == LIBNK2_VALUE_TYPE_BOOLEAN )
+		if( value_identifier->value_type == LIBNK2_VALUE_TYPE_BOOLEAN )
 		{
 			byte_stream_copy_to_uint16_little_endian(
 			 value_data_size_data,
@@ -858,8 +874,8 @@ int libnk2_io_handle_read_item_values(
 				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set value: 0x%04" PRIx16 " 0x%04" PRIx16 " boolean value.",
 				 function,
-				 value_identifier.entry_type,
-				 value_identifier.value_type );
+				 value_identifier->entry_type,
+				 value_identifier->value_type );
 
 				memory_free(
 				 value_data );
@@ -887,8 +903,8 @@ int libnk2_io_handle_read_item_values(
 				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set value: 0x%04" PRIx16 " 0x%04" PRIx16 " data.",
 				 function,
-				 value_identifier.entry_type,
-				 value_identifier.value_type );
+				 value_identifier->entry_type,
+				 value_identifier->value_type );
 
 				memory_free(
 				 value_data );
@@ -896,7 +912,7 @@ int libnk2_io_handle_read_item_values(
 				goto on_error;
 			}
 		}
-		if( value_identifier.value_type == LIBNK2_VALUE_TYPE_STRING_ASCII )
+		if( value_identifier->value_type == LIBNK2_VALUE_TYPE_STRING_ASCII )
 		{
 			if( libfvalue_value_set_codepage(
 			     value,
@@ -909,8 +925,8 @@ int libnk2_io_handle_read_item_values(
 				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set value: 0x%04" PRIx16 " 0x%04" PRIx16 " codepage.",
 				 function,
-				 value_identifier.entry_type,
-				 value_identifier.value_type );
+				 value_identifier->entry_type,
+				 value_identifier->value_type );
 
 				goto on_error;
 			}
@@ -929,9 +945,28 @@ int libnk2_io_handle_read_item_values(
 			goto on_error;
 		}
 	}
+	if( libnk2_value_identifier_free(
+	     &value_identifier,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free value identifier.",
+		 function );
+
+		goto on_error;
+	}
 	return( 1 );
 
 on_error:
+	if( value_identifier != NULL )
+	{
+		libnk2_value_identifier_free(
+		 &value_identifier,
+		 NULL );
+	}
 	libfvalue_table_empty(
 	 values_table,
 	 NULL );

@@ -43,6 +43,10 @@ struct info_handle
 	 */
 	libnk2_file_t *input_file;
 
+	/* The ascii codepage
+	 */
+	int ascii_codepage;
+
 	/* The nofication output stream
 	 */
 	FILE *notify_stream;
@@ -62,6 +66,11 @@ int info_handle_free(
 
 int info_handle_signal_abort(
      info_handle_t *info_handle,
+     liberror_error_t **error );
+
+int info_handle_set_ascii_codepage(
+     info_handle_t *info_handle,
+     const libcstring_system_character_t *string,
      liberror_error_t **error );
 
 int info_handle_open(

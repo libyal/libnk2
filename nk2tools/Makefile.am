@@ -40,6 +40,7 @@ nk2export_LDADD = \
 nk2info_SOURCES = \
 	info_handle.c info_handle.h \
 	nk2info.c \
+	nk2input.c nk2input.h \
 	nk2output.c nk2output.h \
 	nk2tools_libfdatetime.h \
 	nk2tools_libnk2.h

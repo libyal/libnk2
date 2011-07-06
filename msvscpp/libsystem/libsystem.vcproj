@@ -185,7 +185,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libsystem\libsystem_split_string.c"
+				RelativePath="..\..\libsystem\libsystem_split_values.c"
 				>
 			</File>
 			<File
@@ -268,10 +268,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libsystem\libsystem_signal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libsystem\libsystem_split_string.h"
 				>
 			</File>
 			<File

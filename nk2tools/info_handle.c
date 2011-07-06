@@ -27,6 +27,7 @@
 #include <liberror.h>
 
 #include "info_handle.h"
+#include "nk2input.h"
 #include "nk2tools_libfdatetime.h"
 #include "nk2tools_libnk2.h"
 
@@ -196,6 +197,47 @@ int info_handle_signal_abort(
 		}
 	}
 	return( 1 );
+}
+
+/* Sets the ascii codepage
+ * Returns 1 if successful or -1 on error
+ */
+int info_handle_set_ascii_codepage(
+     info_handle_t *info_handle,
+     const libcstring_system_character_t *string,
+     liberror_error_t **error )
+{
+	static char *function = "info_handle_set_ascii_codepage";
+	int result            = 0;
+
+	if( info_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid info handle.",
+		 function );
+
+		return( -1 );
+	}
+	result = nk2input_determine_ascii_codepage(
+	          string,
+	          &( info_handle->ascii_codepage ),
+	          error );
+
+	if( result == -1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to determine ASCII codepage.",
+		 function );
+
+		return( -1 );
+	}
+	return( result );
 }
 
 /* Opens the info handle
