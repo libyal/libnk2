@@ -855,34 +855,19 @@ int libnk2_item_get_entry_value_size(
 
 			return( -1 );
 		}
-		if( ( sizeof( size_t ) != 8 )
-		 && ( sizeof( size_t ) != 4 ) )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported size of size_t.",
-			 function );
-
-			return( -1 );
-		}
-		if( sizeof( size_t ) == 8 )
-		{
-			result = libfvalue_value_copy_to_64bit(
-			          value,
-			          0,
-			          (uint64_t *) value_size,
-			          error );
-		}
-		else
-		{
-			result = libfvalue_value_copy_to_32bit(
-			          value,
-			          0,
-			          (uint32_t *) value_size,
-			          error );
-		}
+#if ( SIZEOF_SIZE_T == 8 ) || defined( _WIN64 )
+		result = libfvalue_value_copy_to_64bit(
+		          value,
+		          0,
+		          (uint64_t *) value_size,
+		          error );
+#else
+		result = libfvalue_value_copy_to_32bit(
+		          value,
+		          0,
+		          (uint32_t *) value_size,
+		          error );
+#endif
 		if( result != 1 )
 		{
 			liberror_error_set(

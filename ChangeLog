@@ -13,7 +13,6 @@ library
 * what about multiple alias entries 0x6001 of a single item?
   - they are set in values table but identifier lookup will return first only
 * local library support
-* implement an alternative solution for sizeof( size_t ) == 8 ?
 
 Tools
 * add signal handling
@@ -38,6 +37,9 @@ Bindings:
 * python
 * .net
 * java
+
+20110717
+* implemented an alternative solution for sizeof( size_t ) == 8 ?
 
 20110706
 * code clean up
