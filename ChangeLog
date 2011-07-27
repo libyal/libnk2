@@ -38,6 +38,9 @@ Bindings:
 * .net
 * java
 
+20110727
+* updated manuals
+
 20110717
 * implemented an alternative solution for sizeof( size_t ) == 8 ?
 
