@@ -33,7 +33,7 @@
 #include "libnk2_libbfio.h"
 #include "libnk2_types.h"
 
-#if defined( _MSC_VER ) || defined( __BORLANDC__ )
+#if defined( _MSC_VER ) || defined( __BORLANDC__ ) || defined( __MINGW32_VERSION ) || defined( __MINGW64_VERSION_MAJOR )
 
 /* This inclusion is needed otherwise some linkers
  * mess up exporting the legacy functions
@@ -51,7 +51,7 @@ struct libnk2_internal_file
 {
 	/* The items array
 	 */
-	libnk2_array_t *items;
+	libnk2_array_t *items_array;
 
 	/* The IO handle
 	 */

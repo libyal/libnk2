@@ -93,7 +93,7 @@ int libnk2_file_initialize(
 			return( -1 );
 		}
 		if( libnk2_array_initialize(
-		     &( internal_file->items ),
+		     &( internal_file->items_array ),
 		     0,
 		     error ) != 1 )
 		{
@@ -126,10 +126,10 @@ int libnk2_file_initialize(
 on_error:
 	if( internal_file != NULL )
 	{
-		if( internal_file->items != NULL )
+		if( internal_file->items_array != NULL )
 		{
 			libnk2_array_free(
-			 &( internal_file->items ),
+			 &( internal_file->items_array ),
 			 NULL,
 			 NULL );
 		}
@@ -184,7 +184,7 @@ int libnk2_file_free(
 		*file = NULL;
 
 		if( libnk2_array_free(
-		     &( internal_file->items ),
+		     &( internal_file->items_array ),
 		     &libfvalue_table_free_as_value,
 		     error ) != 1 )
 		{
@@ -741,7 +741,7 @@ int libnk2_file_close(
 	internal_file->file_io_handle_created_in_library = 0;
 
 	if( libnk2_array_resize(
-	     internal_file->items,
+	     internal_file->items_array,
 	     0,
 	     &libfvalue_table_free_as_value,
 	     error ) != 1 )
@@ -830,7 +830,7 @@ int libnk2_file_open_read(
 	          internal_file->io_handle,
 	          internal_file->file_io_handle,
 	          number_of_items,
-	          internal_file->items,
+	          internal_file->items_array,
 	          error );
 
 	if( result != 1 )
@@ -1051,7 +1051,7 @@ int libnk2_file_get_number_of_items(
 	internal_file = (libnk2_internal_file_t *) file;
 
 	if( libnk2_array_get_number_of_entries(
-	     internal_file->items,
+	     internal_file->items_array,
 	     number_of_items,
 	     error ) != 1 )
 	{
@@ -1093,17 +1093,6 @@ int libnk2_file_get_item(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
-	if( internal_file->items == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing items array.",
-		 function );
-
-		return( -1 );
-	}
 	if( item == NULL )
 	{
 		liberror_error_set(
@@ -1116,7 +1105,7 @@ int libnk2_file_get_item(
 		return( -1 );
 	}
 	if( libnk2_array_get_entry_by_index(
-	     internal_file->items,
+	     internal_file->items_array,
 	     item_index,
 	     (intptr_t **) &values_table,
 	     error ) != 1 )
