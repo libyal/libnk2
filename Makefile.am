@@ -36,6 +36,7 @@ SPEC_FILES = \
 
 EXTRA_DIST = \
 	README.dll \
+	README.macosx \
 	README.mingw \
 	README.static \
 	$(GETTEXT_FILES) \
