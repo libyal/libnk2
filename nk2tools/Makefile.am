@@ -26,7 +26,10 @@ nk2export_SOURCES = \
 	nk2export.c \
 	nk2input.c nk2input.h \
 	nk2output.c nk2output.h \
-	nk2tools_libnk2.h
+	nk2tools_libfdatetime.h \
+	nk2tools_libfguid.h \
+	nk2tools_libnk2.h \
+	nk2tools_libuna.h
 
 nk2export_LDADD = \
 	../libcstring/libcstring.la \
@@ -43,7 +46,9 @@ nk2info_SOURCES = \
 	nk2input.c nk2input.h \
 	nk2output.c nk2output.h \
 	nk2tools_libfdatetime.h \
-	nk2tools_libnk2.h
+	nk2tools_libfguid.h \
+	nk2tools_libnk2.h \
+	nk2tools_libuna.h
 
 nk2info_LDADD = \
 	../libcstring/libcstring.la \

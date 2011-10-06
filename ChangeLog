@@ -1,6 +1,4 @@
 TODO:
-* configure/m4 clean up
-* update pc file
 * update msvscpp files
 * in io_handle_read_items used set array value instead of append ?
 * 2011 update
@@ -41,10 +39,15 @@ Bindings:
 * .net
 * java
 
+20111005
+* updated configure.ac and m4 files
+* code clean up
+
 20111004
-* updated configure.ac
+* updated configure.ac and m4 files
 * updated README files
 * updated spec file
+* updated pc file
 
 20111003
 * updated configure.ac

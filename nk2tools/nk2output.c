@@ -24,28 +24,10 @@
 #include <memory.h>
 #include <types.h>
 
-#if defined( HAVE_LOCAL_LIBUNA )
-#include <libuna_definitions.h>
-#elif defined( HAVE_LIBUNA_H )
-#include <libuna.h>
-#endif
-
 #if defined( HAVE_LOCAL_LIBBFIO )
 #include <libbfio_definitions.h>
 #elif defined( HAVE_LIBBFIO_H )
 #include <libbfio.h>
-#endif
-
-#if defined( HAVE_LOCAL_LIBFDATETIME )
-#include <libfdatetime_definitions.h>
-#elif defined( HAVE_LIBFDATETIME_H )
-#include <libfdatetime.h>
-#endif
-
-#if defined( HAVE_LOCAL_LIBFGUID )
-#include <libfguid_definitions.h>
-#elif defined( HAVE_LIBFGUID_H )
-#include <libfguid.h>
 #endif
 
 #if defined( HAVE_LOCAL_LIBFVALUE )
@@ -67,7 +49,10 @@
 #endif
 
 #include "nk2output.h"
+#include "nk2tools_libfdatetime.h"
+#include "nk2tools_libfguid.h"
 #include "nk2tools_libnk2.h"
+#include "nk2tools_libuna.h"
 
 /* Prints the copyright information
  */

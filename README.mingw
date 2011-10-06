@@ -36,7 +36,7 @@ libnk2-<version>/libnk2/.libs/libnk2-1.dll
 
 And the following executables:
 libnk2-<version>/nk2tools/.libs/nk2info.exe
-libnk2-<version>/nk2tools/.libs/nk2mount.exe
+libnk2-<version>/nk2tools/.libs/nk2export.exe
 
 To install the libnk2 DLL in the MinGW build tree use:
 sudo make install

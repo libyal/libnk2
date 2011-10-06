@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
- [20111004],
+ [20111005],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -64,249 +64,19 @@ dnl Check for enabling libbfio for basic file IO support
 AX_LIBBFIO_CHECK_ENABLE
 
 dnl Check for enabling libfdatetime for file date and time support
-AX_COMMON_ARG_WITH(
- [libfdatetime],
- [libfdatetime],
- [search for libfdatetime in includedir and libdir or in the specified DIR, or no if to use local version],
- [auto-detect],
- [DIR])
-
-AC_CHECK_LIBFDATETIME
-
-AS_IF(
- [test "x$ac_cv_libfdatetime" = xyes],
- [AC_SUBST(
-  [ax_libfdatetime_pc_libs_private],
-  [-lfdatetime])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfdatetime" = xyes],
- [AC_SUBST(
-  [ax_libfdatetime_spec_requires],
-  [libfdatetime])
- AC_SUBST(
-  [ax_libfdatetime_spec_build_requires],
-  [libfdatetime-devel])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfdatetime" != xyes],
- [AC_DEFINE(
-  [HAVE_LOCAL_LIBFDATETIME],
-  [1],
-  [Define to 1 if the local version of libfdatetime is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBFDATETIME],
-  [1])
- AC_SUBST(
-  [LIBFDATETIME_CPPFLAGS],
-  [-I../libfdatetime])
- AC_SUBST(
-  [LIBFDATETIME_LIBADD],
-  [../libfdatetime/libfdatetime.la])
- ac_cv_libfdatetime=local
- ])
-
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBFDATETIME],
- [test "x$ac_cv_libfdatetime" = xlocal])
+AX_LIBFDATETIME_CHECK_ENABLE
 
 dnl Check for enabling libfguid for file GUID/UUID support
-AX_COMMON_ARG_WITH(
- [libfguid],
- [libfguid],
- [search for libfguid in includedir and libdir or in the specified DIR, or no if to use local version],
- [auto-detect],
- [DIR])
-
-AC_CHECK_LIBFGUID
-
-AS_IF(
- [test "x$ac_cv_libfguid" = xyes],
- [AC_SUBST(
-  [ax_libfguid_pc_libs_private],
-  [-lfguid])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfguid" = xyes],
- [AC_SUBST(
-  [ax_libfguid_spec_requires],
-  [libfguid])
- AC_SUBST(
-  [ax_libfguid_spec_build_requires],
-  [libfguid-devel])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfguid" != xyes],
- [AC_DEFINE(
-  [HAVE_LOCAL_LIBFGUID],
-  [1],
-  [Define to 1 if the local version of libfguid is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBFGUID],
-  [1])
- AC_SUBST(
-  [LIBFGUID_CPPFLAGS],
-  [-I../libfguid])
- AC_SUBST(
-  [LIBFGUID_LIBADD],
-  [../libfguid/libfguid.la])
- ac_cv_libfguid=local
- ])
-
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBFGUID],
- [test "x$ac_cv_libfguid" = xlocal])
+AX_LIBFGUID_CHECK_ENABLE
 
 dnl Check for enabling libfvalue for file value support
-AX_COMMON_ARG_WITH(
- [libfvalue],
- [libfvalue],
- [search for libfvalue in includedir and libdir or in the specified DIR, or no if to use local version],
- [auto-detect],
- [DIR])
-
-AC_CHECK_LIBFVALUE
-
-AS_IF(
- [test "x$ac_cv_libfvalue" = xyes],
- [AC_SUBST(
-  [ax_libfvalue_pc_libs_private],
-  [-lfvalue])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfvalue" = xyes],
- [AC_SUBST(
-  [ax_libfvalue_spec_requires],
-  [libfvalue])
- AC_SUBST(
-  [ax_libfvalue_spec_build_requires],
-  [libfvalue-devel])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfvalue" != xyes],
- [AC_DEFINE(
-  [HAVE_LOCAL_LIBFVALUE],
-  [1],
-  [Define to 1 if the local version of libfvalue is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBFVALUE],
-  [1])
- AC_SUBST(
-  [LIBFVALUE_CPPFLAGS],
-  [-I../libfvalue])
- AC_SUBST(
-  [LIBFVALUE_LIBADD],
-  [../libfvalue/libfvalue.la])
- ac_cv_libfvalue=local
- ])
-
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBFVALUE],
- [test "x$ac_cv_libfvalue" = xlocal])
+AX_LIBFVALUE_CHECK_ENABLE
 
 dnl Check for enabling libfwnt for file Windows NT type support
-AX_COMMON_ARG_WITH(
- [libfwnt],
- [libfwnt],
- [search for libfwnt in includedir and libdir or in the specified DIR, or no if to use local version],
- [auto-detect],
- [DIR])
-
-AC_CHECK_LIBFWNT
-
-AS_IF(
- [test "x$ac_cv_libfwnt" = xyes],
- [AC_SUBST(
-  [ax_libfwnt_pc_libs_private],
-  [-lfvalue])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfwnt" = xyes],
- [AC_SUBST(
-  [ax_libfwnt_spec_requires],
-  [libfvalue])
- AC_SUBST(
-  [ax_libfwnt_spec_build_requires],
-  [libfvalue-devel])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfwnt" != xyes],
- [AC_DEFINE(
-  [HAVE_LOCAL_LIBFWNT],
-  [1],
-  [Define to 1 if the local version of libfwnt is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBFWNT],
-  [1])
- AC_SUBST(
-  [LIBFWNT_CPPFLAGS],
-  [-I../libfwnt])
- AC_SUBST(
-  [LIBFWNT_LIBADD],
-  [../libfwnt/libfwnt.la])
- ac_cv_libfwnt=local
- ])
-
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBFWNT],
- [test "x$ac_cv_libfwnt" = xlocal])
+AX_LIBFWNT_CHECK_ENABLE
 
 dnl Check for enabling libfmapi for file MAPI types support
-AX_COMMON_ARG_WITH(
- [libfmapi],
- [libfmapi],
- [search for libfmapi in includedir and libdir or in the specified DIR, or no if to use local version],
- [auto-detect],
- [DIR])
-
-AC_CHECK_LIBFMAPI
-
-AS_IF(
- [test "x$ac_cv_libfmapi" = xyes],
- [AC_SUBST(
-  [ax_libfwnt_pc_libs_private],
-  [-lfvalue])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfmapi" = xyes],
- [AC_SUBST(
-  [ax_libfwnt_spec_requires],
-  [libfvalue])
- AC_SUBST(
-  [ax_libfwnt_spec_build_requires],
-  [libfvalue-devel])
- ])
-
-AS_IF(
- [test "x$ac_cv_libfmapi" != xyes],
- [AC_DEFINE(
-  [HAVE_LOCAL_LIBFMAPI],
-  [1],
-  [Define to 1 if the local version of libfmapi is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBFMAPI],
-  [1])
- AC_SUBST(
-  [LIBFMAPI_CPPFLAGS],
-  [-I../libfmapi])
- AC_SUBST(
-  [LIBFMAPI_LIBADD],
-  [../libfmapi/libfmapi.la])
- ac_cv_libfmapi=local
- ])
-
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBFMAPI],
- [test "x$ac_cv_libfmapi" = xlocal])
+AX_LIBFMAPI_CHECK_ENABLE
 
 dnl Check if nk2tools should be build as static executables
 AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
@@ -319,7 +89,7 @@ AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_have_libuna" = xyes || test "x$ac_cv_have_libbfio" = xyes || test "x$ac_cv_have_libfdatetime" = xyes || test "x$ac_cv_have_libfguid" = xyes || test "x$ac_cv_have_libfvalue" = xyes || test "x$ac_cv_have_libfwnt" = xyes || test "x$ac_cv_have_libfmapi" = xyes],
+ [test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwnt" = xyes || test "x$ac_cv_libfmapi" = xyes],
  [AC_SUBST(
   [libnk2_spec_requires],
   [Requires:])
@@ -403,13 +173,13 @@ AC_OUTPUT
 dnl Print a summary
 AC_MSG_NOTICE([
 Building:
-   libuna support:                           $ac_cv_have_libuna
-   libbfio support:                          $ac_cv_have_libbfio
-   libfdatetime support:                     $ac_cv_have_libfdatetime
-   libfguid support:                         $ac_cv_have_libfguid
-   libfvalue support:                        $ac_cv_have_libfvalue
-   libfwnt support:                          $ac_cv_have_libfwnt
-   libfmapi support:                         $ac_cv_have_libfmapi
+   libuna support:                           $ac_cv_libuna
+   libbfio support:                          $ac_cv_libbfio
+   libfdatetime support:                     $ac_cv_libfdatetime
+   libfguid support:                         $ac_cv_libfguid
+   libfvalue support:                        $ac_cv_libfvalue
+   libfwnt support:                          $ac_cv_libfwnt
+   libfmapi support:                         $ac_cv_libfmapi
 
 Features:
    Wide character type support:              $ac_cv_enable_wide_character_type
