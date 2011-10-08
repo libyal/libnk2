@@ -39,6 +39,14 @@ Bindings:
 * .net
 * java
 
+20111007
+* updated README
+* updated libfdatetime
+* updated msvscpp files for libfdatetime
+
+20111006
+* removed acinclude.m4
+
 20111005
 * updated configure.ac and m4 files
 * code clean up
