@@ -120,7 +120,6 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	export_handle_t *export_handle                       = NULL;
 	liberror_error_t *error                              = NULL;
 	log_handle_t *log_handle                             = NULL;
 	libcstring_system_character_t *log_filename          = NULL;
@@ -367,7 +366,7 @@ int main( int argc, char * const argv[] )
 	 "Exporting aliases.\n" );
 
 	result = export_handle_export_file(
-	          export_handle,
+	          nk2export_export_handle,
 	          log_handle,
 	          &error );
 

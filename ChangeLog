@@ -1,5 +1,4 @@
 TODO:
-* update msvscpp files
 * in io_handle_read_items used set array value instead of append ?
 * 2011 update
   - macosx/libnk2.pmproj
@@ -38,6 +37,11 @@ Bindings:
 * python
 * .net
 * java
+
+20111030
+* updated configure.ac and m4 files
+* updated common, libsystem, libfdatetime, libfvalue
+* changes for libfvalue updates
 
 20111007
 * updated README

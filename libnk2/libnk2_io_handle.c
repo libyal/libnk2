@@ -704,7 +704,6 @@ int libnk2_io_handle_read_item_values(
 		if( libfvalue_value_initialize(
 		     &value,
 		     value_type,
-		     LIBFVALUE_VALUE_FLAG_IDENTIFIER_MANAGED | LIBFVALUE_VALUE_FLAG_DATA_MANAGED,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -722,6 +721,7 @@ int libnk2_io_handle_read_item_values(
 		     value,
 		     (uint8_t *) value_identifier,
 		     sizeof( libnk2_value_identifier_t ),
+		     LIBFVALUE_VALUE_IDENTIFIER_FLAG_MANAGED,
 		     error ) != 1 )
 		{
 			liberror_error_set(

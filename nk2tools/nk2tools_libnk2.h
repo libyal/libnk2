@@ -28,9 +28,7 @@
  * before including libnk2.h
  */
 #if defined( _WIN32 ) && defined( DLL_EXPORT )
-#if !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBNK2_DLL_IMPORT
-#endif
 #endif
 
 #include <libnk2.h>

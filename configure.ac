@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
- [20111007],
+ [20111030],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -39,11 +39,11 @@ AC_C_VOLATILE
 dnl Check if WINAPI support should be enabled
 AX_COMMON_CHECK_ENABLE_WINAPI
 
-dnl Check for type definitions
-AX_TYPES_CHECK_LOCAL
-
 dnl Check if wide character type should be enabled
 AX_COMMON_CHECK_ENABLE_WIDE_CHARACTER_TYPE
+
+dnl Check for type definitions
+AX_TYPES_CHECK_LOCAL
 
 dnl Checks for libraries and library functions
 AX_COMMON_CHECK_LOCAL
@@ -114,7 +114,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if DLL support is needed in nk2tools
 AS_IF(
- [test "x$enable_shared" = xyes],
+ [test "x$enable_shared" = xyes && test "x$ac_cv_enable_static_executables" = xno],
  [AS_CASE(
   [$host],
   [*cygwin* | *mingw*],

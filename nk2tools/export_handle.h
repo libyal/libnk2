@@ -94,11 +94,6 @@ int export_handle_signal_abort(
      export_handle_t *export_handle,
      liberror_error_t **error );
 
-int export_handle_set_export_mode(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
-     liberror_error_t **error );
-
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
      const libcstring_system_character_t *string,
