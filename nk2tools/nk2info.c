@@ -1,7 +1,7 @@
 /*
  * Shows information obtained from a Nickfile (NK2)
  *
- * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -123,6 +123,7 @@ int main( int argc, char * const argv[] )
 
 	if( libsystem_initialize(
 	     "nk2tools",
+	     _IONBF,
 	     &error ) != 1 )
 	{
 		fprintf(

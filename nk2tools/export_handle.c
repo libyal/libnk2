@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -55,53 +55,62 @@ int export_handle_initialize(
 
 		return( -1 );
 	}
+	if( *export_handle != NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid export handle value already set.",
+		 function );
+
+		return( -1 );
+	}
+	*export_handle = memory_allocate_structure(
+	                  export_handle_t );
+
 	if( *export_handle == NULL )
 	{
-		*export_handle = memory_allocate_structure(
-		                  export_handle_t );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create export handle.",
+		 function );
 
-		if( *export_handle == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create export handle.",
-			 function );
-
-			goto on_error;
-		}
-		if( memory_set(
-		     *export_handle,
-		     0,
-		     sizeof( export_handle_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear export handle.",
-			 function );
-
-			goto on_error;
-		}
-		if( libnk2_file_initialize(
-		     &( ( *export_handle )->input_file ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to initialize input file.",
-			 function );
-
-			goto on_error;
-		}
-		( *export_handle )->dump_item_values         = 1;
-		( *export_handle )->print_status_information = 1;
-		( *export_handle )->notify_stream            = EXPORT_HANDLE_NOTIFY_STREAM;
+		goto on_error;
 	}
+	if( memory_set(
+	     *export_handle,
+	     0,
+	     sizeof( export_handle_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear export handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( libnk2_file_initialize(
+	     &( ( *export_handle )->input_file ),
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize input file.",
+		 function );
+
+		goto on_error;
+	}
+	( *export_handle )->dump_item_values         = 1;
+	( *export_handle )->print_status_information = 1;
+	( *export_handle )->notify_stream            = EXPORT_HANDLE_NOTIFY_STREAM;
+
 	return( 1 );
 
 on_error:
@@ -601,60 +610,6 @@ int export_handle_create_items_export_path(
 	return( 1 );
 }
 
-/* Makes (creates) a directory
- * Returns 1 if successful or -1 on error
- */
-int export_handle_make_directory(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *directory_name,
-     log_handle_t *log_handle,
-     liberror_error_t **error )
-{
-	static char *function = "export_handle_make_directory";
-
-	if( export_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( directory_name == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid directory name.",
-		 function );
-
-		return( -1 );
-	}
-	if( libsystem_directory_make(
-	     directory_name ) != 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
-		 function,
-		 directory_name );
-
-		return( -1 );
-	}
-	log_handle_printf(
-	 log_handle,
-	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-	 directory_name );
-
-	return( 1 );
-}
-
 /* Prints the data on the stream
  * Returns the number of printed characters if successful or -1 on error
  */
@@ -1078,22 +1033,25 @@ int export_handle_create_default_item_directory(
 
 		goto on_error;
 	}
-	if( export_handle_make_directory(
-	     export_handle,
+	if( libsystem_directory_make(
 	     *item_directory_path,
-	     log_handle,
-	     error ) != 1 )
+	     error ) != 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to create directory: %" PRIs_LIBCSTRING_SYSTEM "",
+		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
 		 *item_directory_path );
 
-		goto on_error;
+		return( -1 );
 	}
+	log_handle_printf(
+	 log_handle,
+	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+	 *item_directory_path );
+
 	return( 1 );
 
 on_error:
@@ -1613,22 +1571,25 @@ int export_handle_export_items(
 	 export_handle->notify_stream,
 	 "Exporting items.\n" );
 
-	if( export_handle_make_directory(
-	     export_handle,
+	if( libsystem_directory_make(
 	     export_handle->items_export_path,
-	     log_handle,
-	     error ) != 1 )
+	     error ) != 0 )
 	{
 		liberror_error_set(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_IO,
 		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM "",
+		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
 		 export_handle->items_export_path );
 
 		return( -1 );
 	}
+	log_handle_printf(
+	 log_handle,
+	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+	 export_handle->items_export_path );
+
 	for( item_index = 0;
 	     item_index < number_of_items;
 	     item_index++ )

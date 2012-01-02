@@ -1,7 +1,7 @@
 /*
  * libnk2 file
  *
- * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -59,68 +59,77 @@ int libnk2_file_initialize(
 
 		return( -1 );
 	}
-	if( *file == NULL )
+	if( *file != NULL )
 	{
-		internal_file = memory_allocate_structure(
-		                 libnk2_internal_file_t );
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid file value already set.",
+		 function );
 
-		if( internal_file == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create file.",
-			 function );
-
-			goto on_error;
-		}
-		if( memory_set(
-		     internal_file,
-		     0,
-		     sizeof( libnk2_internal_file_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear file.",
-			 function );
-
-			memory_free(
-			 internal_file );
-
-			return( -1 );
-		}
-		if( libnk2_array_initialize(
-		     &( internal_file->items_array ),
-		     0,
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create items array.",
-			 function );
-
-			goto on_error;
-		}
-		if( libnk2_io_handle_initialize(
-		     &( internal_file->io_handle ),
-		     error ) != 1 )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create IO handle.",
-			 function );
-
-			goto on_error;
-		}
-		*file = (libnk2_file_t *) internal_file;
+		return( -1 );
 	}
+	internal_file = memory_allocate_structure(
+	                 libnk2_internal_file_t );
+
+	if( internal_file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create file.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
+	     internal_file,
+	     0,
+	     sizeof( libnk2_internal_file_t ) ) == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_MEMORY,
+		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear file.",
+		 function );
+
+		memory_free(
+		 internal_file );
+
+		return( -1 );
+	}
+	if( libnk2_array_initialize(
+	     &( internal_file->items_array ),
+	     0,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create items array.",
+		 function );
+
+		goto on_error;
+	}
+	if( libnk2_io_handle_initialize(
+	     &( internal_file->io_handle ),
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	*file = (libnk2_file_t *) internal_file;
+
 	return( 1 );
 
 on_error:
@@ -185,7 +194,7 @@ int libnk2_file_free(
 
 		if( libnk2_array_free(
 		     &( internal_file->items_array ),
-		     &libfvalue_table_free_as_value,
+		     (int (*)(intptr_t **, liberror_error_t **)) &libfvalue_table_free,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -603,7 +612,7 @@ int libnk2_file_open_file_io_handle(
 	}
 	if( ( access_flags & LIBNK2_ACCESS_FLAG_READ ) != 0 )
 	{
-		bfio_access_flags = LIBBFIO_FLAG_READ;
+		bfio_access_flags = LIBBFIO_ACCESS_FLAG_READ;
 	}
 	internal_file->file_io_handle = file_io_handle;
 
@@ -743,7 +752,7 @@ int libnk2_file_close(
 	if( libnk2_array_resize(
 	     internal_file->items_array,
 	     0,
-	     &libfvalue_table_free_as_value,
+	     (int (*)(intptr_t **, liberror_error_t **)) &libfvalue_table_free,
 	     error ) != 1 )
 	{
 		liberror_error_set(
@@ -962,6 +971,8 @@ int libnk2_file_set_ascii_codepage(
 	}
 	if( ( ascii_codepage != LIBNK2_CODEPAGE_ASCII )
 	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_874 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_932 )
+	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_936 )
 	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1250 )
 	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1251 )
 	 && ( ascii_codepage != LIBNK2_CODEPAGE_WINDOWS_1252 )

@@ -1,7 +1,7 @@
 /*
  * Support functions
  *
- * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -105,6 +105,8 @@ int libnk2_set_codepage(
 	 && ( codepage != LIBNK2_CODEPAGE_KOI8_R )
 	 && ( codepage != LIBNK2_CODEPAGE_KOI8_U )
 	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_874 )
+	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_932 )
+	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_936 )
 	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1250 )
 	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1251 )
 	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1252 )

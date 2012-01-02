@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2009-2011, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -116,12 +116,6 @@ int export_handle_set_export_path(
 
 int export_handle_create_items_export_path(
      export_handle_t *export_handle,
-     liberror_error_t **error );
-
-int export_handle_make_directory(
-     export_handle_t *export_handle,
-     const libcstring_system_character_t *directory_name,
-     log_handle_t *log_handle,
      liberror_error_t **error );
 
 int export_handle_print_data(

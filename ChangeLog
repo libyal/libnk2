@@ -1,6 +1,6 @@
 TODO:
 * in io_handle_read_items used set array value instead of append ?
-* 2011 update
+* 2012 update
   - macosx/libnk2.pmproj
 
 Optimizations:
@@ -37,6 +37,10 @@ Bindings:
 * python
 * .net
 * java
+
+20120102
+* 2012 update
+* added codepage windows 932 and 936 support
 
 20111030
 * updated configure.ac and m4 files
