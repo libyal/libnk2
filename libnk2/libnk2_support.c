@@ -133,7 +133,7 @@ int libnk2_set_codepage(
 
 #endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 
-/* Determines if a file is a PPF file (check for the NK2 file signature)
+/* Determines if a file is a Nickfile (check for the NK2 file signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libnk2_check_file_signature(
@@ -239,7 +239,7 @@ int libnk2_check_file_signature(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Determines if a file is a NK2 file (check for the NK2 file signature)
+/* Determines if a file is a Nickfile (check for the NK2 file signature)
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libnk2_check_file_signature_wide(
@@ -345,7 +345,7 @@ int libnk2_check_file_signature_wide(
 
 #endif
 
-/* Determines if a file is a NK2 file (check for the NK2 file signature) using a Basic File IO (bfio) handle
+/* Determines if a file is a Nickfile (check for the NK2 file signature) using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
 int libnk2_check_file_signature_file_io_handle(
