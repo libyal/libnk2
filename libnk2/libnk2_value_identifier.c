@@ -23,9 +23,7 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
+#include "libnk2_libcerror.h"
 #include "libnk2_value_identifier.h"
 
 /* Initialize an value identifier
@@ -34,16 +32,16 @@
  */
 int libnk2_value_identifier_initialize(
      libnk2_value_identifier_t **value_identifier,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libnk2_value_identifier_initialize";
 
 	if( value_identifier == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid value identifier.",
 		 function );
 
@@ -51,10 +49,10 @@ int libnk2_value_identifier_initialize(
 	}
 	if( *value_identifier != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid value identifier value already set.",
 		 function );
 
@@ -65,10 +63,10 @@ int libnk2_value_identifier_initialize(
 
 	if( *value_identifier == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create value identifier.",
 		 function );
 
@@ -79,10 +77,10 @@ int libnk2_value_identifier_initialize(
 	     0,
 	     sizeof( libnk2_value_identifier_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear file.",
 		 function );
 
@@ -106,16 +104,16 @@ on_error:
  */
 int libnk2_value_identifier_free(
      libnk2_value_identifier_t **value_identifier,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libnk2_value_identifier_free";
 
 	if( value_identifier == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid value identifier.",
 		 function );
 

@@ -25,9 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libnk2_extern.h"
+#include "libnk2_libcerror.h"
 #include "libnk2_types.h"
 
 #if defined( __cplusplus )
@@ -40,13 +39,13 @@ LIBNK2_EXTERN \
 int libnk2_file_get_amount_of_items(
      libnk2_file_t *file,
      int *amount_of_items,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_item_get_amount_of_entries(
      libnk2_item_t *item,
      uint32_t *amount_of_entries,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 

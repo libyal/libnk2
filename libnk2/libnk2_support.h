@@ -25,10 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libnk2_extern.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -47,31 +46,31 @@ int libnk2_get_access_flags_read(
 LIBNK2_EXTERN \
 int libnk2_get_codepage(
      int *codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_set_codepage(
      int codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 
 LIBNK2_EXTERN \
 int libnk2_check_file_signature(
      const char *filename,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 LIBNK2_EXTERN \
 int libnk2_check_file_signature_wide(
      const wchar_t *filename,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 #endif
 
 LIBNK2_EXTERN \
 int libnk2_check_file_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

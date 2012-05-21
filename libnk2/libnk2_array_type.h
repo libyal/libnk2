@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libnk2_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -81,71 +81,71 @@ struct libnk2_array
 int libnk2_array_initialize(
      libnk2_array_t **array,
      int number_of_entries,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_array_free(
      libnk2_array_t **array,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libnk2_array_empty(
      libnk2_array_t *array,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libnk2_array_clear(
      libnk2_array_t *array,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libnk2_array_clone(
      libnk2_array_t **destination_array,
      libnk2_array_t *source_array,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      int (*entry_clone_function)(
             intptr_t **destination,
             intptr_t *source,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libnk2_array_resize(
      libnk2_array_t *array,
      int number_of_entries,
      int (*entry_free_function)(
             intptr_t **entry,
-            liberror_error_t **error ),
-     liberror_error_t **error );
+            libcerror_error_t **error ),
+     libcerror_error_t **error );
 
 int libnk2_array_get_number_of_entries(
      libnk2_array_t *array,
      int *number_of_entries,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_array_get_entry_by_index(
      libnk2_array_t *array,
      int entry_index,
      intptr_t **entry,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_array_set_entry_by_index(
      libnk2_array_t *array,
      int entry_index,
      intptr_t *entry,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_array_append_entry(
      libnk2_array_t *array,
      int *entry_index,
      intptr_t *entry,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_array_insert_entry(
      libnk2_array_t *array,
@@ -154,9 +154,9 @@ int libnk2_array_insert_entry(
      int (*entry_compare_function)(
             intptr_t *first_entry,
             intptr_t *second_entry,
-            liberror_error_t **error ),
+            libcerror_error_t **error ),
      uint8_t insert_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

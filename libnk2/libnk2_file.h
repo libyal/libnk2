@@ -25,12 +25,11 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libnk2_array_type.h"
 #include "libnk2_extern.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcerror.h"
 #include "libnk2_types.h"
 
 #if defined( _MSC_VER ) || defined( __BORLANDC__ ) || defined( __MINGW32_VERSION ) || defined( __MINGW64_VERSION_MAJOR )
@@ -73,24 +72,24 @@ struct libnk2_internal_file
 LIBNK2_EXTERN \
 int libnk2_file_initialize(
      libnk2_file_t **file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_free(
      libnk2_file_t **file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_signal_abort(
      libnk2_file_t *file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_open(
      libnk2_file_t *file,
      const char *filename,
      int access_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 LIBNK2_EXTERN \
@@ -98,7 +97,7 @@ int libnk2_file_open_wide(
      libnk2_file_t *file,
      const wchar_t *filename,
      int access_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 #endif
 
 LIBNK2_EXTERN \
@@ -106,47 +105,47 @@ int libnk2_file_open_file_io_handle(
      libnk2_file_t *file,
      libbfio_handle_t *file_io_handle,
      int access_flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_close(
      libnk2_file_t *file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_file_open_read(
      libnk2_internal_file_t *internal_file,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_get_ascii_codepage(
      libnk2_file_t *file,
      int *ascii_codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_set_ascii_codepage(
      libnk2_file_t *file,
      int ascii_codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_get_modification_time(
      libnk2_file_t *file,
      uint64_t *modification_time,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_get_number_of_items(
      libnk2_file_t *file,
      int *number_of_items,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_file_get_item(
      libnk2_file_t *file,
      int item_index,
      libnk2_item_t **item,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

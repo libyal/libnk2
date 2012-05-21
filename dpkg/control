@@ -1,0 +1,29 @@
+Source: libnk2
+Section: unknown
+Priority: extra
+Maintainer: Joachim Metz <jbmetz@users.sourceforge.net>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.8.3
+Homepage: https://sourceforge.net/projects/libnk2/
+
+Package: libnk2
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library to support the Nickfile (NK2) format
+ libnk2 is a library to support the Nickfile (NK2) format.
+
+Package: libnk2-dev
+Section: libdevel
+Architecture: any
+Depends: libnk2 (= ${Source-Version})
+Description: Header files and libraries for developing applications for libnk2
+ Header files and libraries for developing applications for libnk2.
+
+Package: libnk2-tools
+Section: utils
+Architecture: any
+Depends: libnk2 (= ${Source-Version}), ${shlibs:Depends}
+Description: Several tools for reading Nickfiles (NK2)
+ Several tools for reading Nickfiles (NK2).
+

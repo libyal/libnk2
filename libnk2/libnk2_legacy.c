@@ -23,11 +23,10 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libnk2_file.h"
 #include "libnk2_item.h"
 #include "libnk2_legacy.h"
+#include "libnk2_libcerror.h"
 #include "libnk2_types.h"
 
 #if !defined( HAVE_LOCAL_LIBNK2 )
@@ -38,7 +37,7 @@
 int libnk2_file_get_amount_of_items(
      libnk2_file_t *file,
      int *amount_of_items,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	return( libnk2_file_get_number_of_items(
 	         file,
@@ -53,7 +52,7 @@ int libnk2_file_get_amount_of_items(
 int libnk2_item_get_amount_of_entries(
      libnk2_item_t *item,
      uint32_t *amount_of_entries,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	return( libnk2_item_get_number_of_entries(
 	         item,

@@ -1,4 +1,11 @@
 TODO:
+* update libfdatetime
+  - floating time support
+* update libfvalue
+  - floating time support
+  - fixed point currency support
+* complete libcerror update
+  - nk2tools
 * in io_handle_read_items used set array value instead of append ?
 * 2012 update
   - macosx/libnk2.pmproj

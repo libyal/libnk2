@@ -4,9 +4,12 @@ SUBDIRS = \
 	include \
 	common \
 	libcstring \
-	liberror \
-	libnotify \
+	libcerror \
+	libclocale \
+	libcnotify \
 	libuna \
+	libcfile \
+	libcpath \
 	libbfio \
 	libfdatetime \
 	libfguid \
@@ -14,7 +17,7 @@ SUBDIRS = \
 	libfwnt \
 	libfmapi \
 	libnk2 \
-	libsystem \
+	libcsystem \
 	nk2tools \
 	po \
 	manuals \
@@ -22,6 +25,18 @@ SUBDIRS = \
 	tests \
 	macosx \
 	msvscpp
+
+DPKG_FILES = \
+	dpkg/changelog \
+	dpkg/changelog.in \
+       	dpkg/compat \
+       	dpkg/control \
+       	dpkg/copyright \
+       	dpkg/copyright.in \
+       	dpkg/rules \
+       	dpkg/libnk2-dev.docs \
+       	dpkg/libnk2.docs \
+       	dpkg/libnk2-tools.docs
 
 GETTEXT_FILES = \
 	config.rpath \
@@ -39,6 +54,7 @@ EXTRA_DIST = \
 	README.macosx \
 	README.mingw \
 	README.static \
+	$(DPKG_FILES) \
 	$(GETTEXT_FILES) \
         $(PKGCONFIG_FILES) \
         $(SPEC_FILES)
@@ -59,9 +75,12 @@ lib: library
 library:
 	(cd $(srcdir)/common && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcstring && $(MAKE) $(AM_MAKEFLAGS))
-	(cd $(srcdir)/liberror && $(MAKE) $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libnotify && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcerror && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libclocale && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcnotify && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcfile && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcpath && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfdatetime && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfguid && $(MAKE) $(AM_MAKEFLAGS))
@@ -85,9 +104,12 @@ distclean: clean
 
 splint:
 	(cd $(srcdir)/libcstring && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/liberror && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libnotify && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcerror && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libclocale && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcnotify && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcfile && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcpath && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfdatetime && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfguid && $(MAKE) splint $(AM_MAKEFLAGS))
@@ -95,7 +117,7 @@ splint:
 	(cd $(srcdir)/libfwnt && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfmapi && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libnk2 && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libsystem && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/nk2tools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))
 

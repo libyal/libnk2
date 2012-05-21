@@ -24,15 +24,14 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
 #include "libnk2_array_type.h"
 #include "libnk2_codepage.h"
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcerror.h"
+#include "libnk2_libcnotify.h"
 #include "libnk2_libfdatetime.h"
 #include "libnk2_libfmapi.h"
 #include "libnk2_libfvalue.h"
@@ -52,16 +51,16 @@ const uint8_t nk2_file_signature[ 4 ] = { 0x0d, 0xf0, 0xad, 0xba };
  */
 int libnk2_io_handle_initialize(
      libnk2_io_handle_t **io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libnk2_io_handle_initialize";
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -69,10 +68,10 @@ int libnk2_io_handle_initialize(
 	}
 	if( *io_handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid IO handle value already set.",
 		 function );
 
@@ -83,10 +82,10 @@ int libnk2_io_handle_initialize(
 
 	if( *io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create IO handle.",
 		 function );
 
@@ -97,10 +96,10 @@ int libnk2_io_handle_initialize(
 	     0,
 	     sizeof( libnk2_io_handle_t ) ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 		 "%s: unable to clear file.",
 		 function );
 
@@ -126,16 +125,16 @@ on_error:
  */
 int libnk2_io_handle_free(
      libnk2_io_handle_t **io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libnk2_io_handle_free";
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -158,7 +157,7 @@ int libnk2_io_handle_read_file_header(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t *number_of_items,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	nk2_file_header_t file_header;
 
@@ -171,10 +170,10 @@ int libnk2_io_handle_read_file_header(
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -182,19 +181,19 @@ int libnk2_io_handle_read_file_header(
 	}
 	if( number_of_items == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid number of items.",
 		 function );
 
 		return( -1 );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: reading file header at offset: 0 (0x00000000)\n",
 		 function );
 	}
@@ -205,16 +204,16 @@ int libnk2_io_handle_read_file_header(
 	     SEEK_SET,
 	     error ) == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_SEEK_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
 		 "%s: unable to seek file header offset: 0.",
 		 function );
 
 		return( -1 );
 	}
-	read_count = libbfio_handle_read(
+	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
 	              (uint8_t *) &file_header,
 	              sizeof( nk2_file_header_t ),
@@ -222,22 +221,22 @@ int libnk2_io_handle_read_file_header(
 
 	if( read_count != (ssize_t) sizeof( nk2_file_header_t ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read file header.",
 		 function );
 
 		return( -1 );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: file header:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 (uint8_t *) &file_header,
 		 sizeof( nk2_file_header_t ) );
 	}
@@ -247,10 +246,10 @@ int libnk2_io_handle_read_file_header(
 	     nk2_file_signature,
 	     4 ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 		 "%s: invalid file signature.",
 		 function );
 
@@ -261,12 +260,12 @@ int libnk2_io_handle_read_file_header(
 	 *number_of_items );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 file_header.signature,
 		 value_32bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: signature\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
@@ -274,7 +273,7 @@ int libnk2_io_handle_read_file_header(
 		byte_stream_copy_to_uint32_little_endian(
 		 file_header.unknown1,
 		 value_32bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: unknown1\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
@@ -282,17 +281,17 @@ int libnk2_io_handle_read_file_header(
 		byte_stream_copy_to_uint32_little_endian(
 		 file_header.unknown2,
 		 value_32bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: unknown2\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: number of items\t: %" PRIu32 "\n",
 		 function,
 		 *number_of_items );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "\n" );
 	}
 #endif
@@ -307,7 +306,7 @@ int libnk2_io_handle_read_items(
      libbfio_handle_t *file_io_handle,
      uint32_t number_of_items,
      libnk2_array_t *items_array,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	uint8_t number_of_item_values_data[ 4 ];
 
@@ -320,10 +319,10 @@ int libnk2_io_handle_read_items(
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -331,10 +330,10 @@ int libnk2_io_handle_read_items(
 	}
 	if( items_array == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid items array.",
 		 function );
 
@@ -344,7 +343,7 @@ int libnk2_io_handle_read_items(
 	     item_iterator < number_of_items;
 	     item_iterator++ )
 	{
-		read_count = libbfio_handle_read(
+		read_count = libbfio_handle_read_buffer(
 			      file_io_handle,
 			      number_of_item_values_data,
 			      4,
@@ -352,10 +351,10 @@ int libnk2_io_handle_read_items(
 
 		if( read_count != (ssize_t) 4 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
 			 "%s: unable to read item: %" PRIu32 " number of item values data.",
 			 function,
 			 item_iterator );
@@ -371,9 +370,9 @@ int libnk2_io_handle_read_items(
 			break;
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: item: %03" PRIu32 " number of item values\t: %" PRIu32 "\n",
 			 function,
 			 item_iterator,
@@ -385,10 +384,10 @@ int libnk2_io_handle_read_items(
 		     number_of_item_values,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create item values table.",
 			 function );
 
@@ -402,10 +401,10 @@ int libnk2_io_handle_read_items(
 		     values_table,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
 			 "%s: unable to read item values: %" PRIu32 ".",
 			 function,
 			 item_iterator );
@@ -418,10 +417,10 @@ int libnk2_io_handle_read_items(
 		     (intptr_t *) values_table,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
 			 "%s: unable to append item values to items array.",
 			 function );
 
@@ -450,7 +449,7 @@ int libnk2_io_handle_read_item_values(
      uint32_t item_index LIBNK2_ATTRIBUTE_UNUSED,
      uint32_t number_of_item_values,
      libfvalue_table_t *values_table,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	uint8_t value_data_size_data[ 4 ];
 
@@ -465,6 +464,7 @@ int libnk2_io_handle_read_item_values(
 	uint16_t value_data_size                    = 0;
 	uint16_t value_boolean                      = 0;
 	uint8_t value_type                          = 0;
+	int value_encoding                          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint32_t value_32bit                        = 0;
@@ -474,10 +474,10 @@ int libnk2_io_handle_read_item_values(
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -485,10 +485,10 @@ int libnk2_io_handle_read_item_values(
 	}
 	if( values_table == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid values table.",
 		 function );
 
@@ -498,10 +498,10 @@ int libnk2_io_handle_read_item_values(
 	     &value_identifier,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create value identifier.",
 		 function );
 
@@ -511,7 +511,7 @@ int libnk2_io_handle_read_item_values(
 	     item_value_index < number_of_item_values;
 	     item_value_index++ )
 	{
-		read_count = libbfio_handle_read(
+		read_count = libbfio_handle_read_buffer(
 			      file_io_handle,
 			      (uint8_t *) &item_value_entry,
 			      sizeof( nk2_item_value_entry_t ),
@@ -519,24 +519,24 @@ int libnk2_io_handle_read_item_values(
 
 		if( read_count != (ssize_t) sizeof( nk2_item_value_entry_t ) )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_READ_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
 			 "%s: unable to read item value.",
 			 function );
 
 			goto on_error;
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 "\n",
 			 function,
 			 item_index,
 			 item_value_index );
-			libnotify_print_data(
+			libcnotify_print_data(
 			 (uint8_t *) &item_value_entry,
 			 sizeof( nk2_item_value_entry_t ) );
 		}
@@ -549,9 +549,9 @@ int libnk2_io_handle_read_item_values(
 		 value_identifier->entry_type );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " value type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
 			 function,
 			 item_index,
@@ -562,7 +562,7 @@ int libnk2_io_handle_read_item_values(
 			 libfmapi_value_type_get_description(
 			  value_identifier->value_type ) );
 
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " entry type\t\t: 0x%04" PRIx16 " (%s : %s)\n",
 			 function,
 			 item_index,
@@ -580,19 +580,19 @@ int libnk2_io_handle_read_item_values(
 			byte_stream_copy_to_uint32_little_endian(
 			 item_value_entry.unknown1,
 			 value_32bit );
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " unknown1\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 item_index,
 			 item_value_index,
 			 value_32bit );
 
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " value data array:\n",
 			 function,
 			 item_index,
 			 item_value_index );
-			libnotify_print_data(
+			libcnotify_print_data(
 			 item_value_entry.value_data_array,
 			 8 );
 		}
@@ -604,58 +604,74 @@ int libnk2_io_handle_read_item_values(
 			case LIBNK2_VALUE_TYPE_BOOLEAN:
 				value_type      = LIBFVALUE_VALUE_TYPE_BOOLEAN;
 				value_data_size = 2;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_INTEGER_16BIT_SIGNED:
 				value_type      = LIBFVALUE_VALUE_TYPE_INTEGER_16BIT;
 				value_data_size = 2;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED:
 				value_type      = LIBFVALUE_VALUE_TYPE_INTEGER_32BIT;
 				value_data_size = 4;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED:
 				value_type      = LIBFVALUE_VALUE_TYPE_INTEGER_64BIT;
 				value_data_size = 8;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_FLOAT_32BIT:
 				value_type      = LIBFVALUE_VALUE_TYPE_FLOATING_POINT_32BIT;
 				value_data_size = 4;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_DOUBLE_64BIT:
 				value_type      = LIBFVALUE_VALUE_TYPE_FLOATING_POINT_64BIT;
 				value_data_size = 8;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_ERROR:
 				value_type      = LIBFVALUE_VALUE_TYPE_ENUMERATION;
 				value_data_size = 4;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_CURRENCY:
-			case LIBNK2_VALUE_TYPE_APPLICATION_TIME:
-				/* TODO add libfvalue support for these types */
-				value_type      = LIBFVALUE_VALUE_TYPE_UNDEFINED;
+				value_type      = LIBFVALUE_VALUE_TYPE_FIXED_POINT_64BIT;
 				value_data_size = 8;
+/* TODO location of the point */
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
+				break;
+
+			case LIBNK2_VALUE_TYPE_FLOATINGTIME:
+				value_type      = LIBFVALUE_VALUE_TYPE_FLOATINGTIME;
+				value_data_size = 8;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_FILETIME:
 				value_type      = LIBFVALUE_VALUE_TYPE_FILETIME;
 				value_data_size = 8;
+				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 
 			case LIBNK2_VALUE_TYPE_STRING_ASCII:
 				value_type      = LIBFVALUE_VALUE_TYPE_STRING_BYTE_STREAM;
 				value_data_size = 0;
+				value_encoding  = io_handle->ascii_codepage;
 				break;
 
 			case LIBNK2_VALUE_TYPE_STRING_UNICODE:
 				value_type      = LIBFVALUE_VALUE_TYPE_STRING_UTF16;
 				value_data_size = 0;
+				value_encoding  = LIBFVALUE_CODEPAGE_UTF16_LITTLE_ENDIAN;
 				break;
 
 			case LIBNK2_VALUE_TYPE_BINARY_DATA:
@@ -664,10 +680,10 @@ int libnk2_io_handle_read_item_values(
 				break;
 
 			default:
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 				 "%s: unsupported value type: 0x%04" PRIx16 ".",
 				 function,
 				 value_identifier->value_type );
@@ -678,7 +694,7 @@ int libnk2_io_handle_read_item_values(
 		{
 			/* The value data size is stored after the item value
 			 */
-			read_count = libbfio_handle_read(
+			read_count = libbfio_handle_read_buffer(
 				      file_io_handle,
 				      value_data_size_data,
 				      4,
@@ -686,10 +702,10 @@ int libnk2_io_handle_read_item_values(
 
 			if( read_count != (ssize_t) 4 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_READ_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
 				 "%s: unable to read value data size.",
 				 function );
 
@@ -700,9 +716,9 @@ int libnk2_io_handle_read_item_values(
 			 value_data_size );
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " value data size\t: %" PRIu16 "\n",
 			 function,
 			 item_index,
@@ -710,15 +726,15 @@ int libnk2_io_handle_read_item_values(
 			 value_data_size );
 		}
 #endif
-		if( libfvalue_value_initialize(
+		if( libfvalue_value_type_initialize(
 		     &value,
 		     value_type,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create value: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 			 function,
 			 value_identifier->entry_type,
@@ -733,10 +749,10 @@ int libnk2_io_handle_read_item_values(
 		     LIBFVALUE_VALUE_IDENTIFIER_FLAG_MANAGED,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set identifier in value: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 			 function,
 			 value_identifier->entry_type,
@@ -754,10 +770,10 @@ int libnk2_io_handle_read_item_values(
 		     value,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 			 "%s: unable to set value: 0x%04" PRIx16 " 0x%04" PRIx16 " in values table.",
 			 function,
 			 value_identifier->entry_type,
@@ -774,10 +790,10 @@ int libnk2_io_handle_read_item_values(
 
 		if( value_data == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create value data.",
 			 function );
 
@@ -790,7 +806,7 @@ int libnk2_io_handle_read_item_values(
 			case LIBNK2_VALUE_TYPE_BINARY_DATA:
 				/* Read the value data
 				 */
-				read_count = libbfio_handle_read(
+				read_count = libbfio_handle_read_buffer(
 					      file_io_handle,
 					      value_data,
 					      (size_t) value_data_size,
@@ -798,10 +814,10 @@ int libnk2_io_handle_read_item_values(
 
 				if( read_count != (ssize_t) value_data_size )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_IO,
-					 LIBERROR_IO_ERROR_READ_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
 					 "%s: unable to read value data.",
 					 function );
 
@@ -820,10 +836,10 @@ int libnk2_io_handle_read_item_values(
 				     item_value_entry.value_data_array,
 				     value_data_size ) == NULL )
 				{
-					liberror_error_set(
+					libcerror_error_set(
 					 error,
-					 LIBERROR_ERROR_DOMAIN_MEMORY,
-					 LIBERROR_MEMORY_ERROR_COPY_FAILED,
+					 LIBCERROR_ERROR_DOMAIN_MEMORY,
+					 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 					 "%s: unable to copy value date.",
 					 function );
 
@@ -835,9 +851,9 @@ int libnk2_io_handle_read_item_values(
 				break;
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "%s: item: %03" PRIu32 " value: %03" PRIu32 " value data:\n",
 			 function,
 			 item_index,
@@ -851,10 +867,10 @@ int libnk2_io_handle_read_item_values(
 			     io_handle->ascii_codepage,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
 				 "%s: unable to print value data.",
 				 function );
 
@@ -877,10 +893,10 @@ int libnk2_io_handle_read_item_values(
 			     value_boolean,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set value: 0x%04" PRIx16 " 0x%04" PRIx16 " boolean value.",
 				 function,
 				 value_identifier->entry_type,
@@ -902,14 +918,14 @@ int libnk2_io_handle_read_item_values(
 			     value,
 			     value_data,
 			     (size_t) value_data_size,
-			     LIBFVALUE_ENDIAN_LITTLE,
+			     value_encoding,
 			     LIBFVALUE_VALUE_DATA_FLAG_MANAGED,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 				 "%s: unable to set value: 0x%04" PRIx16 " 0x%04" PRIx16 " data.",
 				 function,
 				 value_identifier->entry_type,
@@ -921,33 +937,14 @@ int libnk2_io_handle_read_item_values(
 				goto on_error;
 			}
 		}
-		if( value_identifier->value_type == LIBNK2_VALUE_TYPE_STRING_ASCII )
-		{
-			if( libfvalue_value_set_codepage(
-			     value,
-			     io_handle->ascii_codepage,
-			     error ) != 1 )
-			{
-				liberror_error_set(
-				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-				 "%s: unable to set value: 0x%04" PRIx16 " 0x%04" PRIx16 " codepage.",
-				 function,
-				 value_identifier->entry_type,
-				 value_identifier->value_type );
-
-				goto on_error;
-			}
-		}
 		value = NULL;
 
 		if( io_handle->abort != 0 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_ABORT_REQUESTED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_ABORT_REQUESTED,
 			 "%s: abort requested.",
 			 function );
 
@@ -958,10 +955,10 @@ int libnk2_io_handle_read_item_values(
 	     &value_identifier,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 		 "%s: unable to free value identifier.",
 		 function );
 
@@ -990,7 +987,7 @@ int libnk2_io_handle_read_file_footer(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint64_t *modification_time,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	nk2_file_footer_t file_footer;
 
@@ -1007,10 +1004,10 @@ int libnk2_io_handle_read_file_footer(
 
 	if( io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid IO handle.",
 		 function );
 
@@ -1018,16 +1015,16 @@ int libnk2_io_handle_read_file_footer(
 	}
 	if( modification_time == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid modification time.",
 		 function );
 
 		return( -1 );
 	}
-	read_count = libbfio_handle_read(
+	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
 	              (uint8_t *) &file_footer,
 	              sizeof( nk2_file_footer_t ),
@@ -1035,22 +1032,22 @@ int libnk2_io_handle_read_file_footer(
 
 	if( read_count != (ssize_t) sizeof( nk2_file_footer_t ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read file footer.",
 		 function );
 
 		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: file footer:\n",
 		 function );
-		libnotify_print_data(
+		libcnotify_print_data(
 		 (uint8_t *) &file_footer,
 		 sizeof( nk2_file_footer_t ) );
 	}
@@ -1060,16 +1057,16 @@ int libnk2_io_handle_read_file_footer(
 	 *modification_time );
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
 		if( libfdatetime_filetime_initialize(
 		     &filetime,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create filetime.",
 			 function );
 
@@ -1078,7 +1075,7 @@ int libnk2_io_handle_read_file_footer(
 		byte_stream_copy_to_uint32_little_endian(
 		 file_footer.unknown1,
 		 value_32bit );
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: unknown1\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
@@ -1090,10 +1087,10 @@ int libnk2_io_handle_read_file_footer(
 		     LIBFDATETIME_ENDIAN_LITTLE,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
 			 "%s: unable to copy byte stream to filetime.",
 			 function );
 
@@ -1118,31 +1115,31 @@ int libnk2_io_handle_read_file_footer(
 #endif
 		if( result != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
 			 "%s: unable to copy filetime to string.",
 			 function );
 
 			goto on_error;
 		}
-		libnotify_printf(
+		libcnotify_printf(
 		 "%s: modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n\n",
 		 function,
 		 filetime_string );
 
-		libnotify_printf(
+		libcnotify_printf(
 		 "\n" );
 
 		if( libfdatetime_filetime_free(
 		     &filetime,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free filetime.",
 			 function );
 

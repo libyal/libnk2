@@ -22,11 +22,10 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
 #include "libnk2_debug.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcerror.h"
+#include "libnk2_libcnotify.h"
 #include "libnk2_libfmapi.h"
 
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -40,7 +39,7 @@ int libnk2_debug_mapi_value_print(
      uint8_t *value_data,
      size_t value_data_size,
      int ascii_codepage,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libnk2_debug_mapi_value_print";
 
@@ -52,31 +51,31 @@ int libnk2_debug_mapi_value_print(
 	     ascii_codepage,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
 		 "%s: unable to print MAPI value.",
 		 function );
 
 		if( ( error != NULL )
 		 && ( *error != NULL ) )
 		{
-			libnotify_print_error_backtrace(
+			libcnotify_print_error_backtrace(
 			 *error );
 		}
-		liberror_error_free(
+		libcerror_error_free(
 		 error );
 
 		if( value_data != NULL )
 		{
-			libnotify_print_data(
+			libcnotify_print_data(
 			 value_data,
 			 value_data_size );
 		}
 		else
 		{
-			libnotify_printf(
+			libcnotify_printf(
 			 "<NULL>\n\n" );
 		}
 	}
@@ -88,7 +87,7 @@ int libnk2_debug_mapi_value_print(
  */
 int libnk2_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libnk2_debug_print_read_offsets";
 	off64_t offset        = 0;
@@ -98,10 +97,10 @@ int libnk2_debug_print_read_offsets(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file io handle.",
 		 function );
 
@@ -112,16 +111,16 @@ int libnk2_debug_print_read_offsets(
 	     &number_of_offsets,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of offsets read.",
 		 function );
 
 		return( -1 );
 	}
-	libnotify_printf(
+	libcnotify_printf(
 	 "Offsets read:\n" );
 
 	for( offset_iterator = 0;
@@ -135,17 +134,17 @@ int libnk2_debug_print_read_offsets(
 		     &size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve offset: %d.",
 			 function,
 			 ( offset_iterator + 1 ) );
 
 			return( -1 );
 		}
-		libnotify_printf(
+		libcnotify_printf(
 		 "%08" PRIi64 " ( 0x%08" PRIx64 " ) - %08" PRIi64 " ( 0x%08" PRIx64 " ) size: %" PRIu64 "\n",
 		 offset,
 		 offset,
@@ -153,7 +152,7 @@ int libnk2_debug_print_read_offsets(
 		 offset + size,
 		 size );
 	}
-	libnotify_printf(
+	libcnotify_printf(
 	 "\n" );
 
 	return( 1 );

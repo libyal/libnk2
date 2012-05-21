@@ -22,12 +22,12 @@ Requires: libnk2 = %{version}-%{release}
 Header files and libraries for developing applications for libnk2.
 
 %package tools
-Summary: Several tools for accessing Nickfiles (NK2)
+Summary: Several tools for reading Nickfiles (NK2)
 Group: Applications/System
 Requires: libnk2 = %{version}-%{release}
 
 %description tools
-Several tools for accessing Nickfiles (NK2)
+Several tools for reading Nickfiles (NK2)
 
 %prep
 %setup -q

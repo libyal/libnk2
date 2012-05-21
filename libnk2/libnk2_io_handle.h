@@ -25,10 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libnk2_array_type.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcerror.h"
 #include "libnk2_libfvalue.h"
 
 #if defined( __cplusplus )
@@ -52,24 +51,24 @@ struct libnk2_io_handle
 
 int libnk2_io_handle_initialize(
      libnk2_io_handle_t **io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_io_handle_free(
      libnk2_io_handle_t **io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_io_handle_read_file_header(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t *number_of_items,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t number_of_items,
      libnk2_array_t *items_array,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_io_handle_read_item_values(
      libnk2_io_handle_t *io_handle,
@@ -77,13 +76,13 @@ int libnk2_io_handle_read_item_values(
      uint32_t item_index,
      uint32_t number_of_item_values,
      libfvalue_table_t *values_table,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_io_handle_read_file_footer(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint64_t *modification_time,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

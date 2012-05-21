@@ -25,9 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libnk2_libbfio.h"
+#include "libnk2_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -41,11 +40,11 @@ int libnk2_debug_mapi_value_print(
      uint8_t *value_data,
      size_t value_data_size,
      int ascii_codepage,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif
 

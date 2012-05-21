@@ -1,7 +1,7 @@
 /*
- * Configuration file for Borland/CodeGear C++ Builder compiler
+ * The internal libclocale header
  *
- * Copyright (c) 2006-2012, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2009-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,30 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _CONFIG_BORLANDC_H )
-#define _CONFIG_BORLANDC_H
+#if !defined( _LIBNK2_LIBCLOCALE_H )
+#define _LIBNK2_LIBCLOCALE_H
 
-/* Define to the address where bug reports for this package should be sent.
- */
-#define PACKAGE_BUGREPORT "joachim.metz@gmail.com"
+#include <common.h>
 
-/* Define the size of the wide character for WINAPI
+/* Define HAVE_LOCAL_LIBCLOCALE for local use of libclocale
  */
-#if !defined( SIZEOF_WCHAR_T )
-#define SIZEOF_WCHAR_T          2
+#if defined( HAVE_LOCAL_LIBCLOCALE )
+
+#include <libclocale_codepage.h>
+#include <libclocale_definitions.h>
+#include <libclocale_locale.h>
+#include <libclocale_support.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCLOCALE_DLL_IMPORT
+ * before including libclocale.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCLOCALE_DLL_IMPORT
 #endif
 
-/* Use the C Runtime (CRT) functions instead of the WINAPI functions
-#define USE_CRT_FUNCTIONS	1
- */
+#include <libclocale.h>
 
-/* Enable verbose output
-#define HAVE_VERBOSE_OUTPUT     1
- */
-
-/* Enable debug output
-#define HAVE_DEBUG_OUTPUT       1
- */
+#endif
 
 #endif
 

@@ -23,13 +23,11 @@
 #define _LIBNK2_NOTIFY_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
 
-#include <liberror.h>
-
-#include <stdio.h>
-
 #include "libnk2_extern.h"
+#include "libnk2_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -44,16 +42,16 @@ void libnk2_notify_set_verbose(
 LIBNK2_EXTERN \
 int libnk2_notify_set_stream(
      FILE *stream,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_notify_stream_open(
      const char *filename,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_notify_stream_close(
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #endif
 

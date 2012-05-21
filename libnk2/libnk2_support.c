@@ -23,13 +23,12 @@
 #include <memory.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
-#include "libnk2_codepage.h"
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcerror.h"
+#include "libnk2_libclocale.h"
+#include "libnk2_libcstring.h"
 #include "libnk2_support.h"
 
 #if !defined( HAVE_LOCAL_LIBNK2 )
@@ -56,23 +55,23 @@ int libnk2_get_access_flags_read(
  */
 int libnk2_get_codepage(
      int *codepage,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libnk2_get_codepage";
 
-	if( codepage == NULL )
+	if( libclocale_codepage_get(
+	     codepage,
+	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid codepage.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve codepage.",
 		 function );
 
 		return( -1 );
 	}
-	*codepage = libcstring_narrow_system_string_codepage;
-
 	return( 1 );
 }
 
@@ -82,52 +81,23 @@ int libnk2_get_codepage(
  */
 int libnk2_set_codepage(
      int codepage,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libnk2_set_codepage";
 
-	if( ( codepage != LIBNK2_CODEPAGE_ASCII )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_1 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_2 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_3 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_4 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_5 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_6 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_7 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_8 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_9 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_10 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_11 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_13 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_14 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_15 )
-	 && ( codepage != LIBNK2_CODEPAGE_ISO_8859_16 )
-	 && ( codepage != LIBNK2_CODEPAGE_KOI8_R )
-	 && ( codepage != LIBNK2_CODEPAGE_KOI8_U )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_874 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_932 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_936 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1250 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1251 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1252 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1253 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1254 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1256 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1257 )
-	 && ( codepage != LIBNK2_CODEPAGE_WINDOWS_1258 )
-	 && ( codepage != 0 ) )
+	if( libclocale_codepage_set(
+	     codepage,
+	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported codepage.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set codepage.",
 		 function );
 
 		return( -1 );
 	}
-	libcstring_narrow_system_string_codepage = codepage;
-
 	return( 1 );
 }
 
@@ -138,7 +108,7 @@ int libnk2_set_codepage(
  */
 int libnk2_check_file_signature(
      const char *filename,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle = NULL;
 	static char *function            = "libnk2_check_file_signature";
@@ -147,10 +117,10 @@ int libnk2_check_file_signature(
 
 	if( filename == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid filename.",
 		 function );
 
@@ -161,10 +131,10 @@ int libnk2_check_file_signature(
 
 	if( filename_length == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid filename.",
 		 function );
 
@@ -174,10 +144,10 @@ int libnk2_check_file_signature(
 	     &file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create file IO handle.",
 		 function );
 
@@ -189,10 +159,10 @@ int libnk2_check_file_signature(
 	     filename_length,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set filename in file IO handle.",
 		 function );
 
@@ -208,10 +178,10 @@ int libnk2_check_file_signature(
 
 	if( result == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to check file signature using a file handle.",
 		 function );
 
@@ -225,10 +195,10 @@ int libnk2_check_file_signature(
 	     &file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to free file IO handle.",
 		 function );
 
@@ -244,7 +214,7 @@ int libnk2_check_file_signature(
  */
 int libnk2_check_file_signature_wide(
      const wchar_t *filename,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle = NULL;
 	static char *function            = "libnk2_check_file_signature_wide";
@@ -253,10 +223,10 @@ int libnk2_check_file_signature_wide(
 
 	if( filename == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid filename.",
 		 function );
 
@@ -267,10 +237,10 @@ int libnk2_check_file_signature_wide(
 
 	if( filename_length == 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid filename.",
 		 function );
 
@@ -280,10 +250,10 @@ int libnk2_check_file_signature_wide(
 	     &file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create file IO handle.",
 		 function );
 
@@ -295,10 +265,10 @@ int libnk2_check_file_signature_wide(
 	     filename_length,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
 		 "%s: unable to set filename in file IO handle.",
 		 function );
 
@@ -314,10 +284,10 @@ int libnk2_check_file_signature_wide(
 
 	if( result == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to check file signature using a file handle.",
 		 function );
 
@@ -331,10 +301,10 @@ int libnk2_check_file_signature_wide(
 	     &file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to free file IO handle.",
 		 function );
 
@@ -350,7 +320,7 @@ int libnk2_check_file_signature_wide(
  */
 int libnk2_check_file_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	uint8_t signature[ 4 ];
 
@@ -360,10 +330,10 @@ int libnk2_check_file_signature_file_io_handle(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -375,10 +345,10 @@ int libnk2_check_file_signature_file_io_handle(
 
 	if( file_io_handle_is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open file.",
 		 function );
 
@@ -391,17 +361,17 @@ int libnk2_check_file_signature_file_io_handle(
 		     LIBBFIO_OPEN_READ,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open file.",
 			 function );
 
 			return( -1 );
 		}
 	}
-	read_count = libbfio_handle_read(
+	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
 	              signature,
 	              4,
@@ -409,10 +379,10 @@ int libnk2_check_file_signature_file_io_handle(
 
 	if( read_count != 4 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read signature.",
 		 function );
 
@@ -428,10 +398,10 @@ int libnk2_check_file_signature_file_io_handle(
 		     file_io_handle,
 		     error ) != 0 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 			 "%s: unable to close file.",
 			 function );
 

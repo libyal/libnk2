@@ -1,7 +1,7 @@
 /*
- * Configuration file for Borland/CodeGear C++ Builder compiler
+ * The internal libcnotify header
  *
- * Copyright (c) 2006-2012, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (c) 2010-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,30 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _CONFIG_BORLANDC_H )
-#define _CONFIG_BORLANDC_H
+#if !defined( _LIBNK2_LIBCNOTIFY_H )
+#define _LIBNK2_LIBCNOTIFY_H
 
-/* Define to the address where bug reports for this package should be sent.
- */
-#define PACKAGE_BUGREPORT "joachim.metz@gmail.com"
+#include <common.h>
 
-/* Define the size of the wide character for WINAPI
+/* Define HAVE_LOCAL_LIBCNOTIFY for local use of libcnotify
  */
-#if !defined( SIZEOF_WCHAR_T )
-#define SIZEOF_WCHAR_T          2
+#if defined( HAVE_LOCAL_LIBCNOTIFY )
+
+#include <libcnotify_definitions.h>
+#include <libcnotify_print.h>
+#include <libcnotify_stream.h>
+#include <libcnotify_verbose.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCNOTIFY_DLL_IMPORT
+ * before including libcnotify.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCNOTIFY_DLL_IMPORT
 #endif
 
-/* Use the C Runtime (CRT) functions instead of the WINAPI functions
-#define USE_CRT_FUNCTIONS	1
- */
+#include <libcnotify.h>
 
-/* Enable verbose output
-#define HAVE_VERBOSE_OUTPUT     1
- */
-
-/* Enable debug output
-#define HAVE_DEBUG_OUTPUT       1
- */
+#endif
 
 #endif
 

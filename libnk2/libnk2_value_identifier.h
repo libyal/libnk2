@@ -25,6 +25,8 @@
 #include <common.h>
 #include <types.h>
 
+#include "libnk2_libcerror.h"
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
@@ -44,11 +46,11 @@ struct libnk2_value_identifier
 
 int libnk2_value_identifier_initialize(
      libnk2_value_identifier_t **value_identifier,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libnk2_value_identifier_free(
      libnk2_value_identifier_t **value_identifier,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

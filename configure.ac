@@ -26,8 +26,13 @@ AC_PROG_CC
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
+
+dnl Check for libtool
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
+
+dnl Check for pkg-config
+AC_PATH_PROG(PKGCONFIG,[pkg-config])
 
 dnl Support of internationalization (i18n)
 AM_GNU_GETTEXT([external])
@@ -47,13 +52,27 @@ AX_TYPES_CHECK_LOCAL
 
 dnl Checks for libraries and library functions
 AX_COMMON_CHECK_LOCAL
-AX_LIBCSTRING_CHECK_LOCAL
-AX_LIBERROR_CHECK_LOCAL
-AX_LIBNOTIFY_CHECK_LOCAL
-AX_LIBSYSTEM_CHECK_LOCAL
+
+dnl Check for enabling libcstring for cross-platform C string functions
+AX_LIBCSTRING_CHECK_ENABLE
+
+dnl Check for enabling libcerror for cross-platform C error functions
+AX_LIBCERROR_CHECK_ENABLE
+
+dnl Check for enabling libclocale for cross-platform C locale functions
+AX_LIBCLOCALE_CHECK_ENABLE
+
+dnl Check for enabling libcnotify for cross-platform C notification functions
+AX_LIBCNOTIFY_CHECK_ENABLE
 
 dnl Check for enabling libuna for Unicode string support
 AX_LIBUNA_CHECK_ENABLE
+
+dnl Check for enabling libcfile for cross-platform C file functions
+AX_LIBCFILE_CHECK_ENABLE
+
+dnl Check for enabling libcpath for cross-platform C path functions
+AX_LIBCPATH_CHECK_ENABLE
 
 dnl Check for enabling libbfio for basic file IO support
 AX_LIBBFIO_CHECK_ENABLE
@@ -73,6 +92,12 @@ AX_LIBFWNT_CHECK_ENABLE
 dnl Check for enabling libfmapi for file MAPI types support
 AX_LIBFMAPI_CHECK_ENABLE
 
+dnl Check for library function support
+AX_LIBNK2_CHECK_LOCAL
+
+dnl Check for enabling libcsystem for cross-platform C generic system functions
+AX_LIBCSYSTEM_CHECK_ENABLE
+
 dnl Check if nk2tools should be build as static executables
 AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
 
@@ -82,16 +107,20 @@ AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
 dnl Check if libnk2 should be build with debug output
 AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
-dnl Check if requires and build requires should be set in spec file
+dnl Check if DLL support is needed in nk2tools
 AS_IF(
- [test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwnt" = xyes || test "x$ac_cv_libfmapi" = xyes],
- [AC_SUBST(
-  [libnk2_spec_requires],
-  [Requires:])
- AC_SUBST(
-  [libnk2_spec_build_requires],
-  [BuildRequires:])
+ [test "x$enable_shared" = xyes && test "x$ac_cv_enable_static_executables" = xno],
+ [AS_CASE(
+  [$host],
+  [*cygwin* | *mingw*],
+  [AC_SUBST(
+   [LIBNK2_DLL_IMPORT],
+   ["-DLIBNK2_DLL_IMPORT"])
+  ])
  ])
+
+dnl Set additional compiler flags
+CFLAGS="$CFLAGS -Wall";
 
 dnl Set memwatch support
 ac_cv_enable_memwatch=no
@@ -109,29 +138,40 @@ AM_CONDITIONAL(
  [HAVE_MEMWATCH],
  [test "x$ac_cv_enable_memwatch" != xno])
 
-dnl Set additional compiler flags
-CFLAGS="$CFLAGS -Wall";
-
-dnl Check if DLL support is needed in nk2tools
+dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$enable_shared" = xyes && test "x$ac_cv_enable_static_executables" = xno],
- [AS_CASE(
-  [$host],
-  [*cygwin* | *mingw*],
-  [AC_SUBST(
-   [LIBNK2_DLL_IMPORT],
-   ["-DLIBNK2_DLL_IMPORT"])
-  ])
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwnt" = xyes || test "x$ac_cv_libfmapi" = xyes],
+ [AC_SUBST(
+  [libnk2_spec_requires],
+  [Requires:])
+ AC_SUBST(
+  [libnk2_spec_build_requires],
+  [BuildRequires:])
  ])
+
+AS_IF(
+ [test "x$ac_cv_libcsystem" = xyes],
+ [AC_SUBST(
+  [liblnk_tools_spec_build_requires],
+  [BuildRequires:])
+ ])
+
+dnl Set the date for dpkg files
+AC_SUBST(
+ [DATE],
+ [`date -R 2> /dev/null`])
 
 dnl Have configure make the Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcstring/Makefile])
-AC_CONFIG_FILES([liberror/Makefile])
-AC_CONFIG_FILES([libnotify/Makefile])
+AC_CONFIG_FILES([libcerror/Makefile])
+AC_CONFIG_FILES([libclocale/Makefile])
+AC_CONFIG_FILES([libcnotify/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
+AC_CONFIG_FILES([libcfile/Makefile])
+AC_CONFIG_FILES([libcpath/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
@@ -139,7 +179,7 @@ AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libfwnt/Makefile])
 AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
-AC_CONFIG_FILES([libsystem/Makefile])
+AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
@@ -156,6 +196,8 @@ AC_CONFIG_FILES([include/libnk2/types.h])
 AC_CONFIG_FILES([libnk2/libnk2_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([dpkg/changelog])
+AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libnk2/libnk2.rc])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libnk2.pc])
@@ -168,13 +210,20 @@ AC_OUTPUT
 dnl Print a summary
 AC_MSG_NOTICE([
 Building:
+   libcstring support:                       $ac_cv_libcstring
+   libcerror support:                        $ac_cv_libcerror
+   libclocale support:                       $ac_cv_libclocale
+   libcnotify support:                       $ac_cv_libcnotify
    libuna support:                           $ac_cv_libuna
+   libcfile support:                         $ac_cv_libcfile
+   libcpath support:                         $ac_cv_libcpath
    libbfio support:                          $ac_cv_libbfio
    libfdatetime support:                     $ac_cv_libfdatetime
    libfguid support:                         $ac_cv_libfguid
    libfvalue support:                        $ac_cv_libfvalue
    libfwnt support:                          $ac_cv_libfwnt
    libfmapi support:                         $ac_cv_libfmapi
+   libcsystem support:                       $ac_cv_libcsystem
 
 Features:
    Wide character type support:              $ac_cv_enable_wide_character_type
