@@ -5,10 +5,10 @@ Summary: Library to support the Nickfile (NK2) format
 Group: System Environment/Libraries
 License: LGPL
 Source: %{name}-%{version}.tar.gz
-URL: http://libnk2.sourceforge.net
+URL: http://code.google.com/p/libnk2/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-@libnk2_spec_requires@ @ax_libbfio_spec_requires@ @ax_libfdatetime_spec_requires@ @ax_libfguid_spec_requires@ @ax_libfmapi_spec_requires@ @ax_libfvalue_spec_requires@ @ax_libfwnt_spec_requires@ @ax_libuna_spec_requires@
-@libnk2_spec_build_requires@ @ax_libbfio_spec_build_requires@ @ax_libfdatetime_spec_build_requires@ @ax_libfguid_spec_build_requires@ @ax_libfmapi_spec_build_requires@ @ax_libfvalue_spec_build_requires@ @ax_libfwnt_spec_build_requires@ @ax_libuna_spec_build_requires@
+@libnk2_spec_requires@ @ax_libbfio_spec_requires@ @ax_libcerror_spec_requires@ @ax_libcfile_spec_requires@ @ax_libclocale_spec_requires@ @ax_libcnotify_spec_requires@ @ax_libcpath_spec_requires@ @ax_libcsplit_spec_requires@ @ax_libcstring_spec_requires@ @ax_libfdatetime_spec_requires@ @ax_libfguid_spec_requires@ @ax_libfmapi_spec_requires@ @ax_libfvalue_spec_requires@ @ax_libfwnt_spec_requires@ @ax_libuna_spec_requires@
+@libnk2_spec_build_requires@  @ax_libbfio_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcfile_spec_build_requires@ @ax_libclocale_spec_build_requires@ @ax_libcnotify_spec_build_requires@ @ax_libcpath_spec_build_requires@ @ax_libcsplit_spec_build_requires@ @ax_libcstring_spec_build_requires@ @ax_libfdatetime_spec_build_requires@ @ax_libfguid_spec_build_requires@ @ax_libfmapi_spec_build_requires@ @ax_libfvalue_spec_build_requires@ @ax_libfwnt_spec_build_requires@ @ax_libuna_spec_build_requires@
 
 %description
 libnk2 is a library to support the Nickfile (NK2) format
@@ -70,14 +70,14 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man1/*
 
 %changelog
-* Mon Oct  4 2011 Joachim Metz <jbmetz@users.sourceforge.net> 20111004-1
+* Mon Oct  4 2011 Joachim Metz <joachim.metz@gmail.com> 20111004-1
 - Updated autoconf variables
 - Updated README files
 
-* Wed Jul 21 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100721-1
+* Wed Jul 21 2010 Joachim Metz <joachim.metz@gmail.com> 20100721-1
 - Added support for libfvalue
 - Added README_mingw
 
-* Sun Jun 27 2010 Joachim Metz <jbmetz@users.sourceforge.net> 20100627-1
+* Sun Jun 27 2010 Joachim Metz <joachim.metz@gmail.com> 20100627-1
 - Clean up of previous version of spec file
 

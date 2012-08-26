@@ -6,6 +6,7 @@ TODO:
   - fixed point currency support
 * complete libcerror update
   - nk2tools
+* update msvscpp files
 * in io_handle_read_items used set array value instead of append ?
 * 2012 update
   - macosx/libnk2.pmproj
@@ -44,6 +45,12 @@ Bindings:
 * python
 * .net
 * java
+
+20120826
+* updated dependencies
+
+20120522
+* updated dependencies
 
 20120102
 * 2012 update

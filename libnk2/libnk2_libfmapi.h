@@ -29,7 +29,7 @@
 #if defined( HAVE_LOCAL_LIBFMAPI )
 
 #include <libfmapi_class_identifier.h>
-#include <libfmapi_crc.h>
+#include <libfmapi_checksum.h>
 #include <libfmapi_definitions.h>
 #include <libfmapi_entry_identifier.h>
 #include <libfmapi_lzfu.h>

@@ -1,16 +1,21 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	-I$(top_srcdir)/libcstring \
-	-I$(top_srcdir)/liberror \
-	-I$(top_srcdir)/libsystem \
+	@LIBCSTRING_CPPFLAGS@ \
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCLOCALE_CPPFLAGS@ \
+	@LIBCNOTIFY_CPPFLAGS@ \
+	@LIBCSPLIT_CPPFLAGS@ \
 	@LIBUNA_CPPFLAGS@ \
+	@LIBCFILE_CPPFLAGS@ \
+	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@LIBFMAPI_CPPFLAGS@ \
+	@LIBCSYSTEM_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@ \
 	@LIBNK2_DLL_IMPORT@
 
@@ -32,11 +37,13 @@ nk2export_SOURCES = \
 	nk2tools_libuna.h
 
 nk2export_LDADD = \
-	../libcstring/libcstring.la \
-	../liberror/liberror.la \
-	../libnk2/libnk2.la \
-	../libsystem/libsystem.la \
+	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	../libnk2/libnk2.la \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@ \
 	@MEMWATCH_LIBADD@
 
@@ -51,12 +58,14 @@ nk2info_SOURCES = \
 	nk2tools_libuna.h
 
 nk2info_LDADD = \
-	../libcstring/libcstring.la \
-	../liberror/liberror.la \
-	../libnk2/libnk2.la \
-	../libsystem/libsystem.la \
-	@LIBUNA_LIBADD@ \
+	@LIBCSYSTEM_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	../libnk2/libnk2.la \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@ \
 	@MEMWATCH_LIBADD@
 
