@@ -24,9 +24,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #if defined( HAVE_UNISTD_H )
 #include <unistd.h>
 #endif
@@ -35,12 +32,16 @@
 #include <stdlib.h>
 #endif
 
-#include <libsystem.h>
-
 #include "export_handle.h"
 #include "log_handle.h"
 #include "nk2input.h"
 #include "nk2output.h"
+#include "nk2tools_libcerror.h"
+#include "nk2tools_libclocale.h"
+#include "nk2tools_libcnotify.h"
+#include "nk2tools_libcpath.h"
+#include "nk2tools_libcstring.h"
+#include "nk2tools_libcsystem.h"
 #include "nk2tools_libnk2.h"
 
 export_handle_t *nk2export_export_handle = NULL;
@@ -78,10 +79,12 @@ void usage_fprint(
 /* Signal handler for nk2export
  */
 void nk2export_signal_handler(
-      libsystem_signal_t signal )
+      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
 {
-	liberror_error_t *error = NULL;
+	libcerror_error_t *error = NULL;
 	static char *function   = "nk2export_signal_handler";
+
+	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
 
 	nk2export_abort = 1;
 
@@ -91,22 +94,22 @@ void nk2export_signal_handler(
 		     nk2export_export_handle,
 		     &error ) != 1 )
 		{
-			libsystem_notify_printf(
+			libcnotify_printf(
 			 "%s: unable to signal export handle to abort.\n",
 			 function );
 
-			libsystem_notify_print_error_backtrace(
+			libcnotify_print_error_backtrace(
 			 error );
-			liberror_error_free(
+			libcerror_error_free(
 			 &error );
 		}
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libsystem_file_io_close(
+	if( libcsystem_file_io_close(
 	     0 ) != 0 )
 	{
-		libsystem_notify_printf(
+		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
 		 function );
 	}
@@ -120,7 +123,7 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	liberror_error_t *error                              = NULL;
+	libcerror_error_t *error                             = NULL;
 	log_handle_t *log_handle                             = NULL;
 	libcstring_system_character_t *log_filename          = NULL;
 	libcstring_system_character_t *option_ascii_codepage = NULL;
@@ -134,14 +137,23 @@ int main( int argc, char * const argv[] )
 	int result                                           = 0;
 	int verbose                                          = 0;
 
-	libsystem_notify_set_stream(
+	libcnotify_stream_set(
 	 stderr,
 	 NULL );
-	libsystem_notify_set_verbose(
+	libcnotify_verbose_set(
 	 1 );
 
-	if( libsystem_initialize(
+	if( libclocale_initialize(
 	     "nk2tools",
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to initialize locale values.\n" );
+
+		goto on_error;
+	}
+	if( libcsystem_initialize(
 	     _IONBF,
 	     &error ) != 1 )
 	{
@@ -149,18 +161,13 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to initialize system values.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	nk2output_version_fprint(
 	 stdout,
 	 program );
 
-	while( ( option = libsystem_getopt(
+	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
 	                   _LIBCSTRING_SYSTEM_STRING( "c:hl:qt:vV" ) ) ) != (libcstring_system_integer_t) -1 )
@@ -237,7 +244,7 @@ int main( int argc, char * const argv[] )
 
 		path_separator = libcstring_system_string_search_character_reverse(
 		                  source,
-		                  (libcstring_system_character_t) LIBSYSTEM_PATH_SEPARATOR,
+		                  (libcstring_system_character_t) LIBCPATH_SEPARATOR,
 		                  source_length );
 
 		if( path_separator == NULL )
@@ -250,7 +257,7 @@ int main( int argc, char * const argv[] )
 		}
 		option_target_path = path_separator;
 	}
-	libsystem_notify_set_verbose(
+	libcnotify_verbose_set(
 	 verbose );
 	libnk2_notify_set_stream(
 	 stderr,
@@ -436,9 +443,9 @@ int main( int argc, char * const argv[] )
 on_error:
 	if( error != NULL )
 	{
-		libsystem_notify_print_error_backtrace(
+		libcnotify_print_error_backtrace(
 		 error );
-		liberror_error_free(
+		libcerror_error_free(
 		 &error );
 	}
 	if( nk2export_export_handle != NULL )

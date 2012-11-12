@@ -24,12 +24,12 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libnk2_array_type.h"
 #include "libnk2_codepage.h"
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
 #include "libnk2_libcnotify.h"
 #include "libnk2_libfdatetime.h"
@@ -305,7 +305,7 @@ int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t number_of_items,
-     libnk2_array_t *items_array,
+     libcdata_array_t *items_array,
      libcerror_error_t **error )
 {
 	uint8_t number_of_item_values_data[ 4 ];
@@ -411,7 +411,7 @@ int libnk2_io_handle_read_items(
 
 			goto on_error;
 		}
-		if( libnk2_array_append_entry(
+		if( libcdata_array_append_entry(
 		     items_array,
 		     &item_entry_index,
 		     (intptr_t *) values_table,
@@ -644,9 +644,8 @@ int libnk2_io_handle_read_item_values(
 				break;
 
 			case LIBNK2_VALUE_TYPE_CURRENCY:
-				value_type      = LIBFVALUE_VALUE_TYPE_FIXED_POINT_64BIT;
+				value_type      = LIBFVALUE_VALUE_TYPE_INTEGER_64BIT;
 				value_data_size = 8;
-/* TODO location of the point */
 				value_encoding  = LIBFVALUE_ENDIAN_LITTLE;
 				break;
 

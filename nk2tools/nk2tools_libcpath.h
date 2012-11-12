@@ -1,7 +1,7 @@
 /*
- * Common input functions for the nk2tools
+ * The internal libcpath header
  *
- * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -9,36 +9,39 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2INPUT_H )
-#define _NK2INPUT_H
+#if !defined( _NK2TOOLS_LIBCPATH_H )
+#define _NK2TOOLS_LIBCPATH_H
 
 #include <common.h>
-#include <types.h>
 
-#include "nk2tools_libcerror.h"
-#include "nk2tools_libcstring.h"
+/* Define HAVE_LOCAL_LIBCPATH for local use of libcpath
+ */
+#if defined( HAVE_LOCAL_LIBCPATH )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libcpath_definitions.h>
+#include <libcpath_path.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCPATH_DLL_IMPORT
+ * before including libcpath.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCPATH_DLL_IMPORT
 #endif
 
-int nk2input_determine_ascii_codepage(
-     const libcstring_system_character_t *string,
-     int *ascii_codepage,
-     libcerror_error_t **error );
+#include <libcpath.h>
 
-#if defined( __cplusplus )
-}
 #endif
 
 #endif

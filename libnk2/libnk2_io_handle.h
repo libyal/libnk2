@@ -25,8 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include "libnk2_array_type.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
 #include "libnk2_libfvalue.h"
 
@@ -67,7 +67,7 @@ int libnk2_io_handle_read_items(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t number_of_items,
-     libnk2_array_t *items_array,
+     libcdata_array_t *items_array,
      libcerror_error_t **error );
 
 int libnk2_io_handle_read_item_values(

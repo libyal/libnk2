@@ -25,10 +25,10 @@
 #include <common.h>
 #include <types.h>
 
-#include "libnk2_array_type.h"
 #include "libnk2_extern.h"
 #include "libnk2_io_handle.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
 #include "libnk2_types.h"
 
@@ -50,7 +50,7 @@ struct libnk2_internal_file
 {
 	/* The items array
 	 */
-	libnk2_array_t *items_array;
+	libcdata_array_t *items_array;
 
 	/* The IO handle
 	 */

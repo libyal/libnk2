@@ -22,10 +22,9 @@
 #include <common.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #include "nk2input.h"
+#include "nk2tools_libcerror.h"
+#include "nk2tools_libcstring.h"
 #include "nk2tools_libnk2.h"
 
 /* Determines the codepage from a string
@@ -34,7 +33,7 @@
 int nk2input_determine_ascii_codepage(
      const libcstring_system_character_t *string,
      int *ascii_codepage,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "nk2input_determine_ascii_codepage";
 	size_t string_length  = 0;
@@ -42,10 +41,10 @@ int nk2input_determine_ascii_codepage(
 
 	if( string == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid string.",
 		 function );
 
@@ -53,10 +52,10 @@ int nk2input_determine_ascii_codepage(
 	}
 	if( ascii_codepage == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid ASCII codepage.",
 		 function );
 

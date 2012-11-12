@@ -1,7 +1,7 @@
 /*
- * Common input functions for the nk2tools
+ * The internal libcerror header
  *
- * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2012, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -9,36 +9,41 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2INPUT_H )
-#define _NK2INPUT_H
+#if !defined( _NK2TOOLS_LIBCERROR_H )
+#define _NK2TOOLS_LIBCERROR_H
 
 #include <common.h>
-#include <types.h>
 
-#include "nk2tools_libcerror.h"
-#include "nk2tools_libcstring.h"
+/* Define HAVE_LOCAL_LIBCERROR for local use of libcerror
+ */
+#if defined( HAVE_LOCAL_LIBCERROR )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libcerror_definitions.h>
+#include <libcerror_error.h>
+#include <libcerror_system.h>
+#include <libcerror_types.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBCERROR_DLL_IMPORT
+ * before including libcerror.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCERROR_DLL_IMPORT
 #endif
 
-int nk2input_determine_ascii_codepage(
-     const libcstring_system_character_t *string,
-     int *ascii_codepage,
-     libcerror_error_t **error );
+#include <libcerror.h>
 
-#if defined( __cplusplus )
-}
 #endif
 
 #endif

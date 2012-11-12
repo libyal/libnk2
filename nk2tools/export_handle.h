@@ -26,10 +26,9 @@
 #include <file_stream.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
 #include "log_handle.h"
+#include "nk2tools_libcerror.h"
+#include "nk2tools_libcstring.h"
 #include "nk2tools_libnk2.h"
 
 #if defined( __cplusplus )
@@ -84,25 +83,25 @@ struct export_handle
 
 int export_handle_initialize(
      export_handle_t **export_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_free(
      export_handle_t **export_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_signal_abort(
      export_handle_t *export_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
      const libcstring_system_character_t *string,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_set_target_path(
      export_handle_t *export_handle,
      const libcstring_system_character_t *target_path,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_set_export_path(
      export_handle_t *export_handle,
@@ -112,27 +111,27 @@ int export_handle_set_export_path(
      size_t suffix_length,
      libcstring_system_character_t **export_path,
      size_t *export_path_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_create_items_export_path(
      export_handle_t *export_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_print_data(
      export_handle_t *export_handle,
      FILE *stream,
      const uint8_t *data,
      size_t data_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_open(
      export_handle_t *export_handle,
      const libcstring_system_character_t *filename,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_close(
      export_handle_t *export_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 /* Item generic export functions
  */
@@ -146,7 +145,7 @@ int export_handle_create_default_item_directory(
      libcstring_system_character_t **item_directory_path,
      size_t *item_directory_path_size,
      log_handle_t *log_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_create_text_item_file(
      export_handle_t *export_handle,
@@ -155,7 +154,7 @@ int export_handle_create_text_item_file(
      const libcstring_system_character_t *export_path,
      size_t export_path_length,
      FILE **item_file_stream,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_export_item_values(
      export_handle_t *export_handle,
@@ -165,7 +164,7 @@ int export_handle_export_item_values(
      const libcstring_system_character_t *export_path,
      size_t export_path_length,
      log_handle_t *log_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 /* Item specific export functions
  */
@@ -176,7 +175,7 @@ int export_handle_export_alias(
      const libcstring_system_character_t *export_path,
      size_t export_path_length,
      log_handle_t *log_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 /* File export functions
  */
@@ -184,12 +183,12 @@ int export_handle_export_items(
      export_handle_t *export_handle,
      libnk2_file_t *file,
      log_handle_t *log_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_export_file(
      export_handle_t *export_handle,
      log_handle_t *log_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

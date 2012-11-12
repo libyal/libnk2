@@ -31,6 +31,13 @@ nk2export_SOURCES = \
 	nk2export.c \
 	nk2input.c nk2input.h \
 	nk2output.c nk2output.h \
+	nk2tools_libcerror.h \
+	nk2tools_libcfile.h \
+	nk2tools_libcpath.h \
+	nk2tools_libclocale.h \
+	nk2tools_libcnotify.h \
+	nk2tools_libcstring.h \
+	nk2tools_libcsystem.h \
 	nk2tools_libfdatetime.h \
 	nk2tools_libfguid.h \
 	nk2tools_libnk2.h \
@@ -38,7 +45,10 @@ nk2export_SOURCES = \
 
 nk2export_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	../libnk2/libnk2.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
@@ -51,6 +61,11 @@ nk2info_SOURCES = \
 	nk2info.c \
 	nk2input.c nk2input.h \
 	nk2output.c nk2output.h \
+	nk2tools_libcerror.h \
+	nk2tools_libclocale.h \
+	nk2tools_libcnotify.h \
+	nk2tools_libcstring.h \
+	nk2tools_libcsystem.h \
 	nk2tools_libfdatetime.h \
 	nk2tools_libfguid.h \
 	nk2tools_libnk2.h \

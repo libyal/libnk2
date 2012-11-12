@@ -1,11 +1,10 @@
 TODO:
+* nk2export:
+  - implement item file
 * complete libfvalue update
-* libcdata update
-* update libfdatetime
-  - floating time support
 * update libfvalue
-  - floating time support
-  - fixed point currency support
+  - implement currency as: LIBFVALUE_VALUE_TYPE_FIXED_POINT_64BIT
+    what about location of the point ?
 * complete libcerror update
   - nk2tools
 * update msvscpp files
@@ -47,6 +46,9 @@ Bindings:
 * python
 * .net
 * java
+
+20121112
+* updated dependencies
 
 20120826
 * updated dependencies

@@ -23,7 +23,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libnk2_array_type.h"
 #include "libnk2_codepage.h"
 #include "libnk2_debug.h"
 #include "libnk2_definitions.h"
@@ -31,6 +30,7 @@
 #include "libnk2_item.h"
 #include "libnk2_file.h"
 #include "libnk2_libbfio.h"
+#include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
 #include "libnk2_libcnotify.h"
 #include "libnk2_libcstring.h"
@@ -100,7 +100,7 @@ int libnk2_file_initialize(
 
 		return( -1 );
 	}
-	if( libnk2_array_initialize(
+	if( libcdata_array_initialize(
 	     &( internal_file->items_array ),
 	     0,
 	     error ) != 1 )
@@ -136,7 +136,7 @@ on_error:
 	{
 		if( internal_file->items_array != NULL )
 		{
-			libnk2_array_free(
+			libcdata_array_free(
 			 &( internal_file->items_array ),
 			 NULL,
 			 NULL );
@@ -191,7 +191,7 @@ int libnk2_file_free(
 		}
 		*file = NULL;
 
-		if( libnk2_array_free(
+		if( libcdata_array_free(
 		     &( internal_file->items_array ),
 		     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
 		     error ) != 1 )
@@ -748,7 +748,7 @@ int libnk2_file_close(
 	internal_file->file_io_handle                    = NULL;
 	internal_file->file_io_handle_created_in_library = 0;
 
-	if( libnk2_array_resize(
+	if( libcdata_array_resize(
 	     internal_file->items_array,
 	     0,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
@@ -1060,7 +1060,7 @@ int libnk2_file_get_number_of_items(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
-	if( libnk2_array_get_number_of_entries(
+	if( libcdata_array_get_number_of_entries(
 	     internal_file->items_array,
 	     number_of_items,
 	     error ) != 1 )
@@ -1114,7 +1114,7 @@ int libnk2_file_get_item(
 
 		return( -1 );
 	}
-	if( libnk2_array_get_entry_by_index(
+	if( libcdata_array_get_entry_by_index(
 	     internal_file->items_array,
 	     item_index,
 	     (intptr_t **) &values_table,
