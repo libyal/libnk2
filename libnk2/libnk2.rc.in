@@ -24,11 +24,11 @@ BEGIN
       VALUE "FileDescription",		"Library to support the Nickfile (NK2) format\0"
       VALUE "FileVersion",		"@VERSION@" "\0"
       VALUE "InternalName",		"libnk2.dll\0"
-      VALUE "LegalCopyright",		"(c) 2009-2012 Joachim Metz <jbmetz@users.sourceforge.net>\0"
+      VALUE "LegalCopyright",		"(c) 2009-2013 Joachim Metz <joachim.metz@gmail.com>\0"
       VALUE "OriginalFilename",		"libnk2.dll\0"
       VALUE "ProductName",		"libnk2\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
-      VALUE "Comments",			"For more information visit http://libnk2.sourceforge.net\0"
+      VALUE "Comments",			"For more information visit https://code.google.com/p/libnk2/\0"
     END
   END
   BLOCK "VarFileInfo"

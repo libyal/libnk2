@@ -70,14 +70,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man1/*
 
 %changelog
-* Mon Oct  4 2011 Joachim Metz <joachim.metz@gmail.com> 20111004-1
-- Updated autoconf variables
-- Updated README files
-
-* Wed Jul 21 2010 Joachim Metz <joachim.metz@gmail.com> 20100721-1
-- Added support for libfvalue
-- Added README_mingw
-
-* Sun Jun 27 2010 Joachim Metz <joachim.metz@gmail.com> 20100627-1
-- Clean up of previous version of spec file
+* @SPEC_DATE@ Joachim Metz <joachim.metz@gmail.com> @VERSION@-1
+- Auto-generated
 

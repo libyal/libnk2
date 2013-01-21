@@ -1,7 +1,7 @@
 /*
  * Library to support the Nickfile (NK2) format
  *
- * Copyright (c) 2009-2012, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
