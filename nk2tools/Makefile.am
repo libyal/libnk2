@@ -27,6 +27,7 @@ bin_PROGRAMS = \
 
 nk2export_SOURCES = \
 	export_handle.c export_handle.h \
+	item_file.c item_file.h \
 	log_handle.c log_handle.h \
 	nk2export.c \
 	nk2input.c nk2input.h \
@@ -40,6 +41,7 @@ nk2export_SOURCES = \
 	nk2tools_libcsystem.h \
 	nk2tools_libfdatetime.h \
 	nk2tools_libfguid.h \
+	nk2tools_libfvalue.h \
 	nk2tools_libnk2.h \
 	nk2tools_libuna.h
 

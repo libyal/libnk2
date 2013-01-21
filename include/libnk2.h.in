@@ -348,7 +348,6 @@ int libnk2_item_get_number_of_entries(
      libnk2_error_t **error );
 
 /* Retrieves the entry and value type of a specific entry
- * The name to id map entry is set when available
  * Returns 1 if successful or -1 on error
  */
 LIBNK2_EXTERN \
@@ -356,6 +355,16 @@ int libnk2_item_get_entry_type(
      libnk2_item_t *item,
      int entry_index,
      uint32_t *entry_type,
+     uint32_t *value_type,
+     libnk2_error_t **error );
+
+/* Retrieves the value type of a specific entry type
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN \
+int libnk2_item_get_value_type(
+     libnk2_item_t *item,
+     uint32_t entry_type,
      uint32_t *value_type,
      libnk2_error_t **error );
 
@@ -385,7 +394,7 @@ LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_boolean(
      libnk2_item_t *item,
      uint32_t entry_type,
-     uint8_t *value_boolean,
+     uint8_t *entry_value,
      libnk2_error_t **error );
 
 /* Retrieves the 32-bit value of a specific entry
@@ -395,7 +404,7 @@ LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_32bit(
      libnk2_item_t *item,
      uint32_t entry_type,
-     uint32_t *value_32bit,
+     uint32_t *entry_value,
      libnk2_error_t **error );
 
 /* Retrieves the 64-bit value of a specific entry
@@ -405,7 +414,17 @@ LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_64bit(
      libnk2_item_t *item,
      uint32_t entry_type,
-     uint64_t *value_64bit,
+     uint64_t *entry_value,
+     libnk2_error_t **error );
+
+/* Retrieves the 64-bit filetime value of a specific entry
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_filetime(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint64_t *entry_value,
      libnk2_error_t **error );
 
 /* Retrieves the size value of a specific entry
@@ -415,7 +434,17 @@ LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_size(
      libnk2_item_t *item,
      uint32_t entry_type,
-     size_t *value_size,
+     size_t *entry_value,
+     libnk2_error_t **error );
+
+/* Retrieves the floating point value of a specific entry
+ * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
+ */
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_floating_point(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     double *entry_value,
      libnk2_error_t **error );
 
 /* Retrieves the size of the UTF-8 encoded string of a specific entry
@@ -425,10 +454,10 @@ int libnk2_item_get_entry_value_size(
  */
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_utf8_string_size(
-                   libnk2_item_t *item,
-                   uint32_t entry_type,
-                   size_t *utf8_string_size,
-                   libnk2_error_t **error );
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *utf8_string_size,
+     libnk2_error_t **error );
 
 /* Retrieves the UTF-8 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
@@ -464,7 +493,7 @@ LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_utf16_string(
      libnk2_item_t *item,
      uint32_t entry_type,
-     uint8_t *utf16_string,
+     uint16_t *utf16_string,
      size_t utf16_string_size,
      libnk2_error_t **error );
 

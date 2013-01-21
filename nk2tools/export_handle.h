@@ -26,6 +26,7 @@
 #include <file_stream.h>
 #include <types.h>
 
+#include "item_file.h"
 #include "log_handle.h"
 #include "nk2tools_libcerror.h"
 #include "nk2tools_libcstring.h"
@@ -117,13 +118,6 @@ int export_handle_create_items_export_path(
      export_handle_t *export_handle,
      libcerror_error_t **error );
 
-int export_handle_print_data(
-     export_handle_t *export_handle,
-     FILE *stream,
-     const uint8_t *data,
-     size_t data_size,
-     libcerror_error_t **error );
-
 int export_handle_open(
      export_handle_t *export_handle,
      const libcstring_system_character_t *filename,
@@ -147,13 +141,13 @@ int export_handle_create_default_item_directory(
      log_handle_t *log_handle,
      libcerror_error_t **error );
 
-int export_handle_create_text_item_file(
+int export_handle_create_item_file(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *item_filename,
-     size_t item_filename_length,
-     const libcstring_system_character_t *export_path,
-     size_t export_path_length,
-     FILE **item_file_stream,
+     const libcstring_system_character_t *path,
+     size_t path_length,
+     const libcstring_system_character_t *filename,
+     size_t filename_length,
+     item_file_t **item_file,
      libcerror_error_t **error );
 
 int export_handle_export_item_values(

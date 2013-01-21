@@ -238,7 +238,8 @@ int libnk2_io_handle_read_file_header(
 		 function );
 		libcnotify_print_data(
 		 (uint8_t *) &file_header,
-		 sizeof( nk2_file_header_t ) );
+		 sizeof( nk2_file_header_t ),
+		 0 );
 	}
 #endif
 	if( memory_compare(
@@ -538,7 +539,8 @@ int libnk2_io_handle_read_item_values(
 			 item_value_index );
 			libcnotify_print_data(
 			 (uint8_t *) &item_value_entry,
-			 sizeof( nk2_item_value_entry_t ) );
+			 sizeof( nk2_item_value_entry_t ),
+			 0 );
 		}
 #endif
 		byte_stream_copy_to_uint16_little_endian(
@@ -594,7 +596,8 @@ int libnk2_io_handle_read_item_values(
 			 item_value_index );
 			libcnotify_print_data(
 			 item_value_entry.value_data_array,
-			 8 );
+			 8,
+			 0 );
 		}
 #endif
 		/* TODO add other value types to the item entry
@@ -880,6 +883,7 @@ int libnk2_io_handle_read_item_values(
 			}
 		}
 #endif
+/* TODO check if this is working as intended
 		if( value_identifier->value_type == LIBNK2_VALUE_TYPE_BOOLEAN )
 		{
 			byte_stream_copy_to_uint16_little_endian(
@@ -910,6 +914,7 @@ int libnk2_io_handle_read_item_values(
 			 value_data );
 		}
 		else
+*/
 		{
 			/* The value takes over managent of the value data
 			 */
@@ -994,7 +999,7 @@ int libnk2_io_handle_read_file_footer(
 	ssize_t read_count                = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t filetime_string[ 32 ];
+	libcstring_system_character_t filetime_string[ 48 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 	uint32_t value_32bit              = 0;
@@ -1048,7 +1053,8 @@ int libnk2_io_handle_read_file_footer(
 		 function );
 		libcnotify_print_data(
 		 (uint8_t *) &file_footer,
-		 sizeof( nk2_file_footer_t ) );
+		 sizeof( nk2_file_footer_t ),
+		 0 );
 	}
 #endif
 	byte_stream_copy_to_uint64_little_endian(
@@ -1099,17 +1105,15 @@ int libnk2_io_handle_read_file_footer(
 		result = libfdatetime_filetime_copy_to_utf16_string(
 			  filetime,
 			  (uint16_t *) filetime_string,
-			  32,
-			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
-			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+			  48,
+			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 			  error );
 #else
 		result = libfdatetime_filetime_copy_to_utf8_string(
 			  filetime,
 			  (uint8_t *) filetime_string,
-			  32,
-			  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
-			  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+			  48,
+			  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 			  error );
 #endif
 		if( result != 1 )

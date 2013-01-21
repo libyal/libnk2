@@ -262,13 +262,13 @@ int export_handle_set_target_path(
      const libcstring_system_character_t *target_path,
      libcerror_error_t **error )
 {
-	static char *function                                      = "export_handle_set_target_path";
-	size_t target_path_length                                  = 0;
+	static char *function                           = "export_handle_set_target_path";
+	size_t target_path_length                       = 0;
 
 #if defined( WINAPI )
-	libcstring_system_character_t *extended_length_target_path = NULL;
-        size_t extended_length_target_path_size                    = 0;
-	int result                                                 = 0;
+	libcstring_system_character_t *full_target_path = NULL;
+        size_t full_target_path_size                    = 0;
+	int result                                      = 0;
 #endif
 
 	if( export_handle == NULL )
@@ -305,13 +305,21 @@ int export_handle_set_target_path(
 	                      target_path );
 
 #if defined( WINAPI )
-	result = libsystem_path_create_windows_extended(
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libcpath_path_get_full_path_wide(
 	          target_path,
                   target_path_length,
-                  &extended_length_target_path,
-                  &extended_length_target_path_size,
+                  &full_target_path,
+                  &full_target_path_size,
                   error );
-
+#else
+	result = libcpath_path_get_full_path(
+	          target_path,
+                  target_path_length,
+                  &full_target_path,
+                  &full_target_path_size,
+                  error );
+#endif
         if( result == -1 )
         {
 		libcerror_error_set(
@@ -325,8 +333,8 @@ int export_handle_set_target_path(
         }
         else if( result != 0 )
         {
-                target_path        = extended_length_target_path;
-                target_path_length = extended_length_target_path_size - 1;
+                target_path        = full_target_path;
+                target_path_length = full_target_path_size - 1;
         }
 #endif
 	if( target_path_length > 0 )
@@ -365,7 +373,7 @@ int export_handle_set_target_path(
 	}
 #if defined( WINAPI )
 	memory_free(
-	 extended_length_target_path );
+	 full_target_path );
 #endif
 	return( 1 );
 
@@ -379,10 +387,10 @@ on_error:
 		export_handle->target_path_size = 0;
 	}
 #if defined( WINAPI )
-	if( extended_length_target_path != NULL )
+	if( full_target_path != NULL )
 	{
 		memory_free(
-		 extended_length_target_path );
+		 full_target_path );
 	}
 #endif
 	return( -1 );
@@ -588,10 +596,15 @@ int export_handle_create_items_export_path(
 
 		return( -1 );
 	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libcfile_file_exists_wide(
+		  export_handle->items_export_path,
+		  error );
+#else
 	result = libcfile_file_exists(
 		  export_handle->items_export_path,
 		  error );
-
+#endif
 	if( result == -1 )
 	{
 		libcerror_error_set(
@@ -609,199 +622,6 @@ int export_handle_create_items_export_path(
 		return( 0 );
 	}
 	return( 1 );
-}
-
-/* Prints the data on the stream
- * Returns the number of printed characters if successful or -1 on error
- */
-int export_handle_print_data(
-     export_handle_t *export_handle,
-     FILE *stream,
-     const uint8_t *data,
-     size_t data_size,
-     libcerror_error_t **error )
-{
-	static char *function = "export_handle_print_data";
-	size_t byte_iterator  = 0;
-	size_t data_iterator  = 0;
-	int print_count       = 0;
-	int total_print_count = 0;
-
-	if( export_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( stream == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid stream.",
-		 function );
-
-		return( -1 );
-	}
-	if( data == NULL )
-	{
-		return( 0 );
-	}
-	while( data_iterator < data_size )
-	{
-		while( byte_iterator < data_size )
-		{
-			if( byte_iterator % 16 == 0 )
-			{
-				print_count = fprintf(
-					       stream,
-					       "%.8" PRIzx ": ",
-					       byte_iterator );
-
-				if( print_count <= -1 )
-				{
-					return( -1 );
-				}
-				total_print_count += print_count;
-			}
-			print_count = fprintf(
-				       stream,
-				       "%.2" PRIx8 " ",
-				       data[ byte_iterator++ ] );
-
-			if( print_count <= -1 )
-			{
-				return( -1 );
-			}
-			total_print_count += print_count;
-
-			if( byte_iterator % 16 == 0 )
-			{
-				break;
-			}
-			else if( byte_iterator % 8 == 0 )
-			{
-				print_count = fprintf(
-					       stream,
-					       " " );
-
-				if( print_count <= -1 )
-				{
-					return( -1 );
-				}
-				total_print_count += print_count;
-			}
-		}
-		while( byte_iterator % 16 != 0 )
-		{
-			byte_iterator++;
-
-			print_count = fprintf(
-				       stream,
-				       "   " );
-
-			if( print_count <= -1 )
-			{
-				return( -1 );
-			}
-			total_print_count += print_count;
-
-			if( ( byte_iterator % 8 == 0 )
-			 && ( byte_iterator % 16 != 0 ) )
-			{
-				print_count = fprintf(
-					       stream,
-					       " " );
-
-				if( print_count <= -1 )
-				{
-					return( -1 );
-				}
-				total_print_count += print_count;
-			}
-		}
-		print_count = fprintf(
-			       stream,
-			       "  " );
-
-		if( print_count <= -1 )
-		{
-			return( -1 );
-		}
-		total_print_count += print_count;
-
-		byte_iterator = data_iterator;
-
-		while( byte_iterator < data_size )
-		{
-			if( ( data[ byte_iterator ] >= 0x20 )
-			 && ( data[ byte_iterator ] <= 0x7e ) )
-			{
-				print_count = fprintf(
-					       stream,
-					       "%c",
-					       (char) data[ byte_iterator ] );
-			}
-			else
-			{
-				print_count = fprintf(
-					       stream,
-					       "." );
-			}
-			if( print_count <= -1 )
-			{
-				return( -1 );
-			}
-			total_print_count += print_count;
-
-			byte_iterator++;
-
-			if( byte_iterator % 16 == 0 )
-			{
-				break;
-			}
-			else if( byte_iterator % 8 == 0 )
-			{
-				print_count = fprintf(
-					       stream,
-					       " " );
-
-				if( print_count <= -1 )
-				{
-					return( -1 );
-				}
-				total_print_count += print_count;
-			}
-		}
-		print_count = fprintf(
-			       stream,
-			       "\n" );
-
-		if( print_count <= -1 )
-		{
-			return( -1 );
-		}
-		total_print_count += print_count;
-
-		data_iterator = byte_iterator;
-	}
-	print_count = fprintf(
-		       stream,
-		       "\n" );
-
-	if( print_count <= -1 )
-	{
-		return( -1 );
-	}
-	total_print_count += print_count;
-
-	return( total_print_count );
 }
 
 /* Opens the export handle
@@ -988,28 +808,45 @@ int export_handle_create_default_item_directory(
 	item_directory_name[ item_prefix_length + 5 ] = 0;
 	item_directory_name_length                    = item_prefix_length + 5;
 
-	if( libsystem_path_create(
-	     item_directory_name,
-	     item_directory_name_length,
-	     export_path,
-	     export_path_length,
-	     item_directory_path,
-	     item_directory_path_size,
-	     error ) != 1 )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libcpath_path_join_wide(
+	          item_directory_path,
+	          item_directory_path_size,
+	          export_path,
+	          export_path_length,
+	          item_directory_name,
+	          item_directory_name_length,
+	          error );
+#else
+	result = libcpath_path_join(
+	          item_directory_path,
+	          item_directory_path_size,
+	          export_path,
+	          export_path_length,
+	          item_directory_name,
+	          item_directory_name_length,
+	          error );
+#endif
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable create item directory path.",
+		 "%s: unable to create item directory path.",
 		 function );
 
 		goto on_error;
 	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libcfile_file_exists_wide(
+		  *item_directory_path,
+		  error );
+#else
 	result = libcfile_file_exists(
-	          *item_directory_path,
-	          error );
-
+		  *item_directory_path,
+		  error );
+#endif
 	if( result == -1 )
 	{
 		libcerror_error_set(
@@ -1034,9 +871,15 @@ int export_handle_create_default_item_directory(
 
 		goto on_error;
 	}
-	if( libsystem_directory_make(
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcpath_path_make_directory_wide(
 	     *item_directory_path,
-	     error ) != 0 )
+	     error ) != 1 )
+#else
+	if( libcpath_path_make_directory(
+	     *item_directory_path,
+	     error ) != 1 )
+#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -1046,7 +889,7 @@ int export_handle_create_default_item_directory(
 		 function,
 		 *item_directory_path );
 
-		return( -1 );
+		goto on_error;
 	}
 	log_handle_printf(
 	 log_handle,
@@ -1067,22 +910,22 @@ on_error:
 	return( -1 );
 }
 
-/* Creates a text item file
+/* Creates an item file
  * Returns 1 if successful, 0 if the file already exists or -1 on error
  */
-int export_handle_create_text_item_file(
+int export_handle_create_item_file(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *item_filename,
-     size_t item_filename_length,
-     const libcstring_system_character_t *export_path,
-     size_t export_path_length,
-     FILE **item_file_stream,
+     const libcstring_system_character_t *path,
+     size_t path_length,
+     const libcstring_system_character_t *filename,
+     size_t filename_length,
+     item_file_t **item_file,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *item_filename_path = NULL;
-	static char *function                             = "export_handle_create_text_item_file";
-	size_t item_filename_path_size                    = 0;
-	int result                                        = 0;
+	libcstring_system_character_t *item_file_path = NULL;
+	static char *function                         = "export_handle_create_item_file";
+	size_t item_file_path_size                    = 0;
+	int result                                    = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1095,39 +938,56 @@ int export_handle_create_text_item_file(
 
 		return( -1 );
 	}
-	if( item_file_stream == NULL )
+	if( item_file == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item file stream.",
+		 "%s: invalid item file.",
 		 function );
 
 		return( -1 );
 	}
-	if( libsystem_path_create(
-	     item_filename,
-	     item_filename_length,
-	     export_path,
-	     export_path_length,
-	     &item_filename_path,
-	     &item_filename_path_size,
-	     error ) != 1 )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libcpath_path_join_wide(
+	          &item_file_path,
+	          &item_file_path_size,
+	          path,
+	          path_length,
+	          filename,
+	          filename_length,
+	          error );
+#else
+	result = libcpath_path_join(
+	          &item_file_path,
+	          &item_file_path_size,
+	          path,
+	          path_length,
+	          filename,
+	          filename_length,
+	          error );
+#endif
+	if( result != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create item filename path.",
+		 "%s: unable to create item file path.",
 		 function );
 
 		goto on_error;
 	}
-	result = libcfile_file_exists(
-	          item_filename_path,
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libcfile_file_exists_wide(
+	          item_file_path,
 	          error );
-
+#else
+	result = libcfile_file_exists(
+	          item_file_path,
+	          error );
+#endif
 	if( result == -1 )
 	{
 		libcerror_error_set(
@@ -1136,22 +996,34 @@ int export_handle_create_text_item_file(
 		 LIBCERROR_IO_ERROR_GENERIC,
 		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
 		 function,
-		 item_filename_path );
+		 item_file_path );
 
 		goto on_error;
 	}
 	else if( result != 0 )
 	{
 		memory_free(
-		 item_filename_path );
+		 item_file_path );
 
 		return( 0 );
 	}
-	*item_file_stream = libsystem_file_stream_open(
-	                     item_filename_path,
-	                     _LIBCSTRING_SYSTEM_STRING( "w" ) );
+	if( item_file_initialize(
+	     item_file,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create item file.",
+		 function );
 
-	if( *item_file_stream == NULL )
+		goto on_error;
+	}
+	if( item_file_open(
+	     *item_file,
+	     item_file_path,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -1159,22 +1031,28 @@ int export_handle_create_text_item_file(
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open: %" PRIs_LIBCSTRING_SYSTEM ".",
 		 function,
-		 item_filename_path );
+		 item_file_path );
 
 		goto on_error;
 	}
 	memory_free(
-	 item_filename_path );
+	 item_file_path );
 
-	item_filename_path = NULL;
+	item_file_path = NULL;
 
 	return( 1 );
 
 on_error:
-	if( item_filename_path != NULL )
+	if( *item_file != NULL )
+	{
+		item_file_free(
+		 item_file,
+		 NULL );
+	}
+	if( item_file_path != NULL )
 	{
 		memory_free(
-		 item_filename_path );
+		 item_file_path );
 	}
 	return( -1 );
 }
@@ -1192,15 +1070,15 @@ int export_handle_export_item_values(
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
-	FILE *item_values_file_stream = NULL;
-	uint8_t *value_data           = NULL;
-	static char *function         = "export_handle_export_item_values";
-	size_t value_data_size        = 0;
-	uint32_t entry_iterator       = 0;
-	uint32_t entry_type           = 0;
-	uint32_t number_of_entries    = 0;
-	uint32_t value_type           = LIBNK2_VALUE_TYPE_UNSPECIFIED;
-	int result                    = 0;
+	item_file_t *item_file     = NULL;
+	uint8_t *value_data        = NULL;
+	static char *function      = "export_handle_export_item_values";
+	size_t value_data_size     = 0;
+	uint32_t entry_index       = 0;
+	uint32_t entry_type        = 0;
+	uint32_t number_of_entries = 0;
+	uint32_t value_type        = LIBNK2_VALUE_TYPE_UNSPECIFIED;
+	int result                 = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1235,13 +1113,13 @@ int export_handle_export_item_values(
 
 		return( -1 );
 	}
-	result = export_handle_create_text_item_file(
+	result = export_handle_create_item_file(
 	          export_handle,
-                  item_values_filename,
-                  item_values_filename_length,
 	          export_path,
 	          export_path_length,
-	          &item_values_file_stream,
+                  item_values_filename,
+                  item_values_filename_length,
+	          &item_file,
 	          error );
 
 	if( result == -1 )
@@ -1250,7 +1128,7 @@ int export_handle_export_item_values(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create item values file.",
+		 "%s: unable to create item file.",
 		 function );
 
 		return( -1 );
@@ -1278,26 +1156,43 @@ int export_handle_export_item_values(
 
 		goto on_error;
 	}
-	fprintf(
-	 item_values_file_stream,
-	 "Number of entries:\t%" PRIu32 "\n",
-	 number_of_entries );
-	fprintf(
-	 item_values_file_stream,
-	 "\n" );
-
-	for( entry_iterator = 0;
-	     entry_iterator < number_of_entries;
-	     entry_iterator++ )
+	if( item_file_write_value_integer_32bit_as_decimal(
+	     item_file,
+	     _LIBCSTRING_SYSTEM_STRING( "Number of entries:\t" ),
+	     number_of_entries,
+	     error ) != 1 )
 	{
-		fprintf(
-		 item_values_file_stream,
-		 "Entry:\t\t\t%" PRIu32 "\n",
-		 entry_iterator );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write 32-bit integer value.",
+		 function );
 
+		goto on_error;
+	}
+	for( entry_index = 0;
+	     entry_index < number_of_entries;
+	     entry_index++ )
+	{
+		if( item_file_write_value_integer_32bit_as_decimal(
+		     item_file,
+		     _LIBCSTRING_SYSTEM_STRING( "Entry:\t\t\t" ),
+		     entry_index,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_WRITE_FAILED,
+			 "%s: unable to write 32-bit integer value.",
+			 function );
+
+			goto on_error;
+		}
 		if( libnk2_item_get_entry_type(
 		     item,
-		     entry_iterator,
+		     entry_index,
 		     &entry_type,
 		     &value_type,
 		     error ) != 1 )
@@ -1308,19 +1203,40 @@ int export_handle_export_item_values(
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve entry type of entry: %" PRIu32 ".",
 			 function,
-			 entry_iterator );
+			 entry_index );
 
 			goto on_error;
 		}
-		fprintf(
-		 item_values_file_stream,
-		 "Entry type:\t\t0x%04" PRIx32 "\n",
-		 entry_type );
-		fprintf(
-		 item_values_file_stream,
-		 "Value type:\t\t0x%04" PRIx32 "\n",
-		 value_type );
+		if( item_file_write_value_integer_32bit_as_hexadecimal(
+		     item_file,
+		     _LIBCSTRING_SYSTEM_STRING( "Entry type:\t\t" ),
+		     entry_type,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_WRITE_FAILED,
+			 "%s: unable to write 32-bit integer value.",
+			 function );
 
+			goto on_error;
+		}
+		if( item_file_write_value_integer_32bit_as_hexadecimal(
+		     item_file,
+		     _LIBCSTRING_SYSTEM_STRING( "Value type:\t\t" ),
+		     value_type,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_WRITE_FAILED,
+			 "%s: unable to write 32-bit integer value.",
+			 function );
+
+			goto on_error;
+		}
 		result = libnk2_item_get_entry_value(
 			  item,
 			  entry_type,
@@ -1338,42 +1254,74 @@ int export_handle_export_item_values(
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve entry value of entry: %" PRIu32 ".",
 			 function,
-			 entry_iterator );
+			 entry_index );
 
 			goto on_error;
 		}
-		fprintf(
-		 item_values_file_stream,
-		 "Value:\n" );
-		export_handle_print_data(
-		 export_handle,
-		 item_values_file_stream,
-		 value_data,
-		 value_data_size,
-		 NULL );
+		if( item_file_write_value_description(
+		     item_file,
+		     _LIBCSTRING_SYSTEM_STRING( "Value:" ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_WRITE_FAILED,
+			 "%s: unable to write string.",
+			 function );
+
+			goto on_error;
+		}
+		if( item_file_write_buffer_as_hexdump(
+		     item_file,
+		     value_data,
+		     value_data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_WRITE_FAILED,
+			 "%s: unable to write buffer.",
+			 function );
+
+			goto on_error;
+		}
 	}
-	if( libsystem_file_stream_close(
-	     item_values_file_stream ) != 0 )
+	if( item_file_close(
+	     item_file,
+	     error ) != 0 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close item values file.",
+		 "%s: unable to close item file.",
 		 function );
-
-		item_values_file_stream = NULL;
 
 		goto on_error;
 	}
-	item_values_file_stream = NULL;
-
-	return( 1 );
-on_error:
-	if( item_values_file_stream != NULL )
+	if( item_file_free(
+	     &item_file,
+	     error ) != 1 )
 	{
-		libsystem_file_stream_close(
-		 item_values_file_stream );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free item file.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( item_file != NULL )
+	{
+		item_file_free(
+		 &item_file,
+		 NULL );
 	}
 	return( -1 );
 }
@@ -1487,7 +1435,7 @@ int export_handle_export_alias(
 			if( ( error != NULL )
 			 && ( *error != NULL ) )
 			{
-				libcsystem_notify_print_error_backtrace(
+				libcnotify_print_error_backtrace(
 				 *error );
 			}
 			libcerror_error_free(
@@ -1572,9 +1520,15 @@ int export_handle_export_items(
 	 export_handle->notify_stream,
 	 "Exporting items.\n" );
 
-	if( libsystem_directory_make(
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcpath_path_make_directory_wide(
 	     export_handle->items_export_path,
-	     error ) != 0 )
+	     error ) != 1 )
+#else
+	if( libcpath_path_make_directory(
+	     export_handle->items_export_path,
+	     error ) != 1 )
+#endif
 	{
 		libcerror_error_set(
 		 error,
@@ -1648,7 +1602,7 @@ int export_handle_export_items(
 			if( ( error != NULL )
 			 && ( *error != NULL ) )
 			{
-				libcsystem_notify_print_error_backtrace(
+				libcnotify_print_error_backtrace(
 				 *error );
 			}
 			libcerror_error_free(

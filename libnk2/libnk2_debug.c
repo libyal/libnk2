@@ -71,7 +71,8 @@ int libnk2_debug_mapi_value_print(
 		{
 			libcnotify_print_data(
 			 value_data,
-			 value_data_size );
+			 value_data_size,
+			 0 );
 		}
 		else
 		{

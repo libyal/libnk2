@@ -339,7 +339,7 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t filetime_string[ 32 ];
+	libcstring_system_character_t filetime_string[ 48 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 	static char *function             = "info_handle_file_fprint";
@@ -403,17 +403,15 @@ int info_handle_file_fprint(
 	result = libfdatetime_filetime_copy_to_utf16_string(
 		  filetime,
 		  (uint16_t *) filetime_string,
-		  32,
-		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
-		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+		  48,
+		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		  NULL );
 #else
 	result = libfdatetime_filetime_copy_to_utf8_string(
 		  filetime,
 		  (uint8_t *) filetime_string,
-		  32,
-		  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_MICRO_SECONDS,
-		  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+		  48,
+		  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 		  NULL );
 #endif
 	if( result != 1 )

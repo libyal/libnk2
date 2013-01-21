@@ -1,16 +1,9 @@
 TODO:
-* nk2export:
-  - implement item file
-* complete libfvalue update
-* update libfvalue
+* libnk2_io_handle.c check if LIBNK2_VALUE_TYPE_BOOLEAN is working as intended
+* item values
   - implement currency as: LIBFVALUE_VALUE_TYPE_FIXED_POINT_64BIT
     what about location of the point ?
-* complete libcerror update
-  - nk2tools
-* update msvscpp files
 * in io_handle_read_items used set array value instead of append ?
-* 2012 update
-  - macosx/libnk2.pmproj
 
 Optimizations:
 * map (file offset and size) items and item values first read on demand ?
@@ -46,6 +39,15 @@ Bindings:
 * python
 * .net
 * java
+
+20130121
+* 2013 update
+* nk2export: added item file
+* added API functions for item file
+* updated dependencies
+* updated macosx PackageMaker files
+* updated msvscpp files
+* bug fix in libnk2_item_get_entry_value_utf16_string API definition
 
 20121112
 * updated dependencies
