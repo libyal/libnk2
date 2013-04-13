@@ -5,7 +5,7 @@
 	<description/>
 	<post-install type="none"/>
 	<requireAuthorization/>
-	<installFrom>@PWD@/macosx/tmp/lib</installFrom>
+	<installFrom>/home/lordyesta/Projects/libnk2/macosx/tmp/lib</installFrom>
 	<installTo mod="true">/usr</installTo>
 	<flags>
 		<followSymbolicLinks/>
