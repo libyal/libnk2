@@ -1,7 +1,7 @@
 Name: libnk2
 Version: @VERSION@
 Release: 1
-Summary: Library to support the Nickfile (NK2) format
+Summary: Library to access the Nickfile (NK2) format
 Group: System Environment/Libraries
 License: LGPL
 Source: %{name}-%{version}.tar.gz
@@ -11,7 +11,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 @libnk2_spec_build_requires@  @ax_libbfio_spec_build_requires@ @ax_libcdata_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcfile_spec_build_requires@ @ax_libclocale_spec_build_requires@ @ax_libcnotify_spec_build_requires@ @ax_libcpath_spec_build_requires@ @ax_libcsplit_spec_build_requires@ @ax_libcstring_spec_build_requires@ @ax_libfdatetime_spec_build_requires@ @ax_libfguid_spec_build_requires@ @ax_libfmapi_spec_build_requires@ @ax_libfvalue_spec_build_requires@ @ax_libfwnt_spec_build_requires@ @ax_libuna_spec_build_requires@
 
 %description
-libnk2 is a library to support the Nickfile (NK2) format
+libnk2 is a library to access the Nickfile (NK2) format
 
 %package devel
 Summary: Header files and libraries for developing applications for libnk2

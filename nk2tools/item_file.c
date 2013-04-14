@@ -33,7 +33,8 @@
 #include "nk2tools_libfvalue.h"
 #include "nk2tools_libnk2.h"
 
-/* Initializes the item file
+/* Creates an item file
+ * Make sure the value item_file is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int item_file_initialize(
@@ -118,7 +119,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees the item file and its elements
+/* Frees an item file
  * Returns 1 if successful or -1 on error
  */
 int item_file_free(

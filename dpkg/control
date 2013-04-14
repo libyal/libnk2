@@ -10,8 +10,8 @@ Package: libnk2
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Library to support the Nickfile (NK2) format
- libnk2 is a library to support the Nickfile (NK2) format.
+Description: Library to access the Nickfile (NK2) format
+ libnk2 is a library to access the Nickfile (NK2) format.
 
 Package: libnk2-dev
 Section: libdevel

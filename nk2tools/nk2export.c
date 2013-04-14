@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -64,6 +64,7 @@ void usage_fprint(
 	fprintf( stream, "\tsource: the source file\n\n" );
 
 	fprintf( stream, "\t-c:     codepage of ASCII strings, options: ascii, windows-874,\n"
+	                 "\t        windows-932, windows-936, windows-949, windows-950,\n"
 	                 "\t        windows-1250, windows-1251, windows-1252 (default),\n"
 	                 "\t        windows-1253, windows-1254, windows-1255, windows-1256,\n"
 	                 "\t        windows-1257 or windows-1258\n" );

@@ -6,14 +6,14 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libsystem \
 	@MEMWATCH_CPPFLAGS@
 
-TESTS = 
+TESTS =
 
 check_SCRIPTS =
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
-check_PROGRAMS = 
+check_PROGRAMS =
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

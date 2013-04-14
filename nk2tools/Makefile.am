@@ -47,6 +47,11 @@ nk2export_SOURCES = \
 
 nk2export_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
+	@LIBFMAPI_LIBADD@ \
+	@LIBFVALUE_LIBADD@ \
+	@LIBFWNT_LIBADD@ \
+	@LIBFGUID_LIBADD@ \
+	@LIBFDATETIME_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
@@ -54,6 +59,7 @@ nk2export_LDADD = \
 	../libnk2/libnk2.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
@@ -91,8 +97,8 @@ distclean: clean
 	/bin/rm -f Makefile
 
 splint:
-	@echo "Running splint on nk2export ..." 
-	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(nk2export_SOURCES) 
-	@echo "Running splint on nk2info ..." 
-	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(nk2info_SOURCES) 
+	@echo "Running splint on nk2export ..."
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(nk2export_SOURCES)
+	@echo "Running splint on nk2info ..."
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(nk2info_SOURCES)
 
