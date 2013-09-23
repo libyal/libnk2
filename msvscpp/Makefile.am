@@ -9,6 +9,7 @@ EXTRA_DIST = \
 	libcsplit/libcsplit.vcproj \
 	libcstring/libcstring.vcproj \
 	libcsystem/libcsystem.vcproj \
+	libcthreads/libcthreads.vcproj \
 	libfdatetime/libfdatetime.vcproj \
 	libfguid/libfguid.vcproj \
 	libfmapi/libfmapi.vcproj \
@@ -16,9 +17,9 @@ EXTRA_DIST = \
 	libfwnt/libfwnt.vcproj \
 	libnk2_dll/libnk2_dll.vcproj \
 	libuna/libuna.vcproj \
-	libnk2.sln \
 	nk2export/nk2export.vcproj \
-	nk2info/nk2info.vcproj
+	nk2info/nk2info.vcproj \
+	libnk2.sln
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
