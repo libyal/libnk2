@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle functions
  *
- * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -147,6 +147,45 @@ int libnk2_io_handle_free(
 
 		*io_handle = NULL;
 	}
+	return( 1 );
+}
+
+/* Clears the IO handle
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_io_handle_clear(
+     libnk2_io_handle_t *io_handle,
+     libcerror_error_t **error )
+{
+	static char *function = "libnk2_io_handle_clear";
+
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( memory_set(
+	     io_handle,
+	     0,
+	     sizeof( libnk2_io_handle_t ) ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	io_handle->ascii_codepage = LIBNK2_CODEPAGE_WINDOWS_1252;
+
 	return( 1 );
 }
 

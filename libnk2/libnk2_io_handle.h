@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle functions
  *
- * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -55,6 +55,10 @@ int libnk2_io_handle_initialize(
 
 int libnk2_io_handle_free(
      libnk2_io_handle_t **io_handle,
+     libcerror_error_t **error );
+
+int libnk2_io_handle_clear(
+     libnk2_io_handle_t *io_handle,
      libcerror_error_t **error );
 
 int libnk2_io_handle_read_file_header(

@@ -1,7 +1,7 @@
 /*
  * File functions
  *
- * Copyright (c) 2009-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -64,6 +64,10 @@ struct libnk2_internal_file
 	 */
 	uint8_t file_io_handle_created_in_library;
 
+	/* Value to indicate if the file IO handle was opened inside the library
+	 */
+	uint8_t file_io_handle_opened_in_library;
+
 	/* The last modification date and time
 	 */
 	uint64_t modification_time;
@@ -114,6 +118,7 @@ int libnk2_file_close(
 
 int libnk2_file_open_read(
      libnk2_internal_file_t *internal_file,
+     libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
 LIBNK2_EXTERN \

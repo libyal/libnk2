@@ -39,7 +39,7 @@ nk2_test_open_close_SOURCES = \
 	nk2_test_open_close.c
 
 nk2_test_open_close_LDADD = \
-	../libnk2/libnk2.la
+	../libnk2/libnk2.la \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
@@ -59,7 +59,7 @@ nk2_test_set_ascii_codepage_SOURCES = \
 	nk2_test_set_ascii_codepage.c
 
 nk2_test_set_ascii_codepage_LDADD = \
-	../libnk2/libnk2.la
+	../libnk2/libnk2.la \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
