@@ -22,11 +22,11 @@ SUBDIRS = \
 	libnk2 \
 	libcsystem \
 	nk2tools \
+	pynk2 \
 	po \
 	manuals \
 	examples \
 	tests \
-	macosx \
 	msvscpp
 
 DPKG_FILES = \
@@ -125,5 +125,7 @@ splint:
 	(cd $(srcdir)/libnk2 && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/nk2tools && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/pynk2 && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/tests && $(MAKE) splint $(AM_MAKEFLAGS))
 

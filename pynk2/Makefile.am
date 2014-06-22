@@ -1,0 +1,43 @@
+if HAVE_PYTHON
+AM_CFLAGS = \
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/common \
+	@LIBCSTRING_CPPFLAGS@ \
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCDATA_CPPFLAGS@ \
+	@LIBCLOCALE_CPPFLAGS@ \
+	@LIBUNA_CPPFLAGS@ \
+	@LIBCFILE_CPPFLAGS@ \
+	@LIBCPATH_CPPFLAGS@ \
+	@LIBBFIO_CPPFLAGS@
+
+pyexec_LTLIBRARIES = pynk2.la
+
+pynk2_la_SOURCES =
+
+pynk2_la_LIBADD = \
+	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	../libnk2/libnk2.la \
+	@LIBCDATA_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBBFIO_LIBADD@
+
+pynk2_la_CPPFLAGS = $(PYTHON_CPPFLAGS)
+pynk2_la_LDFLAGS  = -module -avoid-version $(PYTHON_LDFLAGS)
+
+endif
+
+EXTRA_DIST = \
+	setup.py \
+	setup.py.in
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
+
+distclean: clean
+	/bin/rm -f setup.py
+	/bin/rm -f Makefile
+
