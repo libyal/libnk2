@@ -165,6 +165,16 @@ int export_handle_free(
 				result = -1;
 			}
 		}
+		if( ( *export_handle )->target_path != NULL )
+		{
+			memory_free(
+			 ( *export_handle )->target_path );
+		}
+		if( ( *export_handle )->items_export_path != NULL )
+		{
+			memory_free(
+			 ( *export_handle )->items_export_path );
+		}
 		memory_free(
 		 *export_handle );
 

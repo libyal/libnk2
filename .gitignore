@@ -115,12 +115,8 @@ stamp-h1
 /libcnotify
 /libcpath
 /libcsplit
-/libcstring
-/libcsystem
 /libcthreads
 /libfdatetime
 /libfguid
-/libfmapi
-/libfvalue
-/libfwnt
+/libfwsi
 /libuna

@@ -1,5 +1,5 @@
 TODO:
-* fix memory leaks
+* implement pynk2
 * libnk2_io_handle.c check if LIBNK2_VALUE_TYPE_BOOLEAN is working as intended
 * item values
   - implement currency as: LIBFVALUE_VALUE_TYPE_FIXED_POINT_64BIT
@@ -37,9 +37,12 @@ Beta release
 * check inclusion of local libraries
 
 Bindings:
-* python
 * .net
 * java
+
+20140723
+* worked on dpkg debug packages support
+* fixed small memory leaks
 
 20140324
 * 2014 update

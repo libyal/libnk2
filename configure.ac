@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
- [20140622],
+ [20140723],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -117,6 +117,9 @@ AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
 dnl Check if libnk2 should be build with debug output
 AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
+dnl Check if libnk2 python bindings (pynk2) should be build
+AX_PYTHON_CHECK_ENABLE
+
 dnl Headers included in various places
 AC_CHECK_HEADERS([stdarg.h varargs.h])
 
@@ -167,7 +170,7 @@ AS_IF(
 AS_IF(
  [test "x$ac_cv_libcsystem" = xyes],
  [AC_SUBST(
-  [liblnk_tools_spec_build_requires],
+  [libnk2_tools_spec_build_requires],
   [BuildRequires:])
  ])
 
@@ -209,6 +212,7 @@ AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
+AC_CONFIG_FILES([pynk2/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
@@ -258,6 +262,7 @@ Features:
    Multi-threading support:                  $ac_cv_libcthreads_multi_threading
    Wide character type support:              $ac_cv_enable_wide_character_type
    nk2tools are build as static executables: $ac_cv_enable_static_executables
+   Python (pynk2) support:                   $ac_cv_enable_python
    Verbose output:                           $ac_cv_enable_verbose_output
    Debug output:                             $ac_cv_enable_debug_output
 ]);

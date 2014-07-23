@@ -862,9 +862,6 @@ int libnk2_io_handle_read_item_values(
 					 "%s: unable to read value data.",
 					 function );
 
-					memory_free(
-					 value_data );
-
 					goto on_error;
 				}
 				break;
@@ -883,9 +880,6 @@ int libnk2_io_handle_read_item_values(
 					 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
 					 "%s: unable to copy value date.",
 					 function );
-
-					memory_free(
-					 value_data );
 
 					goto on_error;
 				}
@@ -915,9 +909,6 @@ int libnk2_io_handle_read_item_values(
 				 "%s: unable to print value data.",
 				 function );
 
-				memory_free(
-				 value_data );
-
 				goto on_error;
 			}
 		}
@@ -944,13 +935,12 @@ int libnk2_io_handle_read_item_values(
 				 value_identifier->entry_type,
 				 value_identifier->value_type );
 
-				memory_free(
-				 value_data );
-
 				goto on_error;
 			}
 			memory_free(
 			 value_data );
+
+			value_data = NULL;
 		}
 		else
 */
@@ -962,7 +952,7 @@ int libnk2_io_handle_read_item_values(
 			     value_data,
 			     (size_t) value_data_size,
 			     value_encoding,
-			     LIBFVALUE_VALUE_DATA_FLAG_MANAGED,
+			     LIBFVALUE_VALUE_DATA_FLAG_MANAGED | LIBFVALUE_VALUE_DATA_FLAG_CLONE_BY_REFERENCE,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
@@ -974,11 +964,9 @@ int libnk2_io_handle_read_item_values(
 				 value_identifier->entry_type,
 				 value_identifier->value_type );
 
-				memory_free(
-				 value_data );
-
 				goto on_error;
 			}
+			value_data = NULL;
 		}
 		value = NULL;
 
@@ -1010,6 +998,11 @@ int libnk2_io_handle_read_item_values(
 	return( 1 );
 
 on_error:
+	if( value_data != NULL )
+	{
+		memory_free(
+		 value_data );
+	}
 	if( value_identifier != NULL )
 	{
 		libnk2_value_identifier_free(

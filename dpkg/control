@@ -10,8 +10,16 @@ Package: libnk2
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: libnk2-dbg
 Description: Library to access the Nickfile (NK2) format
  libnk2 is a library to access the Nickfile (NK2) format.
+
+Package: libnk2-dbg
+Architecture: any
+Section: debug
+Depends: libnk2 (= ${Source-Version}), ${misc:Depends}
+Description: Debugging symbols for libnk2
+ Debugging symbols for libnk2.
 
 Package: libnk2-dev
 Section: libdevel
@@ -26,4 +34,20 @@ Architecture: any
 Depends: libnk2 (= ${Source-Version}), ${shlibs:Depends}
 Description: Several tools for reading Nickfiles (NK2)
  Several tools for reading Nickfiles (NK2).
+
+Package: libnk2-python
+Section: python
+Architecture: any
+Depends: libnk2 (= ${Source-Version}), ${shlibs:Depends}, python
+Suggests: libnk2-python-dbg
+Description: Python bindings for libnk2
+ Python bindings for libnk2.
+
+Package: libnk2-python-dbg
+Section: debug
+Architecture: any
+Depends: libnk2-python (= ${Source-Version})
+Description: Debugging symbols for libnk2-python
+ Debugging symbols for libnk2-python.
+
 
