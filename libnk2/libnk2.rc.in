@@ -28,7 +28,7 @@ BEGIN
       VALUE "OriginalFilename",		"libnk2.dll\0"
       VALUE "ProductName",		"libnk2\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
-      VALUE "Comments",			"For more information visit https://code.google.com/p/libnk2/\0"
+      VALUE "Comments",			"For more information visit https://github.com/libyal/libnk2/\0"
     END
   END
   BLOCK "VarFileInfo"

@@ -1,4 +1,7 @@
-See:
-* http://code.google.com/p/libnk2/wiki/Building
-* README.macosx
+libnk2 is a library to access the Microsoft Outlook Nickfile (NK2) format.
+The nickfile is used to store email address aliases.
+
+For more information see:
+* Project documentation: https://github.com/libyal/libnk2/wiki/Home
+* How to build from source: https://github.com/libyal/libnk2/wiki/Building
 

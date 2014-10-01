@@ -43,6 +43,7 @@ Bindings:
 20141001
 * removed README.macosx
 * removed examples
+* changes for project site move
 
 20140723
 * worked on dpkg debug packages support
