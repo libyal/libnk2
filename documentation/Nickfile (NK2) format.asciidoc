@@ -114,7 +114,7 @@ Contains remnant data for 0x0003, 0x001f and 0x0102
 | 8 | 8 | | The value data array +
 Byte array used to store the value data +
 +
-The entry and value types are used to store MAPI properties, see [LIBFMAPI] for more information.
+The entry and value types are used to store MAPI properties, see `[LIBFMAPI]` for more information.
 |===
 
 The value data array is filled according to the size of the value type from the first to the last byte in little‑endian.
