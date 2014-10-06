@@ -65,8 +65,7 @@ A NK2 consist of the following distinguishable elements:
 | Date and time values | FILETIME in UTC
 | Character strings | ASCII strings are Single Byte Character (SBC) or Multi Byte Character (MBC) string stored with a codepage. +
 Sometimes referred to as ANSI string representation. +
-Though technically maybe incorrect, this document will use term extended ASCII string. +
-+
+Though technically maybe incorrect, this document will use term (extended) ASCII string. +
 Unicode strings are stored in UTF-16 little-endian without the byte order mark (BOM).
 |===
 
@@ -139,8 +138,8 @@ The [yellow-background]*highlighted* values have not been seen in file samples a
 | | | 
 | [yellow-background]*0x0014* | 8 bytes (64-bit) | integer 64-bit signed
 | | | 
-| [yellow-background]*0x001e* | 4 bytes (32-bit) for data size | extended ASCII string
-| 0x001f | 4 bytes (32-bit) for data size | Unicode UTF-16 string)
+| [yellow-background]*0x001e* | 4 bytes (32-bit) for data size | ASCII string
+| 0x001f | 4 bytes (32-bit) for data size | Unicode string (UTF-16 little-endian)
 | | | 
 | [yellow-background]*0x0040* | 8 bytes (64-bit) | FILETIME
 | | | 
