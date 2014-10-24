@@ -104,6 +104,8 @@ stamp-h1
 /include/libnk2/types.h
 /libnk2/libnk2.rc
 /libnk2/libnk2_definition.h
+/nk2tools/nk2export
+/nk2tools/nk2info
 /pynk2/setup.py
 /tests/input
 /tests/nk2_test_open_close

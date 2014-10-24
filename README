@@ -1,5 +1,13 @@
 libnk2 is a library to access the Microsoft Outlook Nickfile (NK2) format.
+
 The nickfile is used to store email address aliases.
+
+Project information:
+* Status: alpha
+* Licence: LGPLv3+
+
+Planned:
+* Python bindings
 
 For more information see:
 * Project documentation: https://github.com/libyal/libnk2/wiki/Home

@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
- [20141019],
+ [20141024],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -229,6 +229,7 @@ AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([dpkg/changelog])
 AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libnk2/libnk2.rc])
+AC_CONFIG_FILES([pynk2/setup.py])
 AC_CONFIG_FILES([libnk2.pc])
 AC_CONFIG_FILES([libnk2.spec])
 dnl Have configure write its configuration
