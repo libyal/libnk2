@@ -226,6 +226,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\nk2tools\nk2tools_libbfio.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\nk2tools\nk2tools_libcerror.h"
 				>
 			</File>
@@ -262,7 +266,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\nk2tools\nk2tools_libfmapi.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\nk2tools\nk2tools_libfvalue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nk2tools\nk2tools_libfwnt.h"
 				>
 			</File>
 			<File

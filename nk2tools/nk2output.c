@@ -24,33 +24,13 @@
 #include <memory.h>
 #include <types.h>
 
-#if defined( HAVE_LOCAL_LIBBFIO )
-#include <libbfio_definitions.h>
-#elif defined( HAVE_LIBBFIO_H )
-#include <libbfio.h>
-#endif
-
-#if defined( HAVE_LOCAL_LIBFVALUE )
-#include <libfvalue_definitions.h>
-#elif defined( HAVE_LIBFVALUE_H )
-#include <libfvalue.h>
-#endif
-
-#if defined( HAVE_LOCAL_LIBFWNT )
-#include <libfwnt_definitions.h>
-#elif defined( HAVE_LIBFWNT_H )
-#include <libfwnt.h>
-#endif
-
-#if defined( HAVE_LOCAL_LIBFMAPI )
-#include <libfmapi_definitions.h>
-#elif defined( HAVE_LIBFMAPI_H )
-#include <libfmapi.h>
-#endif
-
 #include "nk2output.h"
+#include "nk2tools_libbfio.h"
 #include "nk2tools_libfdatetime.h"
 #include "nk2tools_libfguid.h"
+#include "nk2tools_libfmapi.h"
+#include "nk2tools_libfvalue.h"
+#include "nk2tools_libfwnt.h"
 #include "nk2tools_libnk2.h"
 #include "nk2tools_libuna.h"
 

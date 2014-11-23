@@ -1,5 +1,7 @@
 TODO:
 * implement pynk2
+  - add tests
+  - travis add --enable-python
 * libnk2_io_handle.c check if LIBNK2_VALUE_TYPE_BOOLEAN is working as intended
 * item values
   - implement currency as: LIBFVALUE_VALUE_TYPE_FIXED_POINT_64BIT

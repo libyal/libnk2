@@ -1,5 +1,5 @@
 /*
- * The internal type definitions
+ * The libbfio header wrapper
  *
  * Copyright (C) 2009-2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,29 +19,30 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBNK2_INTERNAL_TYPES_H )
-#define _LIBNK2_INTERNAL_TYPES_H
+#if !defined( _NK2TOOLS_LIBBFIO_H )
+#define _NK2TOOLS_LIBBFIO_H
 
 #include <common.h>
-#include <types.h>
 
-/* Define HAVE_LOCAL_LIBNK2 for local use of libnk2
- * The definitions in <libnk2/types.h> are copied here
- * for local use of libnk2
+/* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
  */
-#if defined( HAVE_LOCAL_LIBNK2 )
+#if defined( HAVE_LOCAL_LIBBFIO )
 
-/* The following type definitions hide internal data structures
- */
-#if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
-typedef struct libnk2_file {}	libnk2_file_t;
-typedef struct libnk2_item {}	libnk2_item_t;
+#include <libbfio_definitions.h>
+#include <libbfio_file.h>
+#include <libbfio_handle.h>
+#include <libbfio_types.h>
 
 #else
-typedef intptr_t libnk2_file_t;
-typedef intptr_t libnk2_item_t;
 
+/* If libtool DLL support is enabled set LIBBFIO_DLL_IMPORT
+ * before including libbfio.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBBFIO_DLL_IMPORT
 #endif
+
+#include <libbfio.h>
 
 #endif
 
