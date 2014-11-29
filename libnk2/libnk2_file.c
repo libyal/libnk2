@@ -786,17 +786,16 @@ int libnk2_file_close(
 
 		result = -1;
 	}
-	if( libcdata_array_resize(
+	if( libcdata_array_empty(
 	     internal_file->items_array,
-	     0,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_RESIZE_FAILED,
-		 "%s: unable to resize items array.",
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to empty items array.",
 		 function );
 
 		result = -1;
