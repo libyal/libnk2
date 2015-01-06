@@ -1,13 +1,12 @@
 Source: libnk2
-Section: unknown
+Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.5
 Homepage: https://github.com/libyal/libnk2/
 
 Package: libnk2
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libnk2-dbg
@@ -17,28 +16,28 @@ Description: Library to access the Nickfile (NK2) format
 Package: libnk2-dbg
 Architecture: any
 Section: debug
-Depends: libnk2 (= ${Source-Version}), ${misc:Depends}
+Depends: libnk2 (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libnk2
  Debugging symbols for libnk2.
 
 Package: libnk2-dev
 Section: libdevel
 Architecture: any
-Depends: libnk2 (= ${Source-Version})
+Depends: libnk2 (= ${binary:Version}), ${misc:Depends}
 Description: Header files and libraries for developing applications for libnk2
  Header files and libraries for developing applications for libnk2.
 
 Package: libnk2-tools
 Section: utils
 Architecture: any
-Depends: libnk2 (= ${Source-Version}), ${shlibs:Depends}
+Depends: libnk2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Several tools for reading Nickfiles (NK2)
  Several tools for reading Nickfiles (NK2).
 
 Package: libnk2-python
 Section: python
 Architecture: any
-Depends: libnk2 (= ${Source-Version}), ${shlibs:Depends}, python
+Depends: libnk2 (= ${binary:Version}), ${shlibs:Depends}, python, ${misc:Depends}
 Suggests: libnk2-python-dbg
 Description: Python bindings for libnk2
  Python bindings for libnk2.
@@ -46,7 +45,7 @@ Description: Python bindings for libnk2
 Package: libnk2-python-dbg
 Section: debug
 Architecture: any
-Depends: libnk2-python (= ${Source-Version})
+Depends: libnk2-python (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libnk2-python
  Debugging symbols for libnk2-python.
 
