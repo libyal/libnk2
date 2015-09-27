@@ -42,6 +42,10 @@ Bindings:
 * .net
 * java
 
+20150927
+* merged history from backups
+* updated m4 scripts and msvscpp files
+
 20150713
 * worked on check signature
 
