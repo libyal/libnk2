@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20150725
+# Version: 20150927
 
 # Generic auto-generated build files
 *~
@@ -11,6 +11,7 @@
 *.lineno
 *.lo
 *.log
+*.loT
 *.Plo
 *.Po
 *.o
@@ -111,7 +112,7 @@ stamp-h[1-9]
 /include/libnk2/features.h
 /include/libnk2/types.h
 /libnk2/libnk2.rc
-/libnk2/libnk2_definition.h
+/libnk2/libnk2_definitions.h
 /nk2tools/nk2export
 /nk2tools/nk2info
 /pynk2/setup.py
