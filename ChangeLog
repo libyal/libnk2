@@ -40,6 +40,10 @@ Bindings:
 * .net
 * java
 
+20141001
+* removed README.macosx
+* removed examples
+
 20140723
 * worked on dpkg debug packages support
 * fixed small memory leaks

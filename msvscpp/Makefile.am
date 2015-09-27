@@ -1,4 +1,4 @@
-EXTRA_DIST = \
+MSVSCPP_FILES = \
 	libbfio/libbfio.vcproj \
 	libcdata/libcdata.vcproj \
 	libcerror/libcerror.vcproj \
@@ -15,11 +15,24 @@ EXTRA_DIST = \
 	libfmapi/libfmapi.vcproj \
 	libfvalue/libfvalue.vcproj \
 	libfwnt/libfwnt.vcproj \
-	libnk2_dll/libnk2_dll.vcproj \
+	libnk2/libnk2.vcproj \
 	libuna/libuna.vcproj \
 	nk2export/nk2export.vcproj \
 	nk2info/nk2info.vcproj \
+	pynk2/pynk2.vcproj \
 	libnk2.sln
+
+SCRIPT_FILES = \
+	scripts/vs2008_x64.sh \
+	scripts/vs2008_x64_sln.sed \
+	scripts/vs2008_x64_vcproj.sed \
+	scripts/vs2010_x64.sh \
+	scripts/vs2010_x64_sln.sed \
+	scripts/vs2010_x64_vcxproj.sed
+
+EXTRA_DIST = \
+	$(MSVSCPP_FILES) \
+	$(SCRIPT_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

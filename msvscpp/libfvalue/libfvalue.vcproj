@@ -56,7 +56,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\libfvalue.lib"
+				OutputFile="$(OutDir)\$(ProjectName).lib"
 				ModuleDefinitionFile=""
 				IgnoreAllDefaultLibraries="false"
 			/>
@@ -121,7 +121,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\libfvalue.lib"
+				OutputFile="$(OutDir)\$(ProjectName).lib"
 				ModuleDefinitionFile=""
 				IgnoreAllDefaultLibraries="false"
 			/>
@@ -160,6 +160,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libfvalue\libfvalue_error.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfvalue\libfvalue_filetime.c"
 				>
 			</File>
 			<File
@@ -226,6 +230,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libfvalue\libfvalue_extern.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libfvalue\libfvalue_filetime.h"
 				>
 			</File>
 			<File

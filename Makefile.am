@@ -25,7 +25,6 @@ SUBDIRS = \
 	pynk2 \
 	po \
 	manuals \
-	examples \
 	tests \
 	msvscpp
 
@@ -53,7 +52,6 @@ SPEC_FILES = \
 	libnk2.spec.in
 
 EXTRA_DIST = \
-	README.macosx \
 	$(DPKG_FILES) \
 	$(GETTEXT_FILES) \
         $(PKGCONFIG_FILES) \
