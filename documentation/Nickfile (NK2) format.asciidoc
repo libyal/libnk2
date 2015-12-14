@@ -1,6 +1,9 @@
 = Nickfile (NK2) format specification
 Analysis of the NK2 format
 
+:toc:
+:toclevels: 4
+
 :numbered!:
 [abstract]
 == Summary
