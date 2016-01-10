@@ -115,7 +115,7 @@ stamp-h[1-9]
 /libnk2/libnk2_definitions.h
 /nk2tools/nk2export
 /nk2tools/nk2info
-/pynk2/setup.py
+/pynk2-python[23]/*.[ch]
 /tests/input
 /tests/nk2_test_open_close
 /tests/nk2_test_set_ascii_codepage

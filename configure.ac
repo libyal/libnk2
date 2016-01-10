@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
- [20160107],
+ [20160110],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -118,7 +118,10 @@ dnl Check if libnk2 should be build with debug output
 AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
 dnl Check if libnk2 python bindings (pynk2) should be build
+AX_PYTHON_CHECK_PYPREFIX
 AX_PYTHON_CHECK_ENABLE
+AX_PYTHON2_CHECK_ENABLE
+AX_PYTHON3_CHECK_ENABLE
 
 dnl Headers included in various places
 AC_CHECK_HEADERS([stdarg.h varargs.h])
@@ -213,6 +216,8 @@ AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
 AC_CONFIG_FILES([pynk2/Makefile])
+AC_CONFIG_FILES([pynk2-python2/Makefile])
+AC_CONFIG_FILES([pynk2-python3/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
@@ -229,7 +234,6 @@ AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([dpkg/changelog])
 AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libnk2/libnk2.rc])
-AC_CONFIG_FILES([pynk2/setup.py])
 AC_CONFIG_FILES([libnk2.pc])
 AC_CONFIG_FILES([libnk2.spec])
 dnl Have configure write its configuration
@@ -263,6 +267,8 @@ Features:
    Wide character type support:              $ac_cv_enable_wide_character_type
    nk2tools are build as static executables: $ac_cv_enable_static_executables
    Python (pynk2) support:                   $ac_cv_enable_python
+   Python version 2 (pynk2) support:         $ac_cv_enable_python2
+   Python version 3 (pynk2) support:         $ac_cv_enable_python3
    Verbose output:                           $ac_cv_enable_verbose_output
    Debug output:                             $ac_cv_enable_debug_output
 ]);

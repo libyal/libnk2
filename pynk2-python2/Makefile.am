@@ -1,4 +1,10 @@
-if HAVE_PYTHON
+# Note that we cannot use: AUTOMAKE_OPTIONS = subdir-objects
+# subdir-objects will compile the source files to a single version of Python.
+# Since subdir-objects is being deprecated we copy the source files instead.
+am__installdirs = "$(DESTDIR)$(pyexecdir2)"
+pyexecdir = $(pyexecdir2)
+
+if HAVE_PYTHON2
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
@@ -11,9 +17,9 @@ AM_CFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@
 
-pyexec_LTLIBRARIES = pynk2.la
+am_pynk2_la_rpath = -rpath $(pyexecdir2)
 
-pynk2_la_SOURCES = \
+BUILT_SOURCES = \
 	pynk2.c pynk2.h \
 	pynk2_codepage.c pynk2_codepage.h \
 	pynk2_error.c pynk2_error.h \
@@ -26,6 +32,10 @@ pynk2_la_SOURCES = \
 	pynk2_python.h \
 	pynk2_unused.h
 
+pyexec_LTLIBRARIES = pynk2.la
+
+nodist_pynk2_la_SOURCES = $(BUILT_SOURCES)
+
 pynk2_la_LIBADD = \
 	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
@@ -36,13 +46,19 @@ pynk2_la_LIBADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@
 
-pynk2_la_CPPFLAGS = $(PYTHON_CPPFLAGS)
-pynk2_la_LDFLAGS  = -module -avoid-version $(PYTHON_LDFLAGS)
+pynk2_la_CPPFLAGS = $(PYTHON2_CPPFLAGS)
+pynk2_la_LDFLAGS  = -module -avoid-version $(PYTHON2_LDFLAGS)
+
+$(BUILT_SOURCES):
+	/bin/cp -f $(top_srcdir)/pynk2/$@ $@
 
 endif
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+
+clean-local:
+	/bin/rm -f pynk2*.[ch]
 
 distclean: clean
 	/bin/rm -f Makefile

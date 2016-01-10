@@ -30,19 +30,28 @@ Requires: libnk2 = %{version}-%{release}
 Several tools for reading Nickfiles (NK2)
 
 %package python
-Summary: Python bindings for libnk2
+Summary: Python 2 bindings for libnk2
 Group: System Environment/Libraries
 Requires: libnk2 = %{version}-%{release} python
 BuildRequires: python-devel
 
 %description python
-Python bindings for libnk2
+Python 2 bindings for libnk2
+
+%package python3
+Summary: Python 3 bindings for libnk2
+Group: System Environment/Libraries
+Requires: libnk2 = %{version}-%{release} python3
+BuildRequires: python3-devel
+
+%description python3
+Python 3 bindings for libnk2
 
 %prep
 %setup -q
 
 %build
-%configure --prefix=/usr --libdir=%{_libdir} --mandir=%{_mandir} --enable-python
+%configure --prefix=/usr --libdir=%{_libdir} --mandir=%{_mandir} --enable-python2 --enable-python3
 make %{?_smp_mflags}
 
 %install
@@ -81,9 +90,16 @@ rm -rf ${RPM_BUILD_ROOT}
 %files python
 %defattr(644,root,root,755)
 %doc AUTHORS COPYING NEWS README
-%{_libdir}/python*/site-packages/*.a
-%{_libdir}/python*/site-packages/*.la
-%{_libdir}/python*/site-packages/*.so
+%{_libdir}/python2*/site-packages/*.a
+%{_libdir}/python2*/site-packages/*.la
+%{_libdir}/python2*/site-packages/*.so
+
+%files python3
+%defattr(644,root,root,755)
+%doc AUTHORS COPYING NEWS README
+%{_libdir}/python3*/site-packages/*.a
+%{_libdir}/python3*/site-packages/*.la
+%{_libdir}/python3*/site-packages/*.so
 
 %changelog
 * @SPEC_DATE@ Joachim Metz <joachim.metz@gmail.com> @VERSION@-1

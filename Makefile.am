@@ -23,6 +23,8 @@ SUBDIRS = \
 	libcsystem \
 	nk2tools \
 	pynk2 \
+	pynk2-python2 \
+	pynk2-python3 \
 	po \
 	manuals \
 	tests \
@@ -36,8 +38,10 @@ DPKG_FILES = \
 	dpkg/copyright \
 	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libnk2-dev.docs \
 	dpkg/libnk2.docs \
+	dpkg/libnk2-dev.docs \
+	dpkg/libnk2-python.docs \
+	dpkg/libnk2-python3.docs \
 	dpkg/libnk2-tools.docs \
 	dpkg/source/format
 
@@ -48,6 +52,9 @@ GETTEXT_FILES = \
 PKGCONFIG_FILES = \
 	libnk2.pc.in
 
+SETUP_PY_FILES = \
+	setup.py
+
 SPEC_FILES = \
 	libnk2.spec \
 	libnk2.spec.in
@@ -56,6 +63,7 @@ EXTRA_DIST = \
 	$(DPKG_FILES) \
 	$(GETTEXT_FILES) \
 	$(PKGCONFIG_FILES) \
+	$(SETUP_PY_FILES) \
 	$(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \
