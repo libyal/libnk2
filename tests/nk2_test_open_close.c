@@ -20,12 +20,11 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
-
-#include <stdio.h>
 
 #include "nk2_test_libcerror.h"
 #include "nk2_test_libcstring.h"
@@ -40,7 +39,7 @@ int nk2_test_single_open_close_file(
      int expected_result )
 {
 	libcerror_error_t *error = NULL;
-	libnk2_file_t *file     = NULL;
+	libnk2_file_t *file      = NULL;
 	static char *function    = "nk2_test_single_open_close_file";
 	int result               = 0;
 
@@ -140,7 +139,7 @@ int nk2_test_multi_open_close_file(
      int expected_result )
 {
 	libcerror_error_t *error = NULL;
-	libnk2_file_t *file     = NULL;
+	libnk2_file_t *file      = NULL;
 	static char *function    = "nk2_test_multi_open_close_file";
 	int result               = 0;
 

@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "pynk2_libbfio.h"
 #include "pynk2_libcerror.h"
 #include "pynk2_libnk2.h"
 #include "pynk2_python.h"
@@ -44,6 +45,10 @@ struct pynk2_file
 	/* The libnk2 file
 	 */
 	libnk2_file_t *file;
+
+	/* The libbfio file IO handle
+	 */
+	libbfio_handle_t *file_io_handle;
 };
 
 extern PyMethodDef pynk2_file_object_methods[];
@@ -52,11 +57,58 @@ extern PyTypeObject pynk2_file_type_object;
 PyObject *pynk2_file_new(
            void );
 
+PyObject *pynk2_file_new_open(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pynk2_file_new_open_file_object(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
 int pynk2_file_init(
      pynk2_file_t *pynk2_file );
 
 void pynk2_file_free(
       pynk2_file_t *pynk2_file );
+
+PyObject *pynk2_file_signal_abort(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments );
+
+PyObject *pynk2_file_open(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pynk2_file_open_file_object(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pynk2_file_close(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments );
+
+PyObject *pynk2_file_get_ascii_codepage(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments );
+
+int pynk2_file_set_ascii_codepage_from_string(
+     pynk2_file_t *pynk2_file,
+     const char *codepage_string );
+
+PyObject *pynk2_file_set_ascii_codepage(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments,
+           PyObject *keywords );
+
+int pynk2_file_set_ascii_codepage_setter(
+     pynk2_file_t *pynk2_file,
+     PyObject *string_object,
+     void *closure );
+
 
 #if defined( __cplusplus )
 }

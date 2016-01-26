@@ -19,7 +19,6 @@ MSVSCPP_FILES = \
 	libuna/libuna.vcproj \
 	nk2export/nk2export.vcproj \
 	nk2info/nk2info.vcproj \
-	pynk2/pynk2.vcproj \
 	libnk2.sln
 
 SCRIPT_FILES = \

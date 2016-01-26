@@ -1,7 +1,5 @@
 TODO:
-* implement pynk2
-  - add tests
-  - travis add --enable-python
+* nk2export check if always adding .export is the desired behavior
 * libnk2_io_handle.c check if LIBNK2_VALUE_TYPE_BOOLEAN is working as intended
 * item values
   - implement currency as: LIBFVALUE_VALUE_TYPE_FIXED_POINT_64BIT
@@ -27,20 +25,14 @@ Tools
   - export to CSV/TSV, HTML, XML
 * nk2info
 
-Test:
-* add autoconf/make test suite
-
 Beta release
-* have automated test suite
 * remove deprecated functions in libnk2_legacy.[ch]
 * remove deprecated definition in include/libnk2/mapi.h
-* update man pages
-* add documentation
-* check inclusion of local libraries
 
-Bindings:
-* .net
-* java
+20160126
+* worked on tests
+* applied updates
+* worked on Python bindings
 
 20160107
 * 2016 update

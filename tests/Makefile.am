@@ -13,13 +13,22 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBNK2_DLL_IMPORT@
 
+if HAVE_PYTHON_TESTS
+TESTS_PYNK2  = \
+	test_pynk2_set_ascii_codepage.sh \
+	test_pynk2_open_close.sh
+endif
+
 TESTS = \
 	test_set_ascii_codepage.sh \
 	test_open_close.sh \
 	test_nk2info.sh \
-	test_nk2export.sh
+	test_nk2export.sh \
+	$(TESTS_PYNK2)
 
 check_SCRIPTS = \
+	pynk2_test_open_close.py \
+	pynk2_test_set_ascii_codepage.py \
 	test_nk2export.sh \
 	test_nk2info.sh \
 	test_open_close.sh \
