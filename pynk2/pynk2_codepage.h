@@ -38,5 +38,5 @@ const char *pynk2_codepage_to_string(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYNK2_CODEPAGE_H */
 

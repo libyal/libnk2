@@ -28,7 +28,7 @@
 #include "pynk2_libcerror.h"
 #include "pynk2_python.h"
 
-#define PYNK2_ERROR_STRING_SIZE		2048
+#define PYNK2_ERROR_STRING_SIZE	2048
 
 #if defined( __cplusplus )
 extern "C" {
@@ -56,5 +56,5 @@ void pynk2_error_raise(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYNK2_ERROR_H ) */
 

@@ -52,5 +52,5 @@ int pynk2_integer_unsigned_copy_to_64bit(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYNK2_INTEGER_H ) */
 

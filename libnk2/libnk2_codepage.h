@@ -80,11 +80,11 @@ enum LIBNK2_CODEPAGES
 	LIBNK2_CODEPAGE_WINDOWS_1258			= 1258
 };
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_INTERNAL_CODEPAGE_H ) */
 

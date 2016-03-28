@@ -24,7 +24,9 @@ BUILT_SOURCES = \
 	pynk2_codepage.c pynk2_codepage.h \
 	pynk2_error.c pynk2_error.h \
 	pynk2_file.c pynk2_file.h \
+	pynk2_file_object_io_handle.c pynk2_file_object_io_handle.h \
 	pynk2_integer.c pynk2_integer.h \
+	pynk2_libbfio.h \
 	pynk2_libcerror.h \
 	pynk2_libclocale.h \
 	pynk2_libcstring.h \

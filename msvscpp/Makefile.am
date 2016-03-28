@@ -17,6 +17,8 @@ MSVSCPP_FILES = \
 	libfwnt/libfwnt.vcproj \
 	libnk2/libnk2.vcproj \
 	libuna/libuna.vcproj \
+	nk2_test_open_close/nk2_test_open_close.vcproj \
+	nk2_test_set_ascii_codepage/nk2_test_set_ascii_codepage.vcproj \
 	nk2export/nk2export.vcproj \
 	nk2info/nk2info.vcproj \
 	libnk2.sln

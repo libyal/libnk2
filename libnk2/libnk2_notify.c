@@ -27,9 +27,9 @@
 #include <stdlib.h>
 #endif
 
-#include "libnk2_notify.h"
 #include "libnk2_libcerror.h"
 #include "libnk2_libcnotify.h"
+#include "libnk2_notify.h"
 
 #if !defined( HAVE_LOCAL_LIBNK2 )
 
@@ -116,5 +116,5 @@ int libnk2_notify_stream_close(
 	return( 0 );
 }
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 

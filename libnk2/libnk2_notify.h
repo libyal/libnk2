@@ -53,11 +53,11 @@ LIBNK2_EXTERN \
 int libnk2_notify_stream_close(
      libcerror_error_t **error );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_NOTIFY_H ) */
 

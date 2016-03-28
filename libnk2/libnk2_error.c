@@ -91,5 +91,5 @@ int libnk2_error_backtrace_sprint(
 	         size ) );
 }
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 

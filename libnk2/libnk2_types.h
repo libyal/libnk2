@@ -41,9 +41,9 @@ typedef struct libnk2_item {}	libnk2_item_t;
 typedef intptr_t libnk2_file_t;
 typedef intptr_t libnk2_item_t;
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBNK2 ) */
 
-#endif
+#endif /* !defined( _LIBNK2_INTERNAL_TYPES_H ) */
 
