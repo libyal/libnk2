@@ -43,7 +43,7 @@
 
 #include <libfguid.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBFGUID ) */
 
-#endif
+#endif /* !defined( _NK2TOOLS_LIBFGUID_H ) */
 

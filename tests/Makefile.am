@@ -11,27 +11,31 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBCSYSTEM_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@ \
 	@LIBNK2_DLL_IMPORT@
 
 if HAVE_PYTHON_TESTS
 TESTS_PYNK2 = \
-	test_pynk2_set_ascii_codepage.sh \
-	test_pynk2_open_close.sh
+	test_python_functions.sh \
+	test_pynk2_set_ascii_codepage.sh
 endif
 
 TESTS = \
+	test_api_functions.sh \
 	test_set_ascii_codepage.sh \
-	test_open_close.sh \
 	test_nk2info.sh \
 	test_nk2export.sh \
 	$(TESTS_PYNK2)
 
 check_SCRIPTS = \
+	pynk2_test_get_version.py \
 	pynk2_test_open_close.py \
 	pynk2_test_set_ascii_codepage.py \
+	test_api_functions.sh \
 	test_nk2export.sh \
 	test_nk2info.sh \
-	test_open_close.sh \
+	test_python_functions.sh \
 	test_runner.sh \
 	test_set_ascii_codepage.sh
 
@@ -39,27 +43,33 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	nk2_test_get_version \
 	nk2_test_open_close \
 	nk2_test_set_ascii_codepage
 
+nk2_test_get_version_SOURCES = \
+	nk2_test_get_version.c \
+	nk2_test_libcstring.h \
+	nk2_test_libnk2.h \
+	nk2_test_unused.h
+
+nk2_test_get_version_LDADD = \
+	../libnk2/libnk2.la \
+	@LIBCSTRING_LIBADD@
+
 nk2_test_open_close_SOURCES = \
 	nk2_test_libcerror.h \
-	nk2_test_libnk2.h \
 	nk2_test_libcstring.h \
+	nk2_test_libcsystem.h \
+	nk2_test_libnk2.h \
 	nk2_test_open_close.c
 
 nk2_test_open_close_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
 	../libnk2/libnk2.la \
-	@LIBBFIO_LIBADD@ \
-	@LIBCPATH_LIBADD@ \
-	@LIBCFILE_LIBADD@ \
-	@LIBUNA_LIBADD@ \
-	@LIBCSPLIT_LIBADD@ \
-	@LIBCNOTIFY_LIBADD@ \
-	@LIBCLOCALE_LIBADD@ \
-	@LIBCDATA_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@
+	@LIBCSTRING_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 nk2_test_set_ascii_codepage_SOURCES = \
 	nk2_test_libcerror.h \
@@ -69,8 +79,8 @@ nk2_test_set_ascii_codepage_SOURCES = \
 	nk2_test_set_ascii_codepage.c
 
 nk2_test_set_ascii_codepage_LDADD = \
-	../libnk2/libnk2.la \
 	@LIBCLOCALE_LIBADD@ \
+	../libnk2/libnk2.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 

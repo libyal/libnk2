@@ -120,6 +120,7 @@ stamp-h[1-9]
 /nk2tools/nk2info
 /pynk2-python[23]/*.[ch]
 /tests/input
+/tests/nk2_test_get_version
 /tests/nk2_test_open_close
 /tests/nk2_test_set_ascii_codepage
 /tests/tmp*
