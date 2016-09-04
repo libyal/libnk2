@@ -43,14 +43,27 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	nk2_test_error \
 	nk2_test_get_version \
 	nk2_test_open_close \
 	nk2_test_set_ascii_codepage
+
+nk2_test_error_SOURCES = \
+	nk2_test_error.c \
+	nk2_test_libcstring.h \
+	nk2_test_libnk2.h \
+	nk2_test_macros.h \
+	nk2_test_unused.h
+
+nk2_test_error_LDADD = \
+	../libnk2/libnk2.la \
+	@LIBCSTRING_LIBADD@
 
 nk2_test_get_version_SOURCES = \
 	nk2_test_get_version.c \
 	nk2_test_libcstring.h \
 	nk2_test_libnk2.h \
+	nk2_test_macros.h \
 	nk2_test_unused.h
 
 nk2_test_get_version_LDADD = \

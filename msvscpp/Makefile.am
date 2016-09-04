@@ -17,6 +17,7 @@ MSVSCPP_FILES = \
 	libfwnt/libfwnt.vcproj \
 	libnk2/libnk2.vcproj \
 	libuna/libuna.vcproj \
+	nk2_test_error/nk2_test_error.vcproj \
 	nk2_test_get_version/nk2_test_get_version.vcproj \
 	nk2_test_open_close/nk2_test_open_close.vcproj \
 	nk2_test_set_ascii_codepage/nk2_test_set_ascii_codepage.vcproj \
@@ -24,17 +25,8 @@ MSVSCPP_FILES = \
 	nk2info/nk2info.vcproj \
 	libnk2.sln
 
-SCRIPT_FILES = \
-	scripts/vs2008_x64.sh \
-	scripts/vs2008_x64_sln.sed \
-	scripts/vs2008_x64_vcproj.sed \
-	scripts/vs2010_x64.sh \
-	scripts/vs2010_x64_sln.sed \
-	scripts/vs2010_x64_vcxproj.sed
-
 EXTRA_DIST = \
-	$(MSVSCPP_FILES) \
-	$(SCRIPT_FILES)
+	$(MSVSCPP_FILES)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

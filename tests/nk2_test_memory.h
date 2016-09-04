@@ -1,5 +1,5 @@
 /*
- * The internal libcfile header
+ * Memory allocation functions for testing
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,32 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2TOOLS_LIBCFILE_H )
-#define _NK2TOOLS_LIBCFILE_H
+#if !defined( _NK2_TEST_MEMORY_H )
+#define _NK2_TEST_MEMORY_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBCFILE for local use of libcfile
- */
-#if defined( HAVE_LOCAL_LIBCFILE )
-
-#include <libcfile_definitions.h>
-#include <libcfile_file.h>
-#include <libcfile_support.h>
-#include <libcfile_types.h>
-
-#else
-
-/* If libtool DLL support is enabled set LIBCFILE_DLL_IMPORT
- * before including libcfile.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBCFILE_DLL_IMPORT
+#if defined( __cplusplus )
+extern "C" {
 #endif
 
-#include <libcfile.h>
+#if defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ )
 
-#endif /* defined( HAVE_LOCAL_LIBCFILE ) */
+#define HAVE_NK2_TEST_MEMORY		1
 
-#endif /* !defined( _NK2TOOLS_LIBCFILE_H ) */
+extern int nk2_test_malloc_attempts_before_fail;
+
+extern int nk2_test_memcpy_attempts_before_fail;
+
+extern int nk2_test_memset_attempts_before_fail;
+
+extern int nk2_test_realloc_attempts_before_fail;
+
+#endif /* defined( HAVE_GNU_DL_DLSYM ) && defined( __GNUC__ ) && !defined( __clang__ ) */
+
+#if defined( __cplusplus )
+}
+#endif
+
+#endif /* !defined( _NK2_TEST_MEMORY_H ) */
 
