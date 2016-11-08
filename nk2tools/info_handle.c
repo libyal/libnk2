@@ -22,12 +22,12 @@
 #include <common.h>
 #include <file_stream.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include "info_handle.h"
 #include "nk2input.h"
 #include "nk2tools_libcerror.h"
-#include "nk2tools_libcstring.h"
 #include "nk2tools_libfdatetime.h"
 #include "nk2tools_libnk2.h"
 
@@ -214,7 +214,7 @@ int info_handle_signal_abort(
  */
 int info_handle_set_ascii_codepage(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_set_ascii_codepage";
@@ -255,7 +255,7 @@ int info_handle_set_ascii_codepage(
  */
 int info_handle_open(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_open";
@@ -271,7 +271,7 @@ int info_handle_open(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libnk2_file_open_wide(
 	     info_handle->input_file,
 	     filename,
@@ -340,7 +340,7 @@ int info_handle_file_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t filetime_string[ 48 ];
+	system_character_t filetime_string[ 48 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 	static char *function             = "info_handle_file_fprint";
@@ -459,7 +459,7 @@ int info_handle_file_fprint(
 
 	fprintf(
 	 info_handle->notify_stream,
-	 "\tLast modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n",
+	 "\tLast modification time\t: %" PRIs_SYSTEM " UTC\n",
 	 filetime_string );
 
 	fprintf(

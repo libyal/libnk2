@@ -38,10 +38,9 @@
 #include <libnk2/extern.h>
 
 #else
-
-#define LIBNK2_EXTERN  extern
-
-#endif
+#define LIBNK2_EXTERN	extern
 
 #endif
+
+#endif /* !defined( _LIBNK2_INTERNAL_EXTERN_H ) */
 

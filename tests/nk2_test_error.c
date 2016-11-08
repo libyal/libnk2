@@ -20,6 +20,8 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -108,7 +110,7 @@ int nk2_test_error_backtrace_sprint(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc NK2_TEST_ATTRIBUTE_UNUSED,
      wchar_t * const argv[] NK2_TEST_ATTRIBUTE_UNUSED )
@@ -123,23 +125,23 @@ int main(
 
 	NK2_TEST_RUN(
 	 "libnk2_error_free",
-	 nk2_test_error_free() )
+	 nk2_test_error_free );
 
 	NK2_TEST_RUN(
 	 "libnk2_error_fprint",
-	 nk2_test_error_fprint() )
+	 nk2_test_error_fprint );
 
 	NK2_TEST_RUN(
 	 "libnk2_error_sprint",
-	 nk2_test_error_sprint() )
+	 nk2_test_error_sprint );
 
 	NK2_TEST_RUN(
 	 "libnk2_error_backtrace_fprint",
-	 nk2_test_error_backtrace_fprint() )
+	 nk2_test_error_backtrace_fprint );
 
 	NK2_TEST_RUN(
 	 "libnk2_error_backtrace_sprint",
-	 nk2_test_error_backtrace_sprint() )
+	 nk2_test_error_backtrace_sprint );
 
 	return( EXIT_SUCCESS );
 

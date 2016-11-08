@@ -27,7 +27,6 @@
 
 #include "pynk2_libbfio.h"
 #include "pynk2_libcerror.h"
-#include "pynk2_libcstring.h"
 #include "pynk2_python.h"
 
 #if defined( __cplusplus )

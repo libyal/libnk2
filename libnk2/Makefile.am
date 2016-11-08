@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -35,7 +34,6 @@ libnk2_la_SOURCES = \
 	libnk2_libcerror.h \
 	libnk2_libclocale.h \
 	libnk2_libcnotify.h \
-	libnk2_libcstring.h \
 	libnk2_libfdatetime.h \
 	libnk2_libfmapi.h \
 	libnk2_libfvalue.h \
@@ -51,7 +49,6 @@ libnk2_la_SOURCES = \
 	nk2_item.h
 
 libnk2_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \

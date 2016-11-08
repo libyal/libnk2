@@ -22,6 +22,7 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include "libnk2_codepage.h"
@@ -1031,7 +1032,7 @@ int libnk2_io_handle_read_file_footer(
 	ssize_t read_count                = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t filetime_string[ 48 ];
+	system_character_t filetime_string[ 48 ];
 
 	libfdatetime_filetime_t *filetime = NULL;
 	uint32_t value_32bit              = 0;
@@ -1133,7 +1134,7 @@ int libnk2_io_handle_read_file_footer(
 
 			goto on_error;
 		}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libfdatetime_filetime_copy_to_utf16_string(
 			  filetime,
 			  (uint16_t *) filetime_string,
@@ -1160,7 +1161,7 @@ int libnk2_io_handle_read_file_footer(
 			goto on_error;
 		}
 		libcnotify_printf(
-		 "%s: modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n\n",
+		 "%s: modification time\t: %" PRIs_SYSTEM " UTC\n\n",
 		 function,
 		 filetime_string );
 

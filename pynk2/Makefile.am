@@ -2,7 +2,6 @@ if HAVE_PYTHON
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -23,13 +22,11 @@ pynk2_la_SOURCES = \
 	pynk2_libbfio.h \
 	pynk2_libcerror.h \
 	pynk2_libclocale.h \
-	pynk2_libcstring.h \
 	pynk2_libnk2.h \
 	pynk2_python.h \
 	pynk2_unused.h
 
 pynk2_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libnk2/libnk2.la \
 	@LIBCDATA_LIBADD@ \

@@ -118,5 +118,5 @@ enum LIBNK2_CODEPAGES
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_CODEPAGE_H ) */
 

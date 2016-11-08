@@ -22,12 +22,14 @@
 #include <common.h>
 #include <file_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "item_file.h"
 #include "nk2tools_libcerror.h"
 #include "nk2tools_libcfile.h"
-#include "nk2tools_libcstring.h"
 #include "nk2tools_libfdatetime.h"
 #include "nk2tools_libfguid.h"
 #include "nk2tools_libfvalue.h"
@@ -168,7 +170,7 @@ int item_file_free(
  */
 int item_file_open(
      item_file_t *item_file,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "item_file_open";
@@ -184,7 +186,7 @@ int item_file_open(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcfile_file_open_wide(
 	     item_file->file_handle,
 	     filename,
@@ -320,7 +322,7 @@ int item_file_write_buffer_as_hexdump(
      size_t buffer_size,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t value_string[ 3 ];
+	system_character_t value_string[ 3 ];
 
 	static char *function = "item_file_write_buffer_as_hexdump";
 	size_t buffer_index   = 0;
@@ -373,7 +375,7 @@ int item_file_write_buffer_as_hexdump(
 					}
 					if( item_file_write_string(
 					     item_file,
-					     _LIBCSTRING_SYSTEM_STRING( ": " ),
+					     _SYSTEM_STRING( ": " ),
 					     2,
 					     error ) != 1 )
 					{
@@ -391,21 +393,21 @@ int item_file_write_buffer_as_hexdump(
 
 				if( byte_value < 10 )
 				{
-					value_string[ 0 ] = (libcstring_system_character_t) '0' + byte_value;
+					value_string[ 0 ] = (system_character_t) '0' + byte_value;
 				}
 				else
 				{
-					value_string[ 0 ] = (libcstring_system_character_t) 'a' + byte_value;
+					value_string[ 0 ] = (system_character_t) 'a' + byte_value;
 				}
 				byte_value = buffer[ byte_index ] & 0x0f;
 
 				if( byte_value < 10 )
 				{
-					value_string[ 1 ] = (libcstring_system_character_t) '0' + byte_value;
+					value_string[ 1 ] = (system_character_t) '0' + byte_value;
 				}
 				else
 				{
-					value_string[ 1 ] = (libcstring_system_character_t) 'a' + byte_value - 10;
+					value_string[ 1 ] = (system_character_t) 'a' + byte_value - 10;
 				}
 				value_string[ 2 ] = 0;
 
@@ -428,7 +430,7 @@ int item_file_write_buffer_as_hexdump(
 
 				if( item_file_write_string(
 				     item_file,
-				     _LIBCSTRING_SYSTEM_STRING( " " ),
+				     _SYSTEM_STRING( " " ),
 				     1,
 				     error ) != 1 )
 				{
@@ -449,7 +451,7 @@ int item_file_write_buffer_as_hexdump(
 				{
 					if( item_file_write_string(
 					     item_file,
-					     _LIBCSTRING_SYSTEM_STRING( " " ),
+					     _SYSTEM_STRING( " " ),
 					     1,
 					     error ) != 1 )
 					{
@@ -470,7 +472,7 @@ int item_file_write_buffer_as_hexdump(
 
 				if( item_file_write_string(
 				     item_file,
-				     _LIBCSTRING_SYSTEM_STRING( "   " ),
+				     _SYSTEM_STRING( "   " ),
 				     3,
 				     error ) != 1 )
 				{
@@ -488,7 +490,7 @@ int item_file_write_buffer_as_hexdump(
 				{
 					if( item_file_write_string(
 					     item_file,
-					     _LIBCSTRING_SYSTEM_STRING( " " ),
+					     _SYSTEM_STRING( " " ),
 					     1,
 					     error ) != 1 )
 					{
@@ -505,7 +507,7 @@ int item_file_write_buffer_as_hexdump(
 			}
 			if( item_file_write_string(
 			     item_file,
-			     _LIBCSTRING_SYSTEM_STRING( "  " ),
+			     _SYSTEM_STRING( "  " ),
 			     2,
 			     error ) != 1 )
 			{
@@ -525,11 +527,11 @@ int item_file_write_buffer_as_hexdump(
 				if( ( buffer[ byte_index ] >= 0x20 )
 				 && ( buffer[ byte_index ] <= 0x7e ) )
 				{
-					value_string[ 0 ] = (libcstring_system_character_t) buffer[ byte_index ];
+					value_string[ 0 ] = (system_character_t) buffer[ byte_index ];
 				}
 				else
 				{
-					value_string[ 0 ] = (libcstring_system_character_t) '.';
+					value_string[ 0 ] = (system_character_t) '.';
 				}
 				value_string[ 1 ] = 0;
 
@@ -558,7 +560,7 @@ int item_file_write_buffer_as_hexdump(
 				{
 					if( item_file_write_string(
 					     item_file,
-					     _LIBCSTRING_SYSTEM_STRING( " " ),
+					     _SYSTEM_STRING( " " ),
 					     1,
 					     error ) != 1 )
 					{
@@ -613,7 +615,7 @@ int item_file_write_integer_32bit_as_decimal(
      uint32_t value_32bit,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t integer_string[ 32 ];
+	system_character_t integer_string[ 32 ];
 
 	libfvalue_value_t *value     = NULL;
 	static char *function        = "item_file_write_integer_as_decimal";
@@ -664,7 +666,7 @@ int item_file_write_integer_32bit_as_decimal(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libfvalue_value_copy_to_utf16_string(
 	     value,
 	     0,
@@ -689,7 +691,7 @@ int item_file_write_integer_32bit_as_decimal(
 
 		goto on_error;
 	}
-	integer_string_length = libcstring_system_string_length(
+	integer_string_length = system_string_length(
 	                         integer_string );
 
 	if( item_file_write_string(
@@ -740,7 +742,7 @@ int item_file_write_integer_32bit_as_hexadecimal(
      uint32_t value_32bit,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t integer_string[ 32 ];
+	system_character_t integer_string[ 32 ];
 
 	libfvalue_value_t *value     = NULL;
 	static char *function        = "item_file_write_integer_as_hexadecimal";
@@ -791,7 +793,7 @@ int item_file_write_integer_32bit_as_hexadecimal(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libfvalue_value_copy_to_utf16_string(
 	     value,
 	     0,
@@ -816,7 +818,7 @@ int item_file_write_integer_32bit_as_hexadecimal(
 
 		goto on_error;
 	}
-	integer_string_length = libcstring_system_string_length(
+	integer_string_length = system_string_length(
 	                         integer_string );
 
 	if( item_file_write_string(
@@ -867,7 +869,7 @@ int item_file_write_floating_point(
      double floating_point,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t floating_point_string[ 32 ];
+	system_character_t floating_point_string[ 32 ];
 
 	libfvalue_value_t *value            = NULL;
 	static char *function               = "item_file_write_floating_point";
@@ -902,7 +904,7 @@ int item_file_write_floating_point(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libfvalue_value_copy_to_utf16_string(
 	     value,
 	     0,
@@ -927,7 +929,7 @@ int item_file_write_floating_point(
 
 		goto on_error;
 	}
-	floating_point_string_length = libcstring_system_string_length(
+	floating_point_string_length = system_string_length(
 	                                floating_point_string );
 
 	if( item_file_write_string(
@@ -975,7 +977,7 @@ on_error:
  */
 int item_file_write_string(
      item_file_t *item_file,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      size_t string_length,
      libcerror_error_t **error )
 {
@@ -992,7 +994,7 @@ int item_file_write_string(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( string_length > (size_t) SSIZE_MAX )
 	{
 		libcerror_error_set(
@@ -1004,7 +1006,7 @@ int item_file_write_string(
 
 		return( -1 );
 	}
-	string_length *= sizeof( libcstring_system_character_t );
+	string_length *= sizeof( system_character_t );
 #endif
 	if( item_file_write_buffer(
 	     item_file,
@@ -1036,13 +1038,13 @@ int item_file_write_new_line(
 #if defined( WINAPI )
 	if( item_file_write_string(
 	     item_file,
-	     _LIBCSTRING_SYSTEM_STRING( "\r\n" ),
+	     _SYSTEM_STRING( "\r\n" ),
 	     2,
 	     error ) != 1 )
 #else
 	if( item_file_write_string(
 	     item_file,
-	     _LIBCSTRING_SYSTEM_STRING( "\n" ),
+	     _SYSTEM_STRING( "\n" ),
 	     1,
 	     error ) != 1 )
 #endif
@@ -1067,13 +1069,13 @@ int item_file_write_filetime(
      libfdatetime_filetime_t *filetime,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t filetime_string[ 32 ];
+	system_character_t filetime_string[ 32 ];
 
 	static char *function         = "item_file_write_filetime";
 	size_t filetime_string_length = 0;
 	int result                    = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libfdatetime_filetime_copy_to_utf16_string(
 		  filetime,
 		  (uint16_t *) filetime_string,
@@ -1099,7 +1101,7 @@ int item_file_write_filetime(
 
 		return( -1 );
 	}
-	filetime_string_length = libcstring_system_string_length(
+	filetime_string_length = system_string_length(
 	                          filetime_string );
 
 	if( item_file_write_string(
@@ -1119,7 +1121,7 @@ int item_file_write_filetime(
 	}
 	if( item_file_write_string(
 	     item_file,
-	     _LIBCSTRING_SYSTEM_STRING( " UTC" ),
+	     _SYSTEM_STRING( " UTC" ),
 	     4,
 	     error ) != 1 )
 	{
@@ -1143,13 +1145,13 @@ int item_file_write_guid(
      libfguid_identifier_t *guid,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t guid_string[ 48 ];
+	system_character_t guid_string[ 48 ];
 
 	static char *function     = "item_file_write_guid";
 	size_t guid_string_length = 0;
 	int result                = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libfguid_identifier_copy_to_utf16_string(
 		  guid,
 		  (uint16_t *) guid_string,
@@ -1175,7 +1177,7 @@ int item_file_write_guid(
 
 		return( -1 );
 	}
-	guid_string_length = libcstring_system_string_length(
+	guid_string_length = system_string_length(
 	                      guid_string );
 
 	if( item_file_write_string(
@@ -1201,13 +1203,13 @@ int item_file_write_guid(
  */
 int item_file_write_value_description(
      item_file_t *item_file,
-     const libcstring_system_character_t *description,
+     const system_character_t *description,
      libcerror_error_t **error )
 {
 	static char *function     = "item_file_write_value_description";
 	size_t description_length = 0;
 
-	description_length = libcstring_system_string_length(
+	description_length = system_string_length(
 	                      description );
 	
 	if( item_file_write_string(
@@ -1246,14 +1248,14 @@ int item_file_write_value_description(
  */
 int item_file_write_value_integer_32bit_as_decimal(
      item_file_t *item_file,
-     const libcstring_system_character_t *description,
+     const system_character_t *description,
      uint32_t value_32bit,
      libcerror_error_t **error )
 {
 	static char *function     = "item_file_write_value_integer_32bit_as_decimal";
 	size_t description_length = 0;
 
-	description_length = libcstring_system_string_length(
+	description_length = system_string_length(
 	                      description );
 	
 	if( item_file_write_string(
@@ -1306,14 +1308,14 @@ int item_file_write_value_integer_32bit_as_decimal(
  */
 int item_file_write_value_integer_32bit_as_hexadecimal(
      item_file_t *item_file,
-     const libcstring_system_character_t *description,
+     const system_character_t *description,
      uint32_t value_32bit,
      libcerror_error_t **error )
 {
 	static char *function     = "item_file_write_value_integer_32bit_as_hexadecimal";
 	size_t description_length = 0;
 
-	description_length = libcstring_system_string_length(
+	description_length = system_string_length(
 	                      description );
 	
 	if( item_file_write_string(
@@ -1366,15 +1368,15 @@ int item_file_write_value_integer_32bit_as_hexadecimal(
  */
 int item_file_write_value_string(
      item_file_t *item_file,
-     const libcstring_system_character_t *description,
-     const libcstring_system_character_t *string,
+     const system_character_t *description,
+     const system_character_t *string,
      size_t string_length,
      libcerror_error_t **error )
 {
 	static char *function     = "item_file_write_value_description";
 	size_t description_length = 0;
 
-	description_length = libcstring_system_string_length(
+	description_length = system_string_length(
 	                      description );
 	
 	if( item_file_write_string(
@@ -1428,14 +1430,14 @@ int item_file_write_value_string(
  */
 int item_file_write_value_filetime(
      item_file_t *item_file,
-     const libcstring_system_character_t *description,
+     const system_character_t *description,
      libfdatetime_filetime_t *filetime,
      libcerror_error_t **error )
 {
 	static char *function     = "item_file_write_value_filetime";
 	size_t description_length = 0;
 
-	description_length = libcstring_system_string_length(
+	description_length = system_string_length(
 	                      description );
 	
 	if( item_file_write_string(
@@ -1490,21 +1492,21 @@ int item_file_write_item_value(
      item_file_t *item_file,
      libnk2_item_t *item,
      uint32_t entry_type,
-     const libcstring_system_character_t *description,
+     const system_character_t *description,
      uint32_t format_flags,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *value_string = NULL;
-	libfdatetime_filetime_t *filetime           = NULL;
-	static char *function                       = "item_file_write_item_value";
-	size_t description_length                   = 0;
-	size_t value_string_size                    = 0;
-	double value_double                         = 0.0;
-	uint64_t value_64bit                        = 0;
-	uint32_t value_32bit                        = 0;
-	uint32_t value_type                         = LIBNK2_VALUE_TYPE_UNSPECIFIED;
-	uint8_t value_boolean                       = 0;
-	int result                                  = 0;
+	libfdatetime_filetime_t *filetime = NULL;
+	system_character_t *value_string  = NULL;
+	static char *function             = "item_file_write_item_value";
+	double value_double               = 0.0;
+	size_t description_length         = 0;
+	size_t value_string_size          = 0;
+	uint64_t value_64bit              = 0;
+	uint32_t value_32bit              = 0;
+	uint32_t value_type               = LIBNK2_VALUE_TYPE_UNSPECIFIED;
+	uint8_t value_boolean             = 0;
+	int result                        = 0;
 
 	result = libnk2_item_get_value_type(
 	          item,
@@ -1526,7 +1528,7 @@ int item_file_write_item_value(
 	}
 	else if( result != 0 )
 	{
-		description_length = libcstring_system_string_length(
+		description_length = system_string_length(
 		                      description );
 		
 		if( item_file_write_string(
@@ -1564,12 +1566,12 @@ int item_file_write_item_value(
 				}
 				if( value_boolean == 0 )
 				{
-					value_string      = _LIBCSTRING_SYSTEM_STRING( "no" );
+					value_string      = _SYSTEM_STRING( "no" );
 					value_string_size = 3;
 				}
 				else
 				{
-					value_string      = _LIBCSTRING_SYSTEM_STRING( "yes" );
+					value_string      = _SYSTEM_STRING( "yes" );
 					value_string_size = 4;
 				}
 				if( item_file_write_string(
@@ -1647,12 +1649,12 @@ int item_file_write_item_value(
 					{
 						if( value_32bit == 1 )
 						{
-							value_string      = _LIBCSTRING_SYSTEM_STRING( " minute" );
+							value_string      = _SYSTEM_STRING( " minute" );
 							value_string_size = 8;
 						}
 						else if( value_32bit > 1 )
 						{
-							value_string      = _LIBCSTRING_SYSTEM_STRING( " minutes" );
+							value_string      = _SYSTEM_STRING( " minutes" );
 							value_string_size = 9;
 						}
 						if( item_file_write_string(
@@ -1783,7 +1785,7 @@ int item_file_write_item_value(
 
 			case LIBNK2_VALUE_TYPE_STRING_ASCII:
 			case LIBNK2_VALUE_TYPE_STRING_UNICODE:
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 				result = libnk2_item_get_entry_value_utf16_string_size(
 				          item,
 				          entry_type,
@@ -1809,7 +1811,7 @@ int item_file_write_item_value(
 				}
 				else if( value_string_size > 0 )
 				{
-					value_string = libcstring_system_string_allocate(
+					value_string = system_string_allocate(
 					                value_string_size );
 
 					if( value_string == NULL )
@@ -1823,7 +1825,7 @@ int item_file_write_item_value(
 
 						goto on_error;
 					}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 					result = libnk2_item_get_entry_value_utf16_string(
 					          item,
 					          entry_type,

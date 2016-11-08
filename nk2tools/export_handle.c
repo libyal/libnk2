@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "export_handle.h"
 #include "log_handle.h"
@@ -30,7 +33,6 @@
 #include "nk2tools_libcfile.h"
 #include "nk2tools_libcnotify.h"
 #include "nk2tools_libcpath.h"
-#include "nk2tools_libcstring.h"
 #include "nk2tools_libcsystem.h"
 #include "nk2tools_libnk2.h"
 
@@ -229,7 +231,7 @@ int export_handle_signal_abort(
  */
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error )
 {
 	static char *function = "export_handle_set_ascii_codepage";
@@ -270,16 +272,16 @@ int export_handle_set_ascii_codepage(
  */
 int export_handle_set_target_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *target_path,
+     const system_character_t *target_path,
      libcerror_error_t **error )
 {
-	static char *function                           = "export_handle_set_target_path";
-	size_t target_path_length                       = 0;
+	static char *function                = "export_handle_set_target_path";
+	size_t target_path_length            = 0;
 
 #if defined( WINAPI )
-	libcstring_system_character_t *full_target_path = NULL;
-        size_t full_target_path_size                    = 0;
-	int result                                      = 0;
+	system_character_t *full_target_path = NULL;
+        size_t full_target_path_size         = 0;
+	int result                           = 0;
 #endif
 
 	if( export_handle == NULL )
@@ -312,11 +314,11 @@ int export_handle_set_target_path(
 		export_handle->target_path      = NULL;
 		export_handle->target_path_size = 0;
 	}
-	target_path_length = libcstring_system_string_length(
+	target_path_length = system_string_length(
 	                      target_path );
 
 #if defined( WINAPI )
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcpath_path_get_full_path_wide(
 	          target_path,
                   target_path_length,
@@ -350,7 +352,7 @@ int export_handle_set_target_path(
 #endif
 	if( target_path_length > 0 )
 	{
-		export_handle->target_path = libcstring_system_string_allocate(
+		export_handle->target_path = system_string_allocate(
 		                              target_path_length + 1 );
 
 		if( export_handle->target_path == NULL )
@@ -364,7 +366,7 @@ int export_handle_set_target_path(
 
 			goto on_error;
 		}
-		if( libcstring_system_string_copy(
+		if( system_string_copy(
 		     export_handle->target_path,
 		     target_path,
 		     target_path_length ) == NULL )
@@ -412,11 +414,11 @@ on_error:
  */
 int export_handle_set_export_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *base_path,
+     const system_character_t *base_path,
      size_t base_path_length,
-     const libcstring_system_character_t *suffix,
+     const system_character_t *suffix,
      size_t suffix_length,
-     libcstring_system_character_t **export_path,
+     system_character_t **export_path,
      size_t *export_path_size,
      libcerror_error_t **error )
 {
@@ -509,7 +511,7 @@ int export_handle_set_export_path(
 	}
 	*export_path_size = base_path_length + suffix_length + 1;
 
-	*export_path = libcstring_system_string_allocate(
+	*export_path = system_string_allocate(
 	                *export_path_size );
 
 	if( *export_path == NULL )
@@ -523,7 +525,7 @@ int export_handle_set_export_path(
 
 		goto on_error;
 	}
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     *export_path,
 	     base_path,
 	     base_path_length ) == NULL )
@@ -537,7 +539,7 @@ int export_handle_set_export_path(
 
 		goto on_error;
 	}
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     &( ( *export_path )[ base_path_length ] ),
 	     suffix,
 	     suffix_length ) == NULL )
@@ -592,7 +594,7 @@ int export_handle_create_items_export_path(
 	     export_handle,
 	     export_handle->target_path,
 	     export_handle->target_path_size - 1,
-	     _LIBCSTRING_SYSTEM_STRING( ".export" ),
+	     _SYSTEM_STRING( ".export" ),
 	     7,
 	     &( export_handle->items_export_path ),
 	     &( export_handle->items_export_path_size ),
@@ -607,7 +609,7 @@ int export_handle_create_items_export_path(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcfile_file_exists_wide(
 		  export_handle->items_export_path,
 		  error );
@@ -622,7 +624,7 @@ int export_handle_create_items_export_path(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
+		 "%s: unable to determine if %" PRIs_SYSTEM " exists.",
 		 function,
 		 export_handle->items_export_path );
 
@@ -640,7 +642,7 @@ int export_handle_create_items_export_path(
  */
 int export_handle_open(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "export_handle_open";
@@ -656,7 +658,7 @@ int export_handle_open(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libnk2_file_open_wide(
 	     export_handle->input_file,
 	     filename,
@@ -724,16 +726,16 @@ int export_handle_close(
 int export_handle_create_default_item_directory(
      export_handle_t *export_handle,
      int item_index,
-     const libcstring_system_character_t *item_prefix,
+     const system_character_t *item_prefix,
      size_t item_prefix_length,
-     const libcstring_system_character_t *export_path,
+     const system_character_t *export_path,
      size_t export_path_length,
-     libcstring_system_character_t **item_directory_path,
+     system_character_t **item_directory_path,
      size_t *item_directory_path_size,
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t item_directory_name[ 64 ];
+	system_character_t item_directory_name[ 64 ];
 
 	static char *function             = "export_handle_create_default_item_directory";
 	size_t item_directory_name_length = 0;
@@ -797,10 +799,10 @@ int export_handle_create_default_item_directory(
 	}
 	/* Create the item directory
 	 */
-	print_count = libcstring_system_string_sprintf(
+	print_count = system_string_sprintf(
 	               item_directory_name,
 	               64,
-	               _LIBCSTRING_SYSTEM_STRING( "%s%05d" ),
+	               _SYSTEM_STRING( "%s%05d" ),
 	               item_prefix,
 	               item_index + 1 );
 
@@ -819,7 +821,7 @@ int export_handle_create_default_item_directory(
 	item_directory_name[ item_prefix_length + 5 ] = 0;
 	item_directory_name_length                    = item_prefix_length + 5;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcpath_path_join_wide(
 	          item_directory_path,
 	          item_directory_path_size,
@@ -849,7 +851,7 @@ int export_handle_create_default_item_directory(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcfile_file_exists_wide(
 		  *item_directory_path,
 		  error );
@@ -864,7 +866,7 @@ int export_handle_create_default_item_directory(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
+		 "%s: unable to determine if %" PRIs_SYSTEM " exists.",
 		 function,
 		 *item_directory_path );
 
@@ -876,13 +878,13 @@ int export_handle_create_default_item_directory(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_GENERIC,
-		 "%s: %" PRIs_LIBCSTRING_SYSTEM " already exists.",
+		 "%s: %" PRIs_SYSTEM " already exists.",
 		 function,
 		 *item_directory_path );
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcpath_path_make_directory_wide(
 	     *item_directory_path,
 	     error ) != 1 )
@@ -896,7 +898,7 @@ int export_handle_create_default_item_directory(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to make directory: %" PRIs_SYSTEM ".",
 		 function,
 		 *item_directory_path );
 
@@ -904,7 +906,7 @@ int export_handle_create_default_item_directory(
 	}
 	log_handle_printf(
 	 log_handle,
-	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+	 "Created directory: %" PRIs_SYSTEM ".\n",
 	 *item_directory_path );
 
 	return( 1 );
@@ -926,17 +928,17 @@ on_error:
  */
 int export_handle_create_item_file(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *path,
+     const system_character_t *path,
      size_t path_length,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      size_t filename_length,
      item_file_t **item_file,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *item_file_path = NULL;
-	static char *function                         = "export_handle_create_item_file";
-	size_t item_file_path_size                    = 0;
-	int result                                    = 0;
+	system_character_t *item_file_path = NULL;
+	static char *function              = "export_handle_create_item_file";
+	size_t item_file_path_size         = 0;
+	int result                         = 0;
 
 	if( export_handle == NULL )
 	{
@@ -960,7 +962,7 @@ int export_handle_create_item_file(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcpath_path_join_wide(
 	          &item_file_path,
 	          &item_file_path_size,
@@ -990,7 +992,7 @@ int export_handle_create_item_file(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcfile_file_exists_wide(
 	          item_file_path,
 	          error );
@@ -1005,7 +1007,7 @@ int export_handle_create_item_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
+		 "%s: unable to determine if %" PRIs_SYSTEM " exists.",
 		 function,
 		 item_file_path );
 
@@ -1040,7 +1042,7 @@ int export_handle_create_item_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to open: %" PRIs_SYSTEM ".",
 		 function,
 		 item_file_path );
 
@@ -1074,9 +1076,9 @@ on_error:
 int export_handle_export_item_values(
      export_handle_t *export_handle,
      libnk2_item_t *item,
-     const libcstring_system_character_t *item_values_filename,
+     const system_character_t *item_values_filename,
      size_t item_values_filename_length,
-     const libcstring_system_character_t *export_path,
+     const system_character_t *export_path,
      size_t export_path_length,
      log_handle_t *log_handle,
      libcerror_error_t **error )
@@ -1148,7 +1150,7 @@ int export_handle_export_item_values(
 	{
 		log_handle_printf(
 		 log_handle,
-		 "Skipping item values file: %" PRIs_LIBCSTRING_SYSTEM " it already exists.\n",
+		 "Skipping item values file: %" PRIs_SYSTEM " it already exists.\n",
 		 item_values_filename );
 
 		return( 1 );
@@ -1169,7 +1171,7 @@ int export_handle_export_item_values(
 	}
 	if( item_file_write_value_integer_32bit_as_decimal(
 	     item_file,
-	     _LIBCSTRING_SYSTEM_STRING( "Number of entries:\t" ),
+	     _SYSTEM_STRING( "Number of entries:\t" ),
 	     number_of_entries,
 	     error ) != 1 )
 	{
@@ -1188,7 +1190,7 @@ int export_handle_export_item_values(
 	{
 		if( item_file_write_value_integer_32bit_as_decimal(
 		     item_file,
-		     _LIBCSTRING_SYSTEM_STRING( "Entry:\t\t\t" ),
+		     _SYSTEM_STRING( "Entry:\t\t\t" ),
 		     entry_index,
 		     error ) != 1 )
 		{
@@ -1220,7 +1222,7 @@ int export_handle_export_item_values(
 		}
 		if( item_file_write_value_integer_32bit_as_hexadecimal(
 		     item_file,
-		     _LIBCSTRING_SYSTEM_STRING( "Entry type:\t\t" ),
+		     _SYSTEM_STRING( "Entry type:\t\t" ),
 		     entry_type,
 		     error ) != 1 )
 		{
@@ -1235,7 +1237,7 @@ int export_handle_export_item_values(
 		}
 		if( item_file_write_value_integer_32bit_as_hexadecimal(
 		     item_file,
-		     _LIBCSTRING_SYSTEM_STRING( "Value type:\t\t" ),
+		     _SYSTEM_STRING( "Value type:\t\t" ),
 		     value_type,
 		     error ) != 1 )
 		{
@@ -1271,7 +1273,7 @@ int export_handle_export_item_values(
 		}
 		if( item_file_write_value_description(
 		     item_file,
-		     _LIBCSTRING_SYSTEM_STRING( "Value:" ),
+		     _SYSTEM_STRING( "Value:" ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1344,14 +1346,14 @@ int export_handle_export_alias(
      export_handle_t *export_handle,
      libnk2_item_t *alias,
      int alias_index,
-     const libcstring_system_character_t *export_path,
+     const system_character_t *export_path,
      size_t export_path_length,
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *alias_path = NULL;
-	static char *function                     = "export_handle_export_alias";
-	size_t alias_path_size                    = 0;
+	system_character_t *alias_path = NULL;
+	static char *function          = "export_handle_export_alias";
+	size_t alias_path_size         = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1388,7 +1390,7 @@ int export_handle_export_alias(
 	}
 	log_handle_printf(
 	 log_handle,
-	 "Processing alias: %05d in path: %" PRIs_LIBCSTRING_SYSTEM "%c\n",
+	 "Processing alias: %05d in path: %" PRIs_SYSTEM "%c\n",
 	 alias_index,
 	 export_path,
 	 LIBCPATH_SEPARATOR );
@@ -1396,7 +1398,7 @@ int export_handle_export_alias(
 	if( export_handle_create_default_item_directory(
 	     export_handle,
 	     alias_index,
-	     _LIBCSTRING_SYSTEM_STRING( "Alias" ),
+	     _SYSTEM_STRING( "Alias" ),
 	     5,
 	     export_path,
 	     export_path_length,
@@ -1430,7 +1432,7 @@ int export_handle_export_alias(
 		if( export_handle_export_item_values(
 		     export_handle,
 		     alias,
-		     _LIBCSTRING_SYSTEM_STRING( "ItemValues.txt" ),
+		     _SYSTEM_STRING( "ItemValues.txt" ),
 		     14,
 		     alias_path,
 		     alias_path_size - 1,
@@ -1531,7 +1533,7 @@ int export_handle_export_items(
 	 export_handle->notify_stream,
 	 "Exporting items.\n" );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcpath_path_make_directory_wide(
 	     export_handle->items_export_path,
 	     error ) != 1 )
@@ -1545,7 +1547,7 @@ int export_handle_export_items(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to make directory: %" PRIs_SYSTEM ".",
 		 function,
 		 export_handle->items_export_path );
 
@@ -1553,7 +1555,7 @@ int export_handle_export_items(
 	}
 	log_handle_printf(
 	 log_handle,
-	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+	 "Created directory: %" PRIs_SYSTEM ".\n",
 	 export_handle->items_export_path );
 
 	for( item_index = 0;

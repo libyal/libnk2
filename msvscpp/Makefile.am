@@ -7,7 +7,6 @@ MSVSCPP_FILES = \
 	libcnotify/libcnotify.vcproj \
 	libcpath/libcpath.vcproj \
 	libcsplit/libcsplit.vcproj \
-	libcstring/libcstring.vcproj \
 	libcsystem/libcsystem.vcproj \
 	libcthreads/libcthreads.vcproj \
 	libfdatetime/libfdatetime.vcproj \
@@ -18,9 +17,10 @@ MSVSCPP_FILES = \
 	libnk2/libnk2.vcproj \
 	libuna/libuna.vcproj \
 	nk2_test_error/nk2_test_error.vcproj \
-	nk2_test_get_version/nk2_test_get_version.vcproj \
+	nk2_test_file/nk2_test_file.vcproj \
+	nk2_test_item/nk2_test_item.vcproj \
 	nk2_test_open_close/nk2_test_open_close.vcproj \
-	nk2_test_set_ascii_codepage/nk2_test_set_ascii_codepage.vcproj \
+	nk2_test_support/nk2_test_support.vcproj \
 	nk2export/nk2export.vcproj \
 	nk2info/nk2info.vcproj \
 	libnk2.sln

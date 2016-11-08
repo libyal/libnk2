@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -38,7 +37,6 @@ nk2export_SOURCES = \
 	nk2tools_libcpath.h \
 	nk2tools_libclocale.h \
 	nk2tools_libcnotify.h \
-	nk2tools_libcstring.h \
 	nk2tools_libcsystem.h \
 	nk2tools_libfdatetime.h \
 	nk2tools_libfguid.h \
@@ -64,7 +62,6 @@ nk2export_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 nk2info_SOURCES = \
@@ -76,7 +73,6 @@ nk2info_SOURCES = \
 	nk2tools_libcerror.h \
 	nk2tools_libclocale.h \
 	nk2tools_libcnotify.h \
-	nk2tools_libcstring.h \
 	nk2tools_libcsystem.h \
 	nk2tools_libfdatetime.h \
 	nk2tools_libfguid.h \
@@ -93,7 +89,6 @@ nk2info_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 MAINTAINERCLEANFILES = \

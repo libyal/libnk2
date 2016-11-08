@@ -29,7 +29,6 @@
 #include "item_file.h"
 #include "log_handle.h"
 #include "nk2tools_libcerror.h"
-#include "nk2tools_libcstring.h"
 #include "nk2tools_libnk2.h"
 
 #if defined( __cplusplus )
@@ -54,7 +53,7 @@ struct export_handle
 
 	/* The target path
 	 */
-	libcstring_system_character_t *target_path;
+	system_character_t *target_path;
 
 	/* The target path size
 	 */
@@ -62,7 +61,7 @@ struct export_handle
 
 	/* The items export path
 	 */
-	libcstring_system_character_t *items_export_path;
+	system_character_t *items_export_path;
 
 	/* The items export path size
 	 */
@@ -96,21 +95,21 @@ int export_handle_signal_abort(
 
 int export_handle_set_ascii_codepage(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int export_handle_set_target_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *target_path,
+     const system_character_t *target_path,
      libcerror_error_t **error );
 
 int export_handle_set_export_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *base_path,
+     const system_character_t *base_path,
      size_t base_path_length,
-     const libcstring_system_character_t *suffix,
+     const system_character_t *suffix,
      size_t suffix_length,
-     libcstring_system_character_t **export_path,
+     system_character_t **export_path,
      size_t *export_path_size,
      libcerror_error_t **error );
 
@@ -120,7 +119,7 @@ int export_handle_create_items_export_path(
 
 int export_handle_open(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int export_handle_close(
@@ -132,20 +131,20 @@ int export_handle_close(
 int export_handle_create_default_item_directory(
      export_handle_t *export_handle,
      int item_index,
-     const libcstring_system_character_t *item_prefix,
+     const system_character_t *item_prefix,
      size_t item_prefix_length,
-     const libcstring_system_character_t *export_path,
+     const system_character_t *export_path,
      size_t export_path_length,
-     libcstring_system_character_t **item_directory_path,
+     system_character_t **item_directory_path,
      size_t *item_directory_path_size,
      log_handle_t *log_handle,
      libcerror_error_t **error );
 
 int export_handle_create_item_file(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *path,
+     const system_character_t *path,
      size_t path_length,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      size_t filename_length,
      item_file_t **item_file,
      libcerror_error_t **error );
@@ -153,9 +152,9 @@ int export_handle_create_item_file(
 int export_handle_export_item_values(
      export_handle_t *export_handle,
      libnk2_item_t *item,
-     const libcstring_system_character_t *item_values_filename,
+     const system_character_t *item_values_filename,
      size_t item_values_filename_length,
-     const libcstring_system_character_t *export_path,
+     const system_character_t *export_path,
      size_t export_path_length,
      log_handle_t *log_handle,
      libcerror_error_t **error );
@@ -166,7 +165,7 @@ int export_handle_export_alias(
      export_handle_t *export_handle,
      libnk2_item_t *alias,
      int alias_index,
-     const libcstring_system_character_t *export_path,
+     const system_character_t *export_path,
      size_t export_path_length,
      log_handle_t *log_handle,
      libcerror_error_t **error );
