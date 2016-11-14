@@ -511,7 +511,6 @@ int libnk2_item_get_entry_value_utf16_string(
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_binary_data_size(
      libnk2_item_t *item,
-     int set_index,
      uint32_t entry_type,
      size_t *size,
      libnk2_error_t **error );

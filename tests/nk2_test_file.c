@@ -38,7 +38,7 @@
 #include "nk2_test_macros.h"
 #include "nk2_test_memory.h"
 
-#if SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
 #error Unsupported size of wchar_t
 #endif
 
@@ -256,8 +256,8 @@ int nk2_test_file_get_wide_source(
      libcerror_error_t **error )
 {
 	static char *function   = "nk2_test_file_get_wide_source";
-	size_t wide_source_size = 0;
 	size_t source_length    = 0;
+	size_t wide_source_size = 0;
 
 #if !defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	int result              = 0;
@@ -584,11 +584,17 @@ int nk2_test_file_close_source(
 int nk2_test_file_initialize(
      void )
 {
-	libcerror_error_t *error = NULL;
-	libnk2_file_t *file      = NULL;
-	int result               = 0;
+	libcerror_error_t *error        = NULL;
+	libnk2_file_t *file             = NULL;
+	int result                      = 0;
 
-	/* Test libnk2_file_initialize
+#if defined( HAVE_NK2_TEST_MEMORY )
+	int number_of_malloc_fail_tests = 1;
+	int number_of_memset_fail_tests = 1;
+	int test_number                 = 0;
+#endif
+
+	/* Test regular cases
 	 */
 	result = libnk2_file_initialize(
 	          &file,
@@ -664,79 +670,89 @@ int nk2_test_file_initialize(
 
 #if defined( HAVE_NK2_TEST_MEMORY )
 
-	/* Test libnk2_file_initialize with malloc failing
-	 */
-	nk2_test_malloc_attempts_before_fail = 0;
-
-	result = libnk2_file_initialize(
-	          &file,
-	          &error );
-
-	if( nk2_test_malloc_attempts_before_fail != -1 )
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
 	{
-		nk2_test_malloc_attempts_before_fail = -1;
+		/* Test libnk2_file_initialize with malloc failing
+		 */
+		nk2_test_malloc_attempts_before_fail = test_number;
 
-		if( file != NULL )
+		result = libnk2_file_initialize(
+		          &file,
+		          &error );
+
+		if( nk2_test_malloc_attempts_before_fail != -1 )
 		{
-			libnk2_file_free(
-			 &file,
-			 NULL );
+			nk2_test_malloc_attempts_before_fail = -1;
+
+			if( file != NULL )
+			{
+				libnk2_file_free(
+				 &file,
+				 NULL );
+			}
+		}
+		else
+		{
+			NK2_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			NK2_TEST_ASSERT_IS_NULL(
+			 "file",
+			 file );
+
+			NK2_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
 		}
 	}
-	else
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
 	{
-		NK2_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		/* Test libnk2_file_initialize with memset failing
+		 */
+		nk2_test_memset_attempts_before_fail = test_number;
 
-		NK2_TEST_ASSERT_IS_NULL(
-		 "file",
-		 file );
+		result = libnk2_file_initialize(
+		          &file,
+		          &error );
 
-		NK2_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
-
-		libcerror_error_free(
-		 &error );
-	}
-	/* Test libnk2_file_initialize with memset failing
-	 */
-	nk2_test_memset_attempts_before_fail = 0;
-
-	result = libnk2_file_initialize(
-	          &file,
-	          &error );
-
-	if( nk2_test_memset_attempts_before_fail != -1 )
-	{
-		nk2_test_memset_attempts_before_fail = -1;
-
-		if( file != NULL )
+		if( nk2_test_memset_attempts_before_fail != -1 )
 		{
-			libnk2_file_free(
-			 &file,
-			 NULL );
+			nk2_test_memset_attempts_before_fail = -1;
+
+			if( file != NULL )
+			{
+				libnk2_file_free(
+				 &file,
+				 NULL );
+			}
 		}
-	}
-	else
-	{
-		NK2_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+		else
+		{
+			NK2_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
 
-		NK2_TEST_ASSERT_IS_NULL(
-		 "file",
-		 file );
+			NK2_TEST_ASSERT_IS_NULL(
+			 "file",
+			 file );
 
-		NK2_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+			NK2_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
 
-		libcerror_error_free(
-		 &error );
+			libcerror_error_free(
+			 &error );
+		}
 	}
 #endif /* defined( HAVE_NK2_TEST_MEMORY ) */
 
@@ -795,7 +811,7 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libnk2_file_open functions
+/* Tests the libnk2_file_open function
  * Returns 1 if successful or 0 if not
  */
 int nk2_test_file_open(
@@ -858,21 +874,28 @@ int nk2_test_file_open(
          "error",
          error );
 
-	/* Clean up
+	/* Test error cases
 	 */
-	result = libnk2_file_close(
+	result = libnk2_file_open(
 	          file,
+	          narrow_source,
+	          LIBNK2_OPEN_READ,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
 
-        NK2_TEST_ASSERT_IS_NULL(
+        NK2_TEST_ASSERT_IS_NOT_NULL(
          "error",
          error );
 
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libnk2_file_free(
 	          &file,
 	          &error );
@@ -909,7 +932,7 @@ on_error:
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Tests the libnk2_file_open_wide functions
+/* Tests the libnk2_file_open_wide function
  * Returns 1 if successful or 0 if not
  */
 int nk2_test_file_open_wide(
@@ -972,21 +995,28 @@ int nk2_test_file_open_wide(
          "error",
          error );
 
-	/* Clean up
+	/* Test error cases
 	 */
-	result = libnk2_file_close(
+	result = libnk2_file_open_wide(
 	          file,
+	          wide_source,
+	          LIBNK2_OPEN_READ,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
 
-        NK2_TEST_ASSERT_IS_NULL(
+        NK2_TEST_ASSERT_IS_NOT_NULL(
          "error",
          error );
 
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
 	result = libnk2_file_free(
 	          &file,
 	          &error );
@@ -1022,6 +1052,185 @@ on_error:
 }
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
+/* Tests the libnk2_file_close function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_file_close(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libnk2_file_close(
+	          NULL,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        NK2_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_file_open and libnk2_file_close functions
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_file_open_close(
+     const system_character_t *source )
+{
+	libcerror_error_t *error = NULL;
+	libnk2_file_t *file      = NULL;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_file_initialize(
+	          &file,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        NK2_TEST_ASSERT_IS_NOT_NULL(
+         "file",
+         file );
+
+        NK2_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open and close
+	 */
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libnk2_file_open_wide(
+	          file,
+	          source,
+	          LIBNK2_OPEN_READ,
+	          &error );
+#else
+	result = libnk2_file_open(
+	          file,
+	          source,
+	          LIBNK2_OPEN_READ,
+	          &error );
+#endif
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        NK2_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libnk2_file_close(
+	          file,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        NK2_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open and close a second time to validate clean up on close
+	 */
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libnk2_file_open_wide(
+	          file,
+	          source,
+	          LIBNK2_OPEN_READ,
+	          &error );
+#else
+	result = libnk2_file_open(
+	          file,
+	          source,
+	          LIBNK2_OPEN_READ,
+	          &error );
+#endif
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        NK2_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libnk2_file_close(
+	          file,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+        NK2_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Clean up
+	 */
+	result = libnk2_file_free(
+	          &file,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        NK2_TEST_ASSERT_IS_NULL(
+         "file",
+         file );
+
+        NK2_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( file != NULL )
+	{
+		libnk2_file_free(
+		 &file,
+		 NULL );
+	}
+	return( 0 );
+}
 
 /* Tests the libnk2_file_get_ascii_codepage functions
  * Returns 1 if successful or 0 if not
@@ -1261,77 +1470,6 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libnk2_file_get_number_of_items functions
- * Returns 1 if successful or 0 if not
- */
-int nk2_test_file_get_number_of_items(
-     libnk2_file_t *file )
-{
-	libcerror_error_t *error = NULL;
-	int number_of_items    = 0;
-	int result               = 0;
-
-	result = libnk2_file_get_number_of_items(
-	          file,
-	          &number_of_items,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        NK2_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Test error cases
-	 */
-	result = libnk2_file_get_number_of_items(
-	          NULL,
-	          &number_of_items,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        NK2_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libnk2_file_get_number_of_items(
-	          file,
-	          NULL,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        NK2_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1345,8 +1483,8 @@ int main(
 #endif
 {
 	libcerror_error_t *error   = NULL;
-	system_character_t *source = NULL;
 	libnk2_file_t *file        = NULL;
+	system_character_t *source = NULL;
 	system_integer_t option    = 0;
 	int result                 = 0;
 
@@ -1414,7 +1552,14 @@ int main(
 
 #endif /* defined( LIBNK2_HAVE_BFIO ) */
 
-		/* TODO add test for libnk2_file_close */
+		NK2_TEST_RUN(
+		 "libnk2_file_close",
+		 nk2_test_file_close );
+
+		NK2_TEST_RUN_WITH_ARGS(
+		 "libnk2_file_open_close",
+		 nk2_test_file_open_close,
+		 source );
 
 		/* Initialize test
 		 */
@@ -1437,19 +1582,23 @@ int main(
 	         error );
 
 		NK2_TEST_RUN_WITH_ARGS(
-		 "libnk2_file_open",
-		 nk2_test_file_open,
-		 file );
-
-		NK2_TEST_RUN_WITH_ARGS(
 		 "libnk2_file_get_ascii_codepage",
 		 nk2_test_file_get_ascii_codepage,
 		 file );
 
-		NK2_TEST_RUN_WITH_ARGS(
-		 "libnk2_file_get_number_of_items",
-		 nk2_test_file_get_number_of_items,
-		 file );
+		/* TODO: add tests for libnk2_file_signal_abort */
+
+#if defined( __GNUC__ )
+
+		/* TODO: add tests for libnk2_file_open_read */
+
+#endif /* defined( __GNUC__ ) */
+
+		/* TODO: add tests for libnk2_file_get_modification_time */
+
+		/* TODO: add tests for libnk2_file_get_number_of_items */
+
+		/* TODO: add tests for libnk2_file_get_item */
 
 		/* Clean up
 		 */

@@ -21,6 +21,7 @@ am_pynk2_la_rpath = -rpath $(pyexecdir2)
 BUILT_SOURCES = \
 	pynk2.c pynk2.h \
 	pynk2_codepage.c pynk2_codepage.h \
+	pynk2_datetime.c pynk2_datetime.h \
 	pynk2_error.c pynk2_error.h \
 	pynk2_file.c pynk2_file.h \
 	pynk2_file_object_io_handle.c pynk2_file_object_io_handle.h \

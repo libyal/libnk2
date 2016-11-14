@@ -18,9 +18,11 @@ MSVSCPP_FILES = \
 	libuna/libuna.vcproj \
 	nk2_test_error/nk2_test_error.vcproj \
 	nk2_test_file/nk2_test_file.vcproj \
+	nk2_test_io_handle/nk2_test_io_handle.vcproj \
 	nk2_test_item/nk2_test_item.vcproj \
-	nk2_test_open_close/nk2_test_open_close.vcproj \
+	nk2_test_notify/nk2_test_notify.vcproj \
 	nk2_test_support/nk2_test_support.vcproj \
+	nk2_test_value_identifier/nk2_test_value_identifier.vcproj \
 	nk2export/nk2export.vcproj \
 	nk2info/nk2info.vcproj \
 	libnk2.sln

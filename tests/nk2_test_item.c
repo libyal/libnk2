@@ -33,6 +33,8 @@
 #include "nk2_test_memory.h"
 #include "nk2_test_unused.h"
 
+#include "../libnk2/libnk2_item.h"
+
 /* Tests the libnk2_item_free function
  * Returns 1 if successful or 0 if not
  */
@@ -86,9 +88,49 @@ int main(
 	NK2_TEST_UNREFERENCED_PARAMETER( argc )
 	NK2_TEST_UNREFERENCED_PARAMETER( argv )
 
+#if defined( __GNUC__ )
+
+	/* TODO: add tests for libnk2_item_initialize */
+
+#endif /* defined( __GNUC__ ) */
+
 	NK2_TEST_RUN(
 	 "libnk2_item_free",
 	 nk2_test_item_free );
+
+	/* TODO: add tests for libnk2_item_get_number_of_entries */
+
+	/* TODO: add tests for libnk2_item_get_entry_type */
+
+	/* TODO: add tests for libnk2_item_get_value_type */
+
+	/* TODO: add tests for libnk2_item_get_entry_value */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_boolean */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_32bit */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_64bit */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_filetime */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_size */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_floating_point */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_utf8_string_size */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_utf8_string */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_utf16_string_size */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_utf16_string */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_binary_data_size */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_binary_data */
+
+	/* TODO: add tests for libnk2_item_get_entry_value_guid */
 
 	return( EXIT_SUCCESS );
 
