@@ -45,5 +45,5 @@ void nk2output_version_detailed_fprint(
 }
 #endif
 
-#endif
+#endif /* !defined( _NK2OUTPUT_H ) */
 

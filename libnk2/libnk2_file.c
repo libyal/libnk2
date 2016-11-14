@@ -1049,7 +1049,7 @@ int libnk2_file_set_ascii_codepage(
  */
 int libnk2_file_get_modification_time(
      libnk2_file_t *file,
-     uint64_t *modification_time,
+     uint64_t *filetime,
      libcerror_error_t **error )
 {
 	libnk2_internal_file_t *internal_file = NULL;
@@ -1068,18 +1068,18 @@ int libnk2_file_get_modification_time(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
-	if( modification_time == NULL )
+	if( filetime == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid modification time.",
+		 "%s: invalid filetime.",
 		 function );
 
 		return( -1 );
 	}
-	*modification_time = internal_file->modification_time;
+	*filetime = internal_file->modification_time;
 
 	return( 1 );
 }

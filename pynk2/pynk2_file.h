@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libnk2 file
+ * Python object wrapper of libnk2_file_t
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -26,7 +26,6 @@
 #include <types.h>
 
 #include "pynk2_libbfio.h"
-#include "pynk2_libcerror.h"
 #include "pynk2_libnk2.h"
 #include "pynk2_python.h"
 
@@ -109,10 +108,34 @@ int pynk2_file_set_ascii_codepage_setter(
      PyObject *string_object,
      void *closure );
 
+PyObject *pynk2_file_get_modification_time(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments );
+
+PyObject *pynk2_file_get_modification_time_as_integer(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments );
+
+PyObject *pynk2_file_get_number_of_items(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments );
+
+PyObject *pynk2_file_get_item_by_index(
+           PyObject *pynk2_file,
+           int item_index );
+
+PyObject *pynk2_file_get_item(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pynk2_file_get_items(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _PYNK2_FILE_H ) */
 

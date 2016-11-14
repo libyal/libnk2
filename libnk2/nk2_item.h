@@ -58,5 +58,5 @@ struct nk2_item_value_entry
 }
 #endif
 
-#endif
+#endif /* !defined( _NK2_ITEM_H ) */
 

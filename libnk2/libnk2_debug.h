@@ -52,5 +52,5 @@ int libnk2_debug_print_read_offsets(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_DEBUG_H ) */
 

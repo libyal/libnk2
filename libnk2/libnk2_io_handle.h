@@ -92,5 +92,5 @@ int libnk2_io_handle_read_file_footer(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_IO_HANDLE_H ) */
 

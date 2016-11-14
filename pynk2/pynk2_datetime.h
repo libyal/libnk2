@@ -1,8 +1,5 @@
 /*
- * The extern definition
- *
- * This header should be included in header files that export or import
- * library functions
+ * Date and time functions
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -22,23 +19,30 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBNK2_EXTERN_H )
-#define _LIBNK2_EXTERN_H
+#if !defined( _PYNK2_DATETIME_H )
+#define _PYNK2_DATETIME_H
 
-/* To export functions from the libnk2 DLL define LIBNK2_DLL_EXPORT
- * To import functions from the libnk2 DLL define LIBNK2_DLL_IMPORT
- * Otherwise use default extern statement
- */
-#if defined( LIBNK2_DLL_EXPORT )
-#define LIBNK2_EXTERN __declspec(dllexport)
+#include <common.h>
+#include <types.h>
 
-#elif defined( LIBNK2_DLL_IMPORT )
-#define LIBNK2_EXTERN extern __declspec(dllimport)
+#include "pynk2_python.h"
 
-#else
-#define LIBNK2_EXTERN extern
-
+#if defined( __cplusplus )
+extern "C" {
 #endif
 
-#endif /* !defined( _LIBNK2_EXTERN_H ) */
+PyObject *pynk2_datetime_new_from_fat_date_time(
+           uint32_t fat_date_time );
+
+PyObject *pynk2_datetime_new_from_filetime(
+           uint64_t filetime );
+
+PyObject *pynk2_datetime_new_from_posix_time(
+           uint32_t posix_time );
+
+#if defined( __cplusplus )
+}
+#endif
+
+#endif /* !defined( _PYNK2_DATETIME_H ) */
 

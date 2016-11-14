@@ -1,5 +1,5 @@
 /*
- * Common input functions for the nk2tools
+ * Python object wrapper of libnk2_item_t
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,26 +19,57 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2INPUT_H )
-#define _NK2INPUT_H
+#if !defined( _PYNK2_ITEM_H )
+#define _PYNK2_ITEM_H
 
 #include <common.h>
 #include <types.h>
 
-#include "nk2tools_libcerror.h"
+#include "pynk2_libnk2.h"
+#include "pynk2_python.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-int nk2input_determine_ascii_codepage(
-     const system_character_t *string,
-     int *ascii_codepage,
-     libcerror_error_t **error );
+typedef struct pynk2_item pynk2_item_t;
+
+struct pynk2_item
+{
+	/* Python object initialization
+	 */
+	PyObject_HEAD
+
+	/* The libnk2 item
+	 */
+	libnk2_item_t *item;
+
+	/* The parent object
+	 */
+	PyObject *parent_object;
+};
+
+extern PyMethodDef pynk2_item_object_methods[];
+extern PyTypeObject pynk2_item_type_object;
+
+PyObject *pynk2_item_new(
+           PyTypeObject *type_object,
+           libnk2_item_t *item,
+           PyObject *parent_object );
+
+int pynk2_item_init(
+     pynk2_item_t *pynk2_item );
+
+void pynk2_item_free(
+      pynk2_item_t *pynk2_item );
+
+PyObject *pynk2_item_get_number_of_entries(
+           pynk2_item_t *pynk2_item,
+           PyObject *arguments );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _NK2INPUT_H ) */
+#endif /* !defined( _PYNK2_ITEM_H ) */
 

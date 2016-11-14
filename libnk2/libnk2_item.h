@@ -208,5 +208,5 @@ int libnk2_item_get_entry_value_guid(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_INTERNAL_ITEM_H ) */
 

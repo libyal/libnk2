@@ -53,5 +53,5 @@ int libnk2_item_get_amount_of_entries(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_LEGACY_H ) */
 

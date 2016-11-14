@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libnk2 file
+ * Python object wrapper of libnk2_file_t
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,18 +20,21 @@
  */
 
 #include <common.h>
-#include <memory.h>
 #include <narrow_string.h>
 #include <types.h>
 
-#if defined( HAVE_STDLIB_H )
+#if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
 #include <stdlib.h>
 #endif
 
 #include "pynk2_codepage.h"
+#include "pynk2_datetime.h"
 #include "pynk2_error.h"
 #include "pynk2_file.h"
 #include "pynk2_file_object_io_handle.h"
+#include "pynk2_integer.h"
+#include "pynk2_item.h"
+#include "pynk2_items.h"
 #include "pynk2_libbfio.h"
 #include "pynk2_libcerror.h"
 #include "pynk2_libclocale.h"
@@ -59,8 +62,6 @@ PyMethodDef pynk2_file_object_methods[] = {
 	  "\n"
 	  "Signals the file to abort the current activity." },
 
-	/* Functions to access the file */
-
 	{ "open",
 	  (PyCFunction) pynk2_file_open,
 	  METH_VARARGS | METH_KEYWORDS,
@@ -87,16 +88,43 @@ PyMethodDef pynk2_file_object_methods[] = {
 	  METH_NOARGS,
 	  "get_ascii_codepage() -> String\n"
 	  "\n"
-	  "Returns the codepage used for ASCII strings in the file." },
+	  "Retrieves the codepage for ASCII strings used in the file." },
 
 	{ "set_ascii_codepage",
 	  (PyCFunction) pynk2_file_set_ascii_codepage,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "set_ascii_codepage(codepage) -> None\n"
 	  "\n"
-	  "Set the codepage used for ASCII strings in the file.\n"
-	  "Expects the codepage to be a String containing a Python codec definition." },
+	  "Sets the codepage for ASCII strings used in the file.\n"
+	  "Expects the codepage to be a string containing a Python codec definition." },
 
+	{ "get_modification_time",
+	  (PyCFunction) pynk2_file_get_modification_time,
+	  METH_NOARGS,
+	  "get_modification_time() -> Datetime or None\n"
+	  "\n"
+	  "Retrieves the modification time." },
+
+	{ "get_modification_time_as_integer",
+	  (PyCFunction) pynk2_file_get_modification_time_as_integer,
+	  METH_NOARGS,
+	  "get_modification_time_as_integer() -> Integer or None\n"
+	  "\n"
+	  "Retrieves the modification time as a 64-bit integer containing a FILETIME value." },
+
+	{ "get_number_of_items",
+	  (PyCFunction) pynk2_file_get_number_of_items,
+	  METH_NOARGS,
+	  "get_number_of_items() -> Integer or None\n"
+	  "\n"
+	  "Retrieves the number of items." },
+
+	{ "get_item",
+	  (PyCFunction) pynk2_file_get_item,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "get_item(item_index) -> Object or None\n"
+	  "\n"
+	  "Retrieves the item." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -108,6 +136,24 @@ PyGetSetDef pynk2_file_object_get_set_definitions[] = {
 	  (getter) pynk2_file_get_ascii_codepage,
 	  (setter) pynk2_file_set_ascii_codepage_setter,
 	  "The codepage used for ASCII strings in the file.",
+	  NULL },
+
+	{ "modification_time",
+	  (getter) pynk2_file_get_modification_time,
+	  (setter) 0,
+	  "The modification time.",
+	  NULL },
+
+	{ "number_of_items",
+	  (getter) pynk2_file_get_number_of_items,
+	  (setter) 0,
+	  "The number of items.",
+	  NULL },
+
+	{ "items",
+	  (getter) pynk2_file_get_items,
+	  (setter) 0,
+	  "The items.",
 	  NULL },
 
 	/* Sentinel */
@@ -209,14 +255,14 @@ PyTypeObject pynk2_file_type_object = {
 	0
 };
 
-/* Creates a new pynk2 file object
+/* Creates a new file object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pynk2_file_new(
            void )
 {
-	static char *function    = "pynk2_file_new";
 	pynk2_file_t *pynk2_file = NULL;
+	static char *function    = "pynk2_file_new";
 
 	pynk2_file = PyObject_New(
 	              struct pynk2_file,
@@ -274,7 +320,7 @@ PyObject *pynk2_file_new_open(
 	return( pynk2_file );
 }
 
-/* Creates a new file object and opens it
+/* Creates a new file object and opens it using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pynk2_file_new_open_file_object(
@@ -302,8 +348,8 @@ PyObject *pynk2_file_new_open_file_object(
 int pynk2_file_init(
      pynk2_file_t *pynk2_file )
 {
-	static char *function    = "pynk2_file_init";
 	libcerror_error_t *error = NULL;
+	static char *function    = "pynk2_file_init";
 
 	if( pynk2_file == NULL )
 	{
@@ -340,8 +386,8 @@ int pynk2_file_init(
 void pynk2_file_free(
       pynk2_file_t *pynk2_file )
 {
-	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
+	libcerror_error_t *error    = NULL;
 	static char *function       = "pynk2_file_free";
 	int result                  = 0;
 
@@ -466,9 +512,9 @@ PyObject *pynk2_file_open(
 {
 	PyObject *string_object      = NULL;
 	libcerror_error_t *error     = NULL;
+	const char *filename_narrow  = NULL;
 	static char *function        = "pynk2_file_open";
 	static char *keyword_list[]  = { "filename", "mode", NULL };
-	const char *filename_narrow  = NULL;
 	char *mode                   = NULL;
 	int result                   = 0;
 
@@ -522,7 +568,7 @@ PyObject *pynk2_file_open(
 	if( result == -1 )
 	{
 		pynk2_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type unicode.",
 		 function );
 
@@ -539,7 +585,7 @@ PyObject *pynk2_file_open(
 
 		result = libnk2_file_open_wide(
 		          pynk2_file->file,
-	                  filename_wide,
+		          filename_wide,
 		          LIBNK2_OPEN_READ,
 		          &error );
 
@@ -559,16 +605,16 @@ PyObject *pynk2_file_open(
 		}
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libnk2_file_open(
 		          pynk2_file->file,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBNK2_OPEN_READ,
 		          &error );
 
@@ -599,17 +645,17 @@ PyObject *pynk2_file_open(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pynk2_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -621,16 +667,16 @@ PyObject *pynk2_file_open(
 
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   string_object );
+		                   string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   string_object );
+		                   string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libnk2_file_open(
 		          pynk2_file->file,
-	                  filename_narrow,
+		          filename_narrow,
 		          LIBNK2_OPEN_READ,
 		          &error );
 
@@ -672,9 +718,9 @@ PyObject *pynk2_file_open_file_object(
 {
 	PyObject *file_object       = NULL;
 	libcerror_error_t *error    = NULL;
-	char *mode                  = NULL;
-	static char *keyword_list[] = { "file_object", "mode", NULL };
 	static char *function       = "pynk2_file_open_file_object";
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	char *mode                  = NULL;
 	int result                  = 0;
 
 	if( pynk2_file == NULL )
@@ -841,8 +887,8 @@ PyObject *pynk2_file_get_ascii_codepage(
            pynk2_file_t *pynk2_file,
            PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
 {
-	libcerror_error_t *error    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
 	const char *codepage_string = NULL;
 	static char *function       = "pynk2_file_get_ascii_codepage";
 	int ascii_codepage          = 0;
@@ -1001,8 +1047,8 @@ PyObject *pynk2_file_set_ascii_codepage(
            PyObject *arguments,
            PyObject *keywords )
 {
-	static char *keyword_list[] = { "codepage", NULL };
 	char *codepage_string       = NULL;
+	static char *keyword_list[] = { "codepage", NULL };
 	int result                  = 0;
 
 	if( PyArg_ParseTupleAndKeywords(
@@ -1037,8 +1083,8 @@ int pynk2_file_set_ascii_codepage_setter(
      void *closure PYNK2_ATTRIBUTE_UNUSED )
 {
 	PyObject *utf8_string_object = NULL;
-	static char *function        = "pynk2_file_set_ascii_codepage_setter";
 	char *codepage_string        = NULL;
+	static char *function        = "pynk2_file_set_ascii_codepage_setter";
 	int result                   = 0;
 
 	PYNK2_UNREFERENCED_PARAMETER( closure )
@@ -1052,7 +1098,7 @@ int pynk2_file_set_ascii_codepage_setter(
 	if( result == -1 )
 	{
 		pynk2_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type unicode.",
 		 function );
 
@@ -1076,10 +1122,10 @@ int pynk2_file_set_ascii_codepage_setter(
 		}
 #if PY_MAJOR_VERSION >= 3
 		codepage_string = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		codepage_string = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		if( codepage_string == NULL )
 		{
@@ -1099,17 +1145,17 @@ int pynk2_file_set_ascii_codepage_setter(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
 		pynk2_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -1129,8 +1175,8 @@ int pynk2_file_set_ascii_codepage_setter(
 			return( -1 );
 		}
 		result = pynk2_file_set_ascii_codepage_from_string(
-			  pynk2_file,
-			  codepage_string );
+		          pynk2_file,
+		          codepage_string );
 
 		if( result != 1 )
 		{
@@ -1144,5 +1190,343 @@ int pynk2_file_set_ascii_codepage_setter(
 	 function );
 
 	return( -1 );
+}
+
+/* Retrieves the modification time
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_file_get_modification_time(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
+{
+	PyObject *date_time_object = NULL;
+	libcerror_error_t *error   = NULL;
+	static char *function      = "pynk2_file_get_modification_time";
+	uint64_t filetime          = 0;
+	int result                 = 0;
+
+	PYNK2_UNREFERENCED_PARAMETER( arguments )
+
+	if( pynk2_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_file_get_modification_time(
+	          pynk2_file->file,
+	          &filetime,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve modification time.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	date_time_object = pynk2_datetime_new_from_filetime(
+	                    filetime );
+
+	return( date_time_object );
+}
+
+/* Retrieves the modification time as an integer
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_file_get_modification_time_as_integer(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
+{
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pynk2_file_get_modification_time_as_integer";
+	uint64_t filetime        = 0;
+	int result               = 0;
+
+	PYNK2_UNREFERENCED_PARAMETER( arguments )
+
+	if( pynk2_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_file_get_modification_time(
+	          pynk2_file->file,
+	          &filetime,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve modification time.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	integer_object = pynk2_integer_unsigned_new_from_64bit(
+	                  (uint64_t) filetime );
+
+	return( integer_object );
+}
+
+/* Retrieves the number of items
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_file_get_number_of_items(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
+{
+	PyObject *integer_object = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pynk2_file_get_number_of_items";
+	int number_of_items      = 0;
+	int result               = 0;
+
+	PYNK2_UNREFERENCED_PARAMETER( arguments )
+
+	if( pynk2_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_file_get_number_of_items(
+	          pynk2_file->file,
+	          &number_of_items,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of items.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_items );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_items );
+#endif
+	return( integer_object );
+}
+
+/* Retrieves a specific item by index
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_file_get_item_by_index(
+           PyObject *pynk2_file,
+           int item_index )
+{
+	PyObject *item_object    = NULL;
+	libcerror_error_t *error = NULL;
+	libnk2_item_t *item      = NULL;
+	static char *function    = "pynk2_file_get_item_by_index";
+	int result               = 0;
+
+	if( pynk2_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_file_get_item(
+	          ( (pynk2_file_t *) pynk2_file )->file,
+	          item_index,
+	          &item,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve item: %d.",
+		 function,
+		 item_index );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	item_object = pynk2_item_new(
+	               &pynk2_item_type_object,
+	               item,
+	               (PyObject *) pynk2_file );
+
+	if( item_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create item object.",
+		 function );
+
+		goto on_error;
+	}
+	return( item_object );
+
+on_error:
+	if( item != NULL )
+	{
+		libnk2_item_free(
+		 &item,
+		 NULL );
+	}
+	return( NULL );
+}
+
+/* Retrieves a specific item
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_file_get_item(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *item_object       = NULL;
+	static char *keyword_list[] = { "item_index", NULL };
+	int item_index              = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "i",
+	     keyword_list,
+	     &item_index ) == 0 )
+	{
+		return( NULL );
+	}
+	item_object = pynk2_file_get_item_by_index(
+	               (PyObject *) pynk2_file,
+	               item_index );
+
+	return( item_object );
+}
+
+/* Retrieves a sequence and iterator object for the items
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_file_get_items(
+           pynk2_file_t *pynk2_file,
+           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
+{
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pynk2_file_get_items";
+	int number_of_items       = 0;
+	int result                = 0;
+
+	PYNK2_UNREFERENCED_PARAMETER( arguments )
+
+	if( pynk2_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_file_get_number_of_items(
+	          pynk2_file->file,
+	          &number_of_items,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of items.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	sequence_object = pynk2_items_new(
+	                   (PyObject *) pynk2_file,
+	                   &pynk2_file_get_item_by_index,
+	                   number_of_items );
+
+	if( sequence_object == NULL )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to create sequence object.",
+		 function );
+
+		return( NULL );
+	}
+	return( sequence_object );
 }
 

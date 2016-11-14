@@ -157,5 +157,5 @@ int item_file_write_item_value(
 }
 #endif
 
-#endif
+#endif /* !defined( _ITEM_FILE_H ) */
 

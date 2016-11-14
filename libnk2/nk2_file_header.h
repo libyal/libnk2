@@ -59,5 +59,5 @@ struct nk2_file_header
 }
 #endif
 
-#endif
+#endif /* !defined( _NK2_FILE_HEADER_H ) */
 

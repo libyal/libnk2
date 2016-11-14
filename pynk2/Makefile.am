@@ -19,6 +19,8 @@ pynk2_la_SOURCES = \
 	pynk2_file.c pynk2_file.h \
 	pynk2_file_object_io_handle.c pynk2_file_object_io_handle.h \
 	pynk2_integer.c pynk2_integer.h \
+	pynk2_item.c pynk2_item.h \
+	pynk2_items.c pynk2_items.h \
 	pynk2_libbfio.h \
 	pynk2_libcerror.h \
 	pynk2_libclocale.h \

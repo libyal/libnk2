@@ -136,7 +136,7 @@ int libnk2_file_set_ascii_codepage(
 LIBNK2_EXTERN \
 int libnk2_file_get_modification_time(
      libnk2_file_t *file,
-     uint64_t *modification_time,
+     uint64_t *filetime,
      libcerror_error_t **error );
 
 LIBNK2_EXTERN \
@@ -156,5 +156,5 @@ int libnk2_file_get_item(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_INTERNAL_FILE_H ) */
 

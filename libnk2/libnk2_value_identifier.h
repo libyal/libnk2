@@ -56,5 +56,5 @@ int libnk2_value_identifier_free(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_VALUE_IDENTIFIER_H ) */
 

@@ -49,5 +49,5 @@ struct nk2_file_footer
 }
 #endif
 
-#endif
+#endif /* !defined( _NK2_FILE_FOOTER_H ) */
 

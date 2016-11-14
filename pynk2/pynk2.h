@@ -57,5 +57,5 @@ PyMODINIT_FUNC initpynk2(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYNK2_H ) */
 
