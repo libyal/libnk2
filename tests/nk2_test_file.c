@@ -1232,19 +1232,19 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libnk2_file_get_ascii_codepage functions
+/* Tests the libnk2_file_signal_abort function
  * Returns 1 if successful or 0 if not
  */
-int nk2_test_file_get_ascii_codepage(
+int nk2_test_file_signal_abort(
      libnk2_file_t *file )
 {
 	libcerror_error_t *error = NULL;
-	int codepage             = 0;
 	int result               = 0;
 
-	result = libnk2_file_get_ascii_codepage(
+	/* Test regular cases
+	 */
+	result = libnk2_file_signal_abort(
 	          file,
-	          &codepage,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
@@ -1258,25 +1258,7 @@ int nk2_test_file_get_ascii_codepage(
 
 	/* Test error cases
 	 */
-	result = libnk2_file_get_ascii_codepage(
-	          NULL,
-	          &codepage,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        NK2_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libnk2_file_get_ascii_codepage(
-	          file,
+	result = libnk2_file_signal_abort(
 	          NULL,
 	          &error );
 
@@ -1303,11 +1285,89 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libnk2_file_set_ascii_codepage functions
+/* Tests the libnk2_file_get_ascii_codepage function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_file_get_ascii_codepage(
+     libnk2_file_t *file )
+{
+	libcerror_error_t *error  = NULL;
+	int ascii_codepage        = 0;
+	int ascii_codepage_is_set = 0;
+	int result                = 0;
+
+	/* Test regular cases
+	 */
+	result = libnk2_file_get_ascii_codepage(
+	          file,
+	          &ascii_codepage,
+	          &error );
+
+	NK2_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	ascii_codepage_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libnk2_file_get_ascii_codepage(
+	          NULL,
+	          &ascii_codepage,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( ascii_codepage_is_set != 0 )
+	{
+		result = libnk2_file_get_ascii_codepage(
+		          file,
+		          NULL,
+		          &error );
+
+		NK2_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		NK2_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_file_set_ascii_codepage function
  * Returns 1 if successful or 0 if not
  */
 int nk2_test_file_set_ascii_codepage(
-     void )
+     libnk2_file_t *file )
 {
 	int supported_codepages[ 15 ] = {
 		LIBNK2_CODEPAGE_ASCII,
@@ -1346,29 +1406,9 @@ int nk2_test_file_set_ascii_codepage(
 		LIBNK2_CODEPAGE_KOI8_U };
 
 	libcerror_error_t *error = NULL;
-	libnk2_file_t *file      = NULL;
 	int codepage             = 0;
 	int index                = 0;
 	int result               = 0;
-
-	/* Initialize test
-	 */
-	result = libnk2_file_initialize(
-	          &file,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        NK2_TEST_ASSERT_IS_NOT_NULL(
-         "file",
-         file );
-
-        NK2_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
 
 	/* Test set ASCII codepage
 	 */
@@ -1436,18 +1476,15 @@ int nk2_test_file_set_ascii_codepage(
 	}
 	/* Clean up
 	 */
-	result = libnk2_file_free(
-	          &file,
+	result = libnk2_file_set_ascii_codepage(
+	          file,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
 	 1 );
-
-        NK2_TEST_ASSERT_IS_NULL(
-         "file",
-         file );
 
         NK2_TEST_ASSERT_IS_NULL(
          "error",
@@ -1461,11 +1498,161 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( file != NULL )
+	return( 0 );
+}
+
+/* Tests the libnk2_file_get_modification_time function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_file_get_modification_time(
+     libnk2_file_t *file )
+{
+	libcerror_error_t *error     = NULL;
+	uint64_t modification_time   = 0;
+	int modification_time_is_set = 0;
+	int result                   = 0;
+
+	/* Test regular cases
+	 */
+	result = libnk2_file_get_modification_time(
+	          file,
+	          &modification_time,
+	          &error );
+
+	NK2_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	modification_time_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libnk2_file_get_modification_time(
+	          NULL,
+	          &modification_time,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( modification_time_is_set != 0 )
 	{
-		libnk2_file_free(
-		 &file,
-		 NULL );
+		result = libnk2_file_get_modification_time(
+		          file,
+		          NULL,
+		          &error );
+
+		NK2_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		NK2_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_file_get_number_of_items function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_file_get_number_of_items(
+     libnk2_file_t *file )
+{
+	libcerror_error_t *error   = NULL;
+	int number_of_items        = 0;
+	int number_of_items_is_set = 0;
+	int result                 = 0;
+
+	/* Test regular cases
+	 */
+	result = libnk2_file_get_number_of_items(
+	          file,
+	          &number_of_items,
+	          &error );
+
+	NK2_TEST_ASSERT_NOT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	number_of_items_is_set = result;
+
+	/* Test error cases
+	 */
+	result = libnk2_file_get_number_of_items(
+	          NULL,
+	          &number_of_items,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( number_of_items_is_set != 0 )
+	{
+		result = libnk2_file_get_number_of_items(
+		          file,
+		          NULL,
+		          &error );
+
+		NK2_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		NK2_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
 	}
 	return( 0 );
 }
@@ -1525,10 +1712,6 @@ int main(
 	 "libnk2_file_free",
 	 nk2_test_file_free );
 
-	NK2_TEST_RUN(
-	 "libnk2_file_set_ascii_codepage",
-	 nk2_test_file_set_ascii_codepage );
-
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
@@ -1582,11 +1765,9 @@ int main(
 	         error );
 
 		NK2_TEST_RUN_WITH_ARGS(
-		 "libnk2_file_get_ascii_codepage",
-		 nk2_test_file_get_ascii_codepage,
+		 "libnk2_file_signal_abort",
+		 nk2_test_file_signal_abort,
 		 file );
-
-		/* TODO: add tests for libnk2_file_signal_abort */
 
 #if defined( __GNUC__ )
 
@@ -1594,9 +1775,25 @@ int main(
 
 #endif /* defined( __GNUC__ ) */
 
-		/* TODO: add tests for libnk2_file_get_modification_time */
+		NK2_TEST_RUN_WITH_ARGS(
+		 "libnk2_file_get_ascii_codepage",
+		 nk2_test_file_get_ascii_codepage,
+		 file );
 
-		/* TODO: add tests for libnk2_file_get_number_of_items */
+		NK2_TEST_RUN_WITH_ARGS(
+		 "libnk2_file_set_ascii_codepage",
+		 nk2_test_file_set_ascii_codepage,
+		 file );
+
+		NK2_TEST_RUN_WITH_ARGS(
+		 "libnk2_file_get_modification_time",
+		 nk2_test_file_get_modification_time,
+		 file );
+
+		NK2_TEST_RUN_WITH_ARGS(
+		 "libnk2_file_get_number_of_items",
+		 nk2_test_file_get_number_of_items,
+		 file );
 
 		/* TODO: add tests for libnk2_file_get_item */
 

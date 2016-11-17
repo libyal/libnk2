@@ -119,6 +119,7 @@ nk2_test_notify_LDADD = \
 	../libnk2/libnk2.la
 
 nk2_test_support_SOURCES = \
+	nk2_test_libbfio.h \
 	nk2_test_libcerror.h \
 	nk2_test_libclocale.h \
 	nk2_test_libcsystem.h \
@@ -129,6 +130,9 @@ nk2_test_support_SOURCES = \
 
 nk2_test_support_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
