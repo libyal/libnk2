@@ -39,7 +39,9 @@ libnk2_la_SOURCES = \
 	libnk2_libfvalue.h \
 	libnk2_libuna.h \
 	libnk2_mapi.h \
+	libnk2_mapi_value.c libnk2_mapi_value.h \
 	libnk2_notify.c libnk2_notify.h \
+	libnk2_record_entry.c libnk2_record_entry.h \
 	libnk2_support.c libnk2_support.h \
 	libnk2_types.h \
 	libnk2_unused.h \

@@ -1083,15 +1083,15 @@ int export_handle_export_item_values(
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
-	item_file_t *item_file     = NULL;
-	uint8_t *value_data        = NULL;
-	static char *function      = "export_handle_export_item_values";
-	size_t value_data_size     = 0;
-	uint32_t entry_index       = 0;
-	uint32_t entry_type        = 0;
-	uint32_t number_of_entries = 0;
-	uint32_t value_type        = LIBNK2_VALUE_TYPE_UNSPECIFIED;
-	int result                 = 0;
+	item_file_t *item_file = NULL;
+	uint8_t *value_data    = NULL;
+	static char *function  = "export_handle_export_item_values";
+	size_t value_data_size = 0;
+	uint32_t entry_type    = 0;
+	uint32_t value_type    = LIBNK2_VALUE_TYPE_UNSPECIFIED;
+	int entry_index        = 0;
+	int number_of_entries  = 0;
+	int result             = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1172,7 +1172,7 @@ int export_handle_export_item_values(
 	if( item_file_write_value_integer_32bit_as_decimal(
 	     item_file,
 	     _SYSTEM_STRING( "Number of entries:\t" ),
-	     number_of_entries,
+	     (uint32_t) number_of_entries,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1191,7 +1191,7 @@ int export_handle_export_item_values(
 		if( item_file_write_value_integer_32bit_as_decimal(
 		     item_file,
 		     _SYSTEM_STRING( "Entry:\t\t\t" ),
-		     entry_index,
+		     (uint32_t) entry_index,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1214,7 +1214,7 @@ int export_handle_export_item_values(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve entry type of entry: %" PRIu32 ".",
+			 "%s: unable to retrieve entry type of entry: %d.",
 			 function,
 			 entry_index );
 
@@ -1265,7 +1265,7 @@ int export_handle_export_item_values(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve entry value of entry: %" PRIu32 ".",
+			 "%s: unable to retrieve entry value of entry: %d.",
 			 function,
 			 entry_index );
 

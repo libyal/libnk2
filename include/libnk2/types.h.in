@@ -203,6 +203,7 @@ typedef int64_t off64_t;
  */
 typedef intptr_t libnk2_file_t;
 typedef intptr_t libnk2_item_t;
+typedef intptr_t libnk2_record_entry_t;
 
 #ifdef __cplusplus
 }

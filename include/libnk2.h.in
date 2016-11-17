@@ -309,22 +309,6 @@ int libnk2_file_get_item(
      libnk2_error_t **error );
 
 /* -------------------------------------------------------------------------
- * File functions - deprecated
- * ------------------------------------------------------------------------- */
-
-/* Retrieves the amount of items
- * Returns 1 if successful or -1 on error
- *
- * This function is deprecated use libnk2_file_get_number_of_items instead
- */
-LIBNK2_DEPRECATED \
-LIBNK2_EXTERN \
-int libnk2_file_get_amount_of_items(
-     libnk2_file_t *file,
-     int *amount_of_items,
-     libnk2_error_t **error );
-
-/* -------------------------------------------------------------------------
  * Item functions
  * ------------------------------------------------------------------------- */
 
@@ -352,12 +336,30 @@ int libnk2_item_get_identifier(
 LIBNK2_EXTERN \
 int libnk2_item_get_number_of_entries(
      libnk2_item_t *item,
-     uint32_t *number_of_entries,
+     int *number_of_entries,
      libnk2_error_t **error );
 
-/* Retrieves the entry and value type of a specific entry
+/* Retrieves a specific entry from the item
  * Returns 1 if successful or -1 on error
  */
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_by_index(
+     libnk2_item_t *item,
+     int entry_index,
+     libnk2_record_entry_t **record_entry,
+     libnk2_error_t **error );
+
+/* -------------------------------------------------------------------------
+ * Item functions - deprecated
+ * ------------------------------------------------------------------------- */
+
+/* Retrieves the entry and value type of a specific entry
+ *
+ * This function is deprecated use libnk2_record_entry_get_entry_type instead
+ *
+ * Returns 1 if successful or -1 on error
+ */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_type(
      libnk2_item_t *item,
@@ -367,8 +369,12 @@ int libnk2_item_get_entry_type(
      libnk2_error_t **error );
 
 /* Retrieves the value type of a specific entry type
+ *
+ * This function is deprecated use libnk2_record_entry_get_value_type instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_value_type(
      libnk2_item_t *item,
@@ -383,8 +389,11 @@ int libnk2_item_get_value_type(
  * matching of the value type. In this case the value type must be filled
  * with the corresponding value type
  *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value(
      libnk2_item_t *item,
@@ -396,8 +405,12 @@ int libnk2_item_get_entry_value(
      libnk2_error_t **error );
 
 /* Retrieves the boolean value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_boolean(
      libnk2_item_t *item,
@@ -406,8 +419,12 @@ int libnk2_item_get_entry_value_boolean(
      libnk2_error_t **error );
 
 /* Retrieves the 32-bit value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_32bit(
      libnk2_item_t *item,
@@ -416,8 +433,12 @@ int libnk2_item_get_entry_value_32bit(
      libnk2_error_t **error );
 
 /* Retrieves the 64-bit value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_64bit(
      libnk2_item_t *item,
@@ -426,8 +447,12 @@ int libnk2_item_get_entry_value_64bit(
      libnk2_error_t **error );
 
 /* Retrieves the 64-bit filetime value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_filetime(
      libnk2_item_t *item,
@@ -436,8 +461,12 @@ int libnk2_item_get_entry_value_filetime(
      libnk2_error_t **error );
 
 /* Retrieves the size value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_size(
      libnk2_item_t *item,
@@ -446,8 +475,12 @@ int libnk2_item_get_entry_value_size(
      libnk2_error_t **error );
 
 /* Retrieves the floating point value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_floating_point(
      libnk2_item_t *item,
@@ -458,8 +491,12 @@ int libnk2_item_get_entry_value_floating_point(
 /* Retrieves the size of the UTF-8 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The returned size includes the end of string character
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_utf8_string_size(
      libnk2_item_t *item,
@@ -470,8 +507,12 @@ int libnk2_item_get_entry_value_utf8_string_size(
 /* Retrieves the UTF-8 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The size should include the end of string character
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_utf8_string(
      libnk2_item_t *item,
@@ -483,8 +524,12 @@ int libnk2_item_get_entry_value_utf8_string(
 /* Retrieves the size of the UTF-16 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The returned size includes the end of string character
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_utf16_string_size(
      libnk2_item_t *item,
@@ -495,8 +540,12 @@ int libnk2_item_get_entry_value_utf16_string_size(
 /* Retrieves the UTF-16 encoded string of a specific entry
  * The function uses a codepage if necessary, it uses the codepage set for the library
  * The size should include the end of string character
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_utf16_string(
      libnk2_item_t *item,
@@ -506,8 +555,12 @@ int libnk2_item_get_entry_value_utf16_string(
      libnk2_error_t **error );
 
 /* Retrieves the size of a binary data value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_binary_data_size(
      libnk2_item_t *item,
@@ -516,8 +569,12 @@ int libnk2_item_get_entry_value_binary_data_size(
      libnk2_error_t **error );
 
 /* Retrieves the binary data value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_binary_data(
      libnk2_item_t *item,
@@ -527,8 +584,12 @@ int libnk2_item_get_entry_value_binary_data(
      libnk2_error_t **error );
 
 /* Retrieves the GUID value of a specific entry
+ *
+ * This function is deprecated use TODO instead
+ *
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
+LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
 int libnk2_item_get_entry_value_guid(
      libnk2_item_t *item,
@@ -538,20 +599,15 @@ int libnk2_item_get_entry_value_guid(
      libnk2_error_t **error );
 
 /* -------------------------------------------------------------------------
- * Item functions - deprecated
+ * Record entry functions
  * ------------------------------------------------------------------------- */
 
-/* Retrieves the amount of entries
- * All sets in an item contain the same amount of entries
+/* Frees a record entry
  * Returns 1 if successful or -1 on error
- *
- * This function is deprecated use libnk2_item_get_number_of_entries instead
  */
-LIBNK2_DEPRECATED \
 LIBNK2_EXTERN \
-int libnk2_item_get_amount_of_entries(
-     libnk2_item_t *item,
-     uint32_t *amount_of_entries,
+int libnk2_record_entry_free(
+     libnk2_record_entry_t **record_entry,
      libnk2_error_t **error );
 
 #if defined( __cplusplus )

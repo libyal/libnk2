@@ -34,7 +34,16 @@ extern "C" {
 
 #if defined( HAVE_DEBUG_OUTPUT )
 
-int libnk2_debug_mapi_value_print(
+int libnk2_debug_print_filetime_value(
+     const char *function_name,
+     const char *value_name,
+     const uint8_t *byte_stream,
+     size_t byte_stream_size,
+     int byte_order,
+     uint32_t string_format_flags,
+     libcerror_error_t **error );
+
+int libnk2_debug_print_mapi_value(
      uint32_t entry_type,
      uint32_t value_type,
      uint8_t *value_data,
@@ -46,7 +55,7 @@ int libnk2_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
 #if defined( __cplusplus )
 }

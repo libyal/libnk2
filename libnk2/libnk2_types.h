@@ -34,12 +34,14 @@
 /* The following type definitions hide internal data structures
  */
 #if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
-typedef struct libnk2_file {}	libnk2_file_t;
-typedef struct libnk2_item {}	libnk2_item_t;
+typedef struct libnk2_file {}		libnk2_file_t;
+typedef struct libnk2_item {}		libnk2_item_t;
+typedef struct libnk2_record_entry {}	libnk2_record_entry_t;
 
 #else
 typedef intptr_t libnk2_file_t;
 typedef intptr_t libnk2_item_t;
+typedef intptr_t libnk2_record_entry_t;
 
 #endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 

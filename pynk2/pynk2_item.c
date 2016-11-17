@@ -325,7 +325,7 @@ PyObject *pynk2_item_get_number_of_entries(
 	PyObject *integer_object = NULL;
 	libcerror_error_t *error = NULL;
 	static char *function    = "pynk2_item_get_number_of_entries";
-	uint32_t value_32bit     = 0;
+	int value_32bit          = 0;
 	int result               = 0;
 
 	PYNK2_UNREFERENCED_PARAMETER( arguments )

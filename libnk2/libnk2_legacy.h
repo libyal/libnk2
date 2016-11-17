@@ -36,15 +36,123 @@ extern "C" {
 #if !defined( HAVE_LOCAL_LIBNK2 )
 
 LIBNK2_EXTERN \
-int libnk2_file_get_amount_of_items(
-     libnk2_file_t *file,
-     int *amount_of_items,
+int libnk2_item_get_entry_type(
+     libnk2_item_t *item,
+     int entry_index,
+     uint32_t *entry_type,
+     uint32_t *value_type,
      libcerror_error_t **error );
 
 LIBNK2_EXTERN \
-int libnk2_item_get_amount_of_entries(
+int libnk2_item_get_value_type(
      libnk2_item_t *item,
-     uint32_t *amount_of_entries,
+     uint32_t entry_type,
+     uint32_t *value_type,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint32_t *value_type,
+     uint8_t **value_data,
+     size_t *value_data_size,
+     uint8_t flags,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_boolean(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *entry_value,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_32bit(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint32_t *entry_value,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_64bit(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint64_t *entry_value,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_filetime(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint64_t *entry_value,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *entry_value,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_floating_point(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     double *entry_value,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf8_string_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *utf8_string_size,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf8_string(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *utf8_string,
+     size_t utf8_string_size,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf16_string_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *utf16_string_size,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_utf16_string(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint16_t *utf16_string,
+     size_t utf16_string_size,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_binary_data_size(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     size_t *size,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_binary_data(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *binary_data,
+     size_t size,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_item_get_entry_value_guid(
+     libnk2_item_t *item,
+     uint32_t entry_type,
+     uint8_t *guid,
+     size_t size,
      libcerror_error_t **error );
 
 #endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
