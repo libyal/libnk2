@@ -83,23 +83,15 @@ PyObject *pynk2_record_entry_get_data_as_integer(
            pynk2_record_entry_t *pynk2_record_entry,
            PyObject *arguments );
 
-PyObject *pynk2_record_entry_get_data_as_filetime(
-           pynk2_record_entry_t *pynk2_record_entry,
-           PyObject *arguments );
-
-PyObject *pynk2_record_entry_get_data_as_filetime_as_integer(
-           pynk2_record_entry_t *pynk2_record_entry,
-           PyObject *arguments );
-
-PyObject *pynk2_record_entry_get_data_as_floatingtime(
-           pynk2_record_entry_t *pynk2_record_entry,
-           PyObject *arguments );
-
-PyObject *pynk2_record_entry_get_data_as_floatingtime_as_integer(
+PyObject *pynk2_record_entry_get_data_as_datetime(
            pynk2_record_entry_t *pynk2_record_entry,
            PyObject *arguments );
 
 PyObject *pynk2_record_entry_get_data_as_size(
+           pynk2_record_entry_t *pynk2_record_entry,
+           PyObject *arguments );
+
+PyObject *pynk2_record_entry_get_data_as_floating_point(
            pynk2_record_entry_t *pynk2_record_entry,
            PyObject *arguments );
 

@@ -1199,11 +1199,11 @@ PyObject *pynk2_file_get_modification_time(
            pynk2_file_t *pynk2_file,
            PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
 {
-	PyObject *date_time_object = NULL;
-	libcerror_error_t *error   = NULL;
-	static char *function      = "pynk2_file_get_modification_time";
-	uint64_t filetime          = 0;
-	int result                 = 0;
+	PyObject *datetime_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pynk2_file_get_modification_time";
+	uint64_t filetime         = 0;
+	int result                = 0;
 
 	PYNK2_UNREFERENCED_PARAMETER( arguments )
 
@@ -1245,10 +1245,10 @@ PyObject *pynk2_file_get_modification_time(
 
 		return( Py_None );
 	}
-	date_time_object = pynk2_datetime_new_from_filetime(
-	                    filetime );
+	datetime_object = pynk2_datetime_new_from_filetime(
+	                   filetime );
 
-	return( date_time_object );
+	return( datetime_object );
 }
 
 /* Retrieves the modification time as an integer

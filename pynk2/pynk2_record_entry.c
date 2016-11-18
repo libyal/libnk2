@@ -73,33 +73,12 @@ PyMethodDef pynk2_record_entry_object_methods[] = {
 	  "\n"
 	  "Retrieves the data as an integer." },
 
-	{ "get_data_as_filetime",
-	  (PyCFunction) pynk2_record_entry_get_data_as_filetime,
+	{ "get_data_as_datetime",
+	  (PyCFunction) pynk2_record_entry_get_data_as_datetime,
 	  METH_NOARGS,
-	  "get_data_as_filetime() -> Datetime or None\n"
+	  "get_data_as_datetime() -> Datetime or None\n"
 	  "\n"
-	  "Retrieves the data as filetime." },
-
-	{ "get_data_as_filetime_as_integer",
-	  (PyCFunction) pynk2_record_entry_get_data_as_filetime_as_integer,
-	  METH_NOARGS,
-	  "get_data_as_filetime_as_integer() -> Integer or None\n"
-	  "\n"
-	  "Retrieves the data as filetime as a 64-bit integer containing a FILETIME value." },
-
-	{ "get_data_as_floatingtime",
-	  (PyCFunction) pynk2_record_entry_get_data_as_floatingtime,
-	  METH_NOARGS,
-	  "get_data_as_floatingtime() -> Datetime or None\n"
-	  "\n"
-	  "Retrieves the data as floatingtime." },
-
-	{ "get_data_as_floatingtime_as_integer",
-	  (PyCFunction) pynk2_record_entry_get_data_as_floatingtime_as_integer,
-	  METH_NOARGS,
-	  "get_data_as_floatingtime_as_integer() -> Integer or None\n"
-	  "\n"
-	  "Retrieves the data as floatingtime as a 64-bit integer containing a floatingtime value." },
+	  "Retrieves the data as a datetime object." },
 
 	{ "get_data_as_size",
 	  (PyCFunction) pynk2_record_entry_get_data_as_size,
@@ -107,6 +86,13 @@ PyMethodDef pynk2_record_entry_object_methods[] = {
 	  "get_data_as_size() -> Integer or None\n"
 	  "\n"
 	  "Retrieves the data as size." },
+
+	{ "get_data_as_floating_point",
+	  (PyCFunction) pynk2_record_entry_get_data_as_floating_point,
+	  METH_NOARGS,
+	  "get_data_as_floating_point() -> Float or None\n"
+	  "\n"
+	  "Retrieves the data as a floating point." },
 
 	{ "get_data_as_string",
 	  (PyCFunction) pynk2_record_entry_get_data_as_string,
@@ -158,22 +144,22 @@ PyGetSetDef pynk2_record_entry_object_get_set_definitions[] = {
 	  "The data as an integer.",
 	  NULL },
 
-	{ "data_as_filetime",
-	  (getter) pynk2_record_entry_get_data_as_filetime,
+	{ "data_as_datetime",
+	  (getter) pynk2_record_entry_get_data_as_datetime,
 	  (setter) 0,
-	  "The data as filetime.",
-	  NULL },
-
-	{ "data_as_floatingtime",
-	  (getter) pynk2_record_entry_get_data_as_floatingtime,
-	  (setter) 0,
-	  "The data as floatingtime.",
+	  "The data as a datetime object.",
 	  NULL },
 
 	{ "data_as_size",
 	  (getter) pynk2_record_entry_get_data_as_size,
 	  (setter) 0,
 	  "The data as size.",
+	  NULL },
+
+	{ "data_as_floating_point",
+	  (getter) pynk2_record_entry_get_data_as_floating_point,
+	  (setter) 0,
+	  "The data as a floating point.",
 	  NULL },
 
 	{ "data_as_string",
@@ -866,6 +852,20 @@ PyObject *pynk2_record_entry_get_data_as_integer(
 			                  value_64bit );
 			break;
 
+		case LIBNK2_VALUE_TYPE_FLOATINGTIME:
+			Py_BEGIN_ALLOW_THREADS
+
+			result = libnk2_record_entry_get_data_as_floatingtime(
+			          pynk2_record_entry->record_entry,
+			          &value_64bit,
+			          &error );
+
+			Py_END_ALLOW_THREADS
+
+			integer_object = pynk2_integer_unsigned_new_from_64bit(
+			                  value_64bit );
+			break;
+
 		default:
 			PyErr_Format(
 			 PyExc_IOError,
@@ -890,18 +890,19 @@ PyObject *pynk2_record_entry_get_data_as_integer(
 	return( integer_object );
 }
 
-/* Retrieves the data as filetime
+/* Retrieves the data as an datetime value
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pynk2_record_entry_get_data_as_filetime(
+PyObject *pynk2_record_entry_get_data_as_datetime(
            pynk2_record_entry_t *pynk2_record_entry,
            PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
 {
-	PyObject *date_time_object = NULL;
-	libcerror_error_t *error   = NULL;
-	static char *function      = "pynk2_record_entry_get_data_as_filetime";
-	uint64_t filetime          = 0;
-	int result                 = 0;
+	PyObject *datetime_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pynk2_record_entry_get_data_as_datetime";
+	uint64_t value_64bit      = 0;
+	uint32_t value_type       = 0;
+	int result                = 0;
 
 	PYNK2_UNREFERENCED_PARAMETER( arguments )
 
@@ -916,19 +917,19 @@ PyObject *pynk2_record_entry_get_data_as_filetime(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libnk2_record_entry_get_data_as_filetime(
+	result = libnk2_record_entry_get_value_type(
 	          pynk2_record_entry->record_entry,
-	          &filetime,
+	          &value_type,
 	          &error );
 
 	Py_END_ALLOW_THREADS
 
-	if( result == -1 )
+	if( result != 1 )
 	{
 		pynk2_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve data as filetime.",
+		 "%s: unable to retrieve value type.",
 		 function );
 
 		libcerror_error_free(
@@ -936,58 +937,50 @@ PyObject *pynk2_record_entry_get_data_as_filetime(
 
 		return( NULL );
 	}
-	else if( result == 0 )
+	switch( value_type )
 	{
-		Py_IncRef(
-		 Py_None );
+		case LIBNK2_VALUE_TYPE_FILETIME:
+			Py_BEGIN_ALLOW_THREADS
 
-		return( Py_None );
+			result = libnk2_record_entry_get_data_as_filetime(
+			          pynk2_record_entry->record_entry,
+			          &value_64bit,
+			          &error );
+
+			Py_END_ALLOW_THREADS
+
+			datetime_object = pynk2_datetime_new_from_filetime(
+			                   value_64bit );
+			break;
+
+		case LIBNK2_VALUE_TYPE_FLOATINGTIME:
+			Py_BEGIN_ALLOW_THREADS
+
+			result = libnk2_record_entry_get_data_as_floatingtime(
+			          pynk2_record_entry->record_entry,
+			          &value_64bit,
+			          &error );
+
+			Py_END_ALLOW_THREADS
+
+			datetime_object = pynk2_datetime_new_from_floatingtime(
+			                   value_64bit );
+			break;
+
+		default:
+			PyErr_Format(
+			 PyExc_IOError,
+			 "%s: value is not an datetime type.",
+			 function );
+
+			return( NULL );
 	}
-	date_time_object = pynk2_datetime_new_from_filetime(
-	                    filetime );
-
-	return( date_time_object );
-}
-
-/* Retrieves the data as filetime as an integer
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pynk2_record_entry_get_data_as_filetime_as_integer(
-           pynk2_record_entry_t *pynk2_record_entry,
-           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
-{
-	PyObject *integer_object = NULL;
-	libcerror_error_t *error = NULL;
-	static char *function    = "pynk2_record_entry_get_data_as_filetime_as_integer";
-	uint64_t filetime        = 0;
-	int result               = 0;
-
-	PYNK2_UNREFERENCED_PARAMETER( arguments )
-
-	if( pynk2_record_entry == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid record entry.",
-		 function );
-
-		return( NULL );
-	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libnk2_record_entry_get_data_as_filetime(
-	          pynk2_record_entry->record_entry,
-	          &filetime,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
 	if( result == -1 )
 	{
 		pynk2_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to retrieve data as filetime.",
+		 "%s: unable to retrieve datetime value.",
 		 function );
 
 		libcerror_error_free(
@@ -995,135 +988,7 @@ PyObject *pynk2_record_entry_get_data_as_filetime_as_integer(
 
 		return( NULL );
 	}
-	else if( result == 0 )
-	{
-		Py_IncRef(
-		 Py_None );
-
-		return( Py_None );
-	}
-	integer_object = pynk2_integer_unsigned_new_from_64bit(
-	                  (uint64_t) filetime );
-
-	return( integer_object );
-}
-
-/* Retrieves the data as floatingtime
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pynk2_record_entry_get_data_as_floatingtime(
-           pynk2_record_entry_t *pynk2_record_entry,
-           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
-{
-	PyObject *date_time_object = NULL;
-	libcerror_error_t *error   = NULL;
-	static char *function      = "pynk2_record_entry_get_data_as_floatingtime";
-	uint64_t floatingtime      = 0;
-	int result                 = 0;
-
-	PYNK2_UNREFERENCED_PARAMETER( arguments )
-
-	if( pynk2_record_entry == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid record entry.",
-		 function );
-
-		return( NULL );
-	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libnk2_record_entry_get_data_as_floatingtime(
-	          pynk2_record_entry->record_entry,
-	          &floatingtime,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result == -1 )
-	{
-		pynk2_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to retrieve data as floatingtime.",
-		 function );
-
-		libcerror_error_free(
-		 &error );
-
-		return( NULL );
-	}
-	else if( result == 0 )
-	{
-		Py_IncRef(
-		 Py_None );
-
-		return( Py_None );
-	}
-	date_time_object = pynk2_datetime_new_from_floatingtime(
-	                    floatingtime );
-
-	return( date_time_object );
-}
-
-/* Retrieves the data as floatingtime as an integer
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pynk2_record_entry_get_data_as_floatingtime_as_integer(
-           pynk2_record_entry_t *pynk2_record_entry,
-           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
-{
-	PyObject *integer_object = NULL;
-	libcerror_error_t *error = NULL;
-	static char *function    = "pynk2_record_entry_get_data_as_floatingtime_as_integer";
-	uint64_t floatingtime    = 0;
-	int result               = 0;
-
-	PYNK2_UNREFERENCED_PARAMETER( arguments )
-
-	if( pynk2_record_entry == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid record entry.",
-		 function );
-
-		return( NULL );
-	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libnk2_record_entry_get_data_as_floatingtime(
-	          pynk2_record_entry->record_entry,
-	          &floatingtime,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result == -1 )
-	{
-		pynk2_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to retrieve data as floatingtime.",
-		 function );
-
-		libcerror_error_free(
-		 &error );
-
-		return( NULL );
-	}
-	else if( result == 0 )
-	{
-		Py_IncRef(
-		 Py_None );
-
-		return( Py_None );
-	}
-	integer_object = pynk2_integer_unsigned_new_from_64bit(
-	                  (uint64_t) floatingtime );
-
-	return( integer_object );
+	return( datetime_object );
 }
 
 /* Retrieves the data as size
@@ -1176,6 +1041,65 @@ PyObject *pynk2_record_entry_get_data_as_size(
 	                  (uint64_t) data_as_size );
 
 	return( integer_object );
+}
+
+/* Retrieves the data as floating point
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_record_entry_get_data_as_floating_point(
+           pynk2_record_entry_t *pynk2_record_entry,
+           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
+{
+	PyObject *float_object   = NULL;
+	libcerror_error_t *error = NULL;
+	static char *function    = "pynk2_record_entry_get_data_as_floating_point";
+	double value_double      = 0;
+	int result               = 0;
+
+	PYNK2_UNREFERENCED_PARAMETER( arguments )
+
+	if( pynk2_record_entry == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid record entry.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_record_entry_get_data_as_floating_point(
+	          pynk2_record_entry->record_entry,
+	          &value_double,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result == -1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve data as floating point.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	else if( result == 0 )
+	{
+		Py_IncRef(
+		 Py_None );
+
+		return( Py_None );
+	}
+	float_object = PyFloat_FromDouble(
+	                value_double );
+
+	return( float_object );
 }
 
 /* Retrieves the data as a string
