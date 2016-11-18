@@ -303,7 +303,7 @@ int main(
 
 	/* TODO: add tests for libnk2_io_handle_read_items */
 
-	/* TODO: add tests for libnk2_io_handle_read_item_values */
+	/* TODO: add tests for libnk2_io_handle_read_record_entries */
 
 	/* TODO: add tests for libnk2_io_handle_read_file_footer */
 

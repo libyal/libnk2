@@ -51,6 +51,7 @@ check_PROGRAMS = \
 	nk2_test_io_handle \
 	nk2_test_item \
 	nk2_test_notify \
+	nk2_test_record_entry \
 	nk2_test_support
 
 nk2_test_error_SOURCES = \
@@ -115,6 +116,18 @@ nk2_test_notify_SOURCES = \
 
 nk2_test_notify_LDADD = \
 	../libnk2/libnk2.la
+
+nk2_test_record_entry_SOURCES = \
+	nk2_test_libcerror.h \
+	nk2_test_libnk2.h \
+	nk2_test_macros.h \
+	nk2_test_memory.c nk2_test_memory.h \
+	nk2_test_record_entry.c \
+	nk2_test_unused.h
+
+nk2_test_record_entry_LDADD = \
+	../libnk2/libnk2.la \
+	@LIBCERROR_LIBADD@
 
 nk2_test_support_SOURCES = \
 	nk2_test_libbfio.h \

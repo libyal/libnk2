@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2_LIBBFIO_LIBBFIO_H )
-#define _NK2_LIBBFIO_LIBBFIO_H
+#if !defined( _NK2_TEST_LIBBFIO_H )
+#define _NK2_TEST_LIBBFIO_H
 
 #include <common.h>
 
@@ -54,5 +54,5 @@
 
 #endif /* defined( HAVE_LOCAL_LIBBFIO ) */
 
-#endif /* !defined( _NK2_LIBBFIO_LIBBFIO_H ) */
+#endif /* !defined( _NK2_TEST_LIBBFIO_H ) */
 

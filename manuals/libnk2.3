@@ -1,4 +1,4 @@
-.Dd November 14, 2016
+.Dd November 18, 2016
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
@@ -87,39 +87,49 @@ Item functions
 .Ft int
 .Fn libnk2_item_get_identifier "libnk2_item_t *item, uint32_t *identifier, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_number_of_entries "libnk2_item_t *item, uint32_t *number_of_entries, libnk2_error_t **error"
+.Fn libnk2_item_get_number_of_entries "libnk2_item_t *item, int *number_of_entries, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_type "libnk2_item_t *item, int entry_index, uint32_t *entry_type, uint32_t *value_type, libnk2_error_t **error"
+.Fn libnk2_item_get_entry_by_index "libnk2_item_t *item, int entry_index, libnk2_record_entry_t **record_entry, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_value_type "libnk2_item_t *item, uint32_t entry_type, uint32_t *value_type, libnk2_error_t **error"
+.Fn libnk2_item_get_entry_by_type "libnk2_item_t *item, uint32_t entry_type, uint32_t value_type, libnk2_record_entry_t **record_entry, uint8_t flags, libnk2_error_t **error"
+.Pp
+Record entry functions
 .Ft int
-.Fn libnk2_item_get_entry_value "libnk2_item_t *item, uint32_t entry_type, uint32_t *value_type, uint8_t **value_data, size_t *value_data_size, uint8_t flags, libnk2_error_t **error"
+.Fn libnk2_record_entry_free "libnk2_record_entry_t **record_entry, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_boolean "libnk2_item_t *item, uint32_t entry_type, uint8_t *entry_value, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_entry_type "libnk2_record_entry_t *record_entry, uint32_t *entry_type, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_32bit "libnk2_item_t *item, uint32_t entry_type, uint32_t *entry_value, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_value_type "libnk2_record_entry_t *record_entry, uint32_t *value_type, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_64bit "libnk2_item_t *item, uint32_t entry_type, uint64_t *entry_value, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_size "libnk2_record_entry_t *record_entry, size_t *data_size, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_filetime "libnk2_item_t *item, uint32_t entry_type, uint64_t *entry_value, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data "libnk2_record_entry_t *record_entry, uint8_t *data, size_t data_size, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_size "libnk2_item_t *item, uint32_t entry_type, size_t *entry_value, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_boolean "libnk2_record_entry_t *record_entry, uint8_t *value_boolean, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_floating_point "libnk2_item_t *item, uint32_t entry_type, double *entry_value, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_16bit_integer "libnk2_record_entry_t *record_entry, uint16_t *value_16bit, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_utf8_string_size "libnk2_item_t *item, uint32_t entry_type, size_t *utf8_string_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_32bit_integer "libnk2_record_entry_t *record_entry, uint32_t *value_32bit, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_utf8_string "libnk2_item_t *item, uint32_t entry_type, uint8_t *utf8_string, size_t utf8_string_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_64bit_integer "libnk2_record_entry_t *record_entry, uint64_t *value_64bit, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_utf16_string_size "libnk2_item_t *item, uint32_t entry_type, size_t *utf16_string_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_filetime "libnk2_record_entry_t *record_entry, uint64_t *value_64bit, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_utf16_string "libnk2_item_t *item, uint32_t entry_type, uint16_t *utf16_string, size_t utf16_string_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_floatingtime "libnk2_record_entry_t *record_entry, uint64_t *value_64bit, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_binary_data_size "libnk2_item_t *item, int set_index, uint32_t entry_type, size_t *size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_size "libnk2_record_entry_t *record_entry, size64_t *value_size, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_binary_data "libnk2_item_t *item, uint32_t entry_type, uint8_t *binary_data, size_t size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_floating_point "libnk2_record_entry_t *record_entry, double *value_floating_point, libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_value_guid "libnk2_item_t *item, uint32_t entry_type, uint8_t *guid, size_t size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_utf8_string_size "libnk2_record_entry_t *record_entry, size_t *utf8_string_size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_record_entry_get_data_as_utf8_string "libnk2_record_entry_t *record_entry, uint8_t *utf8_string, size_t utf8_string_size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_record_entry_get_data_as_utf16_string_size "libnk2_record_entry_t *record_entry, size_t *utf16_string_size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_record_entry_get_data_as_utf16_string "libnk2_record_entry_t *record_entry, uint16_t *utf16_string, size_t utf16_string_size, libnk2_error_t **error"
+.Ft int
+.Fn libnk2_record_entry_get_data_as_guid "libnk2_record_entry_t *record_entry, uint8_t *guid_data, size_t guid_data_size, libnk2_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libnk2_get_version
