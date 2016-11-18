@@ -144,6 +144,12 @@ int libnk2_record_entry_get_data_as_filetime(
      libcerror_error_t **error );
 
 LIBNK2_EXTERN \
+int libnk2_record_entry_get_data_as_floatingtime(
+     libnk2_record_entry_t *record_entry,
+     uint64_t *value_64bit,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
 int libnk2_record_entry_get_data_as_size(
      libnk2_record_entry_t *record_entry,
      size64_t *value_size,
@@ -179,6 +185,13 @@ int libnk2_record_entry_get_data_as_utf16_string(
      libnk2_record_entry_t *record_entry,
      uint16_t *utf16_string,
      size_t utf16_string_size,
+     libcerror_error_t **error );
+
+LIBNK2_EXTERN \
+int libnk2_record_entry_get_data_as_guid(
+     libnk2_record_entry_t *record_entry,
+     uint8_t *guid_data,
+     size_t guid_data_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

@@ -694,6 +694,7 @@ int libnk2_record_entry_get_data_as_boolean(
 {
 	libnk2_internal_record_entry_t *internal_record_entry = NULL;
 	static char *function                                 = "libnk2_record_entry_get_data_as_boolean";
+	uint16_t value_16bit                                  = 0;
 
 	if( record_entry == NULL )
 	{
@@ -708,6 +709,17 @@ int libnk2_record_entry_get_data_as_boolean(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_BOOLEAN )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_record_entry->value_data == NULL )
 	{
 		libcerror_error_set(
@@ -715,6 +727,17 @@ int libnk2_record_entry_get_data_as_boolean(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid record entry - missing value data.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_record_entry->value_data_size != 2 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported value data size.",
 		 function );
 
 		return( -1 );
@@ -730,20 +753,11 @@ int libnk2_record_entry_get_data_as_boolean(
 
 		return( -1 );
 	}
-	/* The value data size of a boolean value is 1
-	 */
-	if( internal_record_entry->value_data_size != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported value data size.",
-		 function );
+	byte_stream_copy_to_uint16_little_endian(
+	 internal_record_entry->value_data,
+	 value_16bit );
 
-		return( -1 );
-	}
-	*value_boolean = internal_record_entry->value_data[ 0 ];
+	*value_boolean = (uint8_t) value_16bit;
 
 	return( 1 );
 }
@@ -772,6 +786,17 @@ int libnk2_record_entry_get_data_as_16bit_integer(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_INTEGER_16BIT_SIGNED )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_record_entry->value_data == NULL )
 	{
 		libcerror_error_set(
@@ -783,19 +808,6 @@ int libnk2_record_entry_get_data_as_16bit_integer(
 
 		return( -1 );
 	}
-	if( value_16bit == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value 16-bit.",
-		 function );
-
-		return( -1 );
-	}
-	/* The value data size of a 16-bit value is 2
-	 */
 	if( internal_record_entry->value_data_size != 2 )
 	{
 		libcerror_error_set(
@@ -803,6 +815,17 @@ int libnk2_record_entry_get_data_as_16bit_integer(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported value data size.",
+		 function );
+
+		return( -1 );
+	}
+	if( value_16bit == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value 16-bit.",
 		 function );
 
 		return( -1 );
@@ -838,6 +861,18 @@ int libnk2_record_entry_get_data_as_32bit_integer(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED )
+	 && ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_ERROR ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_record_entry->value_data == NULL )
 	{
 		libcerror_error_set(
@@ -849,19 +884,6 @@ int libnk2_record_entry_get_data_as_32bit_integer(
 
 		return( -1 );
 	}
-	if( value_32bit == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value 32-bit.",
-		 function );
-
-		return( -1 );
-	}
-	/* The value data size of a 32-bit value is 4
-	 */
 	if( internal_record_entry->value_data_size != 4 )
 	{
 		libcerror_error_set(
@@ -869,6 +891,17 @@ int libnk2_record_entry_get_data_as_32bit_integer(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported value data size.",
+		 function );
+
+		return( -1 );
+	}
+	if( value_32bit == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value 32-bit.",
 		 function );
 
 		return( -1 );
@@ -904,6 +937,18 @@ int libnk2_record_entry_get_data_as_64bit_integer(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED )
+	 && ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_CURRENCY ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_record_entry->value_data == NULL )
 	{
 		libcerror_error_set(
@@ -915,19 +960,6 @@ int libnk2_record_entry_get_data_as_64bit_integer(
 
 		return( -1 );
 	}
-	if( value_64bit == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value 64-bit.",
-		 function );
-
-		return( -1 );
-	}
-	/* The value data size of a 64-bit value is 8
-	 */
 	if( internal_record_entry->value_data_size != 8 )
 	{
 		libcerror_error_set(
@@ -935,6 +967,17 @@ int libnk2_record_entry_get_data_as_64bit_integer(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported value data size.",
+		 function );
+
+		return( -1 );
+	}
+	if( value_64bit == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value 64-bit.",
 		 function );
 
 		return( -1 );
@@ -970,6 +1013,17 @@ int libnk2_record_entry_get_data_as_filetime(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_FILETIME )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_record_entry->value_data == NULL )
 	{
 		libcerror_error_set(
@@ -977,6 +1031,17 @@ int libnk2_record_entry_get_data_as_filetime(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid record entry - missing value data.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_record_entry->value_data_size != 8 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported value data size.",
 		 function );
 
 		return( -1 );
@@ -992,8 +1057,59 @@ int libnk2_record_entry_get_data_as_filetime(
 
 		return( -1 );
 	}
-	/* The value data size of a 64-bit value is 8
-	 */
+	byte_stream_copy_to_uint64_little_endian(
+	 internal_record_entry->value_data,
+	 *value_64bit );
+
+	return( 1 );
+}
+
+/* Retrieves the data as a 64-bit floating time value
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_record_entry_get_data_as_floatingtime(
+     libnk2_record_entry_t *record_entry,
+     uint64_t *value_64bit,
+     libcerror_error_t **error )
+{
+	libnk2_internal_record_entry_t *internal_record_entry = NULL;
+	static char *function                                 = "libnk2_record_entry_get_data_as_floatingtime";
+
+	if( record_entry == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record entry.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
+
+	if( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_FLOATINGTIME )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_record_entry->value_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record entry - missing value data.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_record_entry->value_data_size != 8 )
 	{
 		libcerror_error_set(
@@ -1001,6 +1117,17 @@ int libnk2_record_entry_get_data_as_filetime(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported value data size.",
+		 function );
+
+		return( -1 );
+	}
+	if( value_64bit == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid value 64-bit.",
 		 function );
 
 		return( -1 );
@@ -1036,6 +1163,17 @@ int libnk2_record_entry_get_data_as_size(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_FILETIME )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_record_entry->value_data == NULL )
 	{
 		libcerror_error_set(
@@ -1114,6 +1252,18 @@ int libnk2_record_entry_get_data_as_floating_point(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_FLOAT_32BIT )
+	 && ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_DOUBLE_64BIT ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_record_entry->value_data == NULL )
 	{
 		libcerror_error_set(
@@ -1194,6 +1344,18 @@ int libnk2_record_entry_get_data_as_utf8_string_size(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
+	 && ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( libnk2_mapi_value_get_data_as_utf8_string_size(
 	     internal_record_entry->value_type,
 	     internal_record_entry->value_data,
@@ -1241,6 +1403,18 @@ int libnk2_record_entry_get_data_as_utf8_string(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
+	 && ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( libnk2_mapi_value_get_data_as_utf8_string(
 	     internal_record_entry->value_type,
 	     internal_record_entry->value_data,
@@ -1287,6 +1461,18 @@ int libnk2_record_entry_get_data_as_utf16_string_size(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
+	 && ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( libnk2_mapi_value_get_data_as_utf16_string_size(
 	     internal_record_entry->value_type,
 	     internal_record_entry->value_data,
@@ -1334,6 +1520,18 @@ int libnk2_record_entry_get_data_as_utf16_string(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
+	if( ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
+	 && ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
 	if( libnk2_mapi_value_get_data_as_utf16_string(
 	     internal_record_entry->value_type,
 	     internal_record_entry->value_data,
@@ -1348,6 +1546,114 @@ int libnk2_record_entry_get_data_as_utf16_string(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve value data as UTF-16 string.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves the data as a GUID value
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_record_entry_get_data_as_guid(
+     libnk2_record_entry_t *record_entry,
+     uint8_t *guid_data,
+     size_t guid_data_size,
+     libcerror_error_t **error )
+{
+	libnk2_internal_record_entry_t *internal_record_entry = NULL;
+	static char *function                                 = "libnk2_record_entry_get_data_as_guid";
+
+	if( record_entry == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid record entry.",
+		 function );
+
+		return( -1 );
+	}
+	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
+
+	if( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_GUID )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: invalid record entry - unsupported value type.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_record_entry->value_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid record entry - missing value data.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_record_entry->value_data_size != 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported value data size.",
+		 function );
+
+		return( -1 );
+	}
+	if( guid_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid GUID data.",
+		 function );
+
+		return( -1 );
+	}
+	if( guid_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: GUID data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( guid_data_size < 16 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
+		 "%s: GUID data size value too small.",
+		 function );
+
+		return( -1 );
+	}
+	if( memory_copy(
+	     guid_data,
+	     internal_record_entry->value_data,
+	     16 ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+		 "%s: unable to copy droid volume identifier.",
 		 function );
 
 		return( -1 );

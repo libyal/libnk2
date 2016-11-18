@@ -26,10 +26,10 @@
 #include "libnk2_item.h"
 #include "libnk2_legacy.h"
 #include "libnk2_libcerror.h"
-#include "libnk2_libfvalue.h"
+#include "libnk2_record_entry.h"
 #include "libnk2_mapi.h"
 #include "libnk2_types.h"
-#include "libnk2_value_identifier.h"
+#include "libnk2_unused.h"
 
 #if !defined( HAVE_LOCAL_LIBNK2 )
 
@@ -43,105 +43,53 @@ int libnk2_item_get_entry_type(
      uint32_t *value_type,
      libcerror_error_t **error )
 {
-	libfvalue_value_t *value                    = NULL;
-	libnk2_internal_item_t *internal_item       = NULL;
-	libnk2_value_identifier_t *value_identifier = NULL;
-	static char *function                       = "libnk2_item_get_entry_type";
-	size_t value_identifier_size                = 0;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_type";
 
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	if( entry_type == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid entry type.",
-		 function );
-
-		return( -1 );
-	}
-	if( value_type == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value type.",
-		 function );
-
-		return( -1 );
-	}
-	if( libfvalue_table_get_value_by_index(
-	     internal_item->values_table,
+	if( libnk2_item_get_entry_by_index(
+	     item,
 	     entry_index,
-	     &value,
+	     &record_entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: %d from values table.",
+		 "%s: unable to retrieve record entry: %d.",
 		 function,
 		 entry_index );
 
 		return( -1 );
 	}
-	if( libfvalue_value_get_identifier(
-	     value,
-	     (uint8_t **) &value_identifier,
-	     &value_identifier_size,
+	if( libnk2_record_entry_get_entry_type(
+	     record_entry,
+	     entry_type,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: %d identifier.",
-		 function,
-		 entry_index );
-
-		return( -1 );
-	}
-	if( value_identifier == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: missing value identifier: %d.",
-		 function,
-		 entry_index );
-
-		return( -1 );
-	}
-	if( value_identifier_size != sizeof( libnk2_value_identifier_t ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: missing value identifier size vale out of bounds.",
+		 "%s: unable to retrieve entry type.",
 		 function );
 
 		return( -1 );
 	}
-	*entry_type = value_identifier->entry_type;
-	*value_type = value_identifier->value_type;
+	if( libnk2_record_entry_get_value_type(
+	     record_entry,
+	     value_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve value type.",
+		 function );
 
+		return( -1 );
+	}
 	return( 1 );
 }
 
@@ -154,46 +102,16 @@ int libnk2_item_get_value_type(
      uint32_t *value_type,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_value_type";
+	int result                          = 0;
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_value_type";
-	int result                            = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	if( value_type == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value type.",
-		 function );
-
-		return( -1 );
-	}
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = 0;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          2,
-	          &value,
-	          LIBFVALUE_TABLE_FLAG_ALLOW_PARTIAL_MATCH,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          0,
+	          &record_entry,
+	          LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE,
 	          error );
 
 	if( result == -1 )
@@ -202,16 +120,28 @@ int libnk2_item_get_value_type(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		*value_type = value_identifier.value_type;
+		if( libnk2_record_entry_get_value_type(
+		     record_entry,
+		     value_type,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value type.",
+			 function );
+
+			return( -1 );
+		}
 	}
 	return( result );
 }
@@ -226,115 +156,31 @@ int libnk2_item_get_value_type(
  * Returns 1 if successful, 0 if the item does not contain such value or -1 on error
  */
 int libnk2_item_get_entry_value(
-     libnk2_item_t *item,
-     uint32_t entry_type,
-     uint32_t *value_type,
-     uint8_t **value_data,
-     size_t *value_data_size,
-     uint8_t flags,
+     libnk2_item_t *item LIBNK2_ATTRIBUTE_UNUSED,
+     uint32_t entry_type LIBNK2_ATTRIBUTE_UNUSED,
+     uint32_t *value_type LIBNK2_ATTRIBUTE_UNUSED,
+     uint8_t **value_data LIBNK2_ATTRIBUTE_UNUSED,
+     size_t *value_data_size LIBNK2_ATTRIBUTE_UNUSED,
+     uint8_t flags LIBNK2_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	static char *function = "libnk2_item_get_entry_value";
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_entry_value";
-	size_t value_identifier_size          = 0;
-	uint8_t values_table_flags            = 0;
-	int encoding                          = 0;
-	int result                            = 0;
+	LIBNK2_UNREFERENCED_PARAMETER( item )
+	LIBNK2_UNREFERENCED_PARAMETER( entry_type )
+	LIBNK2_UNREFERENCED_PARAMETER( value_type )
+	LIBNK2_UNREFERENCED_PARAMETER( value_data )
+	LIBNK2_UNREFERENCED_PARAMETER( value_data_size )
+	LIBNK2_UNREFERENCED_PARAMETER( flags )
 
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
+	libcerror_error_set(
+	 error,
+	 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+	 LIBCERROR_RUNTIME_ERROR_GENERIC,
+	 "%s: access to library internal allocated memory no longer supported.",
+	 function );
 
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	if( value_type == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value type.",
-		 function );
-
-		return( -1 );
-	}
-	if( ( flags & ~( LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE ) ) != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported flags: 0x%02" PRIx8 ".",
-		 function,
-		 flags );
-
-		return( -1 );
-	}
-	value_identifier.entry_type = (uint16_t) entry_type;
-
-	if( ( flags & LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE ) == 0 )
-	{
-		value_identifier.value_type = 0;
-		value_identifier_size       = 2;
-		values_table_flags          = LIBFVALUE_TABLE_FLAG_ALLOW_PARTIAL_MATCH;
-	}
-	else
-	{
-		value_identifier.value_type = (uint16_t) *value_type;
-		value_identifier_size       = sizeof( libnk2_value_identifier_t );
-	}
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          value_identifier_size,
-	          &value,
-	          values_table_flags,
-	          error );
-
-	if( result == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
-		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
-
-		return( -1 );
-	}
-	else if( result != 0 )
-	{
-		if( libfvalue_value_get_data(
-		     value,
-		     value_data,
-		     value_data_size,
-		     &encoding,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value data.",
-			 function );
-
-			return( -1 );
-		}
-		*value_type = value_identifier.value_type;
-	}
-	return( result );
+	return( -1 );
 }
 
 /* Retrieves the boolean value of a specific entry
@@ -346,34 +192,15 @@ int libnk2_item_get_entry_value_boolean(
      uint8_t *entry_value,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_boolean";
+	int result                          = 0;
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_entry_value_boolean";
-	int result                            = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = LIBNK2_VALUE_TYPE_BOOLEAN;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          LIBNK2_VALUE_TYPE_BOOLEAN,
+	          &record_entry,
 	          0,
 	          error );
 
@@ -383,29 +210,26 @@ int libnk2_item_get_entry_value_boolean(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 LIBNK2_VALUE_TYPE_BOOLEAN );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_copy_to_boolean(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_boolean(
+		     record_entry,
 		     entry_value,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to a boolean value.",
-			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve boolean value.",
+			 function );
 
 			return( -1 );
 		}
@@ -422,34 +246,15 @@ int libnk2_item_get_entry_value_32bit(
      uint32_t *entry_value,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_32bit";
+	int result                          = 0;
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_entry_value_32bit";
-	int result                            = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED,
+	          &record_entry,
 	          0,
 	          error );
 
@@ -459,29 +264,26 @@ int libnk2_item_get_entry_value_32bit(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_copy_to_32bit(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_32bit_integer(
+		     record_entry,
 		     entry_value,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to a 32-bit value.",
-			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve 32-bit integer value.",
+			 function );
 
 			return( -1 );
 		}
@@ -498,34 +300,15 @@ int libnk2_item_get_entry_value_64bit(
      uint64_t *entry_value,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_64bit";
+	int result                          = 0;
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_entry_value_64bit";
-	int result                            = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED,
+	          &record_entry,
 	          0,
 	          error );
 
@@ -535,29 +318,26 @@ int libnk2_item_get_entry_value_64bit(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_copy_to_64bit(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_64bit_integer(
+		     record_entry,
 		     entry_value,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to a 64-bit value.",
-			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve 64-bit integer value.",
+			 function );
 
 			return( -1 );
 		}
@@ -574,34 +354,15 @@ int libnk2_item_get_entry_value_filetime(
      uint64_t *entry_value,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_filetime";
+	int result                          = 0;
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_entry_value_filetime";
-	int result                            = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = LIBNK2_VALUE_TYPE_FILETIME;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          LIBNK2_VALUE_TYPE_FILETIME,
+	          &record_entry,
 	          0,
 	          error );
 
@@ -611,29 +372,26 @@ int libnk2_item_get_entry_value_filetime(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 LIBNK2_VALUE_TYPE_FILETIME );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_copy_to_64bit(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_filetime(
+		     record_entry,
 		     entry_value,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to a filetime value.",
-			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve filetime value.",
+			 function );
 
 			return( -1 );
 		}
@@ -650,37 +408,28 @@ int libnk2_item_get_entry_value_size(
      size_t *entry_value,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_size";
+	size64_t value_size                 = 0;
+	int result                          = 0;
 
-	libfvalue_value_t *value                           = NULL;
-	libnk2_internal_item_t *internal_item              = NULL;
-	libnk2_value_identifier_t *stored_value_identifier = NULL;
-	static char *function                              = "libnk2_item_get_entry_value_size";
-	size_t stored_value_identifier_size                = 0;
-	int result                                         = 0;
-
-	if( item == NULL )
+	if( entry_value == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
+		 "%s: invalid entry value.",
 		 function );
 
 		return( -1 );
 	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = 0;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
-	          LIBFVALUE_TABLE_FLAG_ALLOW_PARTIAL_MATCH,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          0,
+	          &record_entry,
+	          LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE,
 	          error );
 
 	if( result == -1 )
@@ -689,80 +438,30 @@ int libnk2_item_get_entry_value_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 0 );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_get_identifier(
-		     value,
-		     (uint8_t **) &stored_value_identifier,
-		     &stored_value_identifier_size,
+		if( libnk2_record_entry_get_data_as_size(
+		     record_entry,
+		     &value_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value identifier.",
+			 "%s: unable to retrieve filetime value.",
 			 function );
 
 			return( -1 );
 		}
-		if( stored_value_identifier == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED )
-		 && ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported string value type: 0x%04" PRIx16 ".",
-			 function,
-			 stored_value_identifier->value_type );
-
-			return( -1 );
-		}
-#if ( SIZEOF_SIZE_T == 8 ) || defined( _WIN64 )
-		result = libfvalue_value_copy_to_64bit(
-		          value,
-		          0,
-		          (uint64_t *) entry_value,
-		          error );
-#else
-		result = libfvalue_value_copy_to_32bit(
-		          value,
-		          0,
-		          (uint32_t *) entry_value,
-		          error );
-#endif
-		if( result != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to a size value.",
-			 function,
-			 value_identifier.entry_type,
-			 stored_value_identifier->value_type );
-
-			return( -1 );
-		}
+		*entry_value = (size_t) value_size;
 	}
 	return( result );
 }
@@ -776,37 +475,16 @@ int libnk2_item_get_entry_value_floating_point(
      double *entry_value,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_floating_point";
+	int result                          = 0;
 
-	libfvalue_value_t *value                           = NULL;
-	libnk2_internal_item_t *internal_item              = NULL;
-	libnk2_value_identifier_t *stored_value_identifier = NULL;
-	static char *function                              = "libnk2_item_get_entry_value_floating_point";
-	size_t stored_value_identifier_size                = 0;
-	int result                                         = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = 0;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
-	          LIBFVALUE_TABLE_FLAG_ALLOW_PARTIAL_MATCH,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          0,
+	          &record_entry,
+	          LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE,
 	          error );
 
 	if( result == -1 )
@@ -815,68 +493,26 @@ int libnk2_item_get_entry_value_floating_point(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 0 );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_get_identifier(
-		     value,
-		     (uint8_t **) &stored_value_identifier,
-		     &stored_value_identifier_size,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( stored_value_identifier == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_FLOAT_32BIT )
-		 && ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_DOUBLE_64BIT ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported string value type: 0x%04" PRIx16 ".",
-			 function,
-			 stored_value_identifier->value_type );
-
-			return( -1 );
-		}
-		if( libfvalue_value_copy_to_double(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_floating_point(
+		     record_entry,
 		     entry_value,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to a double value.",
-			 function,
-			 stored_value_identifier->entry_type,
-			 stored_value_identifier->value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve floating point value.",
+			 function );
 
 			return( -1 );
 		}
@@ -895,48 +531,16 @@ int libnk2_item_get_entry_value_utf8_string_size(
      size_t *utf8_string_size,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_utf8_string_size";
+	int result                          = 0;
 
-	libfvalue_value_t *value                           = NULL;
-	libnk2_internal_item_t *internal_item              = NULL;
-	libnk2_value_identifier_t *stored_value_identifier = NULL;
-	static char *function                              = "libnk2_item_get_entry_value_utf8_string_size";
-	size_t stored_value_identifier_size                = 0;
-	int result                                         = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	if( internal_item->io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = 0;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
-	          LIBFVALUE_TABLE_FLAG_ALLOW_PARTIAL_MATCH,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          0,
+	          &record_entry,
+	          LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE,
 	          error );
 
 	if( result == -1 )
@@ -945,57 +549,17 @@ int libnk2_item_get_entry_value_utf8_string_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 0 );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_get_identifier(
-		     value,
-		     (uint8_t **) &stored_value_identifier,
-		     &stored_value_identifier_size,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( stored_value_identifier == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
-		 && ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported string value type: 0x%04" PRIx16 ".",
-			 function,
-			 stored_value_identifier->value_type );
-
-			return( -1 );
-		}
-		if( libfvalue_value_get_utf8_string_size(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_utf8_string_size(
+		     record_entry,
 		     utf8_string_size,
 		     error ) != 1 )
 		{
@@ -1003,10 +567,8 @@ int libnk2_item_get_entry_value_utf8_string_size(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " UTF-8 string size.",
-			 function,
-			 value_identifier.entry_type,
-			 stored_value_identifier->value_type );
+			 "%s: unable to retrieve size of UTF-8 string.",
+			 function );
 
 			return( -1 );
 		}
@@ -1026,48 +588,16 @@ int libnk2_item_get_entry_value_utf8_string(
      size_t utf8_string_size,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_utf8_string";
+	int result                          = 0;
 
-	libfvalue_value_t *value                           = NULL;
-	libnk2_internal_item_t *internal_item              = NULL;
-	libnk2_value_identifier_t *stored_value_identifier = NULL;
-	static char *function                              = "libnk2_item_get_entry_value_utf8_string";
-	size_t stored_value_identifier_size                = 0;
-	int result                                         = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	if( internal_item->io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = 0;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
-	          LIBFVALUE_TABLE_FLAG_ALLOW_PARTIAL_MATCH,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          0,
+	          &record_entry,
+	          LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE,
 	          error );
 
 	if( result == -1 )
@@ -1076,57 +606,17 @@ int libnk2_item_get_entry_value_utf8_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 0 );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_get_identifier(
-		     value,
-		     (uint8_t **) &stored_value_identifier,
-		     &stored_value_identifier_size,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( stored_value_identifier == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
-		 && ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported string value type: 0x%04" PRIx16 ".",
-			 function,
-			 stored_value_identifier->value_type );
-
-			return( -1 );
-		}
-		if( libfvalue_value_copy_to_utf8_string(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_utf8_string(
+		     record_entry,
 		     utf8_string,
 		     utf8_string_size,
 		     error ) != 1 )
@@ -1134,11 +624,9 @@ int libnk2_item_get_entry_value_utf8_string(
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to an UTF-8 string.",
-			 function,
-			 value_identifier.entry_type,
-			 stored_value_identifier->value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-8 string.",
+			 function );
 
 			return( -1 );
 		}
@@ -1157,48 +645,16 @@ int libnk2_item_get_entry_value_utf16_string_size(
      size_t *utf16_string_size,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_utf16_string_size";
+	int result                          = 0;
 
-	libfvalue_value_t *value                           = NULL;
-	libnk2_internal_item_t *internal_item              = NULL;
-	libnk2_value_identifier_t *stored_value_identifier = NULL;
-	static char *function                              = "libnk2_item_get_entry_value_utf16_string_size";
-	size_t stored_value_identifier_size                = 0;
-	int result                                         = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	if( internal_item->io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = 0;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
-	          LIBFVALUE_TABLE_FLAG_ALLOW_PARTIAL_MATCH,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          0,
+	          &record_entry,
+	          LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE,
 	          error );
 
 	if( result == -1 )
@@ -1207,57 +663,17 @@ int libnk2_item_get_entry_value_utf16_string_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 0 );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_get_identifier(
-		     value,
-		     (uint8_t **) &stored_value_identifier,
-		     &stored_value_identifier_size,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( stored_value_identifier == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
-		 && ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported string value type: 0x%04" PRIx16 ".",
-			 function,
-			 stored_value_identifier->value_type );
-
-			return( -1 );
-		}
-		if( libfvalue_value_get_utf16_string_size(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_utf16_string_size(
+		     record_entry,
 		     utf16_string_size,
 		     error ) != 1 )
 		{
@@ -1265,10 +681,8 @@ int libnk2_item_get_entry_value_utf16_string_size(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " UTF-16 string size.",
-			 function,
-			 value_identifier.entry_type,
-			 stored_value_identifier->value_type );
+			 "%s: unable to retrieve size of UTF-16 string.",
+			 function );
 
 			return( -1 );
 		}
@@ -1288,48 +702,16 @@ int libnk2_item_get_entry_value_utf16_string(
      size_t utf16_string_size,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_utf16_string";
+	int result                          = 0;
 
-	libfvalue_value_t *value                           = NULL;
-	libnk2_internal_item_t *internal_item              = NULL;
-	libnk2_value_identifier_t *stored_value_identifier = NULL;
-	static char *function                              = "libnk2_item_get_entry_value_utf16_string";
-	size_t stored_value_identifier_size                = 0;
-	int result                                         = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	if( internal_item->io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid item - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = 0;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
-	          LIBFVALUE_TABLE_FLAG_ALLOW_PARTIAL_MATCH,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          0,
+	          &record_entry,
+	          LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE,
 	          error );
 
 	if( result == -1 )
@@ -1338,57 +720,17 @@ int libnk2_item_get_entry_value_utf16_string(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 0 );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_get_identifier(
-		     value,
-		     (uint8_t **) &stored_value_identifier,
-		     &stored_value_identifier_size,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( stored_value_identifier == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-			 "%s: missing value identifier.",
-			 function );
-
-			return( -1 );
-		}
-		if( ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_STRING_ASCII )
-		 && ( stored_value_identifier->value_type != LIBNK2_VALUE_TYPE_STRING_UNICODE ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported string value type: 0x%04" PRIx16 ".",
-			 function,
-			 stored_value_identifier->value_type );
-
-			return( -1 );
-		}
-		if( libfvalue_value_copy_to_utf16_string(
-		     value,
-		     0,
+		if( libnk2_record_entry_get_data_as_utf16_string(
+		     record_entry,
 		     utf16_string,
 		     utf16_string_size,
 		     error ) != 1 )
@@ -1396,11 +738,9 @@ int libnk2_item_get_entry_value_utf16_string(
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to an UTF-16 string.",
-			 function,
-			 value_identifier.entry_type,
-			 stored_value_identifier->value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve UTF-16 string.",
+			 function );
 
 			return( -1 );
 		}
@@ -1417,36 +757,15 @@ int libnk2_item_get_entry_value_binary_data_size(
      size_t *size,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_binary_data_size";
+	int result                          = 0;
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	uint8_t *value_data                   = NULL;
-	static char *function                 = "libnk2_item_get_entry_value_binary_data_size";
-	int encoding                          = 0;
-	int result                            = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = LIBNK2_VALUE_TYPE_BINARY_DATA;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          LIBNK2_VALUE_TYPE_BINARY_DATA,
+	          &record_entry,
 	          0,
 	          error );
 
@@ -1456,30 +775,26 @@ int libnk2_item_get_entry_value_binary_data_size(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 LIBNK2_VALUE_TYPE_BINARY_DATA );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_get_data(
-		     value,
-		     &value_data,
+		if( libnk2_record_entry_get_data_size(
+		     record_entry,
 		     size,
-		     &encoding,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " binary data size.",
-			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 "%s: unable to retrieve data size.",
+			 function );
 
 			return( -1 );
 		}
@@ -1497,34 +812,15 @@ int libnk2_item_get_entry_value_binary_data(
      size_t size,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_binary_data";
+	int result                          = 0;
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_entry_value_binary_data";
-	int result                            = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = LIBNK2_VALUE_TYPE_BINARY_DATA;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          LIBNK2_VALUE_TYPE_BINARY_DATA,
+	          &record_entry,
 	          0,
 	          error );
 
@@ -1534,17 +830,17 @@ int libnk2_item_get_entry_value_binary_data(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 LIBNK2_VALUE_TYPE_BINARY_DATA );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_copy_data(
-		     value,
+		if( libnk2_record_entry_get_data(
+		     record_entry,
 		     binary_data,
 		     size,
 		     error ) != 1 )
@@ -1552,11 +848,9 @@ int libnk2_item_get_entry_value_binary_data(
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to binary data.",
-			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve data.",
+			 function );
 
 			return( -1 );
 		}
@@ -1574,34 +868,15 @@ int libnk2_item_get_entry_value_guid(
      size_t size,
      libcerror_error_t **error )
 {
-	libnk2_value_identifier_t value_identifier;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "libnk2_item_get_entry_value_guid";
+	int result                          = 0;
 
-	libfvalue_value_t *value              = NULL;
-	libnk2_internal_item_t *internal_item = NULL;
-	static char *function                 = "libnk2_item_get_entry_value_guid";
-	int result                            = 0;
-
-	if( item == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid item.",
-		 function );
-
-		return( -1 );
-	}
-	internal_item = (libnk2_internal_item_t *) item;
-
-	value_identifier.entry_type = (uint16_t) entry_type;
-	value_identifier.value_type = LIBNK2_VALUE_TYPE_GUID;
-
-	result = libfvalue_table_get_value_by_identifier(
-	          internal_item->values_table,
-	          (uint8_t *) &value_identifier,
-	          sizeof( libnk2_value_identifier_t ),
-	          &value,
+	result = libnk2_item_get_entry_by_type(
+	          item,
+	          entry_type,
+	          LIBNK2_VALUE_TYPE_GUID,
+	          &record_entry,
 	          0,
 	          error );
 
@@ -1611,17 +886,17 @@ int libnk2_item_get_entry_value_guid(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value: 0x%04" PRIx16 " 0x%04" PRIx16 " from values table.",
+		 "%s: unable to retrieve record entry: 0x%04" PRIx16 " 0x%04" PRIx16 ".",
 		 function,
-		 value_identifier.entry_type,
-		 value_identifier.value_type );
+		 entry_type,
+		 LIBNK2_VALUE_TYPE_GUID );
 
 		return( -1 );
 	}
 	else if( result != 0 )
 	{
-		if( libfvalue_value_copy_data(
-		     value,
+		if( libnk2_record_entry_get_data_as_guid(
+		     record_entry,
 		     guid,
 		     size,
 		     error ) != 1 )
@@ -1629,11 +904,9 @@ int libnk2_item_get_entry_value_guid(
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-			 "%s: unable to copy value: 0x%04" PRIx16 " 0x%04" PRIx16 " to GUID.",
-			 function,
-			 value_identifier.entry_type,
-			 value_identifier.value_type );
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve GUID.",
+			 function );
 
 			return( -1 );
 		}

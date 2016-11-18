@@ -35,7 +35,6 @@
 #include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
 #include "libnk2_libcnotify.h"
-#include "libnk2_libfvalue.h"
 
 /* Creates a file
  * Make sure the value file is referencing, is set to NULL
@@ -194,7 +193,7 @@ int libnk2_file_free(
 
 		if( libcdata_array_free(
 		     &( internal_file->items_array ),
-		     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libnk2_internal_item_free,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -795,7 +794,7 @@ int libnk2_file_close(
 	}
 	if( libcdata_array_empty(
 	     internal_file->items_array,
-	     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libnk2_internal_item_free,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -1135,7 +1134,6 @@ int libnk2_file_get_item(
      libcerror_error_t **error )
 {
 	libnk2_internal_file_t *internal_file = NULL;
-	libfvalue_table_t *values_table       = NULL;
 	static char *function                 = "libnk2_file_get_item";
 
 	if( file == NULL )
@@ -1162,36 +1160,30 @@ int libnk2_file_get_item(
 
 		return( -1 );
 	}
+	if( *item != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid item value already set.",
+		 function );
+
+		return( -1 );
+	}
 	if( libcdata_array_get_entry_by_index(
 	     internal_file->items_array,
 	     item_index,
-	     (intptr_t **) &values_table,
+	     (intptr_t **) item,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve item values: %d.",
+		 "%s: unable to retrieve item: %d.",
 		 function,
 		 item_index );
-
-		return( -1 );
-	}
-	if( libnk2_item_initialize(
-	     item,
-	     internal_file->io_handle,
-	     internal_file->file_io_handle,
-	     values_table,
-	     LIBNK2_ITEM_FLAGS_DEFAULT,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create item.",
-		 function );
 
 		return( -1 );
 	}

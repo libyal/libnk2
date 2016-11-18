@@ -12,7 +12,6 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
-	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@LIBFMAPI_CPPFLAGS@ \
 	@LIBCSYSTEM_CPPFLAGS@ \
@@ -52,8 +51,7 @@ check_PROGRAMS = \
 	nk2_test_io_handle \
 	nk2_test_item \
 	nk2_test_notify \
-	nk2_test_support \
-	nk2_test_value_identifier
+	nk2_test_support
 
 nk2_test_error_SOURCES = \
 	nk2_test_error.c \
@@ -137,18 +135,6 @@ nk2_test_support_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
-	../libnk2/libnk2.la \
-	@LIBCERROR_LIBADD@
-
-nk2_test_value_identifier_SOURCES = \
-	nk2_test_libcerror.h \
-	nk2_test_libnk2.h \
-	nk2_test_macros.h \
-	nk2_test_memory.c nk2_test_memory.h \
-	nk2_test_unused.h \
-	nk2_test_value_identifier.c
-
-nk2_test_value_identifier_LDADD = \
 	../libnk2/libnk2.la \
 	@LIBCERROR_LIBADD@
 

@@ -37,9 +37,9 @@ typedef struct info_handle info_handle_t;
 
 struct info_handle
 {
-	/* The libnk2 input file
+	/* The input
 	 */
-	libnk2_file_t *input_file;
+	libnk2_file_t *input;
 
 	/* The ascii codepage
 	 */

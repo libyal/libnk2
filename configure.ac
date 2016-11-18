@@ -90,9 +90,6 @@ AX_LIBFDATETIME_CHECK_ENABLE
 dnl Check for enabling libfguid for GUID/UUID format support
 AX_LIBFGUID_CHECK_ENABLE
 
-dnl Check for enabling libfvalue for file value support
-AX_LIBFVALUE_CHECK_ENABLE
-
 dnl Check for enabling libfwnt for file Windows NT type support
 AX_LIBFWNT_CHECK_ENABLE
 
@@ -104,6 +101,9 @@ AX_LIBNK2_CHECK_LOCAL
 
 dnl Check for enabling libcsystem for cross-platform C generic system functions
 AX_LIBCSYSTEM_CHECK_ENABLE
+
+dnl Check for enabling libfvalue for file value support
+AX_LIBFVALUE_CHECK_ENABLE
 
 dnl Check if nk2tools should be build as static executables
 AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
@@ -165,7 +165,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfwnt" = xyes || test "x$ac_cv_libfmapi" = xyes],
+ [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfwnt" = xyes || test "x$ac_cv_libfmapi" = xyes],
  [AC_SUBST(
   [libnk2_spec_requires],
   [Requires:])
@@ -175,7 +175,7 @@ AS_IF(
  ])
 
 AS_IF(
- [test "x$ac_cv_libcsystem" = xyes],
+ [test "x$ac_cv_libcsystem" = xyes || test "x$ac_cv_libfvalue" = xyes],
  [AC_SUBST(
   [libnk2_tools_spec_build_requires],
   [BuildRequires:])
@@ -212,11 +212,11 @@ AC_CONFIG_FILES([libcpath/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
-AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libfwnt/Makefile])
 AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([libcsystem/Makefile])
+AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
 AC_CONFIG_FILES([pynk2/Makefile])
 AC_CONFIG_FILES([pynk2-python2/Makefile])
@@ -259,10 +259,10 @@ Building:
    libbfio support:                          $ac_cv_libbfio
    libfdatetime support:                     $ac_cv_libfdatetime
    libfguid support:                         $ac_cv_libfguid
-   libfvalue support:                        $ac_cv_libfvalue
    libfwnt support:                          $ac_cv_libfwnt
    libfmapi support:                         $ac_cv_libfmapi
    libcsystem support:                       $ac_cv_libcsystem
+   libfvalue support:                        $ac_cv_libfvalue
 
 Features:
    Multi-threading support:                  $ac_cv_libcthreads_multi_threading

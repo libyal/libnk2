@@ -130,7 +130,6 @@ stamp-h[1-9]
 /tests/nk2_test_item
 /tests/nk2_test_notify
 /tests/nk2_test_support
-/tests/nk2_test_value_identifier
 /tests/tmp*
 
 # Local library dependencies specific files

@@ -12,7 +12,6 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
-	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@LIBFMAPI_CPPFLAGS@
 
@@ -36,7 +35,6 @@ libnk2_la_SOURCES = \
 	libnk2_libcnotify.h \
 	libnk2_libfdatetime.h \
 	libnk2_libfmapi.h \
-	libnk2_libfvalue.h \
 	libnk2_libuna.h \
 	libnk2_mapi.h \
 	libnk2_mapi_value.c libnk2_mapi_value.h \
@@ -45,7 +43,6 @@ libnk2_la_SOURCES = \
 	libnk2_support.c libnk2_support.h \
 	libnk2_types.h \
 	libnk2_unused.h \
-	libnk2_value_identifier.c libnk2_value_identifier.h \
 	nk2_file_footer.h \
 	nk2_file_header.h \
 	nk2_item.h
@@ -62,7 +59,6 @@ libnk2_la_LIBADD = \
 	@LIBBFIO_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
-	@LIBFVALUE_LIBADD@ \
 	@LIBFWNT_LIBADD@ \
 	@LIBFMAPI_LIBADD@
 

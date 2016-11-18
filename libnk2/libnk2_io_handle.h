@@ -28,7 +28,6 @@
 #include "libnk2_libbfio.h"
 #include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
-#include "libnk2_libfvalue.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -74,12 +73,12 @@ int libnk2_io_handle_read_items(
      libcdata_array_t *items_array,
      libcerror_error_t **error );
 
-int libnk2_io_handle_read_item_values(
+int libnk2_io_handle_read_record_entries(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t item_index,
-     uint32_t number_of_item_values,
-     libfvalue_table_t *values_table,
+     uint32_t number_of_record_entries,
+     libcdata_array_t *entries_array,
      libcerror_error_t **error );
 
 int libnk2_io_handle_read_file_footer(

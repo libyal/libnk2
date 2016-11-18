@@ -10,7 +10,7 @@ $TestPrefix = Split-Path -path ${Pwd}.Path -parent
 $TestPrefix = Split-Path -path ${TestPrefix} -leaf
 $TestPrefix = ${TestPrefix}.Substring(3)
 
-$TestTypes = "io_handle item value_identifier"
+$TestTypes = "io_handle item"
 $TestTypesWithInput = "file"
 
 $TestToolDirectory = "..\msvscpp\Release"

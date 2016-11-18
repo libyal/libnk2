@@ -43,9 +43,9 @@ struct export_handle
 	 */
 	uint8_t dump_item_values;
 
-	/* The libnk2 input file
+	/* The input
 	 */
-	libnk2_file_t *input_file;
+	libnk2_file_t *input;
 
 	/* The ascii codepage
 	 */
@@ -147,6 +147,13 @@ int export_handle_create_item_file(
      const system_character_t *filename,
      size_t filename_length,
      item_file_t **item_file,
+     libcerror_error_t **error );
+
+int export_handle_export_record_entry(
+     export_handle_t *export_handle,
+     item_file_t *item_file,
+     int entry_index,
+     libnk2_record_entry_t *record_entry,
      libcerror_error_t **error );
 
 int export_handle_export_item_values(

@@ -99,14 +99,14 @@ int export_handle_initialize(
 		goto on_error;
 	}
 	if( libnk2_file_initialize(
-	     &( ( *export_handle )->input_file ),
+	     &( ( *export_handle )->input ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to initialize input file.",
+		 "%s: unable to initialize input.",
 		 function );
 
 		goto on_error;
@@ -151,17 +151,17 @@ int export_handle_free(
 	}
 	if( *export_handle != NULL )
 	{
-		if( ( *export_handle )->input_file != NULL )
+		if( ( *export_handle )->input != NULL )
 		{
 			if( libnk2_file_free(
-			     &( ( *export_handle )->input_file ),
+			     &( ( *export_handle )->input ),
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free input file.",
+				 "%s: unable to free input.",
 				 function );
 
 				result = -1;
@@ -207,17 +207,17 @@ int export_handle_signal_abort(
 	}
 	export_handle->abort = 1;
 
-	if( export_handle->input_file != NULL )
+	if( export_handle->input != NULL )
 	{
 		if( libnk2_file_signal_abort(
-		     export_handle->input_file,
+		     export_handle->input,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to signal input file to abort.",
+			 "%s: unable to signal input to abort.",
 			 function );
 
 			return( -1 );
@@ -660,13 +660,13 @@ int export_handle_open(
 	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libnk2_file_open_wide(
-	     export_handle->input_file,
+	     export_handle->input,
 	     filename,
 	     LIBNK2_OPEN_READ,
 	     error ) != 1 )
 #else
 	if( libnk2_file_open(
-	     export_handle->input_file,
+	     export_handle->input,
 	     filename,
 	     LIBNK2_OPEN_READ,
 	     error ) != 1 )
@@ -676,7 +676,7 @@ int export_handle_open(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open input file.",
+		 "%s: unable to open input.",
 		 function );
 
 		return( -1 );
@@ -705,14 +705,14 @@ int export_handle_close(
 		return( -1 );
 	}
 	if( libnk2_file_close(
-	     export_handle->input_file,
+	     export_handle->input,
 	     error ) != 0 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close input file.",
+		 "%s: unable to close input.",
 		 function );
 
 		return( -1 );
@@ -1070,6 +1070,205 @@ on_error:
 	return( -1 );
 }
 
+/* Exports the record value
+ * Returns 1 if successful or -1 on error
+ */
+int export_handle_export_record_entry(
+     export_handle_t *export_handle,
+     item_file_t *item_file,
+     int entry_index,
+     libnk2_record_entry_t *record_entry,
+     libcerror_error_t **error )
+{
+	uint8_t *value_data    = NULL;
+	static char *function  = "export_handle_export_record_entry";
+	size_t value_data_size = 0;
+	uint32_t entry_type    = 0;
+	uint32_t value_type    = 0;
+
+	if( export_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( item_file_write_value_integer_32bit_as_decimal(
+	     item_file,
+	     _SYSTEM_STRING( "Entry:\t\t\t" ),
+	     (uint32_t) entry_index,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write 32-bit integer value.",
+		 function );
+
+		goto on_error;
+	}
+	if( libnk2_record_entry_get_entry_type(
+	     record_entry,
+	     &entry_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve entry type.",
+		 function );
+
+		goto on_error;
+	}
+	if( item_file_write_value_integer_32bit_as_hexadecimal(
+	     item_file,
+	     _SYSTEM_STRING( "Entry type:\t\t" ),
+	     entry_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write 32-bit integer value.",
+		 function );
+
+		goto on_error;
+	}
+	if( libnk2_record_entry_get_value_type(
+	     record_entry,
+	     &value_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve value type.",
+		 function );
+
+		goto on_error;
+	}
+	if( item_file_write_value_integer_32bit_as_hexadecimal(
+	     item_file,
+	     _SYSTEM_STRING( "Value type:\t\t" ),
+	     value_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write 32-bit integer value.",
+		 function );
+
+		goto on_error;
+	}
+	if( libnk2_record_entry_get_data_size(
+	     record_entry,
+	     &value_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve data size.",
+		 function );
+
+		goto on_error;
+	}
+	if( value_data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid value data size value exceeds maximum.",
+		 function );
+
+		goto on_error;
+	}
+	value_data = (uint8_t *) memory_allocate(
+	                          sizeof( uint8_t ) * value_data_size );
+
+	if( value_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create value data.",
+		 function );
+
+		goto on_error;
+	}
+	if( libnk2_record_entry_get_data(
+	     record_entry,
+	     value_data,
+	     value_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve data.",
+		 function );
+
+		goto on_error;
+	}
+	if( item_file_write_value_description(
+	     item_file,
+	     _SYSTEM_STRING( "Value:" ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write string.",
+		 function );
+
+		goto on_error;
+	}
+	if( item_file_write_buffer_as_hexdump(
+	     item_file,
+	     value_data,
+	     value_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write buffer.",
+		 function );
+
+		goto on_error;
+	}
+	memory_free(
+	 value_data );
+
+	value_data = NULL;
+
+	return( 1 );
+
+on_error:
+	if( value_data != NULL )
+	{
+		memory_free(
+		 value_data );
+	}
+	return( -1 );
+}
+
 /* Exports the item values
  * Returns 1 if successful or -1 on error
  */
@@ -1083,15 +1282,12 @@ int export_handle_export_item_values(
      log_handle_t *log_handle,
      libcerror_error_t **error )
 {
-	item_file_t *item_file = NULL;
-	uint8_t *value_data    = NULL;
-	static char *function  = "export_handle_export_item_values";
-	size_t value_data_size = 0;
-	uint32_t entry_type    = 0;
-	uint32_t value_type    = LIBNK2_VALUE_TYPE_UNSPECIFIED;
-	int entry_index        = 0;
-	int number_of_entries  = 0;
-	int result             = 0;
+	item_file_t *item_file              = NULL;
+	libnk2_record_entry_t *record_entry = NULL;
+	static char *function               = "export_handle_export_item_values";
+	int entry_index                     = 0;
+	int number_of_entries               = 0;
+	int result                          = 0;
 
 	if( export_handle == NULL )
 	{
@@ -1188,114 +1384,48 @@ int export_handle_export_item_values(
 	     entry_index < number_of_entries;
 	     entry_index++ )
 	{
-		if( item_file_write_value_integer_32bit_as_decimal(
-		     item_file,
-		     _SYSTEM_STRING( "Entry:\t\t\t" ),
-		     (uint32_t) entry_index,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write 32-bit integer value.",
-			 function );
-
-			goto on_error;
-		}
-		if( libnk2_item_get_entry_type(
+		if( libnk2_item_get_entry_by_index(
 		     item,
 		     entry_index,
-		     &entry_type,
-		     &value_type,
+		     &record_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve entry type of entry: %d.",
+			 "%s: unable to retrieve entry: %d.",
 			 function,
 			 entry_index );
 
 			goto on_error;
 		}
-		if( item_file_write_value_integer_32bit_as_hexadecimal(
+		if( export_handle_export_record_entry(
+		     export_handle,
 		     item_file,
-		     _SYSTEM_STRING( "Entry type:\t\t" ),
-		     entry_type,
+		     entry_index,
+		     record_entry,
 		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write 32-bit integer value.",
-			 function );
-
-			goto on_error;
-		}
-		if( item_file_write_value_integer_32bit_as_hexadecimal(
-		     item_file,
-		     _SYSTEM_STRING( "Value type:\t\t" ),
-		     value_type,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write 32-bit integer value.",
-			 function );
-
-			goto on_error;
-		}
-		result = libnk2_item_get_entry_value(
-			  item,
-			  entry_type,
-			  &value_type,
-			  &value_data,
-			  &value_data_size,
-			  0,
-			  error );
-
-		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve entry value of entry: %d.",
+			 LIBCERROR_RUNTIME_ERROR_GENERIC,
+			 "%s: unable to export entry: %d.",
 			 function,
 			 entry_index );
 
 			goto on_error;
 		}
-		if( item_file_write_value_description(
-		     item_file,
-		     _SYSTEM_STRING( "Value:" ),
+		if( libnk2_record_entry_free(
+		     &record_entry,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write string.",
-			 function );
-
-			goto on_error;
-		}
-		if( item_file_write_buffer_as_hexdump(
-		     item_file,
-		     value_data,
-		     value_data_size,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write buffer.",
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free record entry.",
 			 function );
 
 			goto on_error;
@@ -1330,6 +1460,12 @@ int export_handle_export_item_values(
 	return( 1 );
 
 on_error:
+	if( record_entry != NULL )
+	{
+		libnk2_record_entry_free(
+		 &record_entry,
+		 NULL );
+	}
 	if( item_file != NULL )
 	{
 		item_file_free(
@@ -1663,7 +1799,7 @@ int export_handle_export_file(
 	}
 	result = export_handle_export_items(
 	          export_handle,
-	          export_handle->input_file,
+	          export_handle->input,
 	          log_handle,
 	          error );
 
