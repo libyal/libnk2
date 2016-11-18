@@ -363,5 +363,5 @@ enum LIBNK2_ENTRY_TYPES
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_MAPI_H ) */
 

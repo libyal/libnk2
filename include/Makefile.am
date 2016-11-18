@@ -7,6 +7,7 @@ pkginclude_HEADERS = \
 	libnk2/error.h \
 	libnk2/extern.h \
 	libnk2/features.h \
+	libnk2/mapi.h \
 	libnk2/types.h
 
 EXTRA_DIST = \
