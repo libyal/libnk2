@@ -27,11 +27,12 @@
 #endif
 
 #include "pynk2_error.h"
-#include "pynk2_integer.h"
 #include "pynk2_item.h"
 #include "pynk2_libcerror.h"
 #include "pynk2_libnk2.h"
 #include "pynk2_python.h"
+#include "pynk2_record_entries.h"
+#include "pynk2_record_entry.h"
 #include "pynk2_unused.h"
 
 PyMethodDef pynk2_item_object_methods[] = {
@@ -43,6 +44,13 @@ PyMethodDef pynk2_item_object_methods[] = {
 	  "\n"
 	  "Retrieves the number of entries." },
 
+	{ "get_entry",
+	  (PyCFunction) pynk2_item_get_entry,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "get_entry(entry_index) -> Object or None\n"
+	  "\n"
+	  "Retrieves the entry specified by the index." },
+
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
 };
@@ -53,6 +61,12 @@ PyGetSetDef pynk2_item_object_get_set_definitions[] = {
 	  (getter) pynk2_item_get_number_of_entries,
 	  (setter) 0,
 	  "The number of entries.",
+	  NULL },
+
+	{ "entries",
+	  (getter) pynk2_item_get_entries,
+	  (setter) 0,
+	  "The entries.",
 	  NULL },
 
 	/* Sentinel */
@@ -168,7 +182,7 @@ PyObject *pynk2_item_new(
 	if( item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -197,7 +211,7 @@ PyObject *pynk2_item_new(
 
 		goto on_error;
 	}
-	pynk2_item->item  = item;
+	pynk2_item->item          = item;
 	pynk2_item->parent_object = parent_object;
 
 	Py_IncRef(
@@ -214,7 +228,7 @@ on_error:
 	return( NULL );
 }
 
-/* Intializes a item object
+/* Intializes an item object
  * Returns 0 if successful or -1 on error
  */
 int pynk2_item_init(
@@ -225,7 +239,7 @@ int pynk2_item_init(
 	if( pynk2_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -238,7 +252,7 @@ int pynk2_item_init(
 	return( 0 );
 }
 
-/* Frees a item object
+/* Frees an item object
  */
 void pynk2_item_free(
       pynk2_item_t *pynk2_item )
@@ -251,7 +265,7 @@ void pynk2_item_free(
 	if( pynk2_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -260,7 +274,7 @@ void pynk2_item_free(
 	if( pynk2_item->item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item - missing libnk2 item.",
 		 function );
 
@@ -325,7 +339,7 @@ PyObject *pynk2_item_get_number_of_entries(
 	PyObject *integer_object = NULL;
 	libcerror_error_t *error = NULL;
 	static char *function    = "pynk2_item_get_number_of_entries";
-	int value_32bit          = 0;
+	int number_of_entries    = 0;
 	int result               = 0;
 
 	PYNK2_UNREFERENCED_PARAMETER( arguments )
@@ -333,7 +347,7 @@ PyObject *pynk2_item_get_number_of_entries(
 	if( pynk2_item == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid item.",
 		 function );
 
@@ -343,12 +357,12 @@ PyObject *pynk2_item_get_number_of_entries(
 
 	result = libnk2_item_get_number_of_entries(
 	          pynk2_item->item,
-	          &value_32bit,
+	          &number_of_entries,
 	          &error );
 
 	Py_END_ALLOW_THREADS
 
-	if( result == -1 )
+	if( result != 1 )
 	{
 		pynk2_error_raise(
 		 error,
@@ -361,16 +375,201 @@ PyObject *pynk2_item_get_number_of_entries(
 
 		return( NULL );
 	}
-	else if( result == 0 )
-	{
-		Py_IncRef(
-		 Py_None );
-
-		return( Py_None );
-	}
-	integer_object = PyLong_FromUnsignedLong(
-	                  (unsigned long) value_32bit );
-
+#if PY_MAJOR_VERSION >= 3
+	integer_object = PyLong_FromLong(
+	                  (long) number_of_entries );
+#else
+	integer_object = PyInt_FromLong(
+	                  (long) number_of_entries );
+#endif
 	return( integer_object );
+}
+
+/* Retrieves the record entry type object
+ * Returns a Python type object if successful or NULL on error
+ */
+PyTypeObject *pynk2_item_get_record_entry_type_object(
+               libnk2_record_entry_t *record_entry PYNK2_ATTRIBUTE_UNUSED )
+{
+	PYNK2_UNREFERENCED_PARAMETER( record_entry )
+
+	return( &pynk2_record_entry_type_object );
+}
+
+/* Retrieves a specific entry by index
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_item_get_entry_by_index(
+           PyObject *pynk2_item,
+           int entry_index )
+{
+	PyObject *entry_object       = NULL;
+	PyTypeObject *type_object    = NULL;
+	libcerror_error_t *error     = NULL;
+	libnk2_record_entry_t *entry = NULL;
+	static char *function        = "pynk2_item_get_entry_by_index";
+	int result                   = 0;
+
+	if( pynk2_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid item.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_item_get_entry_by_index(
+	          ( (pynk2_item_t *) pynk2_item )->item,
+	          entry_index,
+	          &entry,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve entry: %d.",
+		 function,
+		 entry_index );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	type_object = pynk2_item_get_record_entry_type_object(
+	               entry );
+
+	if( type_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to retrieve record entry type object.",
+		 function );
+
+		goto on_error;
+	}
+	entry_object = pynk2_record_entry_new(
+	                type_object,
+	                entry,
+	                (PyObject *) pynk2_item );
+
+	if( entry_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create record entry object.",
+		 function );
+
+		goto on_error;
+	}
+	return( entry_object );
+
+on_error:
+	if( entry != NULL )
+	{
+		libnk2_record_entry_free(
+		 &entry,
+		 NULL );
+	}
+	return( NULL );
+}
+
+/* Retrieves a specific entry
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_item_get_entry(
+           pynk2_item_t *pynk2_item,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *entry_object      = NULL;
+	static char *keyword_list[] = { "entry_index", NULL };
+	int entry_index             = 0;
+
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "i",
+	     keyword_list,
+	     &entry_index ) == 0 )
+	{
+		return( NULL );
+	}
+	entry_object = pynk2_item_get_entry_by_index(
+	                (PyObject *) pynk2_item,
+	                entry_index );
+
+	return( entry_object );
+}
+
+/* Retrieves a sequence and iterator object for the entries
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_item_get_entries(
+           pynk2_item_t *pynk2_item,
+           PyObject *arguments PYNK2_ATTRIBUTE_UNUSED )
+{
+	PyObject *sequence_object = NULL;
+	libcerror_error_t *error  = NULL;
+	static char *function     = "pynk2_item_get_entries";
+	int number_of_entries     = 0;
+	int result                = 0;
+
+	PYNK2_UNREFERENCED_PARAMETER( arguments )
+
+	if( pynk2_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid item.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_item_get_number_of_entries(
+	          pynk2_item->item,
+	          &number_of_entries,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve number of entries.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	sequence_object = pynk2_record_entries_new(
+	                   (PyObject *) pynk2_item,
+	                   &pynk2_item_get_entry_by_index,
+	                   number_of_entries );
+
+	if( sequence_object == NULL )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to create sequence object.",
+		 function );
+
+		return( NULL );
+	}
+	return( sequence_object );
 }
 

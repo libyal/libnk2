@@ -1485,371 +1485,208 @@ int item_file_write_value_filetime(
 	return( 1 );
 }
 
-/* Writes a specific item value to the item file
+/* Writes a specific record entry to the item file
  * Returns 1 if successful or -1 on error
  */
-int item_file_write_item_value(
+int item_file_write_record_entry(
      item_file_t *item_file,
-     libnk2_item_t *item,
-     uint32_t entry_type,
      const system_character_t *description,
+     libnk2_record_entry_t *record_entry,
      uint32_t format_flags,
      libcerror_error_t **error )
 {
-	libfdatetime_filetime_t *filetime = NULL;
-	system_character_t *value_string  = NULL;
-	static char *function             = "item_file_write_item_value";
-	double value_double               = 0.0;
-	size_t description_length         = 0;
-	size_t value_string_size          = 0;
-	uint64_t value_64bit              = 0;
-	uint32_t value_32bit              = 0;
-	uint32_t value_type               = LIBNK2_VALUE_TYPE_UNSPECIFIED;
-	uint8_t value_boolean             = 0;
-	int result                        = 0;
+	libfdatetime_filetime_t *filetime         = NULL;
+	system_character_t *value_string          = NULL;
+	static char *function                     = "item_file_write_record_entry";
+	size_t description_length                 = 0;
+	size_t value_string_size                  = 0;
+	uint64_t value_64bit                      = 0;
+	uint32_t value_32bit                      = 0;
+	uint32_t value_type                       = 0;
+	uint8_t value_boolean                     = 0;
+	double value_double                       = 0.0;
+	int result                                = 0;
 
-	result = libnk2_item_get_value_type(
-	          item,
-	          entry_type,
-	          &value_type,
-	          error );
+/* TODO implement
+	libfdatetime_floatingtime_t *floatingtime = NULL;
+	uint16_t value_16bit                      = 0;
+ */
 
-	if( result == -1 )
+	if( libnk2_record_entry_get_value_type(
+	     record_entry,
+	     &value_type,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve entry type of entry type: 0x%08" PRIx32 ".",
-		 function,
-		 entry_type );
+		 "%s: unable to retrieve value type.",
+		 function );
 
 		goto on_error;
 	}
-	else if( result != 0 )
-	{
-		description_length = system_string_length(
-		                      description );
+	description_length = system_string_length(
+	                      description );
 		
-		if( item_file_write_string(
-		     item_file,
-		     description,
-		     description_length,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write description string.",
-			 function );
+	if( item_file_write_string(
+	     item_file,
+	     description,
+	     description_length,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write description string.",
+		 function );
 
-			goto on_error;
-		}
-		switch( value_type )
-		{
-			case LIBNK2_VALUE_TYPE_BOOLEAN:
-				if( libnk2_item_get_entry_value_boolean(
-				     item,
-				     entry_type,
-				     &value_boolean,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve boolean.",
-					 function );
+		goto on_error;
+	}
+	switch( value_type )
+	{
+		case LIBNK2_VALUE_TYPE_BOOLEAN:
+			if( libnk2_record_entry_get_data_as_boolean(
+			     record_entry,
+			     &value_boolean,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve boolean value.",
+				 function );
 
-					goto on_error;
-				}
-				if( value_boolean == 0 )
-				{
-					value_string      = _SYSTEM_STRING( "no" );
-					value_string_size = 3;
-				}
-				else
-				{
-					value_string      = _SYSTEM_STRING( "yes" );
-					value_string_size = 4;
-				}
-				if( item_file_write_string(
-				     item_file,
-				     value_string,
-				     value_string_size - 1,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_WRITE_FAILED,
-					 "%s: unable to write string.",
-					 function );
+				goto on_error;
+			}
+			if( value_boolean == 0 )
+			{
+				value_string      = _SYSTEM_STRING( "false" );
+				value_string_size = 6;
+			}
+			else
+			{
+				value_string      = _SYSTEM_STRING( "true" );
+				value_string_size = 5;
+			}
+			if( item_file_write_string(
+			     item_file,
+			     value_string,
+			     value_string_size - 1,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_WRITE_FAILED,
+				 "%s: unable to write string.",
+				 function );
 
-					value_string = NULL;
+				value_string = NULL;
 
-					goto on_error;
-				}
-				break;
+				goto on_error;
+			}
+			break;
 
-			case LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED:
-				if( libnk2_item_get_entry_value_32bit(
-				     item,
-				     entry_type,
-				     &value_32bit,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve 32-bit integer.",
-					 function );
+/* TODO implement
+		case LIBNK2_VALUE_TYPE_INTEGER_16BIT_SIGNED:
+			if( libnk2_record_entry_get_data_as_16bit_integer(
+			     record_entry,
+			     &value_16bit,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve 16-bit integer value.",
+				 function );
 
-					goto on_error;
-				}
-				if( ( format_flags & ITEM_FILE_FORMAT_FLAG_HEXADECIMAL ) != 0 )
-				{
-					if( item_file_write_integer_32bit_as_hexadecimal(
-					     item_file,
-					     value_32bit,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_IO,
-						 LIBCERROR_IO_ERROR_WRITE_FAILED,
-						 "%s: unable to write 32-bit integer.",
-						 function );
-
-						goto on_error;
-					}
-				}
-				else
-				{
-					if( item_file_write_integer_32bit_as_decimal(
-					     item_file,
-					     value_32bit,
-					     error ) != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_IO,
-						 LIBCERROR_IO_ERROR_WRITE_FAILED,
-						 "%s: unable to write 32-bit integer.",
-						 function );
-
-						goto on_error;
-					}
-				}
-				if( ( format_flags & ITEM_FILE_FORMAT_FLAG_DURATION_IN_MINUTES ) != 0 )
-				{
-					if( value_32bit >= 1 )
-					{
-						if( value_32bit == 1 )
-						{
-							value_string      = _SYSTEM_STRING( " minute" );
-							value_string_size = 8;
-						}
-						else if( value_32bit > 1 )
-						{
-							value_string      = _SYSTEM_STRING( " minutes" );
-							value_string_size = 9;
-						}
-						if( item_file_write_string(
-						     item_file,
-						     value_string,
-						     value_string_size - 1,
-						     error ) != 1 )
-						{
-							libcerror_error_set(
-							 error,
-							 LIBCERROR_ERROR_DOMAIN_IO,
-							 LIBCERROR_IO_ERROR_WRITE_FAILED,
-							 "%s: unable to write string.",
-							 function );
-
-							value_string = NULL;
-
-							goto on_error;
-						}
-					}
-				}
-				break;
-
-			case LIBNK2_VALUE_TYPE_FLOAT_32BIT:
-			case LIBNK2_VALUE_TYPE_DOUBLE_64BIT:
-				if( libnk2_item_get_entry_value_floating_point(
-				     item,
-				     entry_type,
-				     &value_double,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve boolean.",
-					 function );
-
-					goto on_error;
-				}
-				if( item_file_write_floating_point(
-				     item_file,
-				     value_double,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_WRITE_FAILED,
-					 "%s: unable to write floating point.",
-					 function );
-
-					goto on_error;
-				}
-				break;
-
-			case LIBNK2_VALUE_TYPE_FILETIME:
-				if( libnk2_item_get_entry_value_filetime(
-				     item,
-				     entry_type,
-				     &value_64bit,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve filetime.",
-					 function );
-
-					goto on_error;
-				}
-				if( libfdatetime_filetime_initialize(
-				     &filetime,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-					 "%s: unable to create filetime.",
-					 function );
-
-					goto on_error;
-				}
-				if( libfdatetime_filetime_copy_from_64bit(
-				     filetime,
-				     value_64bit,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_MEMORY,
-					 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-					 "%s: unable to copy filetime from 64-bit value.",
-					 function );
-
-					goto on_error;
-				}
-				if( item_file_write_filetime(
-				     item_file,
-				     filetime,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_IO,
-					 LIBCERROR_IO_ERROR_WRITE_FAILED,
-					 "%s: unable to write filetime.",
-					 function );
-
-					goto on_error;
-				}
-				if( libfdatetime_filetime_free(
-				     &filetime,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free filetime.",
-					 function );
-
-					goto on_error;
-				}
-				break;
-
-			case LIBNK2_VALUE_TYPE_STRING_ASCII:
-			case LIBNK2_VALUE_TYPE_STRING_UNICODE:
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-				result = libnk2_item_get_entry_value_utf16_string_size(
-				          item,
-				          entry_type,
-				          &value_string_size,
+				goto on_error;
+			}
+			if( ( format_flags & ITEM_FILE_FORMAT_FLAG_HEXADECIMAL ) != 0 )
+			{
+				result = item_file_write_integer_16bit_as_hexadecimal(
+				          item_file,
+				          value_16bit,
 				          error );
-#else
-				result = libnk2_item_get_entry_value_utf8_string_size(
-				          item,
-				          entry_type,
-				          &value_string_size,
+			}
+			else
+			{
+				result = item_file_write_integer_16bit_as_decimal(
+				          item_file,
+				          value_16bit,
 				          error );
-#endif
-				if( result != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve string size.",
-					 function );
+			}
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_WRITE_FAILED,
+				 "%s: unable to write 16-bit integer.",
+				 function );
 
-					goto on_error;
-				}
-				else if( value_string_size > 0 )
-				{
-					value_string = system_string_allocate(
-					                value_string_size );
+				goto on_error;
+			}
+			break;
+*/
 
-					if( value_string == NULL )
+		case LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED:
+			if( libnk2_record_entry_get_data_as_32bit_integer(
+			     record_entry,
+			     &value_32bit,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve 32-bit integer.",
+				 function );
+
+				goto on_error;
+			}
+			if( ( format_flags & ITEM_FILE_FORMAT_FLAG_HEXADECIMAL ) != 0 )
+			{
+				result = item_file_write_integer_32bit_as_hexadecimal(
+				          item_file,
+				          value_32bit,
+				          error );
+			}
+			else
+			{
+				result = item_file_write_integer_32bit_as_decimal(
+				          item_file,
+				          value_32bit,
+				          error );
+			}
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_WRITE_FAILED,
+				 "%s: unable to write 32-bit integer.",
+				 function );
+
+				goto on_error;
+			}
+			if( ( format_flags & ITEM_FILE_FORMAT_FLAG_DURATION_IN_MINUTES ) != 0 )
+			{
+				if( value_32bit >= 1 )
+				{
+					if( value_32bit == 1 )
 					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_MEMORY,
-						 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-						 "%s: unable to create value string.",
-						 function );
-
-						goto on_error;
+						value_string      = _SYSTEM_STRING( " minute" );
+						value_string_size = 8;
 					}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-					result = libnk2_item_get_entry_value_utf16_string(
-					          item,
-					          entry_type,
-					          (uint16_t *) value_string,
-					          value_string_size,
-					          error );
-#else
-					result = libnk2_item_get_entry_value_utf8_string(
-					          item,
-					          entry_type,
-					          (uint8_t *) value_string,
-					          value_string_size,
-					          error );
-#endif
-					if( result != 1 )
+					else if( value_32bit > 1 )
 					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to retrieve string.",
-						 function );
-
-						goto on_error;
+						value_string      = _SYSTEM_STRING( " minutes" );
+						value_string_size = 9;
 					}
 					if( item_file_write_string(
 					     item_file,
@@ -1864,28 +1701,321 @@ int item_file_write_item_value(
 						 "%s: unable to write string.",
 						 function );
 
+						value_string = NULL;
+
 						goto on_error;
 					}
-					memory_free(
-					 value_string );
-
-					value_string = NULL;
 				}
-				break;
-		}
-		if( item_file_write_new_line(
-		     item_file,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_WRITE_FAILED,
-			 "%s: unable to write new line.",
-			 function );
+			}
+			break;
 
-			goto on_error;
-		}
+/* TODO implement
+		case LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED:
+			if( libnk2_record_entry_get_data_as_64bit_integer(
+			     record_entry,
+			     &value_64bit,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve 64-bit integer value.",
+				 function );
+
+				goto on_error;
+			}
+			if( ( format_flags & ITEM_FILE_FORMAT_FLAG_HEXADECIMAL ) != 0 )
+			{
+				result = item_file_write_integer_64bit_as_hexadecimal(
+				          item_file,
+				          value_64bit,
+				          error );
+			}
+			else
+			{
+				result = item_file_write_integer_64bit_as_decimal(
+				          item_file,
+				          value_64bit,
+				          error );
+			}
+			break;
+*/
+
+		case LIBNK2_VALUE_TYPE_FLOAT_32BIT:
+		case LIBNK2_VALUE_TYPE_DOUBLE_64BIT:
+			if( libnk2_record_entry_get_data_as_floating_point(
+			     record_entry,
+			     &value_double,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve floating point value.",
+				 function );
+
+				goto on_error;
+			}
+			if( item_file_write_floating_point(
+			     item_file,
+			     value_double,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_WRITE_FAILED,
+				 "%s: unable to write floating point.",
+				 function );
+
+				goto on_error;
+			}
+			break;
+
+		case LIBNK2_VALUE_TYPE_FILETIME:
+			if( libnk2_record_entry_get_data_as_filetime(
+			     record_entry,
+			     &value_64bit,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve filetime value.",
+				 function );
+
+				goto on_error;
+			}
+			if( libfdatetime_filetime_initialize(
+			     &filetime,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create filetime.",
+				 function );
+
+				goto on_error;
+			}
+			if( libfdatetime_filetime_copy_from_64bit(
+			     filetime,
+			     value_64bit,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+				 "%s: unable to copy filetime from 64-bit value.",
+				 function );
+
+				goto on_error;
+			}
+			if( item_file_write_filetime(
+			     item_file,
+			     filetime,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_WRITE_FAILED,
+				 "%s: unable to write filetime.",
+				 function );
+
+				goto on_error;
+			}
+			if( libfdatetime_filetime_free(
+			     &filetime,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free filetime.",
+				 function );
+
+				goto on_error;
+			}
+			break;
+
+/* TODO implement
+		case LIBNK2_VALUE_TYPE_FLOATINGTIME:
+			if( libnk2_record_entry_get_data_as_floatingtime(
+			     record_entry,
+			     &value_64bit,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve floatingtime value.",
+				 function );
+
+				goto on_error;
+			}
+			if( libfdatetime_floatingtime_initialize(
+			     &floatingtime,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create floatingtime.",
+				 function );
+
+				goto on_error;
+			}
+			if( libfdatetime_floatingtime_copy_from_64bit(
+			     floatingtime,
+			     value_64bit,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+				 "%s: unable to copy floatingtime from 64-bit value.",
+				 function );
+
+				goto on_error;
+			}
+			if( item_floating_write_floatingtime(
+			     item_file,
+			     floatingtime,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_WRITE_FAILED,
+				 "%s: unable to write floatingtime.",
+				 function );
+
+				goto on_error;
+			}
+			if( libfdatetime_floatingtime_free(
+			     &floatingtime,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free floatingtime.",
+				 function );
+
+				goto on_error;
+			}
+			break;
+*/
+
+		case LIBNK2_VALUE_TYPE_STRING_ASCII:
+		case LIBNK2_VALUE_TYPE_STRING_UNICODE:
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libnk2_record_entry_get_data_as_utf16_string_size(
+				  record_entry,
+				  &value_string_size,
+				  error );
+#else
+			result = libnk2_record_entry_get_data_as_utf8_string_size(
+				  record_entry,
+				  &value_string_size,
+				  error );
+#endif
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve string value size.",
+				 function );
+
+				goto on_error;
+			}
+			else if( value_string_size > 0 )
+			{
+				value_string = system_string_allocate(
+						value_string_size );
+
+				if( value_string == NULL )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_MEMORY,
+					 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+					 "%s: unable to create value string.",
+					 function );
+
+					goto on_error;
+				}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+				result = libnk2_record_entry_get_data_as_utf16_string(
+					  record_entry,
+					  (uint16_t *) value_string,
+					  value_string_size,
+					  error );
+#else
+				result = libnk2_record_entry_get_data_as_utf8_string(
+					  record_entry,
+					  (uint8_t *) value_string,
+					  value_string_size,
+					  error );
+#endif
+				if( result != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve string value.",
+					 function );
+
+					goto on_error;
+				}
+				if( item_file_write_string(
+				     item_file,
+				     value_string,
+				     value_string_size - 1,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_WRITE_FAILED,
+					 "%s: unable to write string.",
+					 function );
+
+					goto on_error;
+				}
+				memory_free(
+				 value_string );
+
+				value_string = NULL;
+			}
+			break;
+	}
+	if( item_file_write_new_line(
+	     item_file,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to write new line.",
+		 function );
+
+		goto on_error;
 	}
 	return( 1 );
 

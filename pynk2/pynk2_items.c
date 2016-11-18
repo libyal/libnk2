@@ -26,11 +26,11 @@
 #include <stdlib.h>
 #endif
 
+#include "pynk2_item.h"
+#include "pynk2_items.h"
 #include "pynk2_libcerror.h"
 #include "pynk2_libnk2.h"
 #include "pynk2_python.h"
-#include "pynk2_item.h"
-#include "pynk2_items.h"
 
 PySequenceMethods pynk2_items_sequence_methods = {
 	/* sq_length */
@@ -157,11 +157,11 @@ PyObject *pynk2_items_new(
            PyObject *parent_object,
            PyObject* (*get_item_by_index)(
                         PyObject *parent_object,
-                        int item_index ),
+                        int index ),
            int number_of_items )
 {
-	pynk2_items_t *pynk2_items = NULL;
-	static char *function      = "pynk2_items_new";
+	pynk2_items_t *items_object = NULL;
+	static char *function       = "pynk2_items_new";
 
 	if( parent_object == NULL )
 	{
@@ -183,93 +183,93 @@ PyObject *pynk2_items_new(
 	}
 	/* Make sure the items values are initialized
 	 */
-	pynk2_items = PyObject_New(
-	               struct pynk2_items,
-	               &pynk2_items_type_object );
+	items_object = PyObject_New(
+	                struct pynk2_items,
+	                &pynk2_items_type_object );
 
-	if( pynk2_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize items.",
+		 "%s: unable to create items object.",
 		 function );
 
 		goto on_error;
 	}
 	if( pynk2_items_init(
-	     pynk2_items ) != 0 )
+	     items_object ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize items.",
+		 "%s: unable to initialize items object.",
 		 function );
 
 		goto on_error;
 	}
-	pynk2_items->parent_object             = parent_object;
-	pynk2_items->get_item_by_index = get_item_by_index;
-	pynk2_items->number_of_items   = number_of_items;
+	items_object->parent_object     = parent_object;
+	items_object->get_item_by_index = get_item_by_index;
+	items_object->number_of_items   = number_of_items;
 
 	Py_IncRef(
-	 (PyObject *) pynk2_items->parent_object );
+	 (PyObject *) items_object->parent_object );
 
-	return( (PyObject *) pynk2_items );
+	return( (PyObject *) items_object );
 
 on_error:
-	if( pynk2_items != NULL )
+	if( items_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pynk2_items );
+		 (PyObject *) items_object );
 	}
 	return( NULL );
 }
 
-/* Intializes a items object
+/* Intializes an items object
  * Returns 0 if successful or -1 on error
  */
 int pynk2_items_init(
-     pynk2_items_t *pynk2_items )
+     pynk2_items_t *items_object )
 {
 	static char *function = "pynk2_items_init";
 
-	if( pynk2_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( -1 );
 	}
 	/* Make sure the items values are initialized
 	 */
-	pynk2_items->parent_object             = NULL;
-	pynk2_items->get_item_by_index = NULL;
-	pynk2_items->item_index        = 0;
-	pynk2_items->number_of_items   = 0;
+	items_object->parent_object     = NULL;
+	items_object->get_item_by_index = NULL;
+	items_object->current_index     = 0;
+	items_object->number_of_items   = 0;
 
 	return( 0 );
 }
 
-/* Frees a items object
+/* Frees an items object
  */
 void pynk2_items_free(
-      pynk2_items_t *pynk2_items )
+      pynk2_items_t *items_object )
 {
 	struct _typeobject *ob_type = NULL;
 	static char *function       = "pynk2_items_free";
 
-	if( pynk2_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pynk2_items );
+	           items_object );
 
 	if( ob_type == NULL )
 	{
@@ -289,72 +289,72 @@ void pynk2_items_free(
 
 		return;
 	}
-	if( pynk2_items->parent_object != NULL )
+	if( items_object->parent_object != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pynk2_items->parent_object );
+		 (PyObject *) items_object->parent_object );
 	}
 	ob_type->tp_free(
-	 (PyObject*) pynk2_items );
+	 (PyObject*) items_object );
 }
 
 /* The items len() function
  */
 Py_ssize_t pynk2_items_len(
-            pynk2_items_t *pynk2_items )
+            pynk2_items_t *items_object )
 {
 	static char *function = "pynk2_items_len";
 
-	if( pynk2_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( -1 );
 	}
-	return( (Py_ssize_t) pynk2_items->number_of_items );
+	return( (Py_ssize_t) items_object->number_of_items );
 }
 
 /* The items getitem() function
  */
 PyObject *pynk2_items_getitem(
-           pynk2_items_t *pynk2_items,
+           pynk2_items_t *items_object,
            Py_ssize_t item_index )
 {
 	PyObject *item_object = NULL;
 	static char *function = "pynk2_items_getitem";
 
-	if( pynk2_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pynk2_items->get_item_by_index == NULL )
+	if( items_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - missing get item by index function.",
+		 "%s: invalid items object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pynk2_items->number_of_items < 0 )
+	if( items_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - invalid number of items.",
+		 "%s: invalid items object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
 	if( ( item_index < 0 )
-	 || ( item_index >= (Py_ssize_t) pynk2_items->number_of_items ) )
+	 || ( item_index >= (Py_ssize_t) items_object->number_of_items ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -363,8 +363,8 @@ PyObject *pynk2_items_getitem(
 
 		return( NULL );
 	}
-	item_object = pynk2_items->get_item_by_index(
-	               pynk2_items->parent_object,
+	item_object = items_object->get_item_by_index(
+	               items_object->parent_object,
 	               (int) item_index );
 
 	return( item_object );
@@ -373,83 +373,83 @@ PyObject *pynk2_items_getitem(
 /* The items iter() function
  */
 PyObject *pynk2_items_iter(
-           pynk2_items_t *pynk2_items )
+           pynk2_items_t *items_object )
 {
 	static char *function = "pynk2_items_iter";
 
-	if( pynk2_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( NULL );
 	}
 	Py_IncRef(
-	 (PyObject *) pynk2_items );
+	 (PyObject *) items_object );
 
-	return( (PyObject *) pynk2_items );
+	return( (PyObject *) items_object );
 }
 
 /* The items iternext() function
  */
 PyObject *pynk2_items_iternext(
-           pynk2_items_t *pynk2_items )
+           pynk2_items_t *items_object )
 {
 	PyObject *item_object = NULL;
 	static char *function = "pynk2_items_iternext";
 
-	if( pynk2_items == NULL )
+	if( items_object == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items.",
+		 "%s: invalid items object.",
 		 function );
 
 		return( NULL );
 	}
-	if( pynk2_items->get_item_by_index == NULL )
+	if( items_object->get_item_by_index == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - missing get item by index function.",
+		 "%s: invalid items object - missing get item by index function.",
 		 function );
 
 		return( NULL );
 	}
-	if( pynk2_items->item_index < 0 )
+	if( items_object->current_index < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - invalid item index.",
+		 "%s: invalid items object - invalid current index.",
 		 function );
 
 		return( NULL );
 	}
-	if( pynk2_items->number_of_items < 0 )
+	if( items_object->number_of_items < 0 )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid items - invalid number of items.",
+		 "%s: invalid items object - invalid number of items.",
 		 function );
 
 		return( NULL );
 	}
-	if( pynk2_items->item_index >= pynk2_items->number_of_items )
+	if( items_object->current_index >= items_object->number_of_items )
 	{
 		PyErr_SetNone(
 		 PyExc_StopIteration );
 
 		return( NULL );
 	}
-	item_object = pynk2_items->get_item_by_index(
-	               pynk2_items->parent_object,
-	               pynk2_items->item_index );
+	item_object = items_object->get_item_by_index(
+	               items_object->parent_object,
+	               items_object->current_index );
 
 	if( item_object != NULL )
 	{
-		pynk2_items->item_index++;
+		items_object->current_index++;
 	}
 	return( item_object );
 }

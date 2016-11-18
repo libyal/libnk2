@@ -707,7 +707,7 @@ int libnk2_record_entry_get_data_as_64bit_integer(
 LIBNK2_EXTERN \
 int libnk2_record_entry_get_data_as_filetime(
      libnk2_record_entry_t *record_entry,
-     uint64_t *value_64bit,
+     uint64_t *filetime,
      libnk2_error_t **error );
 
 /* Retrieves the data as a 64-bit floatingtime value
@@ -716,7 +716,7 @@ int libnk2_record_entry_get_data_as_filetime(
 LIBNK2_EXTERN \
 int libnk2_record_entry_get_data_as_floatingtime(
      libnk2_record_entry_t *record_entry,
-     uint64_t *value_64bit,
+     uint64_t *floatingtime,
      libnk2_error_t **error );
 
 /* Retrieves the data as a size_t value

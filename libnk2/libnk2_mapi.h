@@ -20,7 +20,7 @@
  */
 
 #if !defined( _LIBNK2_INTERNAL_MAPI_H )
-#define _LIBNK2NK2_INTERNAL_H
+#define _LIBNK2_INTERNAL_MAPI_H
 
 #include <common.h>
 #include <types.h>
@@ -366,11 +366,11 @@ enum LIBNK2_ENTRY_TYPES
 	LIBNK2_ENTRY_TYPE_MESSAGE_REMINDER_SIGNAL_TIME				= 0x8550
 };
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBNK2_INTERNAL_MAPI_H ) */
 

@@ -31,9 +31,13 @@
 #include "pynk2_error.h"
 #include "pynk2_file.h"
 #include "pynk2_file_object_io_handle.h"
+#include "pynk2_item.h"
+#include "pynk2_items.h"
 #include "pynk2_libcerror.h"
 #include "pynk2_libnk2.h"
 #include "pynk2_python.h"
+#include "pynk2_record_entry.h"
+#include "pynk2_record_entries.h"
 #include "pynk2_unused.h"
 
 #if !defined( LIBNK2_HAVE_BFIO )
@@ -454,9 +458,13 @@ PyMODINIT_FUNC initpynk2(
                 void )
 #endif
 {
-	PyObject *module               = NULL;
-	PyTypeObject *file_type_object = NULL;
-	PyGILState_STATE gil_state     = 0;
+	PyObject *module                         = NULL;
+	PyTypeObject *file_type_object           = NULL;
+	PyTypeObject *item_type_object           = NULL;
+	PyTypeObject *items_type_object          = NULL;
+	PyTypeObject *record_entries_type_object = NULL;
+	PyTypeObject *record_entry_type_object   = NULL;
+	PyGILState_STATE gil_state               = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libnk2_notify_set_stream(
@@ -509,6 +517,82 @@ PyMODINIT_FUNC initpynk2(
 	 module,
 	 "file",
 	 (PyObject *) file_type_object );
+
+	/* Setup the items type object
+	 */
+	pynk2_items_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pynk2_items_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pynk2_items_type_object );
+
+	items_type_object = &pynk2_items_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "_items",
+	 (PyObject *) items_type_object );
+
+	/* Setup the item type object
+	 */
+	pynk2_item_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pynk2_item_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pynk2_item_type_object );
+
+	item_type_object = &pynk2_item_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "item",
+	 (PyObject *) item_type_object );
+
+	/* Setup the record entry type object
+	 */
+	pynk2_record_entry_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pynk2_record_entry_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pynk2_record_entry_type_object );
+
+	record_entry_type_object = &pynk2_record_entry_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "record_entry",
+	 (PyObject *) record_entry_type_object );
+
+	/* Setup the record entries type object
+	 */
+	pynk2_record_entries_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pynk2_record_entries_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pynk2_record_entries_type_object );
+
+	record_entries_type_object = &pynk2_record_entries_type_object;
+
+	PyModule_AddObject(
+	 module,
+	 "_record_entries",
+	 (PyObject *) record_entries_type_object );
 
 	PyGILState_Release(
 	 gil_state );

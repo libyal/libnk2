@@ -145,11 +145,10 @@ int item_file_write_value_filetime(
      libfdatetime_filetime_t *filetime,
      libcerror_error_t **error );
 
-int item_file_write_item_value(
+int item_file_write_record_entry(
      item_file_t *item_file,
-     libnk2_item_t *item,
-     uint32_t entry_type,
      const system_character_t *description,
+     libnk2_record_entry_t *record_entry,
      uint32_t format_flags,
      libcerror_error_t **error );
 

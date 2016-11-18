@@ -272,6 +272,8 @@ on_error:
 	return( 0 );
 }
 
+#if defined( __GNUC__ )
+
 /* Tests the libnk2_item_get_number_of_entries function
  * Returns 1 if successful or 0 if not
  */
@@ -395,6 +397,8 @@ on_error:
 	return( 0 );
 }
 
+#endif /* defined( __GNUC__ ) */
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -422,6 +426,8 @@ int main(
 	 "libnk2_item_free",
 	 nk2_test_item_free );
 
+#if defined( __GNUC__ )
+
 	NK2_TEST_RUN(
 	 "libnk2_item_get_number_of_entries",
 	 nk2_test_item_get_number_of_entries );
@@ -429,6 +435,8 @@ int main(
 	/* TODO: add tests for libnk2_item_get_entry_by_index */
 
 	/* TODO: add tests for libnk2_item_get_entry_by_type */
+
+#endif /* defined( __GNUC__ ) */
 
 	return( EXIT_SUCCESS );
 

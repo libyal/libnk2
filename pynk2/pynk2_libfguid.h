@@ -1,5 +1,5 @@
 /*
- * Date and time functions
+ * The internal libfguid header
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,33 +19,31 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYNK2_DATETIME_H )
-#define _PYNK2_DATETIME_H
+#if !defined( _PYNK2_LIBFGUID_H )
+#define _PYNK2_LIBFGUID_H
 
 #include <common.h>
-#include <types.h>
 
-#include "pynk2_python.h"
+/* Define HAVE_LOCAL_LIBFGUID for local use of libfguid
+ */
+#if defined( HAVE_LOCAL_LIBFGUID )
 
-#if defined( __cplusplus )
-extern "C" {
+#include <libfguid_definitions.h>
+#include <libfguid_identifier.h>
+#include <libfguid_types.h>
+
+#else
+
+/* If libtool DLL support is enabled set LIBFGUID_DLL_IMPORT
+ * before including libfguid.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBFGUID_DLL_IMPORT
 #endif
 
-PyObject *pynk2_datetime_new_from_fat_date_time(
-           uint32_t fat_date_time );
+#include <libfguid.h>
 
-PyObject *pynk2_datetime_new_from_filetime(
-           uint64_t filetime );
-
-PyObject *pynk2_datetime_new_from_floatingtime(
-           uint64_t floatingtime );
-
-PyObject *pynk2_datetime_new_from_posix_time(
-           uint32_t posix_time );
-
-#if defined( __cplusplus )
-}
 #endif
 
-#endif /* !defined( _PYNK2_DATETIME_H ) */
+#endif /* !defined( _PYNK2_LIBFGUID_H ) */
 

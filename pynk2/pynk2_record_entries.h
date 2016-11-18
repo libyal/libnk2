@@ -1,5 +1,5 @@
 /*
- * Python object definition of the sequence and iterator object of items
+ * Python object definition of the sequence and iterator object of record entries
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYNK2_ITEMS_H )
-#define _PYNK2_ITEMS_H
+#if !defined( _PYNK2_RECORD_ENTRIES_H )
+#define _PYNK2_RECORD_ENTRIES_H
 
 #include <common.h>
 #include <types.h>
@@ -32,9 +32,9 @@
 extern "C" {
 #endif
 
-typedef struct pynk2_items pynk2_items_t;
+typedef struct pynk2_record_entries pynk2_record_entries_t;
 
-struct pynk2_items
+struct pynk2_record_entries
 {
 	/* Python object initialization
 	 */
@@ -59,37 +59,37 @@ struct pynk2_items
 	int number_of_items;
 };
 
-extern PyTypeObject pynk2_items_type_object;
+extern PyTypeObject pynk2_record_entries_type_object;
 
-PyObject *pynk2_items_new(
+PyObject *pynk2_record_entries_new(
            PyObject *parent_object,
            PyObject* (*get_item_by_index)(
                         PyObject *parent_object,
                         int index ),
            int number_of_items );
 
-int pynk2_items_init(
-     pynk2_items_t *items_object );
+int pynk2_record_entries_init(
+     pynk2_record_entries_t *record_entries_object );
 
-void pynk2_items_free(
-      pynk2_items_t *items_object );
+void pynk2_record_entries_free(
+      pynk2_record_entries_t *record_entries_object );
 
-Py_ssize_t pynk2_items_len(
-            pynk2_items_t *items_object );
+Py_ssize_t pynk2_record_entries_len(
+            pynk2_record_entries_t *record_entries_object );
 
-PyObject *pynk2_items_getitem(
-           pynk2_items_t *items_object,
+PyObject *pynk2_record_entries_getitem(
+           pynk2_record_entries_t *record_entries_object,
            Py_ssize_t item_index );
 
-PyObject *pynk2_items_iter(
-           pynk2_items_t *items_object );
+PyObject *pynk2_record_entries_iter(
+           pynk2_record_entries_t *record_entries_object );
 
-PyObject *pynk2_items_iternext(
-           pynk2_items_t *items_object );
+PyObject *pynk2_record_entries_iternext(
+           pynk2_record_entries_t *record_entries_object );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _PYNK2_ITEMS_H ) */
+#endif /* !defined( _PYNK2_RECORD_ENTRIES_H ) */
 

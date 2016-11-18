@@ -994,7 +994,7 @@ int libnk2_record_entry_get_data_as_64bit_integer(
  */
 int libnk2_record_entry_get_data_as_filetime(
      libnk2_record_entry_t *record_entry,
-     uint64_t *value_64bit,
+     uint64_t *filetime,
      libcerror_error_t **error )
 {
 	libnk2_internal_record_entry_t *internal_record_entry = NULL;
@@ -1046,20 +1046,20 @@ int libnk2_record_entry_get_data_as_filetime(
 
 		return( -1 );
 	}
-	if( value_64bit == NULL )
+	if( filetime == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value 64-bit.",
+		 "%s: invalid filetime.",
 		 function );
 
 		return( -1 );
 	}
 	byte_stream_copy_to_uint64_little_endian(
 	 internal_record_entry->value_data,
-	 *value_64bit );
+	 *filetime );
 
 	return( 1 );
 }
@@ -1069,7 +1069,7 @@ int libnk2_record_entry_get_data_as_filetime(
  */
 int libnk2_record_entry_get_data_as_floatingtime(
      libnk2_record_entry_t *record_entry,
-     uint64_t *value_64bit,
+     uint64_t *floatingtime,
      libcerror_error_t **error )
 {
 	libnk2_internal_record_entry_t *internal_record_entry = NULL;
@@ -1121,20 +1121,20 @@ int libnk2_record_entry_get_data_as_floatingtime(
 
 		return( -1 );
 	}
-	if( value_64bit == NULL )
+	if( floatingtime == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid value 64-bit.",
+		 "%s: invalid floatingtime.",
 		 function );
 
 		return( -1 );
 	}
 	byte_stream_copy_to_uint64_little_endian(
 	 internal_record_entry->value_data,
-	 *value_64bit );
+	 *floatingtime );
 
 	return( 1 );
 }

@@ -67,6 +67,19 @@ PyObject *pynk2_item_get_number_of_entries(
            pynk2_item_t *pynk2_item,
            PyObject *arguments );
 
+PyObject *pynk2_item_get_entry_by_index(
+           PyObject *pynk2_item,
+           int entry_index );
+
+PyObject *pynk2_item_get_entry(
+           pynk2_item_t *pynk2_item,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pynk2_item_get_entries(
+           pynk2_item_t *pynk2_item,
+           PyObject *arguments );
+
 #if defined( __cplusplus )
 }
 #endif

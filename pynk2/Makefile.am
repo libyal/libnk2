@@ -8,7 +8,8 @@ AM_CFLAGS = \
 	@LIBUNA_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
-	@LIBBFIO_CPPFLAGS@
+	@LIBBFIO_CPPFLAGS@ \
+	@LIBFGUID_CPPFLAGS@
 
 pyexec_LTLIBRARIES = pynk2.la
 
@@ -19,13 +20,17 @@ pynk2_la_SOURCES = \
 	pynk2_error.c pynk2_error.h \
 	pynk2_file.c pynk2_file.h \
 	pynk2_file_object_io_handle.c pynk2_file_object_io_handle.h \
+	pynk2_guid.c pynk2_guid.h \
 	pynk2_integer.c pynk2_integer.h \
 	pynk2_item.c pynk2_item.h \
 	pynk2_items.c pynk2_items.h \
 	pynk2_libbfio.h \
 	pynk2_libcerror.h \
 	pynk2_libclocale.h \
+	pynk2_libfguid.h \
 	pynk2_libnk2.h \
+	pynk2_record_entries.c pynk2_record_entries.h \
+	pynk2_record_entry.c pynk2_record_entry.h \
 	pynk2_python.h \
 	pynk2_unused.h
 
@@ -36,7 +41,8 @@ pynk2_la_LIBADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
-	@LIBBFIO_LIBADD@
+	@LIBBFIO_LIBADD@ \
+	@LIBFGUID_LIBADD@
 
 pynk2_la_CPPFLAGS = $(PYTHON_CPPFLAGS)
 pynk2_la_LDFLAGS  = -module -avoid-version $(PYTHON_LDFLAGS)

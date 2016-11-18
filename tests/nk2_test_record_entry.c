@@ -73,6 +73,10 @@ on_error:
 	return( 0 );
 }
 
+#if defined( __GNUC__ )
+
+#endif /* defined( __GNUC__ ) */
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -103,8 +107,6 @@ int main(
 	/* TODO: add tests for libnk2_record_entry_read_data */
 
 	/* TODO: add tests for libnk2_record_entry_read_value */
-
-#endif /* defined( __GNUC__ ) */
 
 	/* TODO: add tests for libnk2_record_entry_get_entry_type */
 
@@ -139,6 +141,8 @@ int main(
 	/* TODO: add tests for libnk2_record_entry_get_data_as_utf16_string */
 
 	/* TODO: add tests for libnk2_record_entry_get_data_as_guid */
+
+#endif /* defined( __GNUC__ ) */
 
 	return( EXIT_SUCCESS );
 

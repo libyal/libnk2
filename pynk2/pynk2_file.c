@@ -124,7 +124,7 @@ PyMethodDef pynk2_file_object_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "get_item(item_index) -> Object or None\n"
 	  "\n"
-	  "Retrieves the item." },
+	  "Retrieves the item specified by the index." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -1328,7 +1328,7 @@ PyObject *pynk2_file_get_number_of_items(
 	if( pynk2_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1366,6 +1366,17 @@ PyObject *pynk2_file_get_number_of_items(
 	return( integer_object );
 }
 
+/* Retrieves the item type object
+ * Returns a Python type object if successful or NULL on error
+ */
+PyTypeObject *pynk2_file_get_item_type_object(
+               libnk2_item_t *item PYNK2_ATTRIBUTE_UNUSED )
+{
+	PYNK2_UNREFERENCED_PARAMETER( item )
+
+	return( &pynk2_item_type_object );
+}
+
 /* Retrieves a specific item by index
  * Returns a Python object if successful or NULL on error
  */
@@ -1373,16 +1384,17 @@ PyObject *pynk2_file_get_item_by_index(
            PyObject *pynk2_file,
            int item_index )
 {
-	PyObject *item_object    = NULL;
-	libcerror_error_t *error = NULL;
-	libnk2_item_t *item      = NULL;
-	static char *function    = "pynk2_file_get_item_by_index";
-	int result               = 0;
+	PyObject *item_object     = NULL;
+	PyTypeObject *type_object = NULL;
+	libcerror_error_t *error  = NULL;
+	libnk2_item_t *item       = NULL;
+	static char *function     = "pynk2_file_get_item_by_index";
+	int result                = 0;
 
 	if( pynk2_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 
@@ -1412,8 +1424,20 @@ PyObject *pynk2_file_get_item_by_index(
 
 		goto on_error;
 	}
+	type_object = pynk2_file_get_item_type_object(
+	               item );
+
+	if( type_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to retrieve item type object.",
+		 function );
+
+		goto on_error;
+	}
 	item_object = pynk2_item_new(
-	               &pynk2_item_type_object,
+	               type_object,
 	               item,
 	               (PyObject *) pynk2_file );
 
@@ -1484,7 +1508,7 @@ PyObject *pynk2_file_get_items(
 	if( pynk2_file == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid file.",
 		 function );
 

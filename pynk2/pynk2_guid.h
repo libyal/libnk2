@@ -1,5 +1,5 @@
 /*
- * Date and time functions
+ * GUID functions
  *
  * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYNK2_DATETIME_H )
-#define _PYNK2_DATETIME_H
+#if !defined( _PYNK2_GUID_H )
+#define _PYNK2_GUID_H
 
 #include <common.h>
 #include <types.h>
@@ -31,21 +31,13 @@
 extern "C" {
 #endif
 
-PyObject *pynk2_datetime_new_from_fat_date_time(
-           uint32_t fat_date_time );
-
-PyObject *pynk2_datetime_new_from_filetime(
-           uint64_t filetime );
-
-PyObject *pynk2_datetime_new_from_floatingtime(
-           uint64_t floatingtime );
-
-PyObject *pynk2_datetime_new_from_posix_time(
-           uint32_t posix_time );
+PyObject *pynk2_string_new_from_guid(
+           const uint8_t *guid_buffer,
+           size_t guid_buffer_size );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _PYNK2_DATETIME_H ) */
+#endif /* !defined( _PYNK2_GUID_H ) */
 

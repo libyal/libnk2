@@ -140,13 +140,13 @@ int libnk2_record_entry_get_data_as_64bit_integer(
 LIBNK2_EXTERN \
 int libnk2_record_entry_get_data_as_filetime(
      libnk2_record_entry_t *record_entry,
-     uint64_t *value_64bit,
+     uint64_t *filetime,
      libcerror_error_t **error );
 
 LIBNK2_EXTERN \
 int libnk2_record_entry_get_data_as_floatingtime(
      libnk2_record_entry_t *record_entry,
-     uint64_t *value_64bit,
+     uint64_t *floatingtime,
      libcerror_error_t **error );
 
 LIBNK2_EXTERN \
