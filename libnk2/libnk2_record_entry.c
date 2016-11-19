@@ -1653,7 +1653,7 @@ int libnk2_record_entry_get_data_as_guid(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to copy droid volume identifier.",
+		 "%s: unable to copy value data.",
 		 function );
 
 		return( -1 );

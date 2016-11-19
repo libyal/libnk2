@@ -2025,6 +2025,14 @@ on_error:
 		memory_free(
 		 value_string );
 	}
+/* TODO implement
+	if( floatingtime != NULL )
+	{
+		libfdatetime_floatingtime_free(
+		 &floatingtime,
+		 NULL );
+	}
+*/
 	if( filetime != NULL )
 	{
 		libfdatetime_filetime_free(
