@@ -33,5 +33,5 @@
 
 #include <libnk2.h>
 
-#endif
+#endif /* !defined( _NK2TOOLS_LIBNK2_H ) */
 
