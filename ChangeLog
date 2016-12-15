@@ -23,6 +23,7 @@ Tools
   - add export mode like pffexport
   - export alias files instead of item values
   - export to CSV/TSV, HTML, XML
+  - add -d option to dump item values and use this in test_nk2export.sh
 * nk2info
 
 Beta release

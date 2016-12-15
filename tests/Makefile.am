@@ -14,13 +14,11 @@ AM_CPPFLAGS = \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@LIBFMAPI_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBNK2_DLL_IMPORT@
 
 if HAVE_PYTHON_TESTS
 TESTS_PYNK2 = \
-	test_python_functions.sh \
-	test_pynk2_set_ascii_codepage.sh
+	test_python_functions.sh
 endif
 
 TESTS = \
@@ -31,14 +29,11 @@ TESTS = \
 	$(TESTS_PYNK2)
 
 check_SCRIPTS = \
-	pynk2_test_get_version.py \
-	pynk2_test_open_close.py \
-	pynk2_test_set_ascii_codepage.py \
+	pynk2_test_support.py \
 	test_api_functions.sh \
 	test_api_types.sh \
 	test_nk2export.sh \
 	test_nk2info.sh \
-	test_pynk2_set_ascii_codepage.sh \
 	test_python_functions.sh \
 	test_runner.sh
 
@@ -65,16 +60,16 @@ nk2_test_error_LDADD = \
 
 nk2_test_file_SOURCES = \
 	nk2_test_file.c \
+	nk2_test_getopt.c nk2_test_getopt.h \
 	nk2_test_libcerror.h \
 	nk2_test_libclocale.h \
-	nk2_test_libcsystem.h \
+	nk2_test_libcnotify.h \
 	nk2_test_libnk2.h \
 	nk2_test_libuna.h \
 	nk2_test_macros.h \
 	nk2_test_memory.c nk2_test_memory.h
 
 nk2_test_file_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
@@ -130,17 +125,17 @@ nk2_test_record_entry_LDADD = \
 	@LIBCERROR_LIBADD@
 
 nk2_test_support_SOURCES = \
+	nk2_test_getopt.c nk2_test_getopt.h \
 	nk2_test_libbfio.h \
 	nk2_test_libcerror.h \
 	nk2_test_libclocale.h \
-	nk2_test_libcsystem.h \
+	nk2_test_libcnotify.h \
 	nk2_test_libnk2.h \
 	nk2_test_libuna.h \
 	nk2_test_macros.h \
 	nk2_test_support.c
 
 nk2_test_support_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
