@@ -1530,6 +1530,8 @@ int nk2_test_file_get_modification_time(
 
 	modification_time_is_set = result;
 
+	/* TODO: add test to check returns 0 if file is closed */
+
 	/* Test error cases
 	 */
 	result = libnk2_file_get_modification_time(

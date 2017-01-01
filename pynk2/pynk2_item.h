@@ -1,7 +1,7 @@
 /*
  * Python object wrapper of libnk2_item_t
  *
- * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -79,6 +79,11 @@ PyObject *pynk2_item_get_entry(
 PyObject *pynk2_item_get_entries(
            pynk2_item_t *pynk2_item,
            PyObject *arguments );
+
+PyObject *pynk2_item_get_entry_by_type(
+           pynk2_item_t *pynk2_item,
+           PyObject *arguments,
+           PyObject *keywords );
 
 #if defined( __cplusplus )
 }

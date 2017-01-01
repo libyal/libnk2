@@ -1,7 +1,7 @@
 /*
  * Python object wrapper of libnk2_file_t
  *
- * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -752,6 +752,16 @@ PyObject *pynk2_file_open_file_object(
 		 mode );
 
 		return( NULL );
+	}
+	if( pynk2_file->file_io_handle != NULL )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: invalid file - file IO handle already set.",
+		 function );
+
+		goto on_error;
 	}
 	if( pynk2_file_object_initialize(
 	     &( pynk2_file->file_io_handle ),

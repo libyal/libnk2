@@ -30,6 +30,11 @@ import pynk2
 class FileTypeTests(unittest.TestCase):
   """Tests the file type."""
 
+  def test_signal_abort(self):
+    """Tests the signal_abort function."""
+    nk2_file = pynk2.file()
+    nk2_file.signal_abort()
+
   def test_open(self):
     """Tests the open function."""
     if not unittest.source:
@@ -61,8 +66,7 @@ class FileTypeTests(unittest.TestCase):
 
     nk2_file.open_file_object(file_object)
 
-    # TODO: change MemoryError into IOError
-    with self.assertRaises(MemoryError):
+    with self.assertRaises(IOError):
       nk2_file.open_file_object(file_object)
 
     nk2_file.close()
@@ -114,6 +118,13 @@ class FileTypeTests(unittest.TestCase):
     del file_object
     nk2_file.close()
 
+  def test_get_ascii_codepage(self):
+    """Tests the get_ascii_codepage function."""
+    nk2_file = pynk2.file()
+
+    codepage = nk2_file.get_ascii_codepage()
+    self.assertIsNotNone(codepage)
+
   def test_set_ascii_codepage(self):
     """Tests the set_ascii_codepage function."""
     supported_codepages = (
@@ -135,6 +146,96 @@ class FileTypeTests(unittest.TestCase):
     for codepage in unsupported_codepages:
       with self.assertRaises(RuntimeError):
         nk2_file.set_ascii_codepage(codepage)
+
+  def test_get_modification_time(self):
+    """Tests the get_modification_time function."""
+    nk2_file = pynk2.file()
+
+    modification_time = nk2_file.get_modification_time()
+    self.assertIsNone(modification_time)
+
+    self.assertIsNone(nk2_file.modification_time)
+
+    modification_time = nk2_file.get_modification_time_as_integer()
+    self.assertIsNone(modification_time)
+
+    if unittest.source:
+      nk2_file = pynk2.file()
+      nk2_file.open(unittest.source)
+
+      modification_time = nk2_file.get_modification_time()
+      self.assertIsNotNone(modification_time)
+
+      self.assertIsNotNone(nk2_file.modification_time)
+
+      modification_time = nk2_file.get_modification_time_as_integer()
+      self.assertIsNotNone(modification_time)
+
+      nk2_file.close()
+
+  def test_get_number_of_items(self):
+    """Tests the get_number_of_items function."""
+    nk2_file = pynk2.file()
+
+    number_of_items = nk2_file.get_number_of_items()
+    self.assertEqual(number_of_items, 0)
+
+    self.assertEqual(nk2_file.number_of_items, 0)
+
+    if not unittest.source:
+      return
+
+    nk2_file = pynk2.file()
+    nk2_file.open(unittest.source)
+
+    number_of_items = nk2_file.get_number_of_items()
+    self.assertIsNotNone(number_of_items)
+
+    self.assertIsNotNone(nk2_file.number_of_items)
+
+    nk2_file.close()
+
+  def test_get_item(self):
+    """Tests the get_item function."""
+    nk2_file = pynk2.file()
+
+    with self.assertRaises(IOError):
+      nk2_file.get_item(0)
+
+    if not unittest.source:
+      return
+
+    nk2_file = pynk2.file()
+    nk2_file.open(unittest.source)
+
+    if nk2_file.number_of_items > 0:
+      item = nk2_file.get_item(0)
+      self.assertIsNotNone(item)
+
+    nk2_file.close()
+
+  def test_items(self):
+    """Tests the items property."""
+    nk2_file = pynk2.file()
+
+    items = nk2_file.items
+    self.assertIsNotNone(items)
+
+    self.assertEqual(list(items), [])
+
+    if not unittest.source:
+      return
+
+    nk2_file = pynk2.file()
+    nk2_file.open(unittest.source)
+
+    if nk2_file.number_of_items > 0:
+      items = nk2_file.items
+      self.assertIsNotNone(items)
+
+      self.assertNotEqual(list(items), [])
+
+    nk2_file.close()
 
 
 if __name__ == "__main__":

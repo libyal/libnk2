@@ -1,7 +1,7 @@
 /*
  * Python object wrapper of libnk2_item_t
  *
- * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -51,6 +51,13 @@ PyMethodDef pynk2_item_object_methods[] = {
 	  "\n"
 	  "Retrieves the entry specified by the index." },
 
+	{ "get_entry_by_type",
+	  (PyCFunction) pynk2_item_get_entry_by_type,
+	  METH_NOARGS,
+	  "get_entry_by_type() -> None\n"
+	  "\n"
+	  "Retrieves the entry." },
+
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
 };
@@ -67,6 +74,12 @@ PyGetSetDef pynk2_item_object_get_set_definitions[] = {
 	  (getter) pynk2_item_get_entries,
 	  (setter) 0,
 	  "The entries.",
+	  NULL },
+
+	{ "entry_by_type",
+	  (getter) pynk2_item_get_entry_by_type,
+	  (setter) 0,
+	  "The entry.",
 	  NULL },
 
 	/* Sentinel */
@@ -571,5 +584,139 @@ PyObject *pynk2_item_get_entries(
 		return( NULL );
 	}
 	return( sequence_object );
+}
+
+/* Retrieves a specific entry by type
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_item_get_entry_by_type(
+           pynk2_item_t *pynk2_item,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *entry_object       = NULL;
+	PyTypeObject *type_object    = NULL;
+	libcerror_error_t *error     = NULL;
+	libnk2_record_entry_t *entry = NULL;
+	static char *function        = "pynk2_item_get_entry_by_type";
+	static char *keyword_list[]  = { "entry_type", "value_type", "flags", NULL };
+	int entry_type               = 0;
+	int flags                    = 0;
+	int result                   = 0;
+	int value_type               = 0;
+
+	if( pynk2_item == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid item.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "ii|i",
+	     keyword_list,
+	     &entry_type,
+	     &value_type,
+	     &flags ) == 0 )
+	{
+		return( NULL );
+	}
+	if( ( entry_type < 0 )
+	 || ( entry_type > (int) UINT32_MAX ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid entry type value out of bounds.",
+		 function );
+
+		return( NULL );
+	}
+	if( ( value_type < 0 )
+	 || ( value_type > (int) UINT32_MAX ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid value type value out of bounds.",
+		 function );
+
+		return( NULL );
+	}
+	if( ( flags < 0 )
+	 || ( flags > (int) UINT8_MAX ) )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid flags value out of bounds.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libnk2_item_get_entry_by_type(
+	          ( (pynk2_item_t *) pynk2_item )->item,
+	          (uint32_t) entry_type,
+	          (uint32_t) value_type,
+	          &entry,
+	          (uint8_t) flags,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pynk2_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to retrieve entry with type: 0x%08x 0x%08x.",
+		 function,
+		 entry_type,
+		 value_type );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	type_object = pynk2_item_get_record_entry_type_object(
+	               entry );
+
+	if( type_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_IOError,
+		 "%s: unable to retrieve record entry type object.",
+		 function );
+
+		goto on_error;
+	}
+	entry_object = pynk2_record_entry_new(
+	                type_object,
+	                entry,
+	                (PyObject *) pynk2_item );
+
+	if( entry_object == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create record entry object.",
+		 function );
+
+		goto on_error;
+	}
+	return( entry_object );
+
+on_error:
+	if( entry != NULL )
+	{
+		libnk2_record_entry_free(
+		 &entry,
+		 NULL );
+	}
+	return( NULL );
 }
 
