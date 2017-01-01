@@ -2,7 +2,7 @@
 #
 # Python-bindings file type test script
 #
-# Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
+# Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
 #
 # Refer to AUTHORS for acknowledgements.
 #
@@ -20,6 +20,7 @@
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import os
 import sys
 import unittest
 
