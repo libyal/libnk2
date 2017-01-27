@@ -218,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\nk2tools\nk2tools_i18n.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\nk2tools\nk2tools_libbfio.h"
 				>
 			</File>
@@ -231,10 +235,6 @@
 			</File>
 			<File
 				RelativePath="..\..\nk2tools\nk2tools_libcnotify.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\nk2tools\nk2tools_libcsystem.h"
 				>
 			</File>
 			<File

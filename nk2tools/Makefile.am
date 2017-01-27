@@ -28,6 +28,7 @@ nk2export_SOURCES = \
 	item_file.c item_file.h \
 	log_handle.c log_handle.h \
 	nk2export.c \
+	nk2tools_i18n.h \
 	nk2input.c nk2input.h \
 	nk2tools_getopt.c nk2tools_getopt.h \
 	nk2tools_libbfio.h \
@@ -69,11 +70,11 @@ nk2info_SOURCES = \
 	nk2info.c \
 	nk2input.c nk2input.h \
 	nk2tools_getopt.c nk2tools_getopt.h \
+	nk2tools_i18n.h \
 	nk2tools_libbfio.h \
 	nk2tools_libcerror.h \
 	nk2tools_libclocale.h \
 	nk2tools_libcnotify.h \
-	nk2tools_libcsystem.h \
 	nk2tools_libfdatetime.h \
 	nk2tools_libfguid.h \
 	nk2tools_libfmapi.h \
