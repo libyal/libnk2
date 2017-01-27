@@ -38,13 +38,15 @@
 #include "export_handle.h"
 #include "log_handle.h"
 #include "nk2input.h"
-#include "nk2output.h"
+#include "nk2tools_getopt.h"
 #include "nk2tools_libcerror.h"
 #include "nk2tools_libclocale.h"
 #include "nk2tools_libcnotify.h"
 #include "nk2tools_libcpath.h"
-#include "nk2tools_libcsystem.h"
 #include "nk2tools_libnk2.h"
+#include "nk2tools_output.h"
+#include "nk2tools_signal.h"
+#include "nk2tools_unused.h"
 
 export_handle_t *nk2export_export_handle = NULL;
 int nk2export_abort                      = 0;
@@ -82,12 +84,12 @@ void usage_fprint(
 /* Signal handler for nk2export
  */
 void nk2export_signal_handler(
-      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      nk2tools_signal_t signal NK2TOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function   = "nk2export_signal_handler";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
+	NK2TOOLS_UNREFERENCED_PARAMETER( signal )
 
 	nk2export_abort = 1;
 
@@ -109,8 +111,13 @@ void nk2export_signal_handler(
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libcsystem_file_io_close(
+#if defined( WINAPI ) && !defined( __CYGWIN__ )
+	if( _close(
 	     0 ) != 0 )
+#else
+	if( close(
+	     0 ) != 0 )
+#endif
 	{
 		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
@@ -156,13 +163,13 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libcsystem_initialize(
+	if( nk2tools_output_initialize(
 	     _IONBF,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -170,7 +177,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = nk2tools_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "c:hl:qt:vV" ) ) ) != (system_integer_t) -1 )

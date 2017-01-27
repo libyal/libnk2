@@ -1,5 +1,5 @@
 /*
- * Common output functions for the nk2tools
+ * Signal handling functions
  *
  * Copyright (C) 2009-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,31 +19,54 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2OUTPUT_H )
-#define _NK2OUTPUT_H
+#if !defined( _NK2TOOLS_SIGNAL_H )
+#define _NK2TOOLS_SIGNAL_H
 
 #include <common.h>
-#include <file_stream.h>
 #include <types.h>
+
+#include "nk2tools_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-void nk2output_copyright_fprint(
-      FILE *stream );
+#if !defined( HAVE_SIGNAL_H ) && !defined( WINAPI )
+#error missing signal functions
+#endif
 
-void nk2output_version_fprint(
-      FILE *stream,
-      const char *program );
+#if defined( WINAPI )
+typedef unsigned long nk2tools_signal_t;
 
-void nk2output_version_detailed_fprint(
-      FILE *stream,
-      const char *program );
+#else
+typedef int nk2tools_signal_t;
+
+#endif /* defined( WINAPI ) */
+
+#if defined( WINAPI )
+
+BOOL WINAPI nk2tools_signal_handler(
+             nk2tools_signal_t signal );
+
+#if defined( _MSC_VER )
+
+void nk2tools_signal_initialize_memory_debug(
+      void );
+
+#endif /* defined( _MSC_VER ) */
+
+#endif /* defined( WINAPI ) */
+
+int nk2tools_signal_attach(
+     void (*signal_handler)( nk2tools_signal_t ),
+     libcerror_error_t **error );
+
+int nk2tools_signal_detach(
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _NK2OUTPUT_H ) */
+#endif /* !defined( _NK2TOOLS_SIGNAL_H ) */
 

@@ -33,7 +33,6 @@
 #include "nk2tools_libcfile.h"
 #include "nk2tools_libcnotify.h"
 #include "nk2tools_libcpath.h"
-#include "nk2tools_libcsystem.h"
 #include "nk2tools_libnk2.h"
 
 #define EXPORT_HANDLE_NOTIFY_STREAM	stdout

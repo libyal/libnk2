@@ -1044,7 +1044,7 @@ int libnk2_file_set_ascii_codepage(
 
 /* Retrieves the modification time
  * The returned time is a 64-bit version of a filetime value
- * Returns 1 if successful, 0 if not available or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libnk2_file_get_modification_time(
      libnk2_file_t *file,
@@ -1067,6 +1067,17 @@ int libnk2_file_get_modification_time(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
+	if( internal_file->file_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid file - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( filetime == NULL )
 	{
 		libcerror_error_set(
@@ -1077,10 +1088,6 @@ int libnk2_file_get_modification_time(
 		 function );
 
 		return( -1 );
-	}
-	if( internal_file->file_io_handle == NULL )
-	{
-		return( 0 );
 	}
 	*filetime = internal_file->modification_time;
 
@@ -1111,6 +1118,17 @@ int libnk2_file_get_number_of_items(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
+	if( internal_file->file_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid file - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( libcdata_array_get_number_of_entries(
 	     internal_file->items_array,
 	     number_of_items,
@@ -1153,6 +1171,17 @@ int libnk2_file_get_item(
 	}
 	internal_file = (libnk2_internal_file_t *) file;
 
+	if( internal_file->file_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid file - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( item == NULL )
 	{
 		libcerror_error_set(

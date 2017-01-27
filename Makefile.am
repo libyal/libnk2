@@ -18,7 +18,6 @@ SUBDIRS = \
 	libfwnt \
 	libfmapi \
 	libnk2 \
-	libcsystem \
 	libfvalue \
 	nk2tools \
 	pynk2 \
@@ -125,7 +124,6 @@ splint:
 	(cd $(srcdir)/libfwnt && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfmapi && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libnk2 && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfvalue && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/nk2tools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/pynk2 && $(MAKE) splint $(AM_MAKEFLAGS))

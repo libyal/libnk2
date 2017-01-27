@@ -151,13 +151,14 @@ class FileTypeTests(unittest.TestCase):
     """Tests the get_modification_time function."""
     nk2_file = pynk2.file()
 
-    modification_time = nk2_file.get_modification_time()
-    self.assertIsNone(modification_time)
+    with self.assertRaises(IOError):
+      nk2_file.get_modification_time()
 
-    self.assertIsNone(nk2_file.modification_time)
+    with self.assertRaises(IOError):
+      nk2_file.modification_time
 
-    modification_time = nk2_file.get_modification_time_as_integer()
-    self.assertIsNone(modification_time)
+    with self.assertRaises(IOError):
+      nk2_file.get_modification_time_as_integer()
 
     if unittest.source:
       nk2_file = pynk2.file()
@@ -177,10 +178,11 @@ class FileTypeTests(unittest.TestCase):
     """Tests the get_number_of_items function."""
     nk2_file = pynk2.file()
 
-    number_of_items = nk2_file.get_number_of_items()
-    self.assertEqual(number_of_items, 0)
+    with self.assertRaises(IOError):
+      nk2_file.get_number_of_items()
 
-    self.assertEqual(nk2_file.number_of_items, 0)
+    with self.assertRaises(IOError):
+      nk2_file.number_of_items
 
     if not unittest.source:
       return
@@ -218,10 +220,8 @@ class FileTypeTests(unittest.TestCase):
     """Tests the items property."""
     nk2_file = pynk2.file()
 
-    items = nk2_file.items
-    self.assertIsNotNone(items)
-
-    self.assertEqual(list(items), [])
+    with self.assertRaises(IOError):
+      nk2_file.items
 
     if not unittest.source:
       return

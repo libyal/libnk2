@@ -281,7 +281,7 @@ int libnk2_file_set_ascii_codepage(
 
 /* Retrieves the modification time
  * The returned time is a 64-bit version of a filetime value
- * Returns 1 if successful, 0 if not available or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 LIBNK2_EXTERN \
 int libnk2_file_get_modification_time(

@@ -18,23 +18,21 @@ AM_CPPFLAGS = \
 
 if HAVE_PYTHON_TESTS
 TESTS_PYNK2 = \
-	test_python_functions.sh
+	test_python_module.sh
 endif
 
 TESTS = \
-	test_api_functions.sh \
-	test_api_types.sh \
+	test_library.sh \
 	test_nk2info.sh \
 	test_nk2export.sh \
 	$(TESTS_PYNK2)
 
 check_SCRIPTS = \
 	pynk2_test_support.py \
-	test_api_functions.sh \
-	test_api_types.sh \
+	test_library.sh \
 	test_nk2export.sh \
 	test_nk2info.sh \
-	test_python_functions.sh \
+	test_python_module.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
