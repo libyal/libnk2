@@ -34,13 +34,12 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libnk2.docs \
-	dpkg/libnk2-dev.docs \
-	dpkg/libnk2-python.docs \
-	dpkg/libnk2-python3.docs \
-	dpkg/libnk2-tools.docs \
+	dpkg/libnk2.install \
+	dpkg/libnk2-dev.install \
+	dpkg/libnk2-python.install \
+	dpkg/libnk2-python3.install \
+	dpkg/libnk2-tools.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \
