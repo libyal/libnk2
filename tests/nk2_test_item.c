@@ -72,8 +72,8 @@ int nk2_test_item_initialize(
          "error",
          error );
 
-	result = libnk2_item_free(
-	          &item,
+	result = libnk2_internal_item_free(
+	          (libnk2_internal_item_t **) &item,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
@@ -147,8 +147,8 @@ int nk2_test_item_initialize(
 
 			if( item != NULL )
 			{
-				libnk2_item_free(
-				 &item,
+				libnk2_internal_item_free(
+				 (libnk2_internal_item_t **) &item,
 				 NULL );
 			}
 		}
@@ -189,8 +189,8 @@ int nk2_test_item_initialize(
 
 			if( item != NULL )
 			{
-				libnk2_item_free(
-				 &item,
+				libnk2_internal_item_free(
+				 (libnk2_internal_item_t **) &item,
 				 NULL );
 			}
 		}
@@ -225,8 +225,8 @@ on_error:
 	}
 	if( item != NULL )
 	{
-		libnk2_item_free(
-		 &item,
+		libnk2_internal_item_free(
+		 (libnk2_internal_item_t **) &item,
 		 NULL );
 	}
 	return( 0 );
@@ -363,8 +363,8 @@ int nk2_test_item_get_number_of_entries(
 	}
 	/* Clean up
 	 */
-	result = libnk2_item_free(
-	          &item,
+	result = libnk2_internal_item_free(
+	          (libnk2_internal_item_t **) &item,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
@@ -390,8 +390,8 @@ on_error:
 	}
 	if( item != NULL )
 	{
-		libnk2_item_free(
-		 &item,
+		libnk2_internal_item_free(
+		 (libnk2_internal_item_t **) &item,
 		 NULL );
 	}
 	return( 0 );
