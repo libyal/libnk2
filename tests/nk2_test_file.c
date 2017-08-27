@@ -1771,11 +1771,11 @@ int main(
 		 nk2_test_file_signal_abort,
 		 file );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
 		/* TODO: add tests for libnk2_file_open_read */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
 		NK2_TEST_RUN_WITH_ARGS(
 		 "libnk2_file_get_ascii_codepage",

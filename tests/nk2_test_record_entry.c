@@ -73,9 +73,9 @@ on_error:
 	return( 0 );
 }
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -92,17 +92,17 @@ int main(
 	NK2_TEST_UNREFERENCED_PARAMETER( argc )
 	NK2_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
 	/* TODO: add tests for libnk2_record_entry_initialize */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
 	NK2_TEST_RUN(
 	 "libnk2_record_entry_free",
 	 nk2_test_record_entry_free );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
 	/* TODO: add tests for libnk2_record_entry_read_data */
 
@@ -142,7 +142,7 @@ int main(
 
 	/* TODO: add tests for libnk2_record_entry_get_data_as_guid */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
