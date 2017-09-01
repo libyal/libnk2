@@ -64,13 +64,13 @@ int nk2_test_item_initialize(
 	 result,
 	 1 );
 
-        NK2_TEST_ASSERT_IS_NOT_NULL(
-         "item",
-         item );
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "item",
+	 item );
 
-        NK2_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libnk2_internal_item_free(
 	          (libnk2_internal_item_t **) &item,
@@ -81,13 +81,13 @@ int nk2_test_item_initialize(
 	 result,
 	 1 );
 
-        NK2_TEST_ASSERT_IS_NULL(
-         "item",
-         item );
+	NK2_TEST_ASSERT_IS_NULL(
+	 "item",
+	 item );
 
-        NK2_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int nk2_test_item_initialize(
 	 result,
 	 -1 );
 
-        NK2_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int nk2_test_item_initialize(
 	 result,
 	 -1 );
 
-        NK2_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -254,9 +254,9 @@ int nk2_test_item_free(
 	 result,
 	 -1 );
 
-        NK2_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
