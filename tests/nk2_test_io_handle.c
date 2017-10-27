@@ -270,6 +270,104 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libnk2_io_handle_clear function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_io_handle_clear(
+     void )
+{
+	libcerror_error_t *error      = NULL;
+	libnk2_io_handle_t *io_handle = NULL;
+	int result                    = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_io_handle_initialize(
+	          &io_handle,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "io_handle",
+	 io_handle );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libnk2_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_io_handle_clear(
+	          NULL,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libnk2_io_handle_free(
+	          &io_handle,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "io_handle",
+	 io_handle );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( io_handle != NULL )
+	{
+		libnk2_io_handle_free(
+		 &io_handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
 /* The main program
@@ -297,7 +395,9 @@ int main(
 	 "libnk2_io_handle_free",
 	 nk2_test_io_handle_free );
 
-	/* TODO: add tests for libnk2_io_handle_clear */
+	NK2_TEST_RUN(
+	 "libnk2_io_handle_clear",
+	 nk2_test_io_handle_clear );
 
 	/* TODO: add tests for libnk2_io_handle_read_file_header */
 

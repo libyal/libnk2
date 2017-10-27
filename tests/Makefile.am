@@ -28,6 +28,7 @@ TESTS = \
 	$(TESTS_PYNK2)
 
 check_SCRIPTS = \
+	pynk2_test_file.py \
 	pynk2_test_support.py \
 	test_library.sh \
 	test_nk2export.sh \
@@ -58,17 +59,24 @@ nk2_test_error_LDADD = \
 
 nk2_test_file_SOURCES = \
 	nk2_test_file.c \
+	nk2_test_functions.c nk2_test_functions.h \
 	nk2_test_getopt.c nk2_test_getopt.h \
+	nk2_test_libbfio.h \
 	nk2_test_libcerror.h \
 	nk2_test_libclocale.h \
 	nk2_test_libcnotify.h \
 	nk2_test_libnk2.h \
 	nk2_test_libuna.h \
 	nk2_test_macros.h \
-	nk2_test_memory.c nk2_test_memory.h
+	nk2_test_memory.c nk2_test_memory.h \
+	nk2_test_unused.h
 
 nk2_test_file_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
@@ -123,6 +131,7 @@ nk2_test_record_entry_LDADD = \
 	@LIBCERROR_LIBADD@
 
 nk2_test_support_SOURCES = \
+	nk2_test_functions.c nk2_test_functions.h \
 	nk2_test_getopt.c nk2_test_getopt.h \
 	nk2_test_libbfio.h \
 	nk2_test_libcerror.h \
@@ -131,7 +140,8 @@ nk2_test_support_SOURCES = \
 	nk2_test_libnk2.h \
 	nk2_test_libuna.h \
 	nk2_test_macros.h \
-	nk2_test_support.c
+	nk2_test_support.c \
+	nk2_test_unused.h
 
 nk2_test_support_LDADD = \
 	@LIBBFIO_LIBADD@ \
