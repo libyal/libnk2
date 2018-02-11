@@ -406,7 +406,7 @@ int libnk2_record_entry_read_value(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: value data size\t\t\t: %" PRIzd "\n",
+		 "%s: value data size\t\t\t\t: %" PRIzd "\n",
 		 function,
 		 value_data_size );
 	}

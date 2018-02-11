@@ -881,7 +881,7 @@ int libnk2_file_open_read(
 		 "%s: unable to read file header.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )

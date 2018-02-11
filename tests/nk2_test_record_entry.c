@@ -35,6 +35,213 @@
 
 #include "../libnk2/libnk2_record_entry.h"
 
+uint8_t nk2_test_record_entry_data1[ 16 ] = {
+	0x03, 0x00, 0x15, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+#if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
+
+/* Tests the libnk2_record_entry_initialize function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_record_entry_initialize(
+     void )
+{
+	libcerror_error_t *error          = NULL;
+	libnk2_record_entry_t *record_entry = NULL;
+	int result                        = 0;
+
+#if defined( HAVE_NK2_TEST_MEMORY )
+	int number_of_malloc_fail_tests   = 1;
+	int number_of_memset_fail_tests   = 1;
+	int test_number                   = 0;
+#endif
+
+	/* Test regular cases
+	 */
+	result = libnk2_record_entry_initialize(
+	          &record_entry,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_record_entry_free(
+	          &record_entry,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_record_entry_initialize(
+	          NULL,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	record_entry = (libnk2_record_entry_t *) 0x12345678UL;
+
+	result = libnk2_record_entry_initialize(
+	          &record_entry,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	record_entry = NULL;
+
+#if defined( HAVE_NK2_TEST_MEMORY )
+
+	for( test_number = 0;
+	     test_number < number_of_malloc_fail_tests;
+	     test_number++ )
+	{
+		/* Test libnk2_record_entry_initialize with malloc failing
+		 */
+		nk2_test_malloc_attempts_before_fail = test_number;
+
+		result = libnk2_record_entry_initialize(
+		          &record_entry,
+		          LIBNK2_CODEPAGE_WINDOWS_1252,
+		          &error );
+
+		if( nk2_test_malloc_attempts_before_fail != -1 )
+		{
+			nk2_test_malloc_attempts_before_fail = -1;
+
+			if( record_entry != NULL )
+			{
+				libnk2_record_entry_free(
+				 &record_entry,
+				 NULL );
+			}
+		}
+		else
+		{
+			NK2_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			NK2_TEST_ASSERT_IS_NULL(
+			 "record_entry",
+			 record_entry );
+
+			NK2_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+	for( test_number = 0;
+	     test_number < number_of_memset_fail_tests;
+	     test_number++ )
+	{
+		/* Test libnk2_record_entry_initialize with memset failing
+		 */
+		nk2_test_memset_attempts_before_fail = test_number;
+
+		result = libnk2_record_entry_initialize(
+		          &record_entry,
+		          LIBNK2_CODEPAGE_WINDOWS_1252,
+		          &error );
+
+		if( nk2_test_memset_attempts_before_fail != -1 )
+		{
+			nk2_test_memset_attempts_before_fail = -1;
+
+			if( record_entry != NULL )
+			{
+				libnk2_record_entry_free(
+				 &record_entry,
+				 NULL );
+			}
+		}
+		else
+		{
+			NK2_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			NK2_TEST_ASSERT_IS_NULL(
+			 "record_entry",
+			 record_entry );
+
+			NK2_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+	}
+#endif /* defined( HAVE_NK2_TEST_MEMORY ) */
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_entry != NULL )
+	{
+		libnk2_record_entry_free(
+		 &record_entry,
+		 NULL );
+	}
+	return( 0 );
+}
+
+#endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
+
 /* Tests the libnk2_record_entry_free function
  * Returns 1 if successful or 0 if not
  */
@@ -75,6 +282,163 @@ on_error:
 
 #if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
+/* Tests the libnk2_record_entry_read_data function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_record_entry_read_data(
+     void )
+{
+	libcerror_error_t *error          = NULL;
+	libnk2_record_entry_t *record_entry = NULL;
+	int result                        = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_record_entry_initialize(
+	          &record_entry,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          nk2_test_record_entry_data1,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_record_entry_read_data(
+	          NULL,
+	          nk2_test_record_entry_data1,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          NULL,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          nk2_test_record_entry_data1,
+	          0,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          nk2_test_record_entry_data1,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libnk2_record_entry_free(
+	          &record_entry,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_entry != NULL )
+	{
+		libnk2_record_entry_free(
+		 &record_entry,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
 /* The main program
@@ -94,7 +458,9 @@ int main(
 
 #if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
-	/* TODO: add tests for libnk2_record_entry_initialize */
+	NK2_TEST_RUN(
+	 "libnk2_record_entry_initialize",
+	 nk2_test_record_entry_initialize );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
@@ -104,7 +470,9 @@ int main(
 
 #if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
-	/* TODO: add tests for libnk2_record_entry_read_data */
+	NK2_TEST_RUN(
+	 "libnk2_record_entry_read_data",
+	 nk2_test_record_entry_read_data );
 
 	/* TODO: add tests for libnk2_record_entry_read_value */
 

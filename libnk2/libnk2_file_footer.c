@@ -217,13 +217,13 @@ int libnk2_file_footer_read_data(
 		 ( (nk2_file_footer_t *) data )->unknown1,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: unknown1\t\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
 		if( libnk2_debug_print_filetime_value(
 		     function,
-		     "modification time\t\t\t",
+		     "modification time\t\t\t\t",
 		     ( (nk2_file_footer_t *) data )->modification_time,
 		     8,
 		     LIBFDATETIME_ENDIAN_LITTLE,
@@ -234,7 +234,7 @@ int libnk2_file_footer_read_data(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-			 "%s: unable to print filetime value.",
+			 "%s: unable to print FILETIME value.",
 			 function );
 
 			return( -1 );
