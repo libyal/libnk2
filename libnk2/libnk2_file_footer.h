@@ -1,5 +1,5 @@
 /*
- * Input/Output (IO) handle functions
+ * File footer functions
  *
  * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,65 +19,50 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBNK2_IO_HANDLE_H )
-#define _LIBNK2_IO_HANDLE_H
+#if !defined( _LIBNK2_FILE_FOOTER_H )
+#define _LIBNK2_FILE_FOOTER_H
 
 #include <common.h>
 #include <types.h>
 
 #include "libnk2_libbfio.h"
-#include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-extern const uint8_t nk2_file_signature[ 4 ];
+typedef struct libnk2_file_footer libnk2_file_footer_t;
 
-typedef struct libnk2_io_handle libnk2_io_handle_t;
-
-struct libnk2_io_handle
+struct libnk2_file_footer
 {
-	/* The codepage of the extended ASCII strings
+	/* The last modification date and time
 	 */
-	int ascii_codepage;
-
-	/* Value to indicate if abort was signalled
-	 */
-	int abort;
+	uint64_t modification_time;
 };
 
-int libnk2_io_handle_initialize(
-     libnk2_io_handle_t **io_handle,
+int libnk2_file_footer_initialize(
+     libnk2_file_footer_t **file_footer,
      libcerror_error_t **error );
 
-int libnk2_io_handle_free(
-     libnk2_io_handle_t **io_handle,
+int libnk2_file_footer_free(
+     libnk2_file_footer_t **file_footer,
      libcerror_error_t **error );
 
-int libnk2_io_handle_clear(
-     libnk2_io_handle_t *io_handle,
+int libnk2_file_footer_read_data(
+     libnk2_file_footer_t *file_footer,
+     const uint8_t *data,
+     size_t data_size,
      libcerror_error_t **error );
 
-int libnk2_io_handle_read_items(
-     libnk2_io_handle_t *io_handle,
+int libnk2_file_footer_read_file_io_handle(
+     libnk2_file_footer_t *file_footer,
      libbfio_handle_t *file_io_handle,
-     uint32_t number_of_items,
-     libcdata_array_t *items_array,
-     libcerror_error_t **error );
-
-int libnk2_io_handle_read_record_entries(
-     libnk2_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     uint32_t item_index,
-     uint32_t number_of_record_entries,
-     libcdata_array_t *entries_array,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBNK2_IO_HANDLE_H ) */
+#endif /* !defined( _LIBNK2_FILE_FOOTER_H ) */
 

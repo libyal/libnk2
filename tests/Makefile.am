@@ -42,6 +42,7 @@ EXTRA_DIST = \
 check_PROGRAMS = \
 	nk2_test_error \
 	nk2_test_file \
+	nk2_test_file_footer \
 	nk2_test_file_header \
 	nk2_test_io_handle \
 	nk2_test_item \
@@ -85,6 +86,28 @@ nk2_test_file_LDADD = \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@PTHREAD_LIBADD@
+
+nk2_test_file_footer_SOURCES = \
+	nk2_test_file_footer.c \
+	nk2_test_functions.c nk2_test_functions.h \
+	nk2_test_libbfio.h \
+	nk2_test_libcerror.h \
+	nk2_test_libnk2.h \
+	nk2_test_macros.h \
+	nk2_test_memory.c nk2_test_memory.h \
+	nk2_test_unused.h
+
+nk2_test_file_footer_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libnk2/libnk2.la \
+	@LIBCERROR_LIBADD@
 
 nk2_test_file_header_SOURCES = \
 	nk2_test_file_header.c \

@@ -31,6 +31,8 @@
 #include "libnk2_io_handle.h"
 #include "libnk2_item.h"
 #include "libnk2_file.h"
+#include "libnk2_file_footer.h"
+#include "libnk2_file_header.h"
 #include "libnk2_libbfio.h"
 #include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
@@ -819,9 +821,9 @@ int libnk2_file_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	static char *function    = "libnk2_file_open_read";
-	uint32_t number_of_items = 0;
-	int result               = 1;
+	libnk2_file_footer_t *file_footer = NULL;
+	libnk2_file_header_t *file_header = NULL;
+	static char *function             = "libnk2_file_open_read";
 
 	if( internal_file == NULL )
 	{
@@ -845,10 +847,8 @@ int libnk2_file_open_read(
 
 		return( -1 );
 	}
-	if( internal_file->io_handle->abort != 0 )
-	{
-		internal_file->io_handle->abort = 0;
-	}
+	internal_file->io_handle->abort = 0;
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -856,10 +856,22 @@ int libnk2_file_open_read(
 		 "Reading file header:\n" );
 	}
 #endif
-	if( libnk2_io_handle_read_file_header(
-	     internal_file->io_handle,
+	if( libnk2_file_header_initialize(
+	     &file_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create file header.",
+		 function );
+
+		goto on_error;
+	}
+	if( libnk2_file_header_read_file_io_handle(
+	     file_header,
 	     file_io_handle,
-	     &number_of_items,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -878,14 +890,12 @@ int libnk2_file_open_read(
 		 "Reading items:\n" );
 	}
 #endif
-	result = libnk2_io_handle_read_items(
-	          internal_file->io_handle,
-	          file_io_handle,
-	          number_of_items,
-	          internal_file->items_array,
-	          error );
-
-	if( result != 1 )
+	if( libnk2_io_handle_read_items(
+	     internal_file->io_handle,
+	     file_io_handle,
+	     file_header->number_of_items,
+	     internal_file->items_array,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -893,37 +903,91 @@ int libnk2_file_open_read(
 		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read items.",
 		 function );
-	}
-	if( result == 1 )
-	{
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "Reading file footer:\n" );
-		}
-#endif
-		if( libnk2_io_handle_read_file_footer(
-		     internal_file->io_handle,
-		     file_io_handle,
-		     &( internal_file->modification_time ),
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read file footer.",
-			 function );
 
-			result = -1;
-		}
+		goto on_error;
 	}
-	if( internal_file->io_handle->abort != 0 )
+	if( libnk2_file_header_free(
+	     &file_header,
+	     error ) != 1 )
 	{
-		internal_file->io_handle->abort = 0;
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free file header.",
+		 function );
+
+		goto on_error;
 	}
-	return( result );
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "Reading file footer:\n" );
+	}
+#endif
+	if( libnk2_file_footer_initialize(
+	     &file_footer,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create file footer.",
+		 function );
+
+		goto on_error;
+	}
+	if( libnk2_file_footer_read_file_io_handle(
+	     file_footer,
+	     file_io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read file footer.",
+		 function );
+
+		goto on_error;
+	}
+	internal_file->modification_time = file_footer->modification_time;
+
+	if( libnk2_file_footer_free(
+	     &file_footer,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free file footer.",
+		 function );
+
+		goto on_error;
+	}
+	internal_file->io_handle->abort = 0;
+
+	return( 1 );
+
+on_error:
+	if( file_footer != NULL )
+	{
+		libnk2_file_footer_free(
+		 &file_footer,
+		 NULL );
+	}
+	if( file_header != NULL )
+	{
+		libnk2_file_header_free(
+		 &file_header,
+		 NULL );
+	}
+	internal_file->io_handle->abort = 0;
+
+	return( -1 );
 }
 
 /* Retrieves the file ASCII codepage

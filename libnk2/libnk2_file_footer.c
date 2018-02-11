@@ -1,5 +1,5 @@
 /*
- * File header functions
+ * File footer functions
  *
  * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -25,69 +25,69 @@
 #include <types.h>
 
 #include "libnk2_debug.h"
-#include "libnk2_file_header.h"
-#include "libnk2_io_handle.h"
+#include "libnk2_file_footer.h"
 #include "libnk2_libcerror.h"
 #include "libnk2_libcnotify.h"
+#include "libnk2_libfdatetime.h"
 
-#include "nk2_file_header.h"
+#include "nk2_file_footer.h"
 
-/* Creates file header
- * Make sure the value file_header is referencing, is set to NULL
+/* Creates file footer
+ * Make sure the value file_footer is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
-int libnk2_file_header_initialize(
-     libnk2_file_header_t **file_header,
+int libnk2_file_footer_initialize(
+     libnk2_file_footer_t **file_footer,
      libcerror_error_t **error )
 {
-	static char *function = "libnk2_file_header_initialize";
+	static char *function = "libnk2_file_footer_initialize";
 
-	if( file_header == NULL )
+	if( file_footer == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file header.",
+		 "%s: invalid file footer.",
 		 function );
 
 		return( -1 );
 	}
-	if( *file_header != NULL )
+	if( *file_footer != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid file header value already set.",
+		 "%s: invalid file footer value already set.",
 		 function );
 
 		return( -1 );
 	}
-	*file_header = memory_allocate_structure(
-	                libnk2_file_header_t );
+	*file_footer = memory_allocate_structure(
+	                libnk2_file_footer_t );
 
-	if( *file_header == NULL )
+	if( *file_footer == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create file header.",
+		 "%s: unable to create file footer.",
 		 function );
 
 		goto on_error;
 	}
 	if( memory_set(
-	     *file_header,
+	     *file_footer,
 	     0,
-	     sizeof( libnk2_file_header_t ) ) == NULL )
+	     sizeof( libnk2_file_footer_t ) ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear file header.",
+		 "%s: unable to clear file footer.",
 		 function );
 
 		goto on_error;
@@ -95,68 +95,68 @@ int libnk2_file_header_initialize(
 	return( 1 );
 
 on_error:
-	if( *file_header != NULL )
+	if( *file_footer != NULL )
 	{
 		memory_free(
-		 *file_header );
+		 *file_footer );
 
-		*file_header = NULL;
+		*file_footer = NULL;
 	}
 	return( -1 );
 }
 
-/* Frees file header
+/* Frees file footer
  * Returns 1 if successful or -1 on error
  */
-int libnk2_file_header_free(
-     libnk2_file_header_t **file_header,
+int libnk2_file_footer_free(
+     libnk2_file_footer_t **file_footer,
      libcerror_error_t **error )
 {
-	static char *function = "libnk2_file_header_free";
+	static char *function = "libnk2_file_footer_free";
 
-	if( file_header == NULL )
+	if( file_footer == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file header.",
+		 "%s: invalid file footer.",
 		 function );
 
 		return( -1 );
 	}
-	if( *file_header != NULL )
+	if( *file_footer != NULL )
 	{
 		memory_free(
-		 *file_header );
+		 *file_footer );
 
-		*file_header = NULL;
+		*file_footer = NULL;
 	}
 	return( 1 );
 }
 
-/* Reads the file header data
+/* Reads the file footer data
  * Returns 1 if successful or -1 on error
  */
-int libnk2_file_header_read_data(
-     libnk2_file_header_t *file_header,
+int libnk2_file_footer_read_data(
+     libnk2_file_footer_t *file_footer,
      const uint8_t *data,
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libnk2_file_header_read_data";
+	static char *function = "libnk2_file_footer_read_data";
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint32_t value_32bit  = 0;
 #endif
 
-	if( file_header == NULL )
+	if( file_footer == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file header.",
+		 "%s: invalid file footer.",
 		 function );
 
 		return( -1 );
@@ -172,7 +172,7 @@ int libnk2_file_header_read_data(
 
 		return( -1 );
 	}
-	if( data_size < sizeof( nk2_file_header_t ) )
+	if( data_size < sizeof( nk2_file_footer_t ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -198,64 +198,47 @@ int libnk2_file_header_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: file header:\n",
+		 "%s: file footer:\n",
 		 function );
 		libcnotify_print_data(
 		 (uint8_t *) data,
-		 sizeof( nk2_file_header_t ),
+		 sizeof( nk2_file_footer_t ),
 		 0 );
 	}
 #endif
-	if( memory_compare(
-	     ( (nk2_file_header_t *) data )->signature,
-	     nk2_file_signature,
-	     4 ) != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: invalid file signature.",
-		 function );
-
-		return( -1 );
-	}
-	byte_stream_copy_to_uint32_little_endian(
-	 ( (nk2_file_header_t *) data )->number_of_items,
-	 file_header->number_of_items );
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (nk2_file_footer_t *) data )->modification_time,
+	 file_footer->modification_time );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (nk2_file_header_t *) data )->signature,
+		 ( (nk2_file_footer_t *) data )->unknown1,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: signature\t\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (nk2_file_header_t *) data )->unknown1,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown1\t\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
+		if( libnk2_debug_print_filetime_value(
+		     function,
+		     "modification time\t\t\t",
+		     ( (nk2_file_footer_t *) data )->modification_time,
+		     8,
+		     LIBFDATETIME_ENDIAN_LITTLE,
+		     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+			 "%s: unable to print filetime value.",
+			 function );
 
-		byte_stream_copy_to_uint32_little_endian(
-		 ( (nk2_file_header_t *) data )->unknown2,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown2\t\t\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		libcnotify_printf(
-		 "%s: number of items\t\t\t\t: %" PRIu32 "\n",
-		 function,
-		 file_header->number_of_items );
-
+			return( -1 );
+		}
 		libcnotify_printf(
 		 "\n" );
 	}
@@ -263,81 +246,58 @@ int libnk2_file_header_read_data(
 	return( 1 );
 }
 
-/* Reads the file header
+/* Reads the file footer
  * Returns 1 if successful or -1 on error
  */
-int libnk2_file_header_read_file_io_handle(
-     libnk2_file_header_t *file_header,
+int libnk2_file_footer_read_file_io_handle(
+     libnk2_file_footer_t *file_footer,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	uint8_t file_header_data[ sizeof( nk2_file_header_t ) ];
+	uint8_t file_footer_data[ sizeof( nk2_file_footer_t ) ];
 
-	static char *function = "libnk2_file_header_read_file_io_handle";
+	static char *function = "libnk2_file_footer_read_file_io_handle";
 	ssize_t read_count    = 0;
 
-	if( file_header == NULL )
+	if( file_footer == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file header.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading file header at offset: 0 (0x00000000)\n",
-		 function );
-	}
-#endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     0,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek file header offset: 0.",
+		 "%s: invalid file footer.",
 		 function );
 
 		return( -1 );
 	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
-	              file_header_data,
-	              sizeof( nk2_file_header_t ),
+	              file_footer_data,
+	              sizeof( nk2_file_footer_t ),
 	              error );
 
-	if( read_count != (ssize_t) sizeof( nk2_file_header_t ) )
+	if( read_count != (ssize_t) sizeof( nk2_file_footer_t ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file header data.",
+		 "%s: unable to read file footer data.",
 		 function );
 
 		return( -1 );
 	}
-	if( libnk2_file_header_read_data(
-	     file_header,
-	     file_header_data,
-	     sizeof( nk2_file_header_t ),
+	if( libnk2_file_footer_read_data(
+	     file_footer,
+	     file_footer_data,
+	     sizeof( nk2_file_footer_t ),
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file header.",
+		 "%s: unable to read file footer.",
 		 function );
 
 		return( -1 );
