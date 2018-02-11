@@ -17,6 +17,7 @@ MSVSCPP_FILES = \
 	libuna/libuna.vcproj \
 	nk2_test_error/nk2_test_error.vcproj \
 	nk2_test_file/nk2_test_file.vcproj \
+	nk2_test_file_header/nk2_test_file_header.vcproj \
 	nk2_test_io_handle/nk2_test_io_handle.vcproj \
 	nk2_test_item/nk2_test_item.vcproj \
 	nk2_test_notify/nk2_test_notify.vcproj \

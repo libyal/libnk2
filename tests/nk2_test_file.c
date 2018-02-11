@@ -1948,7 +1948,9 @@ int main(
 		NK2_TEST_ASSERT_IS_NULL(
 		 "error",
 		 error );
-
+	}
+	if( file_io_handle != NULL )
+	{
 		result = libbfio_handle_free(
 		          &file_io_handle,
 		          &error );

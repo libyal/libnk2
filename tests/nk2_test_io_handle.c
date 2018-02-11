@@ -332,6 +332,36 @@ int nk2_test_io_handle_clear(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_NK2_TEST_MEMORY )
+
+	/* Test libnk2_io_handle_clear with memset failing
+	 */
+	nk2_test_memset_attempts_before_fail = 0;
+
+	result = libnk2_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	if( nk2_test_memset_attempts_before_fail != -1 )
+	{
+		nk2_test_memset_attempts_before_fail = -1;
+	}
+	else
+	{
+		NK2_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		NK2_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_NK2_TEST_MEMORY ) */
+
 	/* Clean up
 	 */
 	result = libnk2_io_handle_free(

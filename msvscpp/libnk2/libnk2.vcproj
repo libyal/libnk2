@@ -186,6 +186,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libnk2\libnk2_file_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libnk2\libnk2_io_handle.c"
 				>
 			</File>
@@ -241,6 +245,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libnk2\libnk2_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libnk2\libnk2_file_header.h"
 				>
 			</File>
 			<File

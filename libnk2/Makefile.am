@@ -25,6 +25,7 @@ libnk2_la_SOURCES = \
 	libnk2_error.c libnk2_error.h \
 	libnk2_extern.h \
 	libnk2_file.c libnk2_file.h \
+	libnk2_file_header.c libnk2_file_header.h \
 	libnk2_item.c libnk2_item.h \
 	libnk2_io_handle.c libnk2_io_handle.h \
 	libnk2_legacy.c libnk2_legacy.h \
