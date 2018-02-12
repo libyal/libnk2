@@ -60,13 +60,6 @@ int libnk2_io_handle_clear(
      libnk2_io_handle_t *io_handle,
      libcerror_error_t **error );
 
-int libnk2_io_handle_read_items(
-     libnk2_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     uint32_t number_of_items,
-     libcdata_array_t *items_array,
-     libcerror_error_t **error );
-
 int libnk2_io_handle_read_record_entries(
      libnk2_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,

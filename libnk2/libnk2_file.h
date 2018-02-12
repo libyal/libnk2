@@ -123,6 +123,12 @@ int libnk2_file_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
+int libnk2_file_read_items(
+     libnk2_internal_file_t *internal_file,
+     libbfio_handle_t *file_io_handle,
+     uint32_t number_of_items,
+     libcerror_error_t **error );
+
 LIBNK2_EXTERN \
 int libnk2_file_get_ascii_codepage(
      libnk2_file_t *file,

@@ -890,11 +890,10 @@ int libnk2_file_open_read(
 		 "Reading items:\n" );
 	}
 #endif
-	if( libnk2_io_handle_read_items(
-	     internal_file->io_handle,
+	if( libnk2_file_read_items(
+	     internal_file,
 	     file_io_handle,
 	     file_header->number_of_items,
-	     internal_file->items_array,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -985,7 +984,163 @@ on_error:
 		 &file_header,
 		 NULL );
 	}
+	libcdata_array_empty(
+	 internal_file->items_array,
+	 (int (*)(intptr_t **, libcerror_error_t **)) &libnk2_internal_item_free,
+	 NULL );
+
 	internal_file->io_handle->abort = 0;
+
+	return( -1 );
+}
+
+/* Reads the items into the items array
+ * Returns 1 if successful or -1 on error
+ */
+int libnk2_file_read_items(
+     libnk2_internal_file_t *internal_file,
+     libbfio_handle_t *file_io_handle,
+     uint32_t number_of_items,
+     libcerror_error_t **error )
+{
+	uint8_t number_of_record_entries_data[ 4 ];
+
+	libnk2_item_t *item               = NULL;
+	static char *function             = "libnk2_file_read_items";
+	ssize_t read_count                = 0;
+	uint32_t item_index               = 0;
+	uint32_t number_of_record_entries = 0;
+	int entry_index                   = 0;
+
+	if( internal_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid internal file.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_empty(
+	     internal_file->items_array,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libnk2_internal_item_free,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to empty items array.",
+		 function );
+
+		goto on_error;
+	}
+	for( item_index = 0;
+	     item_index < number_of_items;
+	     item_index++ )
+	{
+		read_count = libbfio_handle_read_buffer(
+			      file_io_handle,
+			      number_of_record_entries_data,
+			      4,
+			      error );
+
+		if( read_count != (ssize_t) 4 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read item: %" PRIu32 " number of record entries data.",
+			 function,
+			 item_index );
+
+			goto on_error;
+		}
+		byte_stream_copy_to_uint32_little_endian(
+		 number_of_record_entries_data,
+		 number_of_record_entries );
+
+		if( number_of_record_entries == 0 )
+		{
+			break;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: item: %03" PRIu32 " number of record entries\t\t: %" PRIu32 "\n",
+			 function,
+			 item_index,
+			 number_of_record_entries );
+
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
+		if( libnk2_item_initialize(
+		     &item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create item.",
+			 function );
+
+			goto on_error;
+		}
+		if( libnk2_io_handle_read_record_entries(
+		     internal_file->io_handle,
+		     file_io_handle,
+		     item_index,
+		     number_of_record_entries,
+		     ( (libnk2_internal_item_t *) item )->entries_array,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read record entries: %" PRIu32 ".",
+			 function,
+			 item_index );
+
+			goto on_error;
+		}
+		if( libcdata_array_append_entry(
+		     internal_file->items_array,
+		     &entry_index,
+		     (intptr_t *) item,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append record entries to items array.",
+			 function );
+
+			goto on_error;
+		}
+		item = NULL;
+	}
+	return( 1 );
+
+on_error:
+	if( item != NULL )
+	{
+		libnk2_item_free(
+		 &item,
+		 NULL );
+	}
+	libcdata_array_empty(
+	 internal_file->items_array,
+	 (int (*)(intptr_t **, libcerror_error_t **)) &libnk2_internal_item_free,
+	 NULL );
 
 	return( -1 );
 }

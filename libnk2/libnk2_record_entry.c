@@ -322,7 +322,7 @@ int libnk2_record_entry_read_data(
 		 8,
 		 0 );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 	return( 1 );
 }
 
