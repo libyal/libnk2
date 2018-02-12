@@ -83,7 +83,7 @@ int libnk2_record_entry_read_data(
      size_t data_size,
      libcerror_error_t **error );
 
-int libnk2_record_entry_read_value(
+int libnk2_record_entry_read_file_io_handle(
      libnk2_record_entry_t *record_entry,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );

@@ -323,19 +323,40 @@ int libnk2_record_entry_read_data(
 		 0 );
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+	if( libnk2_mapi_value_get_data_size(
+	     internal_record_entry->value_type,
+	     &( internal_record_entry->value_data_size ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve value data size.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_record_entry->value_data_size != 0 )
+	{
+		internal_record_entry->value_data = internal_record_entry->value_data_array;
+	}
 	return( 1 );
 }
 
-/* Reads the record entry value
+/* Reads the record entry
  * Returns 1 if successful or -1 on error
  */
-int libnk2_record_entry_read_value(
+int libnk2_record_entry_read_file_io_handle(
      libnk2_record_entry_t *record_entry,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
+	uint8_t record_entry_data[ sizeof( nk2_item_value_entry_t ) ];
+
 	libnk2_internal_record_entry_t *internal_record_entry = NULL;
-	static char *function                                 = "libnk2_record_entry_read_value";
+	static char *function                                 = "libnk2_record_entry_read_file_io_handle";
 	size_t value_data_size                                = 0;
 	uint16_t stored_value_data_size                       = 0;
 	ssize_t read_count                                    = 0;
@@ -358,24 +379,43 @@ int libnk2_record_entry_read_value(
 	{
 		memory_free(
 		 internal_record_entry->value_data );
-
-		internal_record_entry->value_data = NULL;
 	}
-	if( libnk2_mapi_value_get_data_size(
-	     internal_record_entry->value_type,
-	     &value_data_size,
-	     error ) != 1 )
+	internal_record_entry->value_data_size = 0;
+	internal_record_entry->value_data      = NULL;
+
+	read_count = libbfio_handle_read_buffer(
+		      file_io_handle,
+		      record_entry_data,
+		      sizeof( nk2_item_value_entry_t ),
+		      error );
+
+	if( read_count != (ssize_t) sizeof( nk2_item_value_entry_t ) )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve value data size.",
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read record entry data.",
 		 function );
 
 		goto on_error;
 	}
-	if( value_data_size == 0 )
+	if( libnk2_record_entry_read_data(
+	     record_entry,
+	     record_entry_data,
+	     sizeof( nk2_item_value_entry_t ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read record entry.",
+		 function );
+
+		goto on_error;
+	}
+	if( internal_record_entry->value_data_size == 0 )
 	{
 		/* The value data size is stored after the item value
 		 */
@@ -400,25 +440,7 @@ int libnk2_record_entry_read_value(
 		 internal_record_entry->value_data_array,
 		 stored_value_data_size );
 
-		value_data_size = (size_t) stored_value_data_size;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: value data size\t\t\t\t: %" PRIzd "\n",
-		 function,
-		 value_data_size );
-	}
-#endif
-	if( stored_value_data_size == 0 )
-	{
-		internal_record_entry->value_data      = internal_record_entry->value_data_array;
-		internal_record_entry->value_data_size = value_data_size;
-	}
-	else
-	{
-		if( value_data_size > (size_t) SSIZE_MAX )
+		if( stored_value_data_size > (size_t) SSIZE_MAX )
 		{
 			libcerror_error_set(
 			 error,
@@ -429,8 +451,21 @@ int libnk2_record_entry_read_value(
 
 			goto on_error;
 		}
+		internal_record_entry->value_data_size = (size_t) stored_value_data_size;
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: value data size\t\t\t\t: %" PRIzd "\n",
+		 function,
+		 internal_record_entry->value_data_size );
+	}
+#endif
+	if( internal_record_entry->value_data == NULL )
+	{
 		internal_record_entry->value_data = (uint8_t *) memory_allocate(
-		                                                 (size_t) value_data_size );
+		                                                 (size_t) internal_record_entry->value_data_size );
 
 		if( internal_record_entry->value_data == NULL )
 		{
@@ -443,15 +478,13 @@ int libnk2_record_entry_read_value(
 
 			goto on_error;
 		}
-		internal_record_entry->value_data_size = value_data_size;
-
 		read_count = libbfio_handle_read_buffer(
 		              file_io_handle,
 		              internal_record_entry->value_data,
-		              value_data_size,
+		              internal_record_entry->value_data_size,
 		              error );
 
-		if( read_count != (ssize_t) value_data_size )
+		if( read_count != (ssize_t) internal_record_entry->value_data_size )
 		{
 			libcerror_error_set(
 			 error,
@@ -471,10 +504,9 @@ on_error:
 	{
 		memory_free(
 		 internal_record_entry->value_data );
-
-		internal_record_entry->value_data = NULL;
 	}
 	internal_record_entry->value_data_size = 0;
+	internal_record_entry->value_data      = NULL;
 
 	return( -1 );
 }

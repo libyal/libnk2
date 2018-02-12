@@ -44,6 +44,9 @@ uint8_t nk2_test_record_entry_16bit_integer_data1[ 16 ] = {
 uint8_t nk2_test_record_entry_32bit_integer_data1[ 16 ] = {
 	0x03, 0x00, 0x15, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+uint8_t nk2_test_record_entry_64bit_integer_data1[ 16 ] = {
+	0x14, 0x00, 0x15, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
 #if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
 /* Tests the libnk2_record_entry_initialize function
@@ -460,113 +463,6 @@ int nk2_test_record_entry_read_data(
 		 &error );
 	}
 #endif /* defined( HAVE_NK2_TEST_MEMORY ) */
-
-	/* Clean up
-	 */
-	result = libnk2_internal_record_entry_free(
-	          (libnk2_internal_record_entry_t **) &record_entry,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	NK2_TEST_ASSERT_IS_NULL(
-	 "record_entry",
-	 record_entry );
-
-	NK2_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	if( record_entry != NULL )
-	{
-		libnk2_internal_record_entry_free(
-		 (libnk2_internal_record_entry_t **) &record_entry,
-		 NULL );
-	}
-	return( 0 );
-}
-
-/* Tests the libnk2_record_entry_read_value function
- * Returns 1 if successful or 0 if not
- */
-int nk2_test_record_entry_read_value(
-     void )
-{
-	libbfio_handle_t *file_io_handle    = NULL;
-	libcerror_error_t *error            = NULL;
-	libnk2_record_entry_t *record_entry = NULL;
-	int result                          = 0;
-
-	/* Initialize test
-	 */
-	result = libnk2_record_entry_initialize(
-	          &record_entry,
-	          LIBNK2_CODEPAGE_WINDOWS_1252,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	NK2_TEST_ASSERT_IS_NOT_NULL(
-	 "record_entry",
-	 record_entry );
-
-	NK2_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test regular cases
-	 */
-/* TODO implement */
-
-	/* Test error cases
-	 */
-	result = libnk2_record_entry_read_value(
-	          NULL,
-	          file_io_handle,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	NK2_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libnk2_record_entry_read_value(
-	          record_entry,
-	          NULL,
-	          &error );
-
-	NK2_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	NK2_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
 
 	/* Clean up
 	 */
@@ -1215,7 +1111,6 @@ int nk2_test_record_entry_get_data_as_boolean(
 
 	/* Test regular cases
 	 */
-/* TODO fix "missing value data"
 	result = libnk2_record_entry_get_data_as_boolean(
 	          record_entry,
 	          &value_boolean,
@@ -1229,7 +1124,6 @@ int nk2_test_record_entry_get_data_as_boolean(
 	NK2_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-*/
 
 	/* Test error cases
 	 */
@@ -1351,7 +1245,6 @@ int nk2_test_record_entry_get_data_as_16bit_integer(
 
 	/* Test regular cases
 	 */
-/* TODO fix "missing value data"
 	result = libnk2_record_entry_get_data_as_16bit_integer(
 	          record_entry,
 	          &value_16bit,
@@ -1365,7 +1258,6 @@ int nk2_test_record_entry_get_data_as_16bit_integer(
 	NK2_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-*/
 
 	/* Test error cases
 	 */
@@ -1487,7 +1379,6 @@ int nk2_test_record_entry_get_data_as_32bit_integer(
 
 	/* Test regular cases
 	 */
-/* TODO fix "missing value data"
 	result = libnk2_record_entry_get_data_as_32bit_integer(
 	          record_entry,
 	          &value_32bit,
@@ -1501,7 +1392,6 @@ int nk2_test_record_entry_get_data_as_32bit_integer(
 	NK2_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-*/
 
 	/* Test error cases
 	 */
@@ -1608,7 +1498,7 @@ int nk2_test_record_entry_get_data_as_64bit_integer(
 
 	result = libnk2_record_entry_read_data(
 	          record_entry,
-	          nk2_test_record_entry_32bit_integer_data1,
+	          nk2_test_record_entry_64bit_integer_data1,
 	          16,
 	          &error );
 
@@ -1623,7 +1513,19 @@ int nk2_test_record_entry_get_data_as_64bit_integer(
 
 	/* Test regular cases
 	 */
-/* TODO implement */
+	result = libnk2_record_entry_get_data_as_64bit_integer(
+	          record_entry,
+	          &value_64bit,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -2220,9 +2122,7 @@ int main(
 	 "libnk2_record_entry_read_data",
 	 nk2_test_record_entry_read_data );
 
-	NK2_TEST_RUN(
-	 "libnk2_record_entry_read_value",
-	 nk2_test_record_entry_read_value );
+	/* TODO: add tests for libnk2_record_entry_read_file_io_handle */
 
 	NK2_TEST_RUN(
 	 "libnk2_record_entry_get_entry_type",

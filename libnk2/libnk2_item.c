@@ -210,8 +210,6 @@ int libnk2_item_read_record_entries(
      uint32_t number_of_record_entries,
      libcerror_error_t **error )
 {
-	nk2_item_value_entry_t item_value_entry;
-
 	libnk2_record_entry_t *record_entry = NULL;
 	static char *function               = "libnk2_item_read_record_entries";
 	ssize_t read_count                  = 0;
@@ -270,39 +268,7 @@ int libnk2_item_read_record_entries(
 
 			goto on_error;
 		}
-		read_count = libbfio_handle_read_buffer(
-			      file_io_handle,
-			      (uint8_t *) &item_value_entry,
-			      sizeof( nk2_item_value_entry_t ),
-			      error );
-
-		if( read_count != (ssize_t) sizeof( nk2_item_value_entry_t ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read record entry data.",
-			 function );
-
-			goto on_error;
-		}
-		if( libnk2_record_entry_read_data(
-		     record_entry,
-		     (uint8_t *) &item_value_entry,
-		     sizeof( nk2_item_value_entry_t ),
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read record entry.",
-			 function );
-
-			goto on_error;
-		}
-		if( libnk2_record_entry_read_value(
+		if( libnk2_record_entry_read_file_io_handle(
 		     record_entry,
 		     file_io_handle,
 		     error ) != 1 )
@@ -311,7 +277,7 @@ int libnk2_item_read_record_entries(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read record entry value.",
+			 "%s: unable to read record entry.",
 			 function );
 
 			goto on_error;
