@@ -25,8 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "libnk2_libbfio.h"
-#include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
 
 #if defined( __cplusplus )
@@ -58,14 +56,6 @@ int libnk2_io_handle_free(
 
 int libnk2_io_handle_clear(
      libnk2_io_handle_t *io_handle,
-     libcerror_error_t **error );
-
-int libnk2_io_handle_read_record_entries(
-     libnk2_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     uint32_t item_index,
-     uint32_t number_of_record_entries,
-     libcdata_array_t *entries_array,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

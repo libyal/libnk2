@@ -74,7 +74,7 @@ enum LIBNK2_ENTRY_VALUE_FLAGS
 	LIBNK2_ENTRY_VALUE_FLAG_MATCH_ANY_VALUE_TYPE	= 0x01,
 };
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 
-#endif
+#endif /* !defined( _LIBNK2_INTERNAL_DEFINITIONS_H ) */
 

@@ -26,6 +26,8 @@
 #include <types.h>
 
 #include "libnk2_extern.h"
+#include "libnk2_io_handle.h"
+#include "libnk2_libbfio.h"
 #include "libnk2_libcdata.h"
 #include "libnk2_libcerror.h"
 #include "libnk2_types.h"
@@ -54,6 +56,14 @@ int libnk2_item_free(
 
 int libnk2_internal_item_free(
      libnk2_internal_item_t **internal_item,
+     libcerror_error_t **error );
+
+int libnk2_item_read_record_entries(
+     libnk2_internal_item_t *internal_item,
+     libnk2_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     uint32_t item_index,
+     uint32_t number_of_record_entries,
      libcerror_error_t **error );
 
 LIBNK2_EXTERN \

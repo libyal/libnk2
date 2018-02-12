@@ -1093,12 +1093,12 @@ int libnk2_file_read_items(
 
 			goto on_error;
 		}
-		if( libnk2_io_handle_read_record_entries(
+		if( libnk2_item_read_record_entries(
+		     (libnk2_internal_item_t *) item,
 		     internal_file->io_handle,
 		     file_io_handle,
 		     item_index,
 		     number_of_record_entries,
-		     ( (libnk2_internal_item_t *) item )->entries_array,
 		     error ) != 1 )
 		{
 			libcerror_error_set(

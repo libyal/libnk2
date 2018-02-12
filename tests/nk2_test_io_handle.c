@@ -429,10 +429,6 @@ int main(
 	 "libnk2_io_handle_clear",
 	 nk2_test_io_handle_clear );
 
-	/* TODO: add tests for libnk2_io_handle_read_items */
-
-	/* TODO: add tests for libnk2_io_handle_read_record_entries */
-
 #endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
