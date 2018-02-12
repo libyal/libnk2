@@ -212,7 +212,6 @@ int libnk2_item_read_record_entries(
 {
 	libnk2_record_entry_t *record_entry = NULL;
 	static char *function               = "libnk2_item_read_record_entries";
-	ssize_t read_count                  = 0;
 	uint32_t record_entry_index         = 0;
 	int entry_index                     = 0;
 

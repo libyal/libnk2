@@ -47,6 +47,11 @@ uint8_t nk2_test_record_entry_32bit_integer_data1[ 16 ] = {
 uint8_t nk2_test_record_entry_64bit_integer_data1[ 16 ] = {
 	0x14, 0x00, 0x15, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+uint8_t nk2_test_record_entry_string_unicode_data1[ 46 ] = {
+	0x1f, 0x00, 0xf6, 0x5f, 0x00, 0x00, 0x4c, 0x29, 0xd6, 0x11, 0x26, 0x02, 0x00, 0x00, 0x00, 0x00,
+	0x1a, 0x00, 0x00, 0x00, 0x4a, 0x00, 0x6f, 0x00, 0x61, 0x00, 0x63, 0x00, 0x68, 0x00, 0x69, 0x00,
+	0x6d, 0x00, 0x20, 0x00, 0x4d, 0x00, 0x65, 0x00, 0x74, 0x00, 0x7a, 0x00, 0x00, 0x00 };
+
 #if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
 /* Tests the libnk2_record_entry_initialize function
@@ -2087,6 +2092,815 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libnk2_record_entry_get_data_as_utf8_string_size function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_record_entry_get_data_as_utf8_string_size(
+     void )
+{
+	libcerror_error_t *error            = NULL;
+	libnk2_record_entry_t *record_entry = NULL;
+	size_t utf8_string_size             = 0;
+	int result                          = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_record_entry_initialize(
+	          &record_entry,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          nk2_test_record_entry_string_unicode_data1,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data      = &( nk2_test_record_entry_string_unicode_data1[ 20 ] );
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data_size = 26;
+
+	/* Test regular cases
+	 */
+	result = libnk2_record_entry_get_data_as_utf8_string_size(
+	          record_entry,
+	          &utf8_string_size,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_record_entry_get_data_as_utf8_string_size(
+	          NULL,
+	          &utf8_string_size,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_utf8_string_size(
+	          record_entry,
+	          NULL,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+	result = libnk2_internal_record_entry_free(
+	          (libnk2_internal_record_entry_t **) &record_entry,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_entry != NULL )
+	{
+		( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+		libnk2_internal_record_entry_free(
+		 (libnk2_internal_record_entry_t **) &record_entry,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_record_entry_get_data_as_utf8_string function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_record_entry_get_data_as_utf8_string(
+     void )
+{
+	uint8_t utf8_string[ 32 ];
+
+	libcerror_error_t *error            = NULL;
+	libnk2_record_entry_t *record_entry = NULL;
+	int result                          = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_record_entry_initialize(
+	          &record_entry,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          nk2_test_record_entry_string_unicode_data1,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data      = &( nk2_test_record_entry_string_unicode_data1[ 20 ] );
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data_size = 26;
+
+	/* Test regular cases
+	 */
+	result = libnk2_record_entry_get_data_as_utf8_string(
+	          record_entry,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_record_entry_get_data_as_utf8_string(
+	          NULL,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_utf8_string(
+	          record_entry,
+	          NULL,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_utf8_string(
+	          record_entry,
+	          utf8_string,
+	          0,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_utf8_string(
+	          record_entry,
+	          utf8_string,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+	result = libnk2_internal_record_entry_free(
+	          (libnk2_internal_record_entry_t **) &record_entry,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_entry != NULL )
+	{
+		( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+		libnk2_internal_record_entry_free(
+		 (libnk2_internal_record_entry_t **) &record_entry,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_record_entry_get_data_as_utf16_string_size function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_record_entry_get_data_as_utf16_string_size(
+     void )
+{
+	libcerror_error_t *error            = NULL;
+	libnk2_record_entry_t *record_entry = NULL;
+	size_t utf16_string_size            = 0;
+	int result                          = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_record_entry_initialize(
+	          &record_entry,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          nk2_test_record_entry_string_unicode_data1,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data      = &( nk2_test_record_entry_string_unicode_data1[ 20 ] );
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data_size = 26;
+
+	/* Test regular cases
+	 */
+	result = libnk2_record_entry_get_data_as_utf16_string_size(
+	          record_entry,
+	          &utf16_string_size,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_record_entry_get_data_as_utf16_string_size(
+	          NULL,
+	          &utf16_string_size,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_utf16_string_size(
+	          record_entry,
+	          NULL,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+	result = libnk2_internal_record_entry_free(
+	          (libnk2_internal_record_entry_t **) &record_entry,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_entry != NULL )
+	{
+		( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+		libnk2_internal_record_entry_free(
+		 (libnk2_internal_record_entry_t **) &record_entry,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_record_entry_get_data_as_utf16_string function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_record_entry_get_data_as_utf16_string(
+     void )
+{
+	uint16_t utf16_string[ 32 ];
+
+	libcerror_error_t *error            = NULL;
+	libnk2_record_entry_t *record_entry = NULL;
+	int result                          = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_record_entry_initialize(
+	          &record_entry,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          nk2_test_record_entry_string_unicode_data1,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data      = &( nk2_test_record_entry_string_unicode_data1[ 20 ] );
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data_size = 26;
+
+	/* Test regular cases
+	 */
+	result = libnk2_record_entry_get_data_as_utf16_string(
+	          record_entry,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_record_entry_get_data_as_utf16_string(
+	          NULL,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_utf16_string(
+	          record_entry,
+	          NULL,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_utf16_string(
+	          record_entry,
+	          utf16_string,
+	          0,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_utf16_string(
+	          record_entry,
+	          utf16_string,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+	result = libnk2_internal_record_entry_free(
+	          (libnk2_internal_record_entry_t **) &record_entry,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_entry != NULL )
+	{
+		( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+		libnk2_internal_record_entry_free(
+		 (libnk2_internal_record_entry_t **) &record_entry,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_record_entry_get_data_as_guid function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_record_entry_get_data_as_guid(
+     void )
+{
+	uint8_t guid_data[ 16 ];
+	
+	libcerror_error_t *error            = NULL;
+	libnk2_record_entry_t *record_entry = NULL;
+	int result                          = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_record_entry_initialize(
+	          &record_entry,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_record_entry_read_data(
+	          record_entry,
+	          nk2_test_record_entry_32bit_integer_data1,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+/* TODO implement */
+
+	/* Test error cases
+	 */
+	result = libnk2_record_entry_get_data_as_guid(
+	          NULL,
+	          guid_data,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_guid(
+	          record_entry,
+	          NULL,
+	          16,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_guid(
+	          record_entry,
+	          guid_data,
+	          0,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_record_entry_get_data_as_guid(
+	          record_entry,
+	          guid_data,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+	result = libnk2_internal_record_entry_free(
+	          (libnk2_internal_record_entry_t **) &record_entry,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "record_entry",
+	 record_entry );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( record_entry != NULL )
+	{
+		( (libnk2_internal_record_entry_t *) record_entry )->value_data = NULL;
+
+		libnk2_internal_record_entry_free(
+		 (libnk2_internal_record_entry_t **) &record_entry,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 
 /* The main program
@@ -2172,15 +2986,25 @@ int main(
 	 "libnk2_record_entry_get_data_as_floating_point",
 	 nk2_test_record_entry_get_data_as_floating_point );
 
-	/* TODO: add tests for libnk2_record_entry_get_data_as_utf8_string_size */
+	NK2_TEST_RUN(
+	 "libnk2_record_entry_get_data_as_utf8_string_size",
+	 nk2_test_record_entry_get_data_as_utf8_string_size );
 
-	/* TODO: add tests for libnk2_record_entry_get_data_as_utf8_string */
+	NK2_TEST_RUN(
+	 "libnk2_record_entry_get_data_as_utf8_string",
+	 nk2_test_record_entry_get_data_as_utf8_string );
 
-	/* TODO: add tests for libnk2_record_entry_get_data_as_utf16_string_size */
+	NK2_TEST_RUN(
+	 "libnk2_record_entry_get_data_as_utf16_string_size",
+	 nk2_test_record_entry_get_data_as_utf16_string_size );
 
-	/* TODO: add tests for libnk2_record_entry_get_data_as_utf16_string */
+	NK2_TEST_RUN(
+	 "libnk2_record_entry_get_data_as_utf16_string",
+	 nk2_test_record_entry_get_data_as_utf16_string );
 
-	/* TODO: add tests for libnk2_record_entry_get_data_as_guid */
+	NK2_TEST_RUN(
+	 "libnk2_record_entry_get_data_as_guid",
+	 nk2_test_record_entry_get_data_as_guid );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 

@@ -357,8 +357,7 @@ int libnk2_record_entry_read_file_io_handle(
 
 	libnk2_internal_record_entry_t *internal_record_entry = NULL;
 	static char *function                                 = "libnk2_record_entry_read_file_io_handle";
-	size_t value_data_size                                = 0;
-	uint16_t stored_value_data_size                       = 0;
+	uint32_t stored_value_data_size                       = 0;
 	ssize_t read_count                                    = 0;
 
 	if( record_entry == NULL )
@@ -380,8 +379,8 @@ int libnk2_record_entry_read_file_io_handle(
 		memory_free(
 		 internal_record_entry->value_data );
 	}
-	internal_record_entry->value_data_size = 0;
 	internal_record_entry->value_data      = NULL;
+	internal_record_entry->value_data_size = 0;
 
 	read_count = libbfio_handle_read_buffer(
 		      file_io_handle,
@@ -436,10 +435,11 @@ int libnk2_record_entry_read_file_io_handle(
 
 			goto on_error;
 		}
-		byte_stream_copy_to_uint16_little_endian(
+		byte_stream_copy_to_uint32_little_endian(
 		 internal_record_entry->value_data_array,
 		 stored_value_data_size );
 
+#if SIZEOF_SIZE_T <= 4
 		if( stored_value_data_size > (size_t) SSIZE_MAX )
 		{
 			libcerror_error_set(
@@ -451,6 +451,7 @@ int libnk2_record_entry_read_file_io_handle(
 
 			goto on_error;
 		}
+#endif
 		internal_record_entry->value_data_size = (size_t) stored_value_data_size;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -505,8 +506,8 @@ on_error:
 		memory_free(
 		 internal_record_entry->value_data );
 	}
-	internal_record_entry->value_data_size = 0;
 	internal_record_entry->value_data      = NULL;
+	internal_record_entry->value_data_size = 0;
 
 	return( -1 );
 }
