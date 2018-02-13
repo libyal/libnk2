@@ -165,6 +165,8 @@ nk2_test_notify_LDADD = \
 	../libnk2/libnk2.la
 
 nk2_test_record_entry_SOURCES = \
+	nk2_test_functions.c nk2_test_functions.h \
+	nk2_test_libbfio.h \
 	nk2_test_libcerror.h \
 	nk2_test_libnk2.h \
 	nk2_test_macros.h \
@@ -173,6 +175,14 @@ nk2_test_record_entry_SOURCES = \
 	nk2_test_unused.h
 
 nk2_test_record_entry_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libnk2/libnk2.la \
 	@LIBCERROR_LIBADD@
 
