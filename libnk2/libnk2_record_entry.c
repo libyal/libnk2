@@ -1197,7 +1197,8 @@ int libnk2_record_entry_get_data_as_size(
 	}
 	internal_record_entry = (libnk2_internal_record_entry_t *) record_entry;
 
-	if( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_FILETIME )
+	if( ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_INTEGER_32BIT_SIGNED )
+	 && ( internal_record_entry->value_type != LIBNK2_VALUE_TYPE_INTEGER_64BIT_SIGNED ) )
 	{
 		libcerror_error_set(
 		 error,
