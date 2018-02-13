@@ -21,6 +21,7 @@
 
 #include <common.h>
 #include <file_stream.h>
+#include <memory.h>
 #include <narrow_string.h>
 #include <system_string.h>
 #include <types.h>
@@ -36,6 +37,7 @@
 #include "nk2_test_libcerror.h"
 #include "nk2_test_libnk2.h"
 #include "nk2_test_macros.h"
+#include "nk2_test_memory.h"
 #include "nk2_test_unused.h"
 
 #if !defined( LIBNK2_HAVE_BFIO )
@@ -261,6 +263,54 @@ int nk2_test_check_file_signature(
 	libcerror_error_free(
 	 &error );
 
+	result = libnk2_check_file_signature(
+	          "",
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( source != NULL )
+	{
+#if defined( HAVE_NK2_TEST_MEMORY )
+
+		/* Test libnk2_check_file_signature with malloc failing in libbfio_file_initialize
+		 */
+		nk2_test_malloc_attempts_before_fail = 0;
+
+		result = libnk2_check_file_signature(
+		          narrow_source,
+		          &error );
+
+		if( nk2_test_malloc_attempts_before_fail != -1 )
+		{
+			nk2_test_malloc_attempts_before_fail = -1;
+		}
+		else
+		{
+			NK2_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			NK2_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+#endif /* defined( HAVE_NK2_TEST_MEMORY ) */
+	}
 	return( 1 );
 
 on_error:
@@ -337,6 +387,54 @@ int nk2_test_check_file_signature_wide(
 	libcerror_error_free(
 	 &error );
 
+	result = libnk2_check_file_signature_wide(
+	          L"",
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	if( source != NULL )
+	{
+#if defined( HAVE_NK2_TEST_MEMORY )
+
+		/* Test libnk2_check_file_signature_wide with malloc failing in libbfio_file_initialize
+		 */
+		nk2_test_malloc_attempts_before_fail = 0;
+
+		result = libnk2_check_file_signature_wide(
+		          wide_source,
+		          &error );
+
+		if( nk2_test_malloc_attempts_before_fail != -1 )
+		{
+			nk2_test_malloc_attempts_before_fail = -1;
+		}
+		else
+		{
+			NK2_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 -1 );
+
+			NK2_TEST_ASSERT_IS_NOT_NULL(
+			 "error",
+			 error );
+
+			libcerror_error_free(
+			 &error );
+		}
+#endif /* defined( HAVE_NK2_TEST_MEMORY ) */
+	}
 	return( 1 );
 
 on_error:

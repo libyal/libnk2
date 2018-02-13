@@ -146,6 +146,7 @@ nk2_test_io_handle_LDADD = \
 
 nk2_test_item_SOURCES = \
 	nk2_test_item.c \
+	nk2_test_libbfio.h \
 	nk2_test_libcerror.h \
 	nk2_test_libnk2.h \
 	nk2_test_macros.h \
@@ -153,6 +154,14 @@ nk2_test_item_SOURCES = \
 	nk2_test_unused.h
 
 nk2_test_item_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libnk2/libnk2.la \
 	@LIBCERROR_LIBADD@
 
@@ -171,6 +180,7 @@ nk2_test_notify_SOURCES = \
 	nk2_test_libcerror.h \
 	nk2_test_libnk2.h \
 	nk2_test_macros.h \
+	nk2_test_memory.c nk2_test_memory.h \
 	nk2_test_notify.c \
 	nk2_test_unused.h
 
@@ -210,6 +220,7 @@ nk2_test_support_SOURCES = \
 	nk2_test_libnk2.h \
 	nk2_test_libuna.h \
 	nk2_test_macros.h \
+	nk2_test_memory.c nk2_test_memory.h \
 	nk2_test_support.c \
 	nk2_test_unused.h
 

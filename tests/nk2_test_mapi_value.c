@@ -354,8 +354,8 @@ int nk2_test_mapi_value_get_data_as_utf8_string_size(
 	          LIBNK2_VALUE_TYPE_STRING_ASCII,
 	          nk2_test_mapi_value_string_ascii_data,
 	          13,
-	          LIBNK2_CODEPAGE_WINDOWS_1252,
-	          NULL,
+	          -1,
+	          &utf8_string_size,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
@@ -374,8 +374,207 @@ int nk2_test_mapi_value_get_data_as_utf8_string_size(
 	          LIBNK2_VALUE_TYPE_STRING_ASCII,
 	          nk2_test_mapi_value_string_ascii_data,
 	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          NULL,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_mapi_value_get_data_as_utf8_string function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_mapi_value_get_data_as_utf8_string(
+     void )
+{
+	uint8_t utf8_string[ 32 ];
+
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          NULL,
+	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          0,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_UNICODE,
+	          nk2_test_mapi_value_string_unicode_data,
+	          26,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_unicode_data,
+	          26,
+	          1200,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+/* TODO test codepage 65000 UTF-7 */
+
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
+	          65001,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
 	          -1,
-	          &utf8_string_size,
+	          utf8_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          NULL,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_mapi_value_get_data_as_utf8_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf8_string,
+	          (size_t) SSIZE_MAX + 1,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
@@ -553,8 +752,8 @@ int nk2_test_mapi_value_get_data_as_utf16_string_size(
 	          LIBNK2_VALUE_TYPE_STRING_ASCII,
 	          nk2_test_mapi_value_string_ascii_data,
 	          13,
-	          LIBNK2_CODEPAGE_WINDOWS_1252,
-	          NULL,
+	          -1,
+	          &utf16_string_size,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
@@ -573,8 +772,207 @@ int nk2_test_mapi_value_get_data_as_utf16_string_size(
 	          LIBNK2_VALUE_TYPE_STRING_ASCII,
 	          nk2_test_mapi_value_string_ascii_data,
 	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          NULL,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_mapi_value_get_data_as_utf16_string function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_mapi_value_get_data_as_utf16_string(
+     void )
+{
+	uint16_t utf16_string[ 32 ];
+
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          NULL,
+	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          0,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_UNICODE,
+	          nk2_test_mapi_value_string_unicode_data,
+	          26,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_unicode_data,
+	          26,
+	          1200,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+/* TODO test codepage 65000 UTF-7 */
+
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
+	          65001,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
 	          -1,
-	          &utf16_string_size,
+	          utf16_string,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          NULL,
+	          32,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_mapi_value_get_data_as_utf16_string(
+	          LIBNK2_VALUE_TYPE_STRING_ASCII,
+	          nk2_test_mapi_value_string_ascii_data,
+	          13,
+	          LIBNK2_CODEPAGE_WINDOWS_1252,
+	          utf16_string,
+	          (size_t) SSIZE_MAX + 1,
 	          &error );
 
 	NK2_TEST_ASSERT_EQUAL_INT(
@@ -631,13 +1029,17 @@ int main(
 	 "libnk2_mapi_value_get_data_as_utf8_string_size",
 	 nk2_test_mapi_value_get_data_as_utf8_string_size )
 
-	/* TODO: add tests for libnk2_mapi_value_get_data_as_utf8_string */
+	NK2_TEST_RUN(
+	 "libnk2_mapi_value_get_data_as_utf8_string",
+	 nk2_test_mapi_value_get_data_as_utf8_string )
 
 	NK2_TEST_RUN(
 	 "libnk2_mapi_value_get_data_as_utf16_string_size",
 	 nk2_test_mapi_value_get_data_as_utf16_string_size )
 
-	/* TODO: add tests for libnk2_mapi_value_get_data_as_utf16_string */
+	NK2_TEST_RUN(
+	 "libnk2_mapi_value_get_data_as_utf16_string",
+	 nk2_test_mapi_value_get_data_as_utf16_string )
 
 #endif /* defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT ) */
 

@@ -27,12 +27,14 @@
 #include <stdlib.h>
 #endif
 
+#include "nk2_test_libbfio.h"
 #include "nk2_test_libcerror.h"
 #include "nk2_test_libnk2.h"
 #include "nk2_test_macros.h"
 #include "nk2_test_memory.h"
 #include "nk2_test_unused.h"
 
+#include "../libnk2/libnk2_io_handle.h"
 #include "../libnk2/libnk2_item.h"
 
 #if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
@@ -48,7 +50,7 @@ int nk2_test_item_initialize(
 	int result                      = 0;
 
 #if defined( HAVE_NK2_TEST_MEMORY )
-	int number_of_malloc_fail_tests = 1;
+	int number_of_malloc_fail_tests = 2;
 	int number_of_memset_fail_tests = 1;
 	int test_number                 = 0;
 #endif
@@ -241,7 +243,29 @@ int nk2_test_item_free(
      void )
 {
 	libcerror_error_t *error = NULL;
+	libnk2_item_t *item      = NULL;
 	int result               = 0;
+
+	/* Test regular cases
+	 */
+	item = (libnk2_item_t *) 0x12345678UL;
+
+	result = libnk2_item_free(
+	          &item,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "item",
+	 item );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -274,17 +298,178 @@ on_error:
 
 #if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
 
+/* Tests the libnk2_internal_item_free function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_internal_item_free(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	libnk2_item_t *item      = NULL;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+/* TODO implement */
+
+	/* Test error cases
+	 */
+	result = libnk2_internal_item_free(
+	          NULL,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( item != NULL )
+	{
+		libnk2_internal_item_free(
+		 (libnk2_internal_item_t **) &item,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libnk2_item_read_record_entries function
+ * Returns 1 if successful or 0 if not
+ */
+int nk2_test_item_read_record_entries(
+     void )
+{
+	libbfio_handle_t *file_io_handle = NULL;
+	libcerror_error_t *error         = NULL;
+	libnk2_io_handle_t *io_handle    = NULL;
+	libnk2_item_t *item              = NULL;
+	int result                       = 0;
+
+	/* Initialize test
+	 */
+	result = libnk2_item_initialize(
+	          &item,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "item",
+	 item );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+/* TODO implement */
+
+	/* Test error cases
+	 */
+	result = libnk2_item_read_record_entries(
+	          NULL,
+	          io_handle,
+	          file_io_handle,
+	          0,
+	          0,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libnk2_item_read_record_entries(
+	          (libnk2_internal_item_t *) item,
+	          NULL,
+	          file_io_handle,
+	          0,
+	          0,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libnk2_internal_item_free(
+	          (libnk2_internal_item_t **) &item,
+	          &error );
+
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "item",
+	 item );
+
+	NK2_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( item != NULL )
+	{
+		libnk2_internal_item_free(
+		 (libnk2_internal_item_t **) &item,
+		 NULL );
+	}
+	return( 0 );
+}
+
 /* Tests the libnk2_item_get_number_of_entries function
  * Returns 1 if successful or 0 if not
  */
 int nk2_test_item_get_number_of_entries(
      void )
 {
-	libcerror_error_t *error     = NULL;
-	libnk2_item_t *item          = NULL;
-	int number_of_entries        = 0;
-	int number_of_entries_is_set = 0;
-	int result                   = 0;
+	libcerror_error_t *error = NULL;
+	libnk2_item_t *item      = NULL;
+	int number_of_entries    = 0;
+	int result               = 0;
 
 	/* Initialize test
 	 */
@@ -321,8 +506,6 @@ int nk2_test_item_get_number_of_entries(
 	 "error",
 	 error );
 
-	number_of_entries_is_set = result;
-
 	/* Test error cases
 	 */
 	result = libnk2_item_get_number_of_entries(
@@ -342,25 +525,23 @@ int nk2_test_item_get_number_of_entries(
 	libcerror_error_free(
 	 &error );
 
-	if( number_of_entries_is_set != 0 )
-	{
-		result = libnk2_item_get_number_of_entries(
-		          item,
-		          NULL,
-		          &error );
+	result = libnk2_item_get_number_of_entries(
+	          item,
+	          NULL,
+	          &error );
 
-		NK2_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	NK2_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		NK2_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	NK2_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	/* Clean up
 	 */
 	result = libnk2_internal_item_free(
@@ -427,6 +608,14 @@ int main(
 	 nk2_test_item_free );
 
 #if defined( __GNUC__ ) && !defined( LIBNK2_DLL_IMPORT )
+
+	NK2_TEST_RUN(
+	 "libnk2_internal_item_free",
+	 nk2_test_internal_item_free );
+
+	NK2_TEST_RUN(
+	 "libnk2_item_read_record_entries",
+	 nk2_test_item_read_record_entries );
 
 	NK2_TEST_RUN(
 	 "libnk2_item_get_number_of_entries",
