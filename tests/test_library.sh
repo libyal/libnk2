@@ -7,7 +7,7 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-LIBRARY_TESTS="error file_footer file_header io_handle item notify record_entry";
+LIBRARY_TESTS="error file_footer file_header io_handle item mapi_value notify record_entry";
 LIBRARY_TESTS_WITH_INPUT="file support";
 OPTION_SETS="";
 

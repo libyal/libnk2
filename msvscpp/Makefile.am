@@ -21,6 +21,7 @@ MSVSCPP_FILES = \
 	nk2_test_file_header/nk2_test_file_header.vcproj \
 	nk2_test_io_handle/nk2_test_io_handle.vcproj \
 	nk2_test_item/nk2_test_item.vcproj \
+	nk2_test_mapi_value/nk2_test_mapi_value.vcproj \
 	nk2_test_notify/nk2_test_notify.vcproj \
 	nk2_test_record_entry/nk2_test_record_entry.vcproj \
 	nk2_test_support/nk2_test_support.vcproj \

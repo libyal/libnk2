@@ -46,6 +46,7 @@ check_PROGRAMS = \
 	nk2_test_file_header \
 	nk2_test_io_handle \
 	nk2_test_item \
+	nk2_test_mapi_value \
 	nk2_test_notify \
 	nk2_test_record_entry \
 	nk2_test_support
@@ -155,14 +156,27 @@ nk2_test_item_LDADD = \
 	../libnk2/libnk2.la \
 	@LIBCERROR_LIBADD@
 
+nk2_test_mapi_value_SOURCES = \
+	nk2_test_libcerror.h \
+	nk2_test_libnk2.h \
+	nk2_test_macros.h \
+	nk2_test_mapi_value.c \
+	nk2_test_unused.h
+
+nk2_test_mapi_value_LDADD = \
+	../libnk2/libnk2.la \
+	@LIBCERROR_LIBADD@
+
 nk2_test_notify_SOURCES = \
+	nk2_test_libcerror.h \
 	nk2_test_libnk2.h \
 	nk2_test_macros.h \
 	nk2_test_notify.c \
 	nk2_test_unused.h
 
 nk2_test_notify_LDADD = \
-	../libnk2/libnk2.la
+	../libnk2/libnk2.la \
+	@LIBCERROR_LIBADD@
 
 nk2_test_record_entry_SOURCES = \
 	nk2_test_functions.c nk2_test_functions.h \

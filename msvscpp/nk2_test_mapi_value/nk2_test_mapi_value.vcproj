@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="nk2_test_notify"
-	ProjectGUID="{B2FD2415-FF71-485C-9651-9977D7D33344}"
-	RootNamespace="nk2_test_notify"
+	Name="nk2_test_mapi_value"
+	ProjectGUID="{57429429-A980-4619-835E-661D5B0791ED}"
+	RootNamespace="nk2_test_mapi_value"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\nk2_test_notify.c"
+				RelativePath="..\..\tests\nk2_test_mapi_value.c"
 				>
 			</File>
 		</Filter>

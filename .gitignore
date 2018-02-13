@@ -131,6 +131,7 @@ stamp-h[1-9]
 /tests/nk2_test_file_header
 /tests/nk2_test_io_handle
 /tests/nk2_test_item
+/tests/nk2_test_mapi_value
 /tests/nk2_test_notify
 /tests/nk2_test_record_entry
 /tests/nk2_test_support
