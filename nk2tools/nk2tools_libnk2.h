@@ -1,5 +1,5 @@
 /*
- * The internal libnk2 header
+ * The libnk2 header wrapper
  *
  * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
  *
