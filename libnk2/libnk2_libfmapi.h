@@ -54,7 +54,7 @@
 
 #include <libfmapi.h>
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBFMAPI ) */
 
-#endif
+#endif /* !defined( _LIBNK2_LIBFMAPI_H ) */
 

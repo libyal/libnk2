@@ -1,5 +1,5 @@
 /*
- * Library notification functions test program
+ * Library mapi_value functions test program
  *
  * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
  *
