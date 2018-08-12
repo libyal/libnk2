@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libnk2],
- [20180714],
+ [20180812],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -106,10 +106,7 @@ dnl Check if libnk2 required headers and functions are available
 AX_LIBNK2_CHECK_LOCAL
 
 dnl Check if libnk2 Python bindings (pynk2) required headers and functions are available
-AX_PYTHON_CHECK_PYPREFIX
 AX_PYTHON_CHECK_ENABLE
-AX_PYTHON2_CHECK_ENABLE
-AX_PYTHON3_CHECK_ENABLE
 
 AS_IF(
   [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
@@ -123,10 +120,6 @@ AS_IF(
       [1])
     ])
   ])
-
-AM_CONDITIONAL(
-  HAVE_PYTHON_TESTS,
-  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno])
 
 dnl Check if libfvalue or required headers and functions are available
 AX_LIBFVALUE_CHECK_ENABLE
@@ -142,7 +135,7 @@ AS_IF(
  [test "x$enable_shared" = xyes],
  [AS_CASE(
   [$host],
-  [*cygwin* | *mingw*],
+  [*cygwin* | *mingw* | *msys*],
   [AC_DEFINE(
    [HAVE_DLLMAIN],
    [1],
@@ -151,7 +144,10 @@ AS_IF(
    [HAVE_DLLMAIN],
    [1])
 
-  dnl Used in tests
+  AC_SUBST(
+   [LIBNK2_DLL_EXPORT],
+   ["-DLIBNK2_DLL_EXPORT"])
+
   AC_SUBST(
    [LIBNK2_DLL_IMPORT],
    ["-DLIBNK2_DLL_IMPORT"])
@@ -259,8 +255,6 @@ Features:
    Wide character type support:              $ac_cv_enable_wide_character_type
    nk2tools are build as static executables: $ac_cv_enable_static_executables
    Python (pynk2) support:                   $ac_cv_enable_python
-   Python version 2 (pynk2) support:         $ac_cv_enable_python2
-   Python version 3 (pynk2) support:         $ac_cv_enable_python3
    Verbose output:                           $ac_cv_enable_verbose_output
    Debug output:                             $ac_cv_enable_debug_output
 ]);

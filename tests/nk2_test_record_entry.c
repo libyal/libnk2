@@ -145,6 +145,8 @@ int nk2_test_record_entry_initialize(
 	          LIBNK2_CODEPAGE_WINDOWS_1252,
 	          &error );
 
+	record_entry = NULL;
+
 	NK2_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -156,8 +158,6 @@ int nk2_test_record_entry_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	record_entry = NULL;
 
 #if defined( HAVE_NK2_TEST_MEMORY )
 
@@ -285,6 +285,8 @@ int nk2_test_record_entry_free(
 	result = libnk2_record_entry_free(
 	          &record_entry,
 	          &error );
+
+	record_entry = NULL;
 
 	NK2_TEST_ASSERT_EQUAL_INT(
 	 "result",

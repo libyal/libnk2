@@ -115,6 +115,8 @@ int nk2_test_item_initialize(
 	          &item,
 	          &error );
 
+	item = NULL;
+
 	NK2_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -126,8 +128,6 @@ int nk2_test_item_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	item = NULL;
 
 #if defined( HAVE_NK2_TEST_MEMORY )
 
@@ -253,6 +253,8 @@ int nk2_test_item_free(
 	result = libnk2_item_free(
 	          &item,
 	          &error );
+
+	item = NULL;
 
 	NK2_TEST_ASSERT_EQUAL_INT(
 	 "result",

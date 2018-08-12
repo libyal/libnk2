@@ -117,6 +117,8 @@ int nk2_test_file_footer_initialize(
 	          &file_footer,
 	          &error );
 
+	file_footer = NULL;
+
 	NK2_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -128,8 +130,6 @@ int nk2_test_file_footer_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	file_footer = NULL;
 
 #if defined( HAVE_NK2_TEST_MEMORY )
 

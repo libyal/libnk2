@@ -24,14 +24,7 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBNK2_DLL_IMPORT
- * before including libnk2.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBNK2_DLL_IMPORT
-#endif
-
 #include <libnk2.h>
 
-#endif
+#endif /* !defined( _PYNK2_LIBNK2_H ) */
 

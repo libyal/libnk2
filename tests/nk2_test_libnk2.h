@@ -24,13 +24,6 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled and do not want to create static
- * executables set LIBNK2_DLL_IMPORT before including libnk2.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBNK2_DLL_IMPORT
-#endif
-
 #include <libnk2.h>
 
 #endif /* !defined( _NK2_TEST_LIBNK2_H ) */

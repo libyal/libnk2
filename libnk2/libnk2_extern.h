@@ -28,17 +28,13 @@
  */
 #if !defined( HAVE_LOCAL_LIBNK2 )
 
-/* If libtool DLL support is enabled set LIBNK2_DLL_EXPORT
- * before including libnk2/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBNK2_DLL_EXPORT
-#endif
-
 #include <libnk2/extern.h>
 
+#define LIBNK2_EXTERN_VARIABLE	LIBNK2_EXTERN
+
 #else
-#define LIBNK2_EXTERN	/* extern */
+#define LIBNK2_EXTERN		/* extern */
+#define LIBNK2_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBNK2 ) */
 
