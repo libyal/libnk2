@@ -1,7 +1,7 @@
 /*
  * Extracts items from a Nickfile (NK2)
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -173,7 +173,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	nk2output_version_fprint(
+	nk2tools_output_version_fprint(
 	 stdout,
 	 program );
 
@@ -228,7 +228,7 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'V':
-				nk2output_copyright_fprint(
+				nk2tools_output_copyright_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );

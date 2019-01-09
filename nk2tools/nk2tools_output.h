@@ -1,7 +1,7 @@
 /*
  * Common output functions for the nk2tools
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -36,14 +36,14 @@ int nk2tools_output_initialize(
      int stdio_mode,
      libcerror_error_t **error );
 
-void nk2output_copyright_fprint(
+void nk2tools_output_copyright_fprint(
       FILE *stream );
 
-void nk2output_version_fprint(
+void nk2tools_output_version_fprint(
       FILE *stream,
       const char *program );
 
-void nk2output_version_detailed_fprint(
+void nk2tools_output_version_detailed_fprint(
       FILE *stream,
       const char *program );
 

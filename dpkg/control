@@ -9,6 +9,8 @@ Homepage: https://github.com/libyal/libnk2
 Package: libnk2
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libnk21
+Replaces: libnk21
 Suggests: libnk2-dbg
 Description: Library to access the Nickfile (NK2) format
  libnk2 is a library to access the Nickfile (NK2) format.
@@ -31,6 +33,8 @@ Package: libnk2-tools
 Section: utils
 Architecture: any
 Depends: libnk2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libnk2-utils
+Replaces: libnk2-utils
 Description: Several tools for reading Nickfiles (NK2)
  Several tools for reading Nickfiles (NK2).
 
@@ -45,6 +49,8 @@ Package: libnk2-python
 Section: python
 Architecture: any
 Depends: libnk2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python-libnk2
+Replaces: python-libnk2
 Suggests: libnk2-python-dbg
 Description: Python 2 bindings for libnk2
  Python 2 bindings for libnk2.
@@ -60,6 +66,8 @@ Package: libnk2-python3
 Section: python
 Architecture: any
 Depends: libnk2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python3-libnk2
+Replaces: python3-libnk2
 Suggests: libnk2-python3-dbg
 Description: Python 3 bindings for libnk2
  Python 3 bindings for libnk2.
