@@ -1,11 +1,9 @@
-.Dd January  1, 2017
+.Dd April 20, 2019
 .Dt libnk2 3
 .Os libnk2
 .Sh NAME
 .Nm libnk2.h
 .Nd Library to access the Nickfile (NK2) format
-.Sh LIBRARY
-.Lb libnk2
 .Sh SYNOPSIS
 .In libnk2.h
 .Pp
@@ -15,27 +13,27 @@ Support functions
 .Ft int
 .Fn libnk2_get_access_flags_read "void"
 .Ft int
-.Fn libnk2_get_codepage "int *codepage, libnk2_error_t **error"
+.Fn libnk2_get_codepage "int *codepage" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_set_codepage "int codepage, libnk2_error_t **error"
+.Fn libnk2_set_codepage "int codepage" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_check_file_signature "const char *filename, libnk2_error_t **error"
+.Fn libnk2_check_file_signature "const char *filename" "libnk2_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libnk2_check_file_signature_wide "const wchar_t *filename, libnk2_error_t **error"
+.Fn libnk2_check_file_signature_wide "const wchar_t *filename" "libnk2_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libnk2_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle, libnk2_error_t **error"
+.Fn libnk2_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle" "libnk2_error_t **error"
 .Pp
 Notify functions
 .Ft void
 .Fn libnk2_notify_set_verbose "int verbose"
 .Ft int
-.Fn libnk2_notify_set_stream "FILE *stream, libnk2_error_t **error"
+.Fn libnk2_notify_set_stream "FILE *stream" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_notify_stream_open "const char *filename, libnk2_error_t **error"
+.Fn libnk2_notify_stream_open "const char *filename" "libnk2_error_t **error"
 .Ft int
 .Fn libnk2_notify_stream_close "libnk2_error_t **error"
 .Pp
@@ -43,93 +41,93 @@ Error functions
 .Ft void
 .Fn libnk2_error_free "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_error_fprint "libnk2_error_t *error, FILE *stream"
+.Fn libnk2_error_fprint "libnk2_error_t *error" "FILE *stream"
 .Ft int
-.Fn libnk2_error_sprint "libnk2_error_t *error, char *string, size_t size"
+.Fn libnk2_error_sprint "libnk2_error_t *error" "char *string" "size_t size"
 .Ft int
-.Fn libnk2_error_backtrace_fprint "libnk2_error_t *error, FILE *stream"
+.Fn libnk2_error_backtrace_fprint "libnk2_error_t *error" "FILE *stream"
 .Ft int
-.Fn libnk2_error_backtrace_sprint "libnk2_error_t *error, char *string, size_t size"
+.Fn libnk2_error_backtrace_sprint "libnk2_error_t *error" "char *string" "size_t size"
 .Pp
 File functions
 .Ft int
-.Fn libnk2_file_initialize "libnk2_file_t **file, libnk2_error_t **error"
+.Fn libnk2_file_initialize "libnk2_file_t **file" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_free "libnk2_file_t **file, libnk2_error_t **error"
+.Fn libnk2_file_free "libnk2_file_t **file" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_signal_abort "libnk2_file_t *file, libnk2_error_t **error"
+.Fn libnk2_file_signal_abort "libnk2_file_t *file" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_open "libnk2_file_t *file, const char *filename, int access_flags, libnk2_error_t **error"
+.Fn libnk2_file_open "libnk2_file_t *file" "const char *filename" "int access_flags" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_close "libnk2_file_t *file, libnk2_error_t **error"
+.Fn libnk2_file_close "libnk2_file_t *file" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_get_ascii_codepage "libnk2_file_t *file, int *ascii_codepage, libnk2_error_t **error"
+.Fn libnk2_file_get_ascii_codepage "libnk2_file_t *file" "int *ascii_codepage" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_set_ascii_codepage "libnk2_file_t *file, int ascii_codepage, libnk2_error_t **error"
+.Fn libnk2_file_set_ascii_codepage "libnk2_file_t *file" "int ascii_codepage" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_get_modification_time "libnk2_file_t *file, uint64_t *filetime, libnk2_error_t **error"
+.Fn libnk2_file_get_modification_time "libnk2_file_t *file" "uint64_t *filetime" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_get_number_of_items "libnk2_file_t *file, int *number_of_items, libnk2_error_t **error"
+.Fn libnk2_file_get_number_of_items "libnk2_file_t *file" "int *number_of_items" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_file_get_item "libnk2_file_t *file, int item_index, libnk2_item_t **item, libnk2_error_t **error"
+.Fn libnk2_file_get_item "libnk2_file_t *file" "int item_index" "libnk2_item_t **item" "libnk2_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libnk2_file_open_wide "libnk2_file_t *file, const wchar_t *filename, int access_flags, libnk2_error_t **error"
+.Fn libnk2_file_open_wide "libnk2_file_t *file" "const wchar_t *filename" "int access_flags" "libnk2_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libnk2_file_open_file_io_handle "libnk2_file_t *file, libbfio_handle_t *file_io_handle, int access_flags, libnk2_error_t **error"
+.Fn libnk2_file_open_file_io_handle "libnk2_file_t *file" "libbfio_handle_t *file_io_handle" "int access_flags" "libnk2_error_t **error"
 .Pp
 Item functions
 .Ft int
-.Fn libnk2_item_free "libnk2_item_t **item, libnk2_error_t **error"
+.Fn libnk2_item_free "libnk2_item_t **item" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_identifier "libnk2_item_t *item, uint32_t *identifier, libnk2_error_t **error"
+.Fn libnk2_item_get_identifier "libnk2_item_t *item" "uint32_t *identifier" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_number_of_entries "libnk2_item_t *item, int *number_of_entries, libnk2_error_t **error"
+.Fn libnk2_item_get_number_of_entries "libnk2_item_t *item" "int *number_of_entries" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_by_index "libnk2_item_t *item, int entry_index, libnk2_record_entry_t **record_entry, libnk2_error_t **error"
+.Fn libnk2_item_get_entry_by_index "libnk2_item_t *item" "int entry_index" "libnk2_record_entry_t **record_entry" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_item_get_entry_by_type "libnk2_item_t *item, uint32_t entry_type, uint32_t value_type, libnk2_record_entry_t **record_entry, uint8_t flags, libnk2_error_t **error"
+.Fn libnk2_item_get_entry_by_type "libnk2_item_t *item" "uint32_t entry_type" "uint32_t value_type" "libnk2_record_entry_t **record_entry" "uint8_t flags" "libnk2_error_t **error"
 .Pp
 Record entry functions
 .Ft int
-.Fn libnk2_record_entry_free "libnk2_record_entry_t **record_entry, libnk2_error_t **error"
+.Fn libnk2_record_entry_free "libnk2_record_entry_t **record_entry" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_entry_type "libnk2_record_entry_t *record_entry, uint32_t *entry_type, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_entry_type "libnk2_record_entry_t *record_entry" "uint32_t *entry_type" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_value_type "libnk2_record_entry_t *record_entry, uint32_t *value_type, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_value_type "libnk2_record_entry_t *record_entry" "uint32_t *value_type" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_size "libnk2_record_entry_t *record_entry, size_t *data_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_size "libnk2_record_entry_t *record_entry" "size_t *data_size" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data "libnk2_record_entry_t *record_entry, uint8_t *data, size_t data_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data "libnk2_record_entry_t *record_entry" "uint8_t *data" "size_t data_size" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_boolean "libnk2_record_entry_t *record_entry, uint8_t *value_boolean, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_boolean "libnk2_record_entry_t *record_entry" "uint8_t *value_boolean" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_16bit_integer "libnk2_record_entry_t *record_entry, uint16_t *value_16bit, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_16bit_integer "libnk2_record_entry_t *record_entry" "uint16_t *value_16bit" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_32bit_integer "libnk2_record_entry_t *record_entry, uint32_t *value_32bit, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_32bit_integer "libnk2_record_entry_t *record_entry" "uint32_t *value_32bit" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_64bit_integer "libnk2_record_entry_t *record_entry, uint64_t *value_64bit, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_64bit_integer "libnk2_record_entry_t *record_entry" "uint64_t *value_64bit" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_filetime "libnk2_record_entry_t *record_entry, uint64_t *filetime, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_filetime "libnk2_record_entry_t *record_entry" "uint64_t *filetime" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_floatingtime "libnk2_record_entry_t *record_entry, uint64_t *floatingtime, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_floatingtime "libnk2_record_entry_t *record_entry" "uint64_t *floatingtime" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_size "libnk2_record_entry_t *record_entry, size64_t *value_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_size "libnk2_record_entry_t *record_entry" "size64_t *value_size" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_floating_point "libnk2_record_entry_t *record_entry, double *value_floating_point, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_floating_point "libnk2_record_entry_t *record_entry" "double *value_floating_point" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_utf8_string_size "libnk2_record_entry_t *record_entry, size_t *utf8_string_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_utf8_string_size "libnk2_record_entry_t *record_entry" "size_t *utf8_string_size" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_utf8_string "libnk2_record_entry_t *record_entry, uint8_t *utf8_string, size_t utf8_string_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_utf8_string "libnk2_record_entry_t *record_entry" "uint8_t *utf8_string" "size_t utf8_string_size" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_utf16_string_size "libnk2_record_entry_t *record_entry, size_t *utf16_string_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_utf16_string_size "libnk2_record_entry_t *record_entry" "size_t *utf16_string_size" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_utf16_string "libnk2_record_entry_t *record_entry, uint16_t *utf16_string, size_t utf16_string_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_utf16_string "libnk2_record_entry_t *record_entry" "uint16_t *utf16_string" "size_t utf16_string_size" "libnk2_error_t **error"
 .Ft int
-.Fn libnk2_record_entry_get_data_as_guid "libnk2_record_entry_t *record_entry, uint8_t *guid_data, size_t guid_data_size, libnk2_error_t **error"
+.Fn libnk2_record_entry_get_data_as_guid "libnk2_record_entry_t *record_entry" "uint8_t *guid_data" "size_t guid_data_size" "libnk2_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libnk2_get_version
@@ -142,8 +140,8 @@ None
 .Sh FILES
 None
 .Sh NOTES
-libnk2 allows to be compiled with wide character support (wchar_t).
-
+libnk2 can be compiled with wide character support (wchar_t).
+.sp
 To compile libnk2 with wide character support use:
 .Ar ./configure --enable-wide-character-type=yes
  or define:
@@ -151,7 +149,7 @@ To compile libnk2 with wide character support use:
  or
 .Ar UNICODE
  during compilation.
-
+.sp
 .Ar LIBNK2_WIDE_CHARACTER_TYPE
  in libnk2/features.h can be used to determine if libnk2 was compiled with wide character support.
 .Sh BUGS
@@ -160,7 +158,7 @@ Please report bugs of any kind on the project issue tracker: https://github.com/
 These man pages are generated from "libnk2.h".
 .Sh COPYRIGHT
 Copyright (C) 2009-2019, Joachim Metz <joachim.metz@gmail.com>.
-
+.sp
 This is free software; see the source for copying conditions.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO

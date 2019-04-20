@@ -31,6 +31,7 @@ check_SCRIPTS = \
 	pynk2_test_file.py \
 	pynk2_test_support.py \
 	test_library.sh \
+	test_manpage.sh \
 	test_nk2export.sh \
 	test_nk2info.sh \
 	test_python_module.sh \
