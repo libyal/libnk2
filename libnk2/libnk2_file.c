@@ -1133,8 +1133,8 @@ int libnk2_file_read_items(
 on_error:
 	if( item != NULL )
 	{
-		libnk2_item_free(
-		 &item,
+		libnk2_internal_item_free(
+		 (libnk2_internal_item_t **) &item,
 		 NULL );
 	}
 	libcdata_array_empty(
