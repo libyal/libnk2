@@ -440,13 +440,13 @@ int libnk2_record_entry_read_file_io_handle(
 		 stored_value_data_size );
 
 #if SIZEOF_SIZE_T <= 4
-		if( stored_value_data_size > (size_t) SSIZE_MAX )
+		if( stored_value_data_size > (uint32_t) SSIZE_MAX )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: invalid stored value data size value out of bounds.",
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid stored value data size value exceeds maximum.",
 			 function );
 
 			goto on_error;
@@ -465,6 +465,18 @@ int libnk2_record_entry_read_file_io_handle(
 #endif
 	if( internal_record_entry->value_data == NULL )
 	{
+		if( ( stored_value_data_size == 0 )
+		 || ( stored_value_data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid stored value data size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		internal_record_entry->value_data = (uint8_t *) memory_allocate(
 		                                                 (size_t) internal_record_entry->value_data_size );
 

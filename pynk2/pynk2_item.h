@@ -53,7 +53,6 @@ extern PyMethodDef pynk2_item_object_methods[];
 extern PyTypeObject pynk2_item_type_object;
 
 PyObject *pynk2_item_new(
-           PyTypeObject *type_object,
            libnk2_item_t *item,
            PyObject *parent_object );
 

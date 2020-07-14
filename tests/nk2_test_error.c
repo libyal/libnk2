@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "nk2_test_libcerror.h"
 #include "nk2_test_libnk2.h"
 #include "nk2_test_macros.h"
 #include "nk2_test_unused.h"

@@ -1,5 +1,5 @@
 /*
- * Python bindings for libnk2 (pynk2)
+ * Python bindings module for libnk2 (pynk2)
  *
  * Copyright (C) 2009-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -41,6 +41,16 @@ PyObject *pynk2_check_file_signature(
            PyObject *keywords );
 
 PyObject *pynk2_check_file_signature_file_object(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pynk2_open_new_file(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pynk2_open_new_file_with_file_object(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );

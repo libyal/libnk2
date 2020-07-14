@@ -23,7 +23,7 @@
 #include <narrow_string.h>
 #include <types.h>
 
-#if defined( HAVE_STDLIB_H )
+#if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
 #include <stdlib.h>
 #endif
 
@@ -64,24 +64,24 @@ PyMethodDef pynk2_module_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "check_file_signature(filename) -> Boolean\n"
 	  "\n"
-	  "Checks if a file has a Nickfile (NK2) signature." },
+	  "Checks if a file has a Microsoft Outlook Nickfile (NK2) signature." },
 
 	{ "check_file_signature_file_object",
 	  (PyCFunction) pynk2_check_file_signature_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "check_file_signature_file_object(file_object) -> Boolean\n"
 	  "\n"
-	  "Checks if a file has a Nickfile (NK2) signature using a file-like object." },
+	  "Checks if a file has a Microsoft Outlook Nickfile (NK2) signature using a file-like object." },
 
 	{ "open",
-	  (PyCFunction) pynk2_file_new_open,
+	  (PyCFunction) pynk2_open_new_file,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> Object\n"
 	  "\n"
 	  "Opens a file." },
 
 	{ "open_file_object",
-	  (PyCFunction) pynk2_file_new_open_file_object,
+	  (PyCFunction) pynk2_open_new_file_with_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> Object\n"
 	  "\n"
@@ -127,7 +127,7 @@ PyObject *pynk2_get_version(
 	         errors ) );
 }
 
-/* Checks if the file has a Nickfile (NK2) signature
+/* Checks if the file has a Microsoft Outlook Nickfile (NK2) signature
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pynk2_check_file_signature(
@@ -137,9 +137,9 @@ PyObject *pynk2_check_file_signature(
 {
 	PyObject *string_object      = NULL;
 	libcerror_error_t *error     = NULL;
+	const char *filename_narrow  = NULL;
 	static char *function        = "pynk2_check_file_signature";
 	static char *keyword_list[]  = { "filename", NULL };
-	const char *filename_narrow  = NULL;
 	int result                   = 0;
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -158,7 +158,7 @@ PyObject *pynk2_check_file_signature(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "|O",
+	     "O|",
 	     keyword_list,
 	     &string_object ) == 0 )
 	{
@@ -174,7 +174,7 @@ PyObject *pynk2_check_file_signature(
 	{
 		pynk2_error_fetch_and_raise(
 	         PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -201,17 +201,17 @@ PyObject *pynk2_check_file_signature(
 		{
 			pynk2_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
 		}
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   utf8_string_object );
+		                   utf8_string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
@@ -223,7 +223,9 @@ PyObject *pynk2_check_file_signature(
 
 		Py_DecRef(
 		 utf8_string_object );
-#endif
+
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 		if( result == -1 )
 		{
 			pynk2_error_raise(
@@ -253,12 +255,12 @@ PyObject *pynk2_check_file_signature(
 
 #if PY_MAJOR_VERSION >= 3
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyBytes_Type );
+	          string_object,
+	          (PyObject *) &PyBytes_Type );
 #else
 	result = PyObject_IsInstance(
-		  string_object,
-		  (PyObject *) &PyString_Type );
+	          string_object,
+	          (PyObject *) &PyString_Type );
 #endif
 	if( result == -1 )
 	{
@@ -275,10 +277,10 @@ PyObject *pynk2_check_file_signature(
 
 #if PY_MAJOR_VERSION >= 3
 		filename_narrow = PyBytes_AsString(
-				   string_object );
+		                   string_object );
 #else
 		filename_narrow = PyString_AsString(
-				   string_object );
+		                   string_object );
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
@@ -321,7 +323,7 @@ PyObject *pynk2_check_file_signature(
 	return( NULL );
 }
 
-/* Checks if the file has a Nickfile (NK2) signature using a file-like object
+/* Checks if the file has a Microsoft Outlook Nickfile (NK2) signature using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pynk2_check_file_signature_file_object(
@@ -329,9 +331,9 @@ PyObject *pynk2_check_file_signature_file_object(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error         = NULL;
-	libbfio_handle_t *file_io_handle = NULL;
 	PyObject *file_object            = NULL;
+	libbfio_handle_t *file_io_handle = NULL;
+	libcerror_error_t *error         = NULL;
 	static char *function            = "pynk2_check_file_signature_file_object";
 	static char *keyword_list[]      = { "file_object", NULL };
 	int result                       = 0;
@@ -421,6 +423,108 @@ on_error:
 	return( NULL );
 }
 
+/* Creates a new file object and opens it
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_open_new_file(
+           PyObject *self PYNK2_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	pynk2_file_t *pynk2_file = NULL;
+	static char *function    = "pynk2_open_new_file";
+
+	PYNK2_UNREFERENCED_PARAMETER( self )
+
+	/* PyObject_New does not invoke tp_init
+	 */
+	pynk2_file = PyObject_New(
+	              struct pynk2_file,
+	              &pynk2_file_type_object );
+
+	if( pynk2_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create file.",
+		 function );
+
+		goto on_error;
+	}
+	if( pynk2_file_init(
+	     pynk2_file ) != 0 )
+	{
+		goto on_error;
+	}
+	if( pynk2_file_open(
+	     pynk2_file,
+	     arguments,
+	     keywords ) == NULL )
+	{
+		goto on_error;
+	}
+	return( (PyObject *) pynk2_file );
+
+on_error:
+	if( pynk2_file != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pynk2_file );
+	}
+	return( NULL );
+}
+
+/* Creates a new file object and opens it using a file-like object
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pynk2_open_new_file_with_file_object(
+           PyObject *self PYNK2_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	pynk2_file_t *pynk2_file = NULL;
+	static char *function    = "pynk2_open_new_file_with_file_object";
+
+	PYNK2_UNREFERENCED_PARAMETER( self )
+
+	/* PyObject_New does not invoke tp_init
+	 */
+	pynk2_file = PyObject_New(
+	              struct pynk2_file,
+	              &pynk2_file_type_object );
+
+	if( pynk2_file == NULL )
+	{
+		PyErr_Format(
+		 PyExc_MemoryError,
+		 "%s: unable to create file.",
+		 function );
+
+		goto on_error;
+	}
+	if( pynk2_file_init(
+	     pynk2_file ) != 0 )
+	{
+		goto on_error;
+	}
+	if( pynk2_file_open_file_object(
+	     pynk2_file,
+	     arguments,
+	     keywords ) == NULL )
+	{
+		goto on_error;
+	}
+	return( (PyObject *) pynk2_file );
+
+on_error:
+	if( pynk2_file != NULL )
+	{
+		Py_DecRef(
+		 (PyObject *) pynk2_file );
+	}
+	return( NULL );
+}
+
 #if PY_MAJOR_VERSION >= 3
 
 /* The pynk2 module definition
@@ -458,13 +562,8 @@ PyMODINIT_FUNC initpynk2(
                 void )
 #endif
 {
-	PyObject *module                         = NULL;
-	PyTypeObject *file_type_object           = NULL;
-	PyTypeObject *item_type_object           = NULL;
-	PyTypeObject *items_type_object          = NULL;
-	PyTypeObject *record_entries_type_object = NULL;
-	PyTypeObject *record_entry_type_object   = NULL;
-	PyGILState_STATE gil_state               = 0;
+	PyObject *module           = NULL;
+	PyGILState_STATE gil_state = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libnk2_notify_set_stream(
@@ -511,31 +610,10 @@ PyMODINIT_FUNC initpynk2(
 	Py_IncRef(
 	 (PyObject *) &pynk2_file_type_object );
 
-	file_type_object = &pynk2_file_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "file",
-	 (PyObject *) file_type_object );
-
-	/* Setup the items type object
-	 */
-	pynk2_items_type_object.tp_new = PyType_GenericNew;
-
-	if( PyType_Ready(
-	     &pynk2_items_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pynk2_items_type_object );
-
-	items_type_object = &pynk2_items_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "_items",
-	 (PyObject *) items_type_object );
+	 (PyObject *) &pynk2_file_type_object );
 
 	/* Setup the item type object
 	 */
@@ -549,31 +627,27 @@ PyMODINIT_FUNC initpynk2(
 	Py_IncRef(
 	 (PyObject *) &pynk2_item_type_object );
 
-	item_type_object = &pynk2_item_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "item",
-	 (PyObject *) item_type_object );
+	 (PyObject *) &pynk2_item_type_object );
 
-	/* Setup the record entry type object
+	/* Setup the items type object
 	 */
-	pynk2_record_entry_type_object.tp_new = PyType_GenericNew;
+	pynk2_items_type_object.tp_new = PyType_GenericNew;
 
 	if( PyType_Ready(
-	     &pynk2_record_entry_type_object ) < 0 )
+	     &pynk2_items_type_object ) < 0 )
 	{
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject *) &pynk2_record_entry_type_object );
-
-	record_entry_type_object = &pynk2_record_entry_type_object;
+	 (PyObject *) &pynk2_items_type_object );
 
 	PyModule_AddObject(
 	 module,
-	 "record_entry",
-	 (PyObject *) record_entry_type_object );
+	 "items",
+	 (PyObject *) &pynk2_items_type_object );
 
 	/* Setup the record entries type object
 	 */
@@ -587,12 +661,27 @@ PyMODINIT_FUNC initpynk2(
 	Py_IncRef(
 	 (PyObject *) &pynk2_record_entries_type_object );
 
-	record_entries_type_object = &pynk2_record_entries_type_object;
+	PyModule_AddObject(
+	 module,
+	 "record_entries",
+	 (PyObject *) &pynk2_record_entries_type_object );
+
+	/* Setup the record entry type object
+	 */
+	pynk2_record_entry_type_object.tp_new = PyType_GenericNew;
+
+	if( PyType_Ready(
+	     &pynk2_record_entry_type_object ) < 0 )
+	{
+		goto on_error;
+	}
+	Py_IncRef(
+	 (PyObject *) &pynk2_record_entry_type_object );
 
 	PyModule_AddObject(
 	 module,
-	 "_record_entries",
-	 (PyObject *) record_entries_type_object );
+	 "record_entry",
+	 (PyObject *) &pynk2_record_entry_type_object );
 
 	PyGILState_Release(
 	 gil_state );

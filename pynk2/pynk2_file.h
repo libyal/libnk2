@@ -53,19 +53,6 @@ struct pynk2_file
 extern PyMethodDef pynk2_file_object_methods[];
 extern PyTypeObject pynk2_file_type_object;
 
-PyObject *pynk2_file_new(
-           void );
-
-PyObject *pynk2_file_new_open(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pynk2_file_new_open_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
 int pynk2_file_init(
      pynk2_file_t *pynk2_file );
 

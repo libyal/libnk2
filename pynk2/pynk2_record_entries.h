@@ -69,23 +69,23 @@ PyObject *pynk2_record_entries_new(
            int number_of_items );
 
 int pynk2_record_entries_init(
-     pynk2_record_entries_t *record_entries_object );
+     pynk2_record_entries_t *sequence_object );
 
 void pynk2_record_entries_free(
-      pynk2_record_entries_t *record_entries_object );
+      pynk2_record_entries_t *sequence_object );
 
 Py_ssize_t pynk2_record_entries_len(
-            pynk2_record_entries_t *record_entries_object );
+            pynk2_record_entries_t *sequence_object );
 
 PyObject *pynk2_record_entries_getitem(
-           pynk2_record_entries_t *record_entries_object,
+           pynk2_record_entries_t *sequence_object,
            Py_ssize_t item_index );
 
 PyObject *pynk2_record_entries_iter(
-           pynk2_record_entries_t *record_entries_object );
+           pynk2_record_entries_t *sequence_object );
 
 PyObject *pynk2_record_entries_iternext(
-           pynk2_record_entries_t *record_entries_object );
+           pynk2_record_entries_t *sequence_object );
 
 #if defined( __cplusplus )
 }

@@ -115,14 +115,14 @@ PyMethodDef pynk2_file_object_methods[] = {
 	{ "get_number_of_items",
 	  (PyCFunction) pynk2_file_get_number_of_items,
 	  METH_NOARGS,
-	  "get_number_of_items() -> Integer or None\n"
+	  "get_number_of_items() -> Integer\n"
 	  "\n"
 	  "Retrieves the number of items." },
 
 	{ "get_item",
 	  (PyCFunction) pynk2_file_get_item,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "get_item(item_index) -> Object or None\n"
+	  "get_item(item_index) -> Object\n"
 	  "\n"
 	  "Retrieves the item specified by the index." },
 
@@ -255,93 +255,6 @@ PyTypeObject pynk2_file_type_object = {
 	0
 };
 
-/* Creates a new file object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pynk2_file_new(
-           void )
-{
-	pynk2_file_t *pynk2_file = NULL;
-	static char *function    = "pynk2_file_new";
-
-	pynk2_file = PyObject_New(
-	              struct pynk2_file,
-	              &pynk2_file_type_object );
-
-	if( pynk2_file == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
-		 function );
-
-		goto on_error;
-	}
-	if( pynk2_file_init(
-	     pynk2_file ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pynk2_file );
-
-on_error:
-	if( pynk2_file != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pynk2_file );
-	}
-	return( NULL );
-}
-
-/* Creates a new file object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pynk2_file_new_open(
-           PyObject *self PYNK2_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pynk2_file = NULL;
-
-	PYNK2_UNREFERENCED_PARAMETER( self )
-
-	pynk2_file = pynk2_file_new();
-
-	pynk2_file_open(
-	 (pynk2_file_t *) pynk2_file,
-	 arguments,
-	 keywords );
-
-	return( pynk2_file );
-}
-
-/* Creates a new file object and opens it using a file-like object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pynk2_file_new_open_file_object(
-           PyObject *self PYNK2_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pynk2_file = NULL;
-
-	PYNK2_UNREFERENCED_PARAMETER( self )
-
-	pynk2_file = pynk2_file_new();
-
-	pynk2_file_open_file_object(
-	 (pynk2_file_t *) pynk2_file,
-	 arguments,
-	 keywords );
-
-	return( pynk2_file );
-}
-
 /* Intializes a file object
  * Returns 0 if successful or -1 on error
  */
@@ -360,6 +273,8 @@ int pynk2_file_init(
 
 		return( -1 );
 	}
+	/* Make sure libnk2 file is set to NULL
+	 */
 	pynk2_file->file           = NULL;
 	pynk2_file->file_io_handle = NULL;
 
@@ -400,15 +315,6 @@ void pynk2_file_free(
 
 		return;
 	}
-	if( pynk2_file->file == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid file - missing libnk2 file.",
-		 function );
-
-		return;
-	}
 	ob_type = Py_TYPE(
 	           pynk2_file );
 
@@ -430,24 +336,27 @@ void pynk2_file_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libnk2_file_free(
-	          &( pynk2_file->file ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pynk2_file->file != NULL )
 	{
-		pynk2_error_raise(
-		 error,
-		 PyExc_MemoryError,
-		 "%s: unable to free libnk2 file.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libnk2_file_free(
+		          &( pynk2_file->file ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pynk2_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libnk2 file.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	ob_type->tp_free(
 	 (PyObject*) pynk2_file );
@@ -569,7 +478,7 @@ PyObject *pynk2_file_open(
 	{
 		pynk2_error_fetch_and_raise(
 		 PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -598,7 +507,7 @@ PyObject *pynk2_file_open(
 		{
 			pynk2_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
@@ -753,6 +662,36 @@ PyObject *pynk2_file_open_file_object(
 
 		return( NULL );
 	}
+	PyErr_Clear();
+
+	result = PyObject_HasAttrString(
+	          file_object,
+	          "read" );
+
+	if( result != 1 )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported file object - missing read attribute.",
+		 function );
+
+		return( NULL );
+	}
+	PyErr_Clear();
+
+	result = PyObject_HasAttrString(
+	          file_object,
+	          "seek" );
+
+	if( result != 1 )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported file object - missing seek attribute.",
+		 function );
+
+		return( NULL );
+	}
 	if( pynk2_file->file_io_handle != NULL )
 	{
 		pynk2_error_raise(
@@ -874,7 +813,7 @@ PyObject *pynk2_file_close(
 		{
 			pynk2_error_raise(
 			 error,
-			 PyExc_IOError,
+			 PyExc_MemoryError,
 			 "%s: unable to free libbfio file IO handle.",
 			 function );
 
@@ -1109,7 +1048,7 @@ int pynk2_file_set_ascii_codepage_setter(
 	{
 		pynk2_error_fetch_and_raise(
 		 PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( -1 );
@@ -1125,7 +1064,7 @@ int pynk2_file_set_ascii_codepage_setter(
 		{
 			pynk2_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( -1 );
@@ -1376,17 +1315,6 @@ PyObject *pynk2_file_get_number_of_items(
 	return( integer_object );
 }
 
-/* Retrieves the item type object
- * Returns a Python type object if successful or NULL on error
- */
-PyTypeObject *pynk2_file_get_item_type_object(
-               libnk2_item_t *item PYNK2_ATTRIBUTE_UNUSED )
-{
-	PYNK2_UNREFERENCED_PARAMETER( item )
-
-	return( &pynk2_item_type_object );
-}
-
 /* Retrieves a specific item by index
  * Returns a Python object if successful or NULL on error
  */
@@ -1394,12 +1322,11 @@ PyObject *pynk2_file_get_item_by_index(
            PyObject *pynk2_file,
            int item_index )
 {
-	PyObject *item_object     = NULL;
-	PyTypeObject *type_object = NULL;
-	libcerror_error_t *error  = NULL;
-	libnk2_item_t *item       = NULL;
-	static char *function     = "pynk2_file_get_item_by_index";
-	int result                = 0;
+	PyObject *item_object    = NULL;
+	libcerror_error_t *error = NULL;
+	libnk2_item_t *item      = NULL;
+	static char *function    = "pynk2_file_get_item_by_index";
+	int result               = 0;
 
 	if( pynk2_file == NULL )
 	{
@@ -1434,20 +1361,7 @@ PyObject *pynk2_file_get_item_by_index(
 
 		goto on_error;
 	}
-	type_object = pynk2_file_get_item_type_object(
-	               item );
-
-	if( type_object == NULL )
-	{
-		PyErr_Format(
-		 PyExc_IOError,
-		 "%s: unable to retrieve item type object.",
-		 function );
-
-		goto on_error;
-	}
 	item_object = pynk2_item_new(
-	               type_object,
 	               item,
 	               (PyObject *) pynk2_file );
 

@@ -69,23 +69,23 @@ PyObject *pynk2_items_new(
            int number_of_items );
 
 int pynk2_items_init(
-     pynk2_items_t *items_object );
+     pynk2_items_t *sequence_object );
 
 void pynk2_items_free(
-      pynk2_items_t *items_object );
+      pynk2_items_t *sequence_object );
 
 Py_ssize_t pynk2_items_len(
-            pynk2_items_t *items_object );
+            pynk2_items_t *sequence_object );
 
 PyObject *pynk2_items_getitem(
-           pynk2_items_t *items_object,
+           pynk2_items_t *sequence_object,
            Py_ssize_t item_index );
 
 PyObject *pynk2_items_iter(
-           pynk2_items_t *items_object );
+           pynk2_items_t *sequence_object );
 
 PyObject *pynk2_items_iternext(
-           pynk2_items_t *items_object );
+           pynk2_items_t *sequence_object );
 
 #if defined( __cplusplus )
 }

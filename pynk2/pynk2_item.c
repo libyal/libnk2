@@ -185,7 +185,6 @@ PyTypeObject pynk2_item_type_object = {
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pynk2_item_new(
-           PyTypeObject *type_object,
            libnk2_item_t *item,
            PyObject *parent_object )
 {
@@ -201,21 +200,13 @@ PyObject *pynk2_item_new(
 
 		return( NULL );
 	}
+	/* PyObject_New does not invoke tp_init
+	 */
 	pynk2_item = PyObject_New(
 	              struct pynk2_item,
-	              type_object );
+	              &pynk2_item_type_object );
 
 	if( pynk2_item == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize item.",
-		 function );
-
-		goto on_error;
-	}
-	if( pynk2_item_init(
-	     pynk2_item ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
@@ -227,9 +218,11 @@ PyObject *pynk2_item_new(
 	pynk2_item->item          = item;
 	pynk2_item->parent_object = parent_object;
 
-	Py_IncRef(
-	 (PyObject *) pynk2_item->parent_object );
-
+	if( pynk2_item->parent_object != NULL )
+	{
+		Py_IncRef(
+		 (PyObject *) pynk2_item->parent_object );
+	}
 	return( (PyObject *) pynk2_item );
 
 on_error:

@@ -1,5 +1,5 @@
 /*
- * The libfwnt header wrapper
+ * The libbfio header wrapper
  *
  * Copyright (C) 2009-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,40 +19,40 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _NK2TOOLS_LIBFWNT_H )
-#define _NK2TOOLS_LIBFWNT_H
+#if !defined( _OSSFUZZ_LIBBFIO_H )
+#define _OSSFUZZ_LIBBFIO_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBFWNT for local use of libfwnt
+/* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
  */
-#if defined( HAVE_LOCAL_LIBFWNT )
+#if defined( HAVE_LOCAL_LIBBFIO )
 
-#include <libfwnt_access_control_entry.h>
-#include <libfwnt_access_control_list.h>
-#include <libfwnt_bit_stream.h>
-#include <libfwnt_definitions.h>
-#include <libfwnt_huffman_tree.h>
-#include <libfwnt_locale_identifier.h>
-#include <libfwnt_lznt1.h>
-#include <libfwnt_lzx.h>
-#include <libfwnt_lzxpress.h>
-#include <libfwnt_security_descriptor.h>
-#include <libfwnt_security_identifier.h>
-#include <libfwnt_types.h>
+#include <libbfio_definitions.h>
+#include <libbfio_file.h>
+#include <libbfio_file_pool.h>
+#include <libbfio_file_range.h>
+#include <libbfio_handle.h>
+#include <libbfio_memory_range.h>
+#include <libbfio_pool.h>
+#include <libbfio_types.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBFWNT_DLL_IMPORT
- * before including libfwnt.h
+/* If libtool DLL support is enabled set LIBBFIO_DLL_IMPORT
+ * before including libbfio.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBFWNT_DLL_IMPORT
+#define LIBBFIO_DLL_IMPORT
 #endif
 
-#include <libfwnt.h>
+#include <libbfio.h>
 
-#endif /* defined( HAVE_LOCAL_LIBFWNT ) */
+#if defined( HAVE_MULTI_THREAD_SUPPORT ) && !defined( LIBBFIO_HAVE_MULTI_THREAD_SUPPORT )
+#error Multi-threading support requires libbfio with multi-threading support
+#endif
 
-#endif /* !defined( _NK2TOOLS_LIBFWNT_H ) */
+#endif /* defined( HAVE_LOCAL_LIBBFIO ) */
+
+#endif /* !defined( _OSSFUZZ_LIBBFIO_H ) */
 

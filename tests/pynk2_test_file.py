@@ -6,18 +6,18 @@
 #
 # Refer to AUTHORS for acknowledgements.
 #
-# This software is free software: you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
+# This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with this software.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
 import os
@@ -33,12 +33,13 @@ class FileTypeTests(unittest.TestCase):
   def test_signal_abort(self):
     """Tests the signal_abort function."""
     nk2_file = pynk2.file()
+
     nk2_file.signal_abort()
 
   def test_open(self):
     """Tests the open function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
 
@@ -58,30 +59,32 @@ class FileTypeTests(unittest.TestCase):
   def test_open_file_object(self):
     """Tests the open_file_object function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
-    file_object = open(unittest.source, "rb")
+    if not os.path.isfile(unittest.source):
+      raise unittest.SkipTest("source not a regular file")
 
     nk2_file = pynk2.file()
 
-    nk2_file.open_file_object(file_object)
+    with open(unittest.source, "rb") as file_object:
 
-    with self.assertRaises(IOError):
       nk2_file.open_file_object(file_object)
 
-    nk2_file.close()
+      with self.assertRaises(IOError):
+        nk2_file.open_file_object(file_object)
 
-    # TODO: change IOError into TypeError
-    with self.assertRaises(IOError):
-      nk2_file.open_file_object(None)
+      nk2_file.close()
 
-    with self.assertRaises(ValueError):
-      nk2_file.open_file_object(file_object, mode="w")
+      with self.assertRaises(TypeError):
+        nk2_file.open_file_object(None)
+
+      with self.assertRaises(ValueError):
+        nk2_file.open_file_object(file_object, mode="w")
 
   def test_close(self):
     """Tests the close function."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
 
@@ -103,27 +106,21 @@ class FileTypeTests(unittest.TestCase):
     nk2_file.open(unittest.source)
     nk2_file.close()
 
-    file_object = open(unittest.source, "rb")
+    if os.path.isfile(unittest.source):
+      with open(unittest.source, "rb") as file_object:
 
-    # Test open_file_object and close.
-    nk2_file.open_file_object(file_object)
-    nk2_file.close()
+        # Test open_file_object and close.
+        nk2_file.open_file_object(file_object)
+        nk2_file.close()
 
-    # Test open_file_object and close a second time to validate clean up on close.
-    nk2_file.open_file_object(file_object)
-    nk2_file.close()
+        # Test open_file_object and close a second time to validate clean up on close.
+        nk2_file.open_file_object(file_object)
+        nk2_file.close()
 
-    # Test open_file_object and close and dereferencing file_object.
-    nk2_file.open_file_object(file_object)
-    del file_object
-    nk2_file.close()
-
-  def test_get_ascii_codepage(self):
-    """Tests the get_ascii_codepage function."""
-    nk2_file = pynk2.file()
-
-    codepage = nk2_file.get_ascii_codepage()
-    self.assertIsNotNone(codepage)
+        # Test open_file_object and close and dereferencing file_object.
+        nk2_file.open_file_object(file_object)
+        del file_object
+        nk2_file.close()
 
   def test_set_ascii_codepage(self):
     """Tests the set_ascii_codepage function."""
@@ -147,47 +144,45 @@ class FileTypeTests(unittest.TestCase):
       with self.assertRaises(RuntimeError):
         nk2_file.set_ascii_codepage(codepage)
 
-  def test_get_modification_time(self):
-    """Tests the get_modification_time function."""
+  def test_get_ascii_codepage(self):
+    """Tests the get_ascii_codepage function and ascii_codepage property."""
+    if not unittest.source:
+      raise unittest.SkipTest("missing source")
+
     nk2_file = pynk2.file()
 
-    with self.assertRaises(IOError):
-      nk2_file.get_modification_time()
+    nk2_file.open(unittest.source)
 
-    with self.assertRaises(IOError):
-      nk2_file.modification_time
+    ascii_codepage = nk2_file.get_ascii_codepage()
+    self.assertIsNotNone(ascii_codepage)
 
-    with self.assertRaises(IOError):
-      nk2_file.get_modification_time_as_integer()
+    self.assertIsNotNone(nk2_file.ascii_codepage)
 
-    if unittest.source:
-      nk2_file = pynk2.file()
-      nk2_file.open(unittest.source)
+    nk2_file.close()
 
-      modification_time = nk2_file.get_modification_time()
-      self.assertIsNotNone(modification_time)
+  def test_get_modification_time(self):
+    """Tests the get_modification_time function and modification_time property."""
+    if not unittest.source:
+      raise unittest.SkipTest("missing source")
 
-      self.assertIsNotNone(nk2_file.modification_time)
+    nk2_file = pynk2.file()
 
-      modification_time = nk2_file.get_modification_time_as_integer()
-      self.assertIsNotNone(modification_time)
+    nk2_file.open(unittest.source)
 
-      nk2_file.close()
+    modification_time = nk2_file.get_modification_time()
+    self.assertIsNotNone(modification_time)
+
+    self.assertIsNotNone(nk2_file.modification_time)
+
+    nk2_file.close()
 
   def test_get_number_of_items(self):
-    """Tests the get_number_of_items function."""
-    nk2_file = pynk2.file()
-
-    with self.assertRaises(IOError):
-      nk2_file.get_number_of_items()
-
-    with self.assertRaises(IOError):
-      nk2_file.number_of_items
-
+    """Tests the get_number_of_items function and number_of_items property."""
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
+
     nk2_file.open(unittest.source)
 
     number_of_items = nk2_file.get_number_of_items()
@@ -199,15 +194,11 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_item(self):
     """Tests the get_item function."""
-    nk2_file = pynk2.file()
-
-    with self.assertRaises(IOError):
-      nk2_file.get_item(0)
-
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
+
     nk2_file.open(unittest.source)
 
     if nk2_file.number_of_items > 0:
@@ -218,15 +209,11 @@ class FileTypeTests(unittest.TestCase):
 
   def test_items(self):
     """Tests the items property."""
-    nk2_file = pynk2.file()
-
-    with self.assertRaises(IOError):
-      nk2_file.items
-
     if not unittest.source:
-      return
+      raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
+
     nk2_file.open(unittest.source)
 
     if nk2_file.number_of_items > 0:
@@ -243,7 +230,7 @@ if __name__ == "__main__":
 
   argument_parser.add_argument(
       "source", nargs="?", action="store", metavar="PATH",
-      default=None, help="The path of the source file.")
+      default=None, help="path of the source file.")
 
   options, unknown_options = argument_parser.parse_known_args()
   unknown_options.insert(0, sys.argv[0])
