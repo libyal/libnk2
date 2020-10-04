@@ -255,7 +255,7 @@ PyTypeObject pynk2_file_type_object = {
 	0
 };
 
-/* Intializes a file object
+/* Initializes a file object
  * Returns 0 if successful or -1 on error
  */
 int pynk2_file_init(
