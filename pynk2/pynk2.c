@@ -88,10 +88,7 @@ PyMethodDef pynk2_module_methods[] = {
 	  "Opens a file using a file-like object." },
 
 	/* Sentinel */
-	{ NULL,
-	  NULL,
-	  0,
-	  NULL}
+	{ NULL, NULL, 0, NULL }
 };
 
 /* Retrieves the pynk2/libnk2 version
@@ -173,7 +170,7 @@ PyObject *pynk2_check_file_signature(
 	if( result == -1 )
 	{
 		pynk2_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
@@ -265,7 +262,7 @@ PyObject *pynk2_check_file_signature(
 	if( result == -1 )
 	{
 		pynk2_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if string object is of type string.",
 		 function );
 
@@ -343,7 +340,7 @@ PyObject *pynk2_check_file_signature_file_object(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "|O",
+	     "O|",
 	     keyword_list,
 	     &file_object ) == 0 )
 	{
@@ -594,8 +591,9 @@ PyMODINIT_FUNC initpynk2(
 		return;
 #endif
 	}
+#if PY_VERSION_HEX < 0x03070000
 	PyEval_InitThreads();
-
+#endif
 	gil_state = PyGILState_Ensure();
 
 	/* Setup the file type object
