@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
@@ -12,6 +14,7 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
+	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFWNT_CPPFLAGS@ \
 	@LIBFMAPI_CPPFLAGS@ \
 	@LIBNK2_DLL_IMPORT@
@@ -23,6 +26,7 @@ endif
 
 TESTS = \
 	test_library.sh \
+	test_tools.sh \
 	test_nk2info.sh \
 	test_nk2export.sh \
 	$(TESTS_PYNK2)
@@ -35,7 +39,8 @@ check_SCRIPTS = \
 	test_nk2export.sh \
 	test_nk2info.sh \
 	test_python_module.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_tools.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -50,7 +55,10 @@ check_PROGRAMS = \
 	nk2_test_mapi_value \
 	nk2_test_notify \
 	nk2_test_record_entry \
-	nk2_test_support
+	nk2_test_support \
+	nk2_test_tools_info_handle \
+	nk2_test_tools_output \
+	nk2_test_tools_signal
 
 nk2_test_error_SOURCES = \
 	nk2_test_error.c \
@@ -234,6 +242,43 @@ nk2_test_support_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libnk2/libnk2.la \
+	@LIBCERROR_LIBADD@
+
+nk2_test_tools_info_handle_SOURCES = \
+	../nk2tools/info_handle.c ../nk2tools/info_handle.h \
+	../nk2tools/nk2input.c ../nk2tools/nk2input.h \
+	nk2_test_libcerror.h \
+	nk2_test_macros.h \
+	nk2_test_memory.c nk2_test_memory.h \
+	nk2_test_tools_info_handle.c \
+	nk2_test_unused.h
+
+nk2_test_tools_info_handle_LDADD = \
+	@LIBFDATETIME_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	../libnk2/libnk2.la \
+	@LIBCERROR_LIBADD@
+
+nk2_test_tools_output_SOURCES = \
+	../nk2tools/nk2tools_output.c ../nk2tools/nk2tools_output.h \
+	nk2_test_libcerror.h \
+	nk2_test_macros.h \
+	nk2_test_tools_output.c \
+	nk2_test_unused.h
+
+nk2_test_tools_output_LDADD = \
+	../libnk2/libnk2.la \
+	@LIBCERROR_LIBADD@
+
+nk2_test_tools_signal_SOURCES = \
+	../nk2tools/nk2tools_signal.c ../nk2tools/nk2tools_signal.h \
+	nk2_test_libcerror.h \
+	nk2_test_macros.h \
+	nk2_test_tools_signal.c \
+	nk2_test_unused.h
+
+nk2_test_tools_signal_LDADD = \
 	../libnk2/libnk2.la \
 	@LIBCERROR_LIBADD@
 

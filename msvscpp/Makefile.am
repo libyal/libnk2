@@ -25,6 +25,9 @@ MSVSCPP_FILES = \
 	nk2_test_notify/nk2_test_notify.vcproj \
 	nk2_test_record_entry/nk2_test_record_entry.vcproj \
 	nk2_test_support/nk2_test_support.vcproj \
+	nk2_test_tools_info_handle/nk2_test_tools_info_handle.vcproj \
+	nk2_test_tools_output/nk2_test_tools_output.vcproj \
+	nk2_test_tools_signal/nk2_test_tools_signal.vcproj \
 	nk2export/nk2export.vcproj \
 	nk2info/nk2info.vcproj \
 	libnk2.sln

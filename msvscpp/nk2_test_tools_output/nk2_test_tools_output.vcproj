@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="nk2_test_io_handle"
-	ProjectGUID="{ADA34658-83D1-4B65-9BD6-C9AD5C0676C0}"
-	RootNamespace="nk2_test_io_handle"
+	Name="nk2_test_tools_output"
+	ProjectGUID="{849D8F5B-AD68-4796-8F37-364B6742580C}"
+	RootNamespace="nk2_test_tools_output"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,11 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\nk2_test_io_handle.c"
+				RelativePath="..\..\nk2tools\nk2tools_output.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\nk2_test_memory.c"
+				RelativePath="..\..\tests\nk2_test_tools_output.c"
 				>
 			</File>
 		</Filter>
@@ -190,19 +190,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\nk2tools\nk2tools_output.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\nk2_test_libcerror.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\nk2_test_libnk2.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\nk2_test_macros.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\nk2_test_memory.h"
 				>
 			</File>
 			<File
