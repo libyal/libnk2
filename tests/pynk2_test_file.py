@@ -38,15 +38,16 @@ class FileTypeTests(unittest.TestCase):
 
   def test_open(self):
     """Tests the open function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
 
-    nk2_file.open(unittest.source)
+    nk2_file.open(test_source)
 
     with self.assertRaises(IOError):
-      nk2_file.open(unittest.source)
+      nk2_file.open(test_source)
 
     nk2_file.close()
 
@@ -54,19 +55,20 @@ class FileTypeTests(unittest.TestCase):
       nk2_file.open(None)
 
     with self.assertRaises(ValueError):
-      nk2_file.open(unittest.source, mode="w")
+      nk2_file.open(test_source, mode="w")
 
   def test_open_file_object(self):
     """Tests the open_file_object function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
-    if not os.path.isfile(unittest.source):
+    if not os.path.isfile(test_source):
       raise unittest.SkipTest("source not a regular file")
 
     nk2_file = pynk2.file()
 
-    with open(unittest.source, "rb") as file_object:
+    with open(test_source, "rb") as file_object:
 
       nk2_file.open_file_object(file_object)
 
@@ -83,7 +85,8 @@ class FileTypeTests(unittest.TestCase):
 
   def test_close(self):
     """Tests the close function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
@@ -93,21 +96,22 @@ class FileTypeTests(unittest.TestCase):
 
   def test_open_close(self):
     """Tests the open and close functions."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       return
 
     nk2_file = pynk2.file()
 
     # Test open and close.
-    nk2_file.open(unittest.source)
+    nk2_file.open(test_source)
     nk2_file.close()
 
     # Test open and close a second time to validate clean up on close.
-    nk2_file.open(unittest.source)
+    nk2_file.open(test_source)
     nk2_file.close()
 
-    if os.path.isfile(unittest.source):
-      with open(unittest.source, "rb") as file_object:
+    if os.path.isfile(test_source):
+      with open(test_source, "rb") as file_object:
 
         # Test open_file_object and close.
         nk2_file.open_file_object(file_object)
@@ -146,12 +150,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_ascii_codepage(self):
     """Tests the get_ascii_codepage function and ascii_codepage property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
 
-    nk2_file.open(unittest.source)
+    nk2_file.open(test_source)
 
     ascii_codepage = nk2_file.get_ascii_codepage()
     self.assertIsNotNone(ascii_codepage)
@@ -162,12 +167,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_modification_time(self):
     """Tests the get_modification_time function and modification_time property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
 
-    nk2_file.open(unittest.source)
+    nk2_file.open(test_source)
 
     modification_time = nk2_file.get_modification_time()
     self.assertIsNotNone(modification_time)
@@ -178,12 +184,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_number_of_items(self):
     """Tests the get_number_of_items function and number_of_items property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
 
-    nk2_file.open(unittest.source)
+    nk2_file.open(test_source)
 
     number_of_items = nk2_file.get_number_of_items()
     self.assertIsNotNone(number_of_items)
@@ -194,12 +201,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_get_item(self):
     """Tests the get_item function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
 
-    nk2_file.open(unittest.source)
+    nk2_file.open(test_source)
 
     if nk2_file.number_of_items > 0:
       item = nk2_file.get_item(0)
@@ -209,12 +217,13 @@ class FileTypeTests(unittest.TestCase):
 
   def test_items(self):
     """Tests the items property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     nk2_file = pynk2.file()
 
-    nk2_file.open(unittest.source)
+    nk2_file.open(test_source)
 
     if nk2_file.number_of_items > 0:
       items = nk2_file.items
