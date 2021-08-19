@@ -336,6 +336,15 @@ void pynk2_file_free(
 
 		return;
 	}
+	if( pynk2_file->file_io_handle != NULL )
+	{
+		if( pynk2_file_close(
+		     pynk2_file,
+		     NULL ) == NULL )
+		{
+			return;
+		}
+	}
 	if( pynk2_file->file != NULL )
 	{
 		Py_BEGIN_ALLOW_THREADS
