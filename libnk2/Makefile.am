@@ -30,7 +30,6 @@ libnk2_la_SOURCES = \
 	libnk2_file_header.c libnk2_file_header.h \
 	libnk2_item.c libnk2_item.h \
 	libnk2_io_handle.c libnk2_io_handle.h \
-	libnk2_legacy.c libnk2_legacy.h \
 	libnk2_libbfio.h \
 	libnk2_libcdata.h \
 	libnk2_libcerror.h \
