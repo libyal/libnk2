@@ -38,7 +38,6 @@ DPKG_FILES = \
 	dpkg/rules \
 	dpkg/libnk2.install \
 	dpkg/libnk2-dev.install \
-	dpkg/libnk2-python.install \
 	dpkg/libnk2-python3.install \
 	dpkg/libnk2-tools.install \
 	dpkg/source/format
