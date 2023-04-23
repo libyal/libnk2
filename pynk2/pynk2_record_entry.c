@@ -1076,7 +1076,7 @@ PyObject *pynk2_record_entry_get_data_as_floating_point(
 
 	Py_END_ALLOW_THREADS
 
-	if( result == -1 )
+	if( result != 1 )
 	{
 		pynk2_error_raise(
 		 error,
@@ -1088,13 +1088,6 @@ PyObject *pynk2_record_entry_get_data_as_floating_point(
 		 &error );
 
 		return( NULL );
-	}
-	else if( result == 0 )
-	{
-		Py_IncRef(
-		 Py_None );
-
-		return( Py_None );
 	}
 	float_object = PyFloat_FromDouble(
 	                value_double );
