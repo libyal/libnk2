@@ -20,9 +20,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libnk2.h
-	/bin/rm -f libnk2/definitions.h
-	/bin/rm -f libnk2/features.h
-	/bin/rm -f libnk2/types.h
-	/bin/rm -f Makefile
+	-rm -f libnk2.h
+	-rm -f libnk2/definitions.h
+	-rm -f libnk2/features.h
+	-rm -f libnk2/types.h
+	-rm -f Makefile
 

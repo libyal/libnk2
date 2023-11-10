@@ -2,13 +2,14 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libnk2],
- [20231018],
+ [20231110],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
  [include/libnk2.h.in])
 
 AM_INIT_AUTOMAKE([gnu 1.6 tar-ustar])
+AM_EXTRA_RECURSIVE_TARGETS([sources splint])
 
 AC_CONFIG_MACRO_DIR([m4])
 
