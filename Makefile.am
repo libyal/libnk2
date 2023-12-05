@@ -21,8 +21,6 @@ SUBDIRS = \
 	libfvalue \
 	nk2tools \
 	pynk2 \
-	pynk2-python2 \
-	pynk2-python3 \
 	po \
 	manuals \
 	tests \
@@ -50,6 +48,9 @@ PKGCONFIG_FILES = \
 	libnk2.pc.in
 
 SETUP_PY_FILES = \
+	pyproject.toml \
+	setup.cfg \
+	setup.cfg.in \
 	setup.py
 
 SPEC_FILES = \

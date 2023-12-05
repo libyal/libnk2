@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libnk2],
- [20231110],
+ [20231205],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -116,7 +116,7 @@ dnl Check if libnk2 Python bindings (pynk2) required headers and functions are a
 AX_PYTHON_CHECK_ENABLE
 
 AS_IF(
-  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
+  [test "x${ac_cv_enable_python}" != xno],
   [dnl Headers included in pynk2/pynk2_error.c
   AC_CHECK_HEADERS([stdarg.h varargs.h])
 
@@ -189,8 +189,6 @@ AC_CONFIG_FILES([libfwnt/Makefile])
 AC_CONFIG_FILES([libfmapi/Makefile])
 AC_CONFIG_FILES([libnk2/Makefile])
 AC_CONFIG_FILES([pynk2/Makefile])
-AC_CONFIG_FILES([pynk2-python2/Makefile])
-AC_CONFIG_FILES([pynk2-python3/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([nk2tools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
