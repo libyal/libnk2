@@ -16,13 +16,11 @@ EXTRA_DIST = \
 	libnk2/features.h.in \
 	libnk2/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libnk2.h \
+	libnk2/definitions.h \
+	libnk2/features.h \
+	libnk2/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libnk2.h
-	-rm -f libnk2/definitions.h
-	-rm -f libnk2/features.h
-	-rm -f libnk2/types.h
-	-rm -f Makefile
 

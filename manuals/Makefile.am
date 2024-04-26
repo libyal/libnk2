@@ -8,9 +8,7 @@ EXTRA_DIST = \
 	nk2info.1 \
 	libnk2.3
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 

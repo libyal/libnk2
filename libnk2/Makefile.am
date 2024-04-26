@@ -1,6 +1,6 @@
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/common \
+	-I../include -I$(top_srcdir)/include \
+	-I../common -I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -71,13 +71,11 @@ EXTRA_DIST = \
 	libnk2.rc \
 	libnk2.rc.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libnk2_definitions.h \
+	libnk2.rc \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libnk2_definitions.h
-	-rm -f libnk2.rc
-	-rm -f Makefile
 
 sources-local: $(BUILT_SOURCES)
 
