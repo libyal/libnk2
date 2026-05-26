@@ -30,12 +30,6 @@
 
 #include <libnk2/extern.h>
 
-#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
-#define LIBNK2_EXTERN_VARIABLE	extern
-#else
-#define LIBNK2_EXTERN_VARIABLE	LIBNK2_EXTERN
-#endif
-
 #else
 #define LIBNK2_EXTERN		/* extern */
 #define LIBNK2_EXTERN_VARIABLE	extern

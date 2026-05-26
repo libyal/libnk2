@@ -31,14 +31,17 @@
  */
 #if defined( LIBNK2_DLL_EXPORT )
 #define LIBNK2_EXTERN __declspec(dllexport)
+#define LIBNK2_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBNK2_DLL_IMPORT )
-#define LIBNK2_EXTERN extern __declspec(dllimport)
+#define LIBNK2_EXTERN __declspec(dllimport)
+#define LIBNK2_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBNK2_EXTERN extern
+#define LIBNK2_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBNK2_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBNK2_EXTERN_H ) */
 
