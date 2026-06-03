@@ -19,6 +19,10 @@ AM_CPPFLAGS = \
 	@LIBFMAPI_CPPFLAGS@ \
 	@LIBNK2_DLL_IMPORT@
 
+AM_TESTS_ENVIRONMENT = \
+	export PYTHON="@PYTHON@"; \
+	export TESTS_USE_WINAPI="@TESTS_USE_WINAPI@";
+
 if HAVE_PYTHON_TESTS
 TESTS_PYNK2 = \
 	test_python_module.sh
@@ -269,7 +273,8 @@ nk2_test_tools_output_SOURCES = \
 
 nk2_test_tools_output_LDADD = \
 	../libnk2/libnk2.la \
-	@LIBCERROR_LIBADD@
+	@LIBCERROR_LIBADD@ \
+	@LIBINTL@
 
 nk2_test_tools_signal_SOURCES = \
 	../nk2tools/nk2tools_signal.c ../nk2tools/nk2tools_signal.h \

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Export tool testing script
 #
-# Version: 20240413
+# Version: 20260602
 
 EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
@@ -85,9 +85,9 @@ then
 	exit ${EXIT_FAILURE};
 fi
 
-PLATFORM=`uname -s`;
-
 source ${TEST_RUNNER};
+
+PLATFORM=`uname -s`;
 
 assert_availability_binary find;
 
@@ -100,17 +100,17 @@ fi
 
 if ! test -d "input";
 then
-	echo "Test input directory: input not found.";
+	echo "Test input directory not found.";
 
-	return ${EXIT_IGNORE};
+	exit ${EXIT_IGNORE};
 fi
 RESULT=`ls input/* | tr ' ' '\n' | wc -l`;
 
 if test ${RESULT} -eq ${EXIT_SUCCESS};
 then
-	echo "No files or directories found in the test input directory: input";
+	echo "No files or directories found in the test input directory";
 
-	return ${EXIT_IGNORE};
+	exit ${EXIT_IGNORE};
 fi
 
 for PROFILE_INDEX in ${!PROFILES[*]};
@@ -196,5 +196,4 @@ do
 done
 
 exit ${RESULT};
-
 

@@ -1495,21 +1495,22 @@ int item_file_write_record_entry(
      uint32_t format_flags,
      libcerror_error_t **error )
 {
-	libfdatetime_filetime_t *filetime         = NULL;
-	system_character_t *value_string          = NULL;
-	static char *function                     = "item_file_write_record_entry";
-	size_t description_length                 = 0;
-	size_t value_string_size                  = 0;
-	uint64_t value_64bit                      = 0;
-	uint32_t value_32bit                      = 0;
-	uint32_t value_type                       = 0;
-	uint8_t value_boolean                     = 0;
-	double value_double                       = 0.0;
-	int result                                = 0;
+	libfdatetime_filetime_t *filetime            = NULL;
+	system_character_t *value_string             = NULL;
+	const system_character_t *fixed_value_string = NULL;
+	static char *function                        = "item_file_write_record_entry";
+	size_t description_length                    = 0;
+	size_t value_string_size                     = 0;
+	uint64_t value_64bit                         = 0;
+	uint32_t value_32bit                         = 0;
+	uint32_t value_type                          = 0;
+	uint8_t value_boolean                        = 0;
+	double value_double                          = 0.0;
+	int result                                   = 0;
 
 /* TODO implement
-	libfdatetime_floatingtime_t *floatingtime = NULL;
-	uint16_t value_16bit                      = 0;
+	libfdatetime_floatingtime_t *floatingtime    = NULL;
+	uint16_t value_16bit                         = 0;
  */
 
 	if( libnk2_record_entry_get_value_type(
@@ -1563,17 +1564,17 @@ int item_file_write_record_entry(
 			}
 			if( value_boolean == 0 )
 			{
-				value_string      = _SYSTEM_STRING( "false" );
-				value_string_size = 6;
+				fixed_value_string = _SYSTEM_STRING( "false" );
+				value_string_size  = 6;
 			}
 			else
 			{
-				value_string      = _SYSTEM_STRING( "true" );
-				value_string_size = 5;
+				fixed_value_string = _SYSTEM_STRING( "true" );
+				value_string_size  = 5;
 			}
 			if( item_file_write_string(
 			     item_file,
-			     value_string,
+			     fixed_value_string,
 			     value_string_size - 1,
 			     error ) != 1 )
 			{
@@ -1583,8 +1584,6 @@ int item_file_write_record_entry(
 				 LIBCERROR_IO_ERROR_WRITE_FAILED,
 				 "%s: unable to write string.",
 				 function );
-
-				value_string = NULL;
 
 				goto on_error;
 			}
@@ -1680,17 +1679,17 @@ int item_file_write_record_entry(
 				{
 					if( value_32bit == 1 )
 					{
-						value_string      = _SYSTEM_STRING( " minute" );
-						value_string_size = 8;
+						fixed_value_string = _SYSTEM_STRING( " minute" );
+						value_string_size  = 8;
 					}
 					else if( value_32bit > 1 )
 					{
-						value_string      = _SYSTEM_STRING( " minutes" );
-						value_string_size = 9;
+						fixed_value_string = _SYSTEM_STRING( " minutes" );
+						value_string_size  = 9;
 					}
 					if( item_file_write_string(
 					     item_file,
-					     value_string,
+					     fixed_value_string,
 					     value_string_size - 1,
 					     error ) != 1 )
 					{
@@ -1700,8 +1699,6 @@ int item_file_write_record_entry(
 						 LIBCERROR_IO_ERROR_WRITE_FAILED,
 						 "%s: unable to write string.",
 						 function );
-
-						value_string = NULL;
 
 						goto on_error;
 					}
