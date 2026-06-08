@@ -3825,7 +3825,7 @@ int nk2_test_record_entry_get_data_as_guid(
      void )
 {
 	uint8_t guid_data[ 16 ];
-	
+
 	libcerror_error_t *error            = NULL;
 	libnk2_record_entry_t *record_entry = NULL;
 	int result                          = 0;
