@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20251129
+# Version: 20260604
 
 # Generic auto-generated build files
 *~
@@ -131,7 +131,12 @@ stamp-h[1-9]
 /nk2tools/*.exe
 /nk2tools/nk2export
 /nk2tools/nk2info
+/tests/*.dir
 /tests/*.exe
+/tests/*.log
+/tests/*.tmp
+/tests/atconfig
+/tests/atlocal
 /tests/input
 /tests/nk2_test_error
 /tests/nk2_test_file
@@ -147,6 +152,12 @@ stamp-h[1-9]
 /tests/nk2_test_tools_output
 /tests/nk2_test_tools_signal
 /tests/notify_stream.log
+/tests/package.m4
+/tests/test_inputs_*.at
+/tests/test_library
+/tests/test_manpages
+/tests/test_python_module
+/tests/test_tools
 /tests/tmp*
 
 # Local library dependencies specific files
