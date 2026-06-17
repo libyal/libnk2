@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libnk2],
-  [20260613],
+  [20260617],
   [https://github.com/libyal/libnk2/issues])
 
 AC_CONFIG_SRCDIR(
