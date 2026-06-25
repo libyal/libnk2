@@ -1,12 +1,12 @@
-.Dd April 20, 2019
-.Dt nk2info
-.Os libnk2
+.Dd June 25, 2026
+.Dt NK2INFO 1
+.Os
 .Sh NAME
 .Nm nk2info
 .Nd determines information about a Nickfile (NK2)
 .Sh SYNOPSIS
 .Nm nk2info
-.Op Fl ahvV
+.Op Fl hvV
 .Ar source
 .Sh DESCRIPTION
 .Nm nk2info
@@ -24,8 +24,6 @@ is the source file.
 .Pp
 The options are as follows:
 .Bl -tag -width Ds
-.It Fl a
-shows allocation information
 .It Fl h
 shows this help
 .It Fl v
@@ -40,7 +38,7 @@ None
 .Sh EXAMPLES
 .Bd -literal
 # nk2info Outlook.NK2
-nk2info 20110704
+nk2info 20260625
 .sp
 Nickfile information:
 	Last modification time	: Jul 04, 2011 09:56:01.557000 UTC
@@ -48,15 +46,19 @@ Nickfile information:
 .sp
 .Ed
 .Sh DIAGNOSTICS
-Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Errors, verbose and debug output are printed to stderr when verbose output \
+\-v is enabled.
 Verbose and debug output are only printed when enabled at compilation.
-.Sh BUGS
-Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://github.com/libyal/libnk2/
-.Sh AUTHOR
-These man pages were written by Joachim Metz.
-.Sh COPYRIGHT
-Copyright (C) 2009-2026, Joachim Metz <joachim.metz@gmail.com>.
-This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
 .Xr nk2export 1
+.Sh AUTHORS
+.An Joachim Metz <joachim.metz@gmail.com>
+.Sh BUGS
+Please report bugs of any kind on the project issue tracker: \
+https://github.com/libyal/libnk2/issues
+.Sh COPYRIGHT
+Copyright (C) 2009-2026, Joachim Metz <joachim.metz@gmail.com>.
+.sp
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A \
+PARTICULAR PURPOSE.

@@ -4,9 +4,7 @@ man_MANS = \
 	libnk2.3
 
 EXTRA_DIST = \
-	nk2export.1 \
-	nk2info.1 \
-	libnk2.3
+	$(man_MANS)
 
 DISTCLEANFILES = \
 	Makefile \

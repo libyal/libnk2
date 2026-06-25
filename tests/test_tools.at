@@ -249,7 +249,7 @@ RUN_TEST_NK2TOOL_AND_COMPARE_STDOUT(
   [],
   test_inputs_nk2info)
 
-RUN_TEST_NK2TOOL_AND_COMPARE_STDOUT(
+RUN_TEST_NK2TOOL_AND_COMPARE_FILES(
   [nk2export],
   [nk2export],
   [],

@@ -1666,7 +1666,7 @@ int export_handle_export_items(
 	}
 	fprintf(
 	 export_handle->notify_stream,
-	 "Exporting items.\n" );
+	 "Exporting aliases.\n" );
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcpath_path_make_directory_wide(
@@ -1721,7 +1721,7 @@ int export_handle_export_items(
 		{
 			fprintf(
 			 export_handle->notify_stream,
-			 "Exporting alias item %d out of %d.\n",
+			 "Exporting alias %d out of %d.\n",
 			 item_index + 1,
 			 number_of_items );
 		}
